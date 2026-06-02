@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ปลดล็อคด่าน - Battle Cats Shop</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">🐱 BATTLE CATS SHOP</a>
+    <ul class="nav-links">
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="shop.html">ร้านขาย</a></li>
+      <li><a href="characters.html">ปลดล็อคแมว</a></li>
+      <li><a href="stages.html" class="active">ปลดล็อคด่าน</a></li>
+      <li><a href="orders.html">ออเดอร์</a></li>
+    </ul>
+    <div class="nav-cart">
+      🛒
+      <span class="cart-badge" id="cartCount">0</span>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <h1 class="section-title">📍 ปลดล็อคด่าน</h1>
+  <p style="color: #666; margin-bottom: 24px;">เลือกด่านที่อยากปลดล็อค เราจะ clear ให้โดยใช้แมวที่คุณให้!</p>
+
+  <!-- FILTER -->
+  <div style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+    <button class="btn btn-primary" onclick="filterStages('all')" style="padding: 8px 16px; font-size: 14px;">ทั้งหมด</button>
+    <button class="btn btn-secondary" onclick="filterStages('normal')" style="padding: 8px 16px; font-size: 14px;">Normal</button>
+    <button class="btn btn-secondary" onclick="filterStages('hard')" style="padding: 8px 16px; font-size: 14px;">Hard</button>
+    <button class="btn btn-secondary" onclick="filterStages('expert')" style="padding: 8px 16px; font-size: 14px;">Expert</button>
+    <button class="btn btn-secondary" onclick="filterStages('insane')" style="padding: 8px 16px; font-size: 14px;">Insane</button>
+  </div>
+
+  <!-- CHAPTER 1 -->
+  <h2 class="section-title">📖 Chapter 1 - Outcast into the Snow</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-emoji">❄️</div>
+      <div class="card-name">1-1: The Warrior</div>
+      <div class="card-desc">เอา Goliath แรก</div>
+      <div class="card-price"><span class="price-now">฿29</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Ch1 Stage 1', 29)" style="width:100%; margin-top: auto;">ปลดล็อค</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">❄️</div>
+      <div class="card-name">1-5: Tough Enemies</div>
+      <div class="card-desc">ศึกชุก หลากชนิด</div>
+      <div class="card-price"><span class="price-now">฿49</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Ch1 Stage 5', 49)" style="width:100%;">ปลดล็อค</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">❄️</div>
+      <div class="card-name">1-10: Premonition</div>
+      <div class="card-desc">เจอ metal เยอะ</div>
+      <div class="card-price"><span class="price-now">฿79</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Ch1 Stage 10', 79)" style="width:100%;">ปลดล็อค</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">❄️</div>
+      <div class="card-name">1-15: Capybara Boss!</div>
+      <div class="card-desc">เจอ boss ตัวแรก</div>
+      <div class="card-price"><span class="price-now">฿199</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Ch1 Stage 15', 199)" style="width:100%;">ปลดล็อค</button>
+    </div>
+  </div>
+
+  <!-- CHAPTER 2 -->
+  <h2 class="section-title" style="margin-top: 32px;">📖 Chapter 2 - Invasion</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-emoji">🌙</div>
+      <div class="card-name">2-1: Break on Through</div>
+      <div class="card-desc">ด่านเบื้องต้น Ch2</div>
+      <div class="card-price"><span class="price-now">฿49</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Ch2 Stage 1', 49)" style="width:100%; margin-top: auto;">ปลดล็อค</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🌙</div>
+      <div class="card-name">2-5: Darkness</div>
+      <div class="card-desc">ชื่อบ่งบอกที่เกิด</div>
+      <div class="card-price"><span class="price-now">฿89</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Ch2 Stage 5', 89)" style="width:100%;">ปลดล็อค</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🌙</div>
+      <div class="card-name">2-10: Merciless</div>
+      <div class="card-desc">ยากขึ้นเรื่อยๆ</div>
+      <div class="card-price"><span class="price-now">฿149</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Ch2 Stage 10', 149)" style="width:100%;">ปลดล็อค</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🌙</div>
+      <div class="card-name">2-15: The Abyss</div>
+      <div class="card-desc">ไม่มีใครผ่านได้</div>
+      <div class="card-price"><span class="price-now">฿299</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Ch2 Stage 15', 299)" style="width:100%;">ปลดล็อค</button>
+    </div>
+  </div>
+
+  <!-- CHAPTER 3 -->
+  <h2 class="section-title" style="margin-top: 32px;">📖 Chapter 3 - Corruption</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-emoji">⚫</div>
+      <div class="card-name">3-1: Return</div>
+      <div class="card-desc">กลับมาสู่โลก</div>
+      <div class="card-price"><span class="price-now">฿99</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Ch3 Stage 1', 99)" style="width:100%; margin-top: auto;">ปลดล็อค</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">⚫</div>
+      <div class="card-name">3-5: Evil Descends</div>
+      <div class="card-desc">ความชั่วลงมา</div>
+      <div class="card-price"><span class="price-now">฿149</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Ch3 Stage 5', 149)" style="width:100%;">ปลดล็อค</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">⚫</div>
+      <div class="card-name">3-10: Frozen Hell</div>
+      <div class="card-desc">นรกแช่แข็ง</div>
+      <div class="card-price"><span class="price-now">฿199</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Ch3 Stage 10', 199)" style="width:100%;">ปลดล็อค</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">⚫</div>
+      <div class="card-name">3-15: The Chosen One</div>
+      <div class="card-desc">ผู้ถูกเลือก</div>
+      <div class="card-price"><span class="price-now">฿399</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Ch3 Stage 15', 399)" style="width:100%;">ปลดล็อค</button>
+    </div>
+  </div>
+
+  <!-- SPECIAL STAGES -->
+  <h2 class="section-title" style="margin-top: 32px;">🌟 Special Stages</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <span class="card-tag tag-hot">HOT</span>
+      <div class="card-emoji">🎪</div>
+      <div class="card-name">Pon Pon Festival</div>
+      <div class="card-desc">เหตุการณ์พิเศษ</div>
+      <div class="card-price"><span class="price-now">฿149</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Pon Pon Festival', 149)" style="width:100%; margin-top: auto;">ปลดล็อค</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-rare">RARE</span>
+      <div class="card-emoji">🌺</div>
+      <div class="card-name">The Great Abyss</div>
+      <div class="card-desc">ลึกลับ อันตราย</div>
+      <div class="card-price"><span class="price-now">฿299</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: The Great Abyss', 299)" style="width:100%;">ปลดล็อค</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-super">MEGA</span>
+      <div class="card-emoji">💀</div>
+      <div class="card-name">Merciless Deathway</div>
+      <div class="card-desc">ทางของการตาย</div>
+      <div class="card-price"><span class="price-now">฿499</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Merciless Deathway', 499)" style="width:100%;">ปลดล็อค</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-super">INSANE</span>
+      <div class="card-emoji">⚡</div>
+      <div class="card-name">Corpse Stage</div>
+      <div class="card-desc">สุดขีดแห่งสมรภูมิ</div>
+      <div class="card-price"><span class="price-now">฿699</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Clear: Corpse Stage', 699)" style="width:100%;">ปลดล็อค</button>
+    </div>
+  </div>
+
+  <!-- INFO -->
+  <div class="trust-row" style="margin-top: 40px;">
+    <div class="trust-card">
+      <div class="trust-icon">✅</div>
+      <div class="trust-title">ปลดล็อคเสร็จ</div>
+      <div class="trust-sub">ด่านจะเปิด forever</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">🐱</div>
+      <div class="trust-title">ใช้แมวของคุณ</div>
+      <div class="trust-sub">ให้แมวของคุณออกจนผ่าน</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">🔓</div>
+      <div class="trust-title">เปิดไปตลอด</div>
+      <div class="trust-sub">ไม่ต้องอ่านต่อไป</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>🐱 Battle Cats Shop</h4>
+        <p style="font-size: 13px; line-height: 1.6;">บริการร้านขายไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
+      </div>
+      <div class="footer-col">
+        <h4>บริการ</h4>
+        <ul>
+          <li><a href="shop.html">ร้านขาย</a></li>
+          <li><a href="characters.html">ปลดล็อคแมว</a></li>
+          <li><a href="stages.html">ปลดล็อคด่าน</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>ติดต่อเรา</h4>
+        <ul>
+          <li><a href="#">📱 Line: @battlecats</a></li>
+          <li><a href="#">💬 Discord: BattleCats</a></li>
+          <li><a href="#">📘 Facebook: BattleCatsShop</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Battle Cats Shop · บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+function addToCart(itemName, price) {
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  cart.push({ name: itemName, price: price });
+  localStorage.setItem('cart', JSON.stringify(cart));
+  document.getElementById('cartCount').textContent = cart.length;
+  alert(`✅ เพิ่ม ${itemName} ลงการ์ทแล้ว!`);
+}
+
+function filterStages(type) {
+  alert(`กรองด่าน: ${type}`);
+}
+
+window.addEventListener('load', () => {
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  document.getElementById('cartCount').textContent = cart.length;
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  if (link.href === window.location.href) {
+    link.classList.add('active');
+  }
+});
+</script>
+
+</body>
+</html>

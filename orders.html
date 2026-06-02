@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ออเดอร์ - Battle Cats Shop</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">🐱 BATTLE CATS SHOP</a>
+    <ul class="nav-links">
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="shop.html">ร้านขาย</a></li>
+      <li><a href="characters.html">ปลดล็อคแมว</a></li>
+      <li><a href="stages.html">ปลดล็อคด่าน</a></li>
+      <li><a href="orders.html" class="active">ออเดอร์</a></li>
+    </ul>
+    <div class="nav-cart">
+      🛒
+      <span class="cart-badge" id="cartCount">0</span>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <h1 class="section-title">🛒 ระบบสั่งซื้อ BCSFE</h1>
+
+  <div class="grid grid-2">
+    <div>
+      <div class="card" style="padding: 28px;">
+        <h2 class="section-title" style="font-size: 24px; margin-bottom: 14px;">💳 สรุปคำสั่งซื้อ</h2>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px;">
+          <span>จำนวนสินค้า:</span>
+          <span id="totalItems" style="font-weight: 700;">0 รายการ</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; font-size: 16px;">
+          <span>รวมทั้งหมด:</span>
+          <span id="totalPrice" style="font-weight: 700; color: #E8002A; font-size: 22px;">฿0</span>
+        </div>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.12); padding-top: 16px; margin-bottom: 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.6;">
+          <p>🔧 ระบบนี้ยังไม่เรียกเก็บเงินจริง (bypass payment flow)</p>
+          <p>📌 ระบุ Transfer Code, Confirmation Code และเซิร์ฟเวอร์ให้ครบ เพื่อสั่งงาน BCSFE ต่อ</p>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Transfer Code *</label>
+          <input type="text" id="transferCode" placeholder="ABCD1234EFGH5678" 
+            style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: monospace; background: rgba(255,255,255,0.06); color: white;">
+          <p style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">ได้จาก Settings → Change Device → Save Data to Server</p>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Confirmation Code *</label>
+          <input type="text" id="confirmCode" placeholder="12345678" 
+            style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: monospace; background: rgba(255,255,255,0.06); color: white;">
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Server (Country) *</label>
+          <select id="server" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,0.06); color: white;">
+            <option value="">-- เลือก --</option>
+            <option value="1">EN (Global / TH / EU)</option>
+            <option value="2">JP (ญี่ปุ่น)</option>
+            <option value="3">KR (เกาหลี)</option>
+            <option value="4">TW (ไต้หวัน)</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">ชื่อ / Username *</label>
+          <input type="text" id="username" placeholder="ชื่อของคุณ" 
+            style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,0.06); color: white;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Line ID / Discord *</label>
+          <input type="text" id="contact" placeholder="@line_id หรือ Discord username" 
+            style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,0.06); color: white;">
+        </div>
+
+        <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 16px; margin-bottom: 18px; font-size: 13px; color: var(--text-secondary);">
+          <strong style="color: #ffb347;">⚠️ สำคัญ:</strong> อย่า Login เข้าเกมขณะรอการทำ edit จะทำให้ Transfer Code หมดอายุ!
+        </div>
+
+        <button class="btn btn-primary" id="checkoutBtn" onclick="checkout()" style="width: 100%; margin-bottom: 12px;">🚀 สร้างคำสั่งชำระเงิน</button>
+        <button class="btn btn-outline" onclick="window.location.href='shop.html'" style="width: 100%;">ต่อไปเลือกสินค้าเพิ่ม</button>
+
+        <div id="paymentSection" style="display: none; margin-top: 24px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 20px;">
+          <h3 style="font-size: 18px; margin-bottom: 16px;">💳 ชำระเงินผ่าน QR PromptPay</h3>
+          <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:center;">
+            <div style="flex:1; min-width:220px; color:#f5f5f5; font-size:14px; line-height:1.5;">
+              <div>Order ID: <strong id="paymentOrderId"></strong></div>
+              <div>ยอดที่ต้องชำระ: <strong id="paymentAmount"></strong></div>
+              <div>หมดเวลา: <strong id="paymentExpires"></strong></div>
+              <div id="paymentMessage" style="margin-top:12px; color:#facc15;"></div>
+            </div>
+            <div style="min-width:220px; text-align:center;">
+              <img id="paymentQr" src="" alt="QR PromptPay" style="width:100%; max-width:260px; border:1px solid rgba(255,255,255,0.12); border-radius:14px; background:#111; padding:12px;" />
+            </div>
+          </div>
+          <div style="margin-top:20px;">
+            <label style="display:block; font-size:12px; font-weight:700; color: var(--text-secondary); margin-bottom:6px;">อัปโหลดสลิปการโอน</label>
+            <input type="file" id="slipInput" accept="image/*" style="width:100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,0.06); color: white;" onchange="toggleSlipButton()" />
+            <button class="btn btn-primary" id="verifyBtn" onclick="verifyPayment()" disabled style="width:100%; margin-top:12px;">ยืนยันการชำระเงิน</button>
+            <div id="paymentError" style="display:none; color:#ff6b6b; margin-top:12px; font-size:13px;"></div>
+            <div id="paymentSuccess" style="display:none; color:#4ade80; margin-top:12px; font-size:13px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="padding: 28px; margin-bottom: 20px;">
+        <h2 class="section-title" style="font-size: 24px; margin-bottom: 14px;">🛍️ ตะกร้าสินค้า</h2>
+        <div id="cartItems" style="min-height: 380px;">
+          <p style="color: var(--text-secondary); text-align: center;">ตะกร้าสินค้าว่าง</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>🐱 Battle Cats Shop</h4>
+        <p style="font-size: 13px; line-height: 1.6;">บริการร้านขายไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
+      </div>
+      <div class="footer-col">
+        <h4>บริการ</h4>
+        <ul>
+          <li><a href="shop.html">ร้านขาย</a></li>
+          <li><a href="characters.html">ปลดล็อคแมว</a></li>
+          <li><a href="stages.html">ปลดล็อคด่าน</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>ติดต่อเรา</h4>
+        <ul>
+          <li><a href="#">📱 Line: @battlecats</a></li>
+          <li><a href="#">💬 Discord: BattleCats</a></li>
+          <li><a href="#">📘 Facebook: BattleCatsShop</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Battle Cats Shop · บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</p>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL SUCCESS -->
+<div class="modal" id="successModal">
+  <div class="modal-content" style="max-width: 500px; text-align: center;">
+    <div class="modal-body" style="padding: 40px 20px;">
+      <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+      <h2 style="font-family: 'Kanit', sans-serif; font-size: 24px; color: #22c55e; margin-bottom: 12px;">ออเดอร์สำเร็จ!</h2>
+      <p style="color: #666; margin-bottom: 12px;">ออเดอร์ #<span id="orderID" style="font-weight: 700; color: #FF6B00;">BC-001</span></p>
+      <p id="resultSummary" style="font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 20px;">ระบบ BCSFE กำลังดำเนินการอัตโนมัติ หากสำเร็จจะได้ Transfer Code ใหม่</p>
+      <div style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; border-radius: 12px; padding: 18px; margin-bottom: 18px; color: #1f2937;">
+        <div style="margin-bottom: 10px;"><strong>Transfer Code ใหม่:</strong> <span id="newTransferCode">-</span></div>
+        <div><strong>Confirmation Code ใหม่:</strong> <span id="newConfirmCode">-</span></div>
+      </div>
+      <div style="background: #e5f6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px; margin-bottom: 18px; color: #0f172a; text-align: left;">
+        <p style="margin-bottom: 8px;"><strong>สรุปรายการ:</strong></p>
+        <div id="orderSummary" style="font-size: 13px; line-height: 1.6;"></div>
+      </div>
+      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="margin-top: 20px;">กลับไปเลือกสินค้าเพิ่มเติม</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE_URL = 'http://localhost:8000';
+let currentOrderId = null;
+let pendingPaymentOrder = null;
+let paymentTimer = null;
+
+function formatCurrency(value) {
+  return '฿' + value.toLocaleString();
+}
+
+function setPaymentMessage(text) {
+  const el = document.getElementById('paymentMessage');
+  if (!el) return;
+  el.textContent = text;
+}
+
+function setPaymentError(text) {
+  const el = document.getElementById('paymentError');
+  const ok = document.getElementById('paymentSuccess');
+  if (!el || !ok) return;
+  el.textContent = text;
+  el.style.display = text ? 'block' : 'none';
+  ok.style.display = 'none';
+}
+
+function setPaymentSuccess(text) {
+  const el = document.getElementById('paymentSuccess');
+  const err = document.getElementById('paymentError');
+  if (!el || !err) return;
+  el.textContent = text;
+  el.style.display = text ? 'block' : 'none';
+  err.style.display = 'none';
+}
+
+function startPaymentCountdown(expiresAt) {
+  const el = document.getElementById('paymentExpires');
+  if (!el) return;
+  if (paymentTimer) {
+    clearInterval(paymentTimer);
+    paymentTimer = null;
+  }
+
+  function tick() {
+    const diff = new Date(expiresAt) - new Date();
+    if (diff <= 0) {
+      el.textContent = 'หมดเวลาแล้ว';
+      setPaymentMessage('QR หมดเวลาแล้ว กรุณาสร้างคำสั่งใหม่');
+      clearInterval(paymentTimer);
+      paymentTimer = null;
+      document.getElementById('verifyBtn').disabled = true;
+      return;
+    }
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    el.textContent = `${minutes} นาที ${seconds.toString().padStart(2, '0')} วินาที`;
+  }
+
+  tick();
+  paymentTimer = setInterval(tick, 1000);
+}
+
+function toggleSlipButton() {
+  const file = document.getElementById('slipInput').files[0];
+  document.getElementById('verifyBtn').disabled = !file;
+}
+
+function showPaymentSection(order, cart) {
+  currentOrderId = order.order_id;
+  pendingPaymentOrder = {
+    id: order.order_id,
+    transferCode: document.getElementById('transferCode').value.trim(),
+    confirmCode: document.getElementById('confirmCode').value.trim(),
+    server: document.getElementById('server').value,
+    username: document.getElementById('username').value.trim(),
+    contact: document.getElementById('contact').value.trim(),
+    items: cart,
+    total: cart.reduce((sum, item) => sum + item.price, 0),
+  };
+
+  document.getElementById('paymentOrderId').textContent = order.order_id;
+  document.getElementById('paymentAmount').textContent = formatCurrency(order.amount);
+  document.getElementById('paymentQr').src = `data:image/png;base64,${order.qr_base64}`;
+  document.getElementById('paymentSection').style.display = 'block';
+  document.getElementById('slipInput').value = '';
+  document.getElementById('verifyBtn').disabled = true;
+  setPaymentError('');
+  setPaymentSuccess('กรุณาสแกน QR แล้วอัปโหลดสลิปเพื่อยืนยันการชำระ');
+  startPaymentCountdown(order.expires_at);
+}
+
+function hidePaymentSection() {
+  const section = document.getElementById('paymentSection');
+  if (section) section.style.display = 'none';
+  if (paymentTimer) {
+    clearInterval(paymentTimer);
+    paymentTimer = null;
+  }
+}
+
+function displayCart() {
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  let cartHTML = '';
+  let total = 0;
+
+  if (cart.length === 0) {
+    document.getElementById('cartItems').innerHTML = '<p style="color: #666; text-align: center;">ตะกร้าสินค้าว่าง</p>';
+    document.getElementById('totalItems').textContent = '0 รายการ';
+    document.getElementById('totalPrice').textContent = '฿0';
+    document.getElementById('cartCount').textContent = '0';
+    return;
+  }
+
+  cart.forEach((item, index) => {
+    total += item.price;
+    const amountText = item.amount ? ` • จำนวน ${item.amount.toLocaleString()}` : '';
+    cartHTML += `
+      <div style="border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-weight: 700; font-size: 14px;">${item.name}${amountText}</div>
+          <div style="font-size: 12px; color: #666;">฿${item.price.toLocaleString()}</div>
+        </div>
+        <button onclick="removeFromCart(${index})" style="background: #ffebee; color: #e8002a; border: none; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">ลบ</button>
+      </div>
+    `;
+  });
+
+  document.getElementById('cartItems').innerHTML = cartHTML;
+  document.getElementById('totalItems').textContent = cart.length + ' รายการ';
+  document.getElementById('totalPrice').textContent = '฿' + total.toLocaleString();
+  document.getElementById('cartCount').textContent = cart.length;
+}
+
+function removeFromCart(index) {
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  cart.splice(index, 1);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  displayCart();
+}
+
+function setSubmitState(isSubmitting) {
+  const button = document.getElementById('checkoutBtn');
+  if (!button) return;
+  button.disabled = isSubmitting;
+  button.textContent = isSubmitting ? 'กำลังส่งคำสั่ง...' : '🚀 ชำระเงินเลย';
+}
+
+async function checkout() {
+  let transferCode = document.getElementById('transferCode').value.trim();
+  let confirmCode = document.getElementById('confirmCode').value.trim();
+  let server = document.getElementById('server').value;
+  let username = document.getElementById('username').value.trim();
+  let contact = document.getElementById('contact').value.trim();
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+  if (!transferCode || !confirmCode || !server || !username || !contact) {
+    alert('❌ กรุณากรอกข้อมูลให้ครบ!');
+    return;
+  }
+
+  if (cart.length === 0) {
+    alert('❌ ตะกร้าว่างเปล่า!');
+    return;
+  }
+
+  const unsupportedItems = cart.filter(item => item.supported === false || !item.key);
+  if (unsupportedItems.length > 0) {
+    alert('❌ ในตะกร้ามีสินค้าที่ไม่รองรับ BCSFE: ' + unsupportedItems.map(i => i.name || 'ไม่ระบุสินค้า').join(', ') + '\nกรุณาลบก่อนกดชำระเงิน');
+    return;
+  }
+
+  setSubmitState(true);
+
+  const payload = {
+    transfer_code: transferCode,
+    confirmation_code: confirmCode,
+    country: server,
+    items: cart.map(item => ({ key: item.key || item.name, amount: item.amount || 1 })),
+  };
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/payment/create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.detail || data.error || 'เกิดข้อผิดพลาดจากระบบ');
+    }
+
+    showPaymentSection(data, cart);
+    setPaymentMessage('ระบบสร้างคำสั่งชำระเงินเรียบร้อยแล้ว กรุณาสแกน QR และอัปโหลดสลิป');
+  } catch (error) {
+    alert('❌ ' + error.message);
+    console.error(error);
+  } finally {
+    setSubmitState(false);
+  }
+}
+
+async function verifyPayment() {
+  if (!currentOrderId) {
+    setPaymentError('ไม่พบคำสั่งชำระเงิน กรุณาสร้างคำสั่งใหม่');
+    return;
+  }
+
+  const fileInput = document.getElementById('slipInput');
+  const file = fileInput.files[0];
+  if (!file) {
+    setPaymentError('กรุณาอัปโหลดสลิปก่อน');
+    return;
+  }
+
+  document.getElementById('verifyBtn').disabled = true;
+  setPaymentError('');
+  setPaymentSuccess('กำลังตรวจสอบสลิป กรุณารอสักครู่...');
+
+  const formData = new FormData();
+  formData.append('slip', file);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/payment/verify/${currentOrderId}`, {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.detail || data.error || 'ตรวจสอบสลิปไม่สำเร็จ');
+    }
+
+    saveOrder({
+      id: currentOrderId,
+      date: new Date().toLocaleString('th-TH'),
+      transferCode,
+      confirmCode,
+      server,
+      username,
+      contact,
+      items: pendingPaymentOrder?.items || [],
+      total: pendingPaymentOrder?.total || 0,
+      status: 'ชำระเงินและสั่ง BCSFE สำเร็จ',
+      result: {
+        newTransferCode: data.new_transfer_code || '-',
+        newConfirmCode: data.new_confirmation_code || '-',
+        summary: data.summary || [],
+      },
+    });
+
+    localStorage.removeItem('cart');
+    displayCart();
+    showSuccessModal(currentOrderId, data);
+    hidePaymentSection();
+  } catch (error) {
+    setPaymentError(error.message);
+    setPaymentSuccess('');
+    console.error(error);
+  } finally {
+    document.getElementById('verifyBtn').disabled = false;
+  }
+}
+
+function saveOrder(order) {
+  let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+  orders.push(order);
+  localStorage.setItem('orders', JSON.stringify(orders));
+}
+
+function showSuccessModal(orderID, data) {
+  document.getElementById('orderID').textContent = orderID;
+  document.getElementById('resultSummary').textContent = 'ระบบ BCSFE จัดการเสร็จสิ้นแล้ว';
+  document.getElementById('newTransferCode').textContent = data.new_transfer_code || '-';
+  document.getElementById('newConfirmCode').textContent = data.new_confirmation_code || '-';
+
+  const summaryEl = document.getElementById('orderSummary');
+  summaryEl.innerHTML = '';
+  if (Array.isArray(data.summary) && data.summary.length > 0) {
+    data.summary.forEach(item => {
+      const row = document.createElement('div');
+      row.textContent = `${item.item} +${item.amount.toLocaleString()}`;
+      summaryEl.appendChild(row);
+    });
+  } else {
+    summaryEl.textContent = 'ไม่มีสรุปรายการ';
+  }
+
+  document.getElementById('successModal').classList.add('active');
+}
+
+function submitOrder() {
+  checkout();
+}
+
+window.addEventListener('load', () => {
+  displayCart();
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  if (link.href === window.location.href) {
+    link.classList.add('active');
+  }
+});
+</script>
+
+</body>
+</html>

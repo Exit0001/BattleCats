@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧪 ทดสอบระบบ - Battle Cats Shop</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    .test-badge {
+      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 20px;
+      font-weight: bold;
+      font-size: 16px;
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    
+    .test-section {
+      background: #f8f9ff;
+      border: 3px dashed #FF6B6B;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .test-item {
+      background: white;
+      border: 2px solid #FFE5E5;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .test-item:hover {
+      background: #FFF5F5;
+      border-color: #FF6B6B;
+      transform: translateY(-3px);
+    }
+    
+    .test-item-title {
+      font-weight: bold;
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    
+    .test-item-desc {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    
+    .test-button {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+      font-size: 16px;
+    }
+    
+    .test-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    }
+    
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 10px 0;
+      border-left: 4px solid #28a745;
+    }
+    
+    .warning-message {
+      background: #fff3cd;
+      color: #856404;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 10px 0;
+      border-left: 4px solid #ffc107;
+    }
+    
+    .order-result {
+      background: #e7f3ff;
+      border: 2px solid #2196F3;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: monospace;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .test-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 15px;
+      margin: 20px 0;
+    }
+    
+    .stat-box {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      border: 2px solid #E0E0E0;
+    }
+    
+    .stat-number {
+      font-size: 32px;
+      font-weight: bold;
+      color: #FF6B6B;
+    }
+    
+    .stat-label {
+      color: #666;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">🐱 BATTLE CATS SHOP</a>
+    <ul class="nav-links">
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="shop.html">ร้านขาย</a></li>
+      <li><a href="characters.html">ปลดล็อคแมว</a></li>
+      <li><a href="stages.html">ปลดล็อคด่าน</a></li>
+      <li><a href="orders.html">ออเดอร์</a></li>
+      <li><a href="test_no_payment.html" style="color: #FF6B6B; font-weight: bold;">🧪 ทดสอบ</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="test-badge">🧪 โหมดทดสอบระบบ - ไม่ต้องจ่ายเงิน 🧪</div>
+
+  <h1 class="section-title">🎮 ห้องทดสอบระบบ Battle Cats Shop</h1>
+  
+  <div class="warning-message">
+    ⚠️ หน้านี้ใช้สำหรับทดสอบระบบเท่านั้น ข้อมูลในห้องทดสอบ <strong>ไม่เก็บลงฐานข้อมูลจริง</strong>
+  </div>
+
+  <!-- STATS -->
+  <div class="test-stats">
+    <div class="stat-box">
+      <div class="stat-number" id="orderCount">0</div>
+      <div class="stat-label">ออเดอร์ที่สร้าง</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" id="itemCount">0</div>
+      <div class="stat-label">ไอเทมทั้งหมด</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" id="totalPrice">฿0</div>
+      <div class="stat-label">ราคารวม</div>
+    </div>
+  </div>
+
+  <!-- TEST PRODUCTS -->
+  <div class="test-section">
+    <h2 style="color: #FF6B6B; margin-top: 0;">📦 สินค้าทดสอบ</h2>
+    
+    <div class="test-item" onclick="testAddItem('Cat Food x10', 10, 10000)">
+      <div class="test-item-title">🐱 Cat Food x10</div>
+      <div class="test-item-desc">เติม Cat Food 10,000 หน่วย</div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: bold; color: #4CAF50;">฿10</span>
+        <button class="test-button" onclick="event.stopPropagation(); testAddItem('Cat Food x10', 10, 10000)">+ เพิ่มลงการ์ท</button>
+      </div>
+    </div>
+
+    <div class="test-item" onclick="testAddItem('Cat Food x20', 18, 20000)">
+      <div class="test-item-title">🐱 Cat Food x20</div>
+      <div class="test-item-desc">เติม Cat Food 20,000 หน่วย</div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: bold; color: #4CAF50;">฿18</span>
+        <button class="test-button" onclick="event.stopPropagation(); testAddItem('Cat Food x20', 18, 20000)">+ เพิ่มลงการ์ท</button>
+      </div>
+    </div>
+
+    <div class="test-item" onclick="testAddItem('XP x1', 19, 1000)">
+      <div class="test-item-title">⭐ XP x1</div>
+      <div class="test-item-desc">เติม XP 1,000 หน่วย</div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: bold; color: #4CAF50;">฿19</span>
+        <button class="test-button" onclick="event.stopPropagation(); testAddItem('XP x1', 19, 1000)">+ เพิ่มลงการ์ท</button>
+      </div>
+    </div>
+
+    <div class="test-item" onclick="testAddItem('Normal Ticket x5', 19, 5)">
+      <div class="test-item-title">🎟️ Normal Ticket x5</div>
+      <div class="test-item-desc">บัตรเล่น 5 ใบ</div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: bold; color: #4CAF50;">฿19</span>
+        <button class="test-button" onclick="event.stopPropagation(); testAddItem('Normal Ticket x5', 19, 5)">+ เพิ่มลงการ์ท</button>
+      </div>
+    </div>
+
+    <div class="test-item" onclick="testAddItem('Rare Ticket x3', 49, 3)">
+      <div class="test-item-title">✨ Rare Ticket x3</div>
+      <div class="test-item-desc">บัตรสุ่มหายาก 3 ใบ</div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: bold; color: #FF6B6B;">฿49</span>
+        <button class="test-button" onclick="event.stopPropagation(); testAddItem('Rare Ticket x3', 49, 3)">+ เพิ่มลงการ์ท</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BCSFE SYSTEM TEST -->
+  <div class="test-section">
+    <h2 style="color: #FF6B6B; margin-top: 0;">⚙️ ตั้งค่า Backend Server</h2>
+    
+    <div style="margin: 15px 0;">
+      <label style="display: block; font-weight: bold; margin-bottom: 5px;">🌐 Backend URL:</label>
+      <input type="text" id="backendURL" placeholder="เช่น http://localhost:8000" value="http://localhost:8000" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
+      <div style="color: #666; font-size: 12px; margin-top: 5px;">💡 ใส่ URL ของ FastAPI backend server</div>
+    </div>
+  </div>
+
+  <!-- BCSFE SYSTEM TEST -->
+  <div class="test-section">
+    <h2 style="color: #FF6B6B; margin-top: 0;">🎮 ทดสอบระบบ BCSFE (เพิ่มของเข้าเกม)</h2>
+    
+    <div class="warning-message">
+      ⚠️ สำหรับใช้งานนี้ต้องมี Transfer Code และ Confirmation Code จากเกม Battle Cats ให้ตรวจสอบว่า BCSFE ได้ติดตั้งแล้ว
+    </div>
+
+    <!-- Transfer & Confirmation Code Input -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+      <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">📝 Transfer Code:</label>
+        <input type="text" id="transferCode" placeholder="เช่น 123456789012345" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: bold; margin-bottom: 5px;">🔐 Confirmation Code:</label>
+        <input type="text" id="confirmCode" placeholder="เช่น abcdefghij123456" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
+      </div>
+    </div>
+
+    <!-- Item Selection -->
+    <div style="margin: 15px 0;">
+      <label style="display: block; font-weight: bold; margin-bottom: 5px;">📦 เลือกประเภทของ:</label>
+      <select id="itemType" onchange="onItemTypeChange()" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
+        <option value="">-- เลือกของ --</option>
+        <option value="cat_food">🐱 Cat Food (Max: 45,000)</option>
+        <option value="xp">⭐ XP (Max: 99,999,999)</option>
+        <option value="normal_ticket">🎟️ Normal Ticket (Max: 2,999)</option>
+        <option value="rare_ticket">✨ Rare Ticket (Max: 299)</option>
+        <option value="np">💰 NP (Max: 9,999)</option>
+        <option value="platinum_shard">💎 Platinum Shard (Max: 59)</option>
+        <option value="leadership">👑 Leadership (Max: 9,999)</option>
+        <option value="catseye">👁️ Catseye (Max: 9,999)</option>
+        <option value="catfruit">🍎 Catfruit (Max: 9,999)</option>
+        <option value="battle_item">⚔️ Battle Item (Max: 9,999)</option>
+        <option value="catamins">💊 Catamins (Max: 9,999)</option>
+        <option value="legend_ticket">🏆 Legend Ticket (Max: 4)</option>
+        <option value="lucky_ticket">🍀 Lucky Ticket (Max: 2,999)</option>
+      </select>
+    </div>
+
+    <!-- Sub Type Selection (for items with subtypes) -->
+    <div id="subTypeContainer" style="display: none; margin: 15px 0;">
+      <label style="display: block; font-weight: bold; margin-bottom: 5px;" id="subTypeLabel">เลือกประเภท:</label>
+      <select id="subType" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;"></select>
+    </div>
+
+    <!-- Amount Input -->
+    <div style="margin: 15px 0;">
+      <label style="display: block; font-weight: bold; margin-bottom: 5px;">📊 จำนวนที่ต้องการเพิ่ม:</label>
+      <input type="number" id="itemAmount" placeholder="ป้อนจำนวน" min="1" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
+    </div>
+
+    <!-- Execute Button -->
+    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+      <button class="test-button" onclick="testBCSFE()" style="background: linear-gradient(135deg, #FF6B6B, #FF8E53); flex: 1;">🚀 ทดสอบเพิ่มของ</button>
+    </div>
+  </div>
+
+  <!-- CART PREVIEW -->
+  <div class="test-section">
+    <h2 style="color: #FF6B6B; margin-top: 0;">🛒 ตะกร้าสินค้า</h2>
+    <div id="cartList" style="min-height: 100px; border: 1px solid #ddd; border-radius: 6px; padding: 10px; background: white;">
+      <p style="color: #999; text-align: center;">ตะกร้าว่างเปล่า</p>
+    </div>
+    <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+      <button class="test-button" onclick="testCreateOrder()" style="background: linear-gradient(135deg, #2196F3, #1976D2);">✅ ยืนยันการสั่งซื้อ (ทดสอบ)</button>
+      <button class="test-button" onclick="testClearCart()" style="background: #999;">🗑️ ล้างตะกร้า</button>
+    </div>
+  </div>
+
+  <!-- ORDER RESULT -->
+  <div id="orderResult" style="display: none;">
+    <div class="test-section">
+      <h2 style="color: #4CAF50; margin-top: 0;">✅ ผลลัพธ์ของการสั่งซื้อ</h2>
+      <div class="order-result" id="orderResultContent"></div>
+      <button class="test-button" onclick="testNewOrder()" style="margin-top: 15px; width: 100%;">🔄 ทดสอบคำสั่งซื้อใหม่</button>
+    </div>
+  </div>
+
+  <!-- TEST FUNCTIONS -->
+  <div class="test-section">
+    <h2 style="color: #FF6B6B; margin-top: 0;">⚙️ ฟังก์ชันทดสอบ</h2>
+    
+    <div class="test-item">
+      <div class="test-item-title">🔧 ทดสอบการสร้าง QR Code</div>
+      <div class="test-item-desc">ทำการสร้าง QR Code สำหรับการจ่ายเงิน (ทดสอบ)</div>
+      <button class="test-button" onclick="testGenerateQR()">🔗 สร้าง QR Code ทดสอบ</button>
+    </div>
+
+    <div class="test-item">
+      <div class="test-item-title">📝 ทดสอบการเช็ครายการที่จ่ายแล้ว</div>
+      <div class="test-item-desc">ตรวจสอบการจ่ายเงินของคำสั่งซื้อที่สร้างแล้ว</div>
+      <button class="test-button" onclick="testCheckPayment()">📊 เช็คสถานะการจ่ายเงิน</button>
+    </div>
+
+    <div class="test-item">
+      <div class="test-item-title">💾 ดูข้อมูลระบบทั้งหมด</div>
+      <div class="test-item-desc">ดูข้อมูล localStorage และข้อมูลทั้งหมดในระบบ</div>
+      <button class="test-button" onclick="testShowSystemData()">📂 ดูข้อมูลระบบ</button>
+    </div>
+  </div>
+
+  <!-- DEBUG INFO -->
+  <div id="debugInfo" style="display: none;">
+    <div class="test-section">
+      <h2 style="color: #FF9800; margin-top: 0;">🐛 ข้อมูลการ DEBUG</h2>
+      <div class="order-result" id="debugContent"></div>
+      <button class="test-button" onclick="closeDebugInfo()" style="margin-top: 15px;">✖️ ปิด</button>
+    </div>
+  </div>
+
+  <div style="height: 40px;"></div>
+
+</div>
+
+<script>
+// Test System Variables
+let testCart = [];
+let testOrders = [];
+let orderCounter = 0;
+
+// Add item to cart
+function testAddItem(name, price, quantity) {
+  testCart.push({
+    name: name,
+    price: price,
+    quantity: quantity,
+    id: Math.random().toString(36).substr(2, 9)
+  });
+  updateCartDisplay();
+  showMessage(`✅ เพิ่ม "${name}" ลงตะกร้าแล้ว`);
+}
+
+// Update cart display
+function updateCartDisplay() {
+  const cartList = document.getElementById('cartList');
+  const itemCount = testCart.length;
+  const totalPrice = testCart.reduce((sum, item) => sum + item.price, 0);
+  
+  if (itemCount === 0) {
+    cartList.innerHTML = '<p style="color: #999; text-align: center;">ตะกร้าว่างเปล่า</p>';
+  } else {
+    cartList.innerHTML = testCart.map((item, index) => `
+      <div style="display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
+        <div>
+          <strong>${item.name}</strong> x${item.quantity}
+          <div style="color: #666; font-size: 12px;">฿${item.price}</div>
+        </div>
+        <button class="test-button" style="padding: 6px 12px; font-size: 12px; background: #F44336;" onclick="testRemoveItem(${index})">✕</button>
+      </div>
+    `).join('');
+  }
+  
+  document.getElementById('itemCount').textContent = itemCount;
+  document.getElementById('totalPrice').textContent = '฿' + totalPrice;
+}
+
+// Remove item from cart
+function testRemoveItem(index) {
+  testCart.splice(index, 1);
+  updateCartDisplay();
+}
+
+// Clear cart
+function testClearCart() {
+  testCart = [];
+  updateCartDisplay();
+  document.getElementById('orderResult').style.display = 'none';
+  showMessage('🗑️ ล้างตะกร้าแล้ว');
+}
+
+// Create order
+function testCreateOrder() {
+  if (testCart.length === 0) {
+    showMessage('❌ ตะกร้าว่างเปล่า กรุณาเพิ่มสินค้า');
+    return;
+  }
+  
+  orderCounter++;
+  const orderId = 'TEST-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
+  const totalPrice = testCart.reduce((sum, item) => sum + item.price, 0);
+  
+  const order = {
+    orderId: orderId,
+    items: [...testCart],
+    totalPrice: totalPrice,
+    createdAt: new Date().toLocaleString('th-TH'),
+    status: 'ทดสอบเสร็จสิ้น ✅',
+    simulatedPayment: true
+  };
+  
+  testOrders.push(order);
+  
+  // Display result
+  document.getElementById('orderResultContent').innerHTML = `
+    <div style="line-height: 1.8;">
+      <strong>📦 Order ID:</strong> <span style="color: #2196F3; font-weight: bold;">${order.orderId}</span><br>
+      <strong>💰 ราคารวม:</strong> <span style="color: #4CAF50; font-weight: bold;">฿${order.totalPrice}</span><br>
+      <strong>📅 เวลา:</strong> ${order.createdAt}<br>
+      <strong>✅ สถานะ:</strong> ${order.status}<br>
+      <strong>📋 สินค้า:</strong><br>
+      <div style="margin-left: 20px;">
+        ${order.items.map(item => `• ${item.name} - ฿${item.price}`).join('<br>')}
+      </div><br>
+      <strong>💡 ผลลัพธ์:</strong> <span style="color: #4CAF50;">การซื้อสำเร็จโดยไม่ต้องชำระเงิน ✅</span>
+    </div>
+  `;
+  
+  document.getElementById('orderResult').style.display = 'block';
+  document.getElementById('orderCount').textContent = testOrders.length;
+  
+  testClearCart();
+  showMessage('✅ สร้างคำสั่งซื้อสำเร็จ! (ทดสอบ)');
+}
+
+// New order
+function testNewOrder() {
+  document.getElementById('orderResult').style.display = 'none';
+}
+
+// Generate QR Code test
+function testGenerateQR() {
+  const qrData = {
+    paymentMethod: 'PromptPay',
+    promptPayId: '0634515901',
+    amount: testCart.reduce((sum, item) => sum + item.price, 0) || 100,
+    note: 'TEST_' + Date.now(),
+    timestamp: new Date().toISOString()
+  };
+  
+  document.getElementById('debugContent').innerHTML = `
+    <div style="line-height: 1.8;">
+      <strong>🔗 ข้อมูล QR Code (ทดสอบ):</strong><br><br>
+      <pre>${JSON.stringify(qrData, null, 2)}</pre><br>
+      <strong>💡 ในระบบจริง:</strong> QR Code จะถูกสร้างจากข้อมูลนี้ เพื่อให้ผู้ใช้สแกนและจ่ายเงิน<br>
+      <strong>ใน โหมดทดสอบ:</strong> ข้อมูลนี้จะข้ามขั้นตอนการจ่ายเงิน
+    </div>
+  `;
+  document.getElementById('debugInfo').style.display = 'block';
+  showMessage('🔗 ข้อมูล QR Code ถูกสร้าง (ดูใน DEBUG INFO)');
+}
+
+// Check payment test
+function testCheckPayment() {
+  const paymentInfo = {
+    totalOrders: testOrders.length,
+    allOrdersPaid: testOrders.map(order => ({
+      orderId: order.orderId,
+      status: '✅ ชำระเงินแล้ว (ทดสอบ)',
+      amount: order.totalPrice,
+      timestamp: order.createdAt
+    }))
+  };
+  
+  document.getElementById('debugContent').innerHTML = `
+    <div style="line-height: 1.8;">
+      <strong>📊 สถานะการจ่ายเงิน (ทดสอบ):</strong><br><br>
+      <pre>${JSON.stringify(paymentInfo, null, 2)}</pre><br>
+      <strong>💡 หมายเหตุ:</strong> ในโหมดทดสอบ ทุกคำสั่งซื้อจะถูกมองว่า "ชำระเงินแล้ว" โดยอัตโนมัติ
+    </div>
+  `;
+  document.getElementById('debugInfo').style.display = 'block';
+  showMessage('📊 ข้อมูลการจ่ายเงินถูกโหลด (ดูใน DEBUG INFO)');
+}
+
+// Show system data
+function testShowSystemData() {
+  const systemData = {
+    testCart: testCart,
+    testOrders: testOrders,
+    localStorage: {
+      ...localStorage
+    },
+    sessionData: {
+      totalOrders: testOrders.length,
+      totalItems: testCart.length,
+      sessionStarted: new Date().toLocaleString('th-TH')
+    }
+  };
+  
+  document.getElementById('debugContent').innerHTML = `
+    <div style="line-height: 1.8;">
+      <strong>📂 ข้อมูลระบบ (ทดสอบ):</strong><br><br>
+      <pre>${JSON.stringify(systemData, null, 2)}</pre>
+    </div>
+  `;
+  document.getElementById('debugInfo').style.display = 'block';
+}
+
+// Close debug info
+function closeDebugInfo() {
+  document.getElementById('debugInfo').style.display = 'none';
+}
+
+// Show message
+function showMessage(message) {
+  const messageEl = document.createElement('div');
+  messageEl.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out;
+  `;
+  messageEl.textContent = message;
+  
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  document.body.appendChild(messageEl);
+  setTimeout(() => messageEl.remove(), 3000);
+}
+
+// ═══════════════════════════════════════
+// BCSFE TEST FUNCTIONS
+// ═══════════════════════════════════════
+
+const ITEM_CONFIG = {
+  cat_food:       { name: "Cat Food", subtypes: null },
+  xp:             { name: "XP", subtypes: null },
+  normal_ticket:  { name: "Normal Ticket", subtypes: null },
+  rare_ticket:    { name: "Rare Ticket", subtypes: null },
+  np:             { name: "NP", subtypes: null },
+  platinum_shard: { name: "Platinum Shard", subtypes: null },
+  leadership:     { name: "Leadership", subtypes: null },
+  catseye:        { name: "Catseye", subtypes: 6, labels: ["Normal", "Rare", "SR", "UR", "LR", "Alien"] },
+  catfruit:       { name: "Catfruit", subtypes: 29, labels: Array.from({length: 29}, (_, i) => `Type ${i+1}`) },
+  battle_item:    { name: "Battle Item", subtypes: 6, labels: ["Type 1", "Type 2", "Type 3", "Type 4", "Type 5", "Type 6"] },
+  catamins:       { name: "Catamins", subtypes: 3, labels: ["Type 1", "Type 2", "Type 3"] },
+  legend_ticket:  { name: "Legend Ticket", subtypes: 4, labels: ["Type 1", "Type 2", "Type 3", "Type 4"] },
+  lucky_ticket:   { name: "Lucky Ticket", subtypes: null }
+};
+
+function onItemTypeChange() {
+  const itemType = document.getElementById('itemType').value;
+  const subTypeContainer = document.getElementById('subTypeContainer');
+  const subTypeSelect = document.getElementById('subType');
+  const subTypeLabel = document.getElementById('subTypeLabel');
+  
+  if (!itemType || !ITEM_CONFIG[itemType].subtypes) {
+    subTypeContainer.style.display = 'none';
+    return;
+  }
+  
+  const config = ITEM_CONFIG[itemType];
+  subTypeLabel.textContent = config.name + ' - เลือกประเภท:';
+  subTypeSelect.innerHTML = '';
+  
+  for (let i = 1; i <= config.subtypes; i++) {
+    const label = config.labels ? config.labels[i-1] : `Type ${i}`;
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = label;
+    subTypeSelect.appendChild(option);
+  }
+  
+  subTypeContainer.style.display = 'block';
+}
+
+async function testBCSFE() {
+  const backendURL = document.getElementById('backendURL').value.trim();
+  const transferCode = document.getElementById('transferCode').value.trim();
+  const confirmCode = document.getElementById('confirmCode').value.trim();
+  const itemType = document.getElementById('itemType').value;
+  const amount = parseInt(document.getElementById('itemAmount').value) || 0;
+  const subType = document.getElementById('subType').value;
+  
+  // Validation
+  if (!backendURL) {
+    showMessage('❌ กรุณากำหนด Backend URL');
+    return;
+  }
+  
+  if (!transferCode) {
+    showMessage('❌ กรุณากรอก Transfer Code');
+    return;
+  }
+  
+  if (!confirmCode) {
+    showMessage('❌ กรุณากรอก Confirmation Code');
+    return;
+  }
+  
+  if (!itemType) {
+    showMessage('❌ กรุณาเลือกประเภทของ');
+    return;
+  }
+  
+  if (amount <= 0) {
+    showMessage('❌ กรุณากรอกจำนวนที่มากกว่า 0');
+    return;
+  }
+  
+  const itemConfig = ITEM_CONFIG[itemType];
+  if (itemConfig.subtypes && !subType) {
+    showMessage('❌ กรุณาเลือกประเภท');
+    return;
+  }
+  
+  // Show loading
+  document.getElementById('debugContent').innerHTML = `
+    <div style="text-align: center; padding: 20px;">
+      <div style="font-size: 24px; animation: spin 1s linear infinite; display: inline-block;">⏳</div>
+      <p style="margin-top: 10px; font-size: 16px;">⏳ กำลังเรียก BCSFE...</p>
+      <p style="color: #666; font-size: 12px;">Transfer Code: ${transferCode.substring(0, 8)}...</p>
+    </div>
+  `;
+  document.getElementById('debugInfo').style.display = 'block';
+  
+  try {
+    // Call Backend API to execute BCSFE
+    const apiURL = backendURL + '/api/test/bcsfe';
+    const response = await fetch(apiURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        transfer_code: transferCode,
+        confirmation_code: confirmCode,
+        item: itemType,
+        amount: amount,
+        sub_type: subType ? parseInt(subType) : null,
+        country: '1' // default to English
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      document.getElementById('debugContent').innerHTML = `
+        <div style="line-height: 1.8;">
+          <strong style="color: #4CAF50;">✅ สำเร็จ!</strong><br><br>
+          <strong>📝 Transfer Code ใหม่:</strong><br>
+          <div style="background: #f5f5f5; padding: 10px; border-radius: 4px; word-break: break-all; font-family: monospace;">
+            ${result.new_transfer_code}
+          </div><br>
+          <strong>🔐 Confirmation Code ใหม่:</strong><br>
+          <div style="background: #f5f5f5; padding: 10px; border-radius: 4px; word-break: break-all; font-family: monospace;">
+            ${result.new_confirmation_code}
+          </div><br>
+          <strong>📋 สรุปการเพิ่มของ:</strong><br>
+          ${result.summary ? result.summary.map(s => `• ${s.item}: +${s.amount}`).join('<br>') : 'N/A'}<br><br>
+          <strong>💡 ขั้นตอนต่อไป:</strong><br>
+          1. อัปเดต Transfer Code และ Confirmation Code ที่ใหม่ในเกม<br>
+          2. กลับเข้าเกมเพื่อดูสินค้าที่ถูกเพิ่มเข้ามา
+        </div>
+      `;
+      showMessage('✅ เพิ่มของสำเร็จ!');
+    } else {
+      document.getElementById('debugContent').innerHTML = `
+        <div style="line-height: 1.8;">
+          <strong style="color: #F44336;">❌ เกิดข้อผิดพลาด</strong><br><br>
+          <strong>ข้อผิดพลาด:</strong> ${result.error || 'Unknown error'}<br><br>
+          <strong>💡 สาเหตุที่อาจเป็นไปได้:</strong><br>
+          • Transfer Code หรือ Confirmation Code ไม่ถูกต้อง<br>
+          • BCSFE ไม่ได้ติดตั้งอย่างถูกต้อง<br>
+          • Save file ของเกมถูกเสียหายหรือหาไม่เจอ<br>
+          • เครื่องคอมพิวเตอร์ไม่มีอินเทอร์เน็ต
+        </div>
+      `;
+      showMessage('❌ เกิดข้อผิดพลาด - ' + (result.error || 'Unknown error'));
+    }
+  } catch (error) {
+    document.getElementById('debugContent').innerHTML = `
+      <div style="line-height: 1.8;">
+        <strong style="color: #F44336;">❌ เข้าถึง API ไม่ได้</strong><br><br>
+        <strong>ข้อผิดพลาด:</strong> ${error.message}<br><br>
+        <strong>Backend URL:</strong> ${backendURL}<br><br>
+        <strong>💡 สาเหตุที่อาจเป็นไปได้:</strong><br>
+        • Backend server ไม่ทำงาน<br>
+        • Backend URL ไม่ถูกต้อง<br>
+        • CORS error หรือเครือข่ายปัญหา<br>
+        • ตรวจสอบว่า FastAPI server กำลังทำงานอยู่
+      </div>
+    `;
+    showMessage('❌ ไม่สามารถเข้าถึง API ได้');
+  }
+}
+
+// Add CSS animation for spinning loader
+const spinStyle = document.createElement('style');
+spinStyle.textContent = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+document.head.appendChild(spinStyle);
+
+// Initialize
+updateCartDisplay();
+showMessage('🧪 เข้าสู่โหมดทดสอบแล้ว - ไม่ต้องจ่ายเงิน!');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📦 จัดการออเดอร์ - Battle Cats Shop</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    .order-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 10px 0;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+    }
+
+    .order-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+      border-color: #fff;
+    }
+
+    .order-card.active {
+      border: 3px solid #fff;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .order-id {
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .order-status {
+      background: rgba(255, 255, 255, 0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .order-status.pending {
+      background: #fbbf24;
+      color: #000;
+    }
+
+    .order-status.done {
+      background: #34d399;
+      color: #000;
+    }
+
+    .order-info {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .code-box {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      margin: 10px 0;
+      font-family: monospace;
+      word-break: break-all;
+      color: #e0e0e0;
+      font-size: 12px;
+    }
+
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+      margin-left: 8px;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .bcsfe-section {
+      background: #1a1a2e;
+      border: 2px dashed #667eea;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #e0e0e0;
+      font-size: 13px;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 10px;
+      border: 2px solid #333;
+      border-radius: 8px;
+      background: #252525;
+      color: white;
+      font-size: 14px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .btn-action {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .btn-action.primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-action.primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-action.secondary {
+      background: #333;
+      color: white;
+      border: 2px solid #667eea;
+    }
+
+    .btn-action.secondary:hover {
+      background: #667eea;
+    }
+
+    .result-box {
+      background: #1a1a2e;
+      border: 2px solid #34d399;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      display: none;
+    }
+
+    .result-box.success {
+      display: block;
+    }
+
+    .result-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #34d399;
+      margin-bottom: 15px;
+    }
+
+    .result-item {
+      background: rgba(52, 211, 153, 0.1);
+      border-left: 4px solid #34d399;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 6px;
+      color: #e0e0e0;
+      font-size: 13px;
+    }
+
+    .result-item.code {
+      background: rgba(102, 126, 234, 0.1);
+      border-left-color: #667eea;
+      font-family: monospace;
+      word-break: break-all;
+    }
+
+    .orders-list {
+      max-height: 600px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .orders-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .orders-list::-webkit-scrollbar-track {
+      background: #1a1a2e;
+      border-radius: 10px;
+    }
+
+    .orders-list::-webkit-scrollbar-thumb {
+      background: #667eea;
+      border-radius: 10px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .action-buttons {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: #999;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #333;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .info-box {
+      background: rgba(102, 126, 234, 0.1);
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      padding: 15px;
+      color: #e0e0e0;
+      font-size: 13px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">🐱 BATTLE CATS SHOP</a>
+    <ul class="nav-links">
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="shop.html">ร้านขาย</a></li>
+      <li><a href="characters.html">ปลดล็อคแมว</a></li>
+      <li><a href="stages.html">ปลดล็อคด่าน</a></li>
+      <li><a href="orders.html">ออเดอร์</a></li>
+      <li><a href="orders_manager.html" class="active">📦 จัดการออเดอร์</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <h1 class="section-title">📦 จัดการออเดอร์และเพิ่มของ</h1>
+
+  <div class="info-box">
+    💡 คลิกเลือกออเดอร์จากรายการด้านซ้าย แล้วใช้งาน BCSFE ได้เลย - สะดวกและรวดเร็ว!
+  </div>
+
+  <div class="grid-2">
+    <!-- LEFT: Orders List -->
+    <div>
+      <h2 style="color: #667eea; margin-bottom: 15px;">📋 รายการออเดอร์</h2>
+      <div class="orders-list" id="ordersList">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>กำลังโหลดข้อมูล...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Details & BCSFE Runner -->
+    <div>
+      <div id="noOrderSelected" style="text-align: center; color: #999; padding: 40px 20px;">
+        <p style="font-size: 48px; margin-bottom: 10px;">📭</p>
+        <p>กรุณาเลือกออเดอร์จากรายการ</p>
+      </div>
+
+      <!-- ORDER DETAILS -->
+      <div id="orderDetails" style="display: none;">
+        <h2 style="color: #667eea; margin-bottom: 15px;">📝 รายละเอียดออเดอร์</h2>
+
+        <!-- Transfer & Confirmation Codes -->
+        <div style="background: #1a1a2e; border-radius: 12px; padding: 15px; margin-bottom: 15px;">
+          <div style="margin-bottom: 15px;">
+            <label style="color: #999; font-size: 12px;">Transfer Code:</label>
+            <div style="display: flex; align-items: center; margin-top: 5px;">
+              <div class="code-box" id="transferCodeBox" style="flex: 1; margin: 0;"></div>
+              <button class="copy-btn" onclick="copyToClipboard('transferCodeBox')">📋 Copy</button>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 15px;">
+            <label style="color: #999; font-size: 12px;">Confirmation Code:</label>
+            <div style="display: flex; align-items: center; margin-top: 5px;">
+              <div class="code-box" id="confirmCodeBox" style="flex: 1; margin: 0;"></div>
+              <button class="copy-btn" onclick="copyToClipboard('confirmCodeBox')">📋 Copy</button>
+            </div>
+          </div>
+
+          <div>
+            <label style="color: #999; font-size: 12px;">สินค้าในออเดอร์:</label>
+            <div id="itemsList" style="margin-top: 10px; color: #e0e0e0; font-size: 13px;"></div>
+          </div>
+        </div>
+
+        <!-- BCSFE RUNNER -->
+        <div class="bcsfe-section">
+          <h3 style="color: #667eea; margin-bottom: 15px;">🎮 เพิ่มของเข้าเกม (BCSFE)</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Backend URL:</label>
+              <input type="text" id="backendURL" placeholder="http://localhost:8000" value="http://localhost:8000">
+            </div>
+            <div class="form-group">
+              <label>Server (Country):</label>
+              <select id="bcsfeCountry">
+                <option value="1">EN (Global)</option>
+                <option value="2">JP (ญี่ปุ่น)</option>
+                <option value="3">KR (เกาหลี)</option>
+                <option value="4">TW (ไต้หวัน)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>เลือกประเภทของ:</label>
+              <select id="itemType" onchange="updateSubTypes()">
+                <option value="">-- เลือกของ --</option>
+                <option value="cat_food">🐱 Cat Food (Max: 45,000)</option>
+                <option value="xp">⭐ XP (Max: 99,999,999)</option>
+                <option value="normal_ticket">🎟️ Normal Ticket (Max: 2,999)</option>
+                <option value="rare_ticket">✨ Rare Ticket (Max: 299)</option>
+                <option value="np">💰 NP (Max: 9,999)</option>
+                <option value="platinum_shard">💎 Platinum Shard (Max: 59)</option>
+                <option value="leadership">👑 Leadership (Max: 9,999)</option>
+                <option value="catseye">👁️ Catseye (Max: 9,999)</option>
+                <option value="catfruit">🍎 Catfruit (Max: 9,999)</option>
+                <option value="battle_item">⚔️ Battle Item (Max: 9,999)</option>
+                <option value="catamins">💊 Catamins (Max: 9,999)</option>
+                <option value="legend_ticket">🏆 Legend Ticket (Max: 4)</option>
+                <option value="lucky_ticket">🍀 Lucky Ticket (Max: 2,999)</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="subTypeGroup" style="display: none;">
+              <label>เลือกประเภท:</label>
+              <select id="subType">
+                <option value="">-- เลือก --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>จำนวนที่ต้องการเพิ่ม:</label>
+            <input type="number" id="itemAmount" placeholder="ป้อนจำนวน" min="1">
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn-action primary" onclick="runBCSFE()">🚀 รัน BCSFE</button>
+            <button class="btn-action secondary" onclick="openBCSFETest()">🧪 ทดสอบ</button>
+          </div>
+        </div>
+
+        <!-- RESULT -->
+        <div id="resultSection" class="result-box">
+          <div class="result-title">✅ สำเร็จ!</div>
+          <div class="result-item code" id="newTransferCode"></div>
+          <div class="result-item code" id="newConfirmCode"></div>
+          <div class="result-item" id="resultSummary"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ITEM_CONFIG = {
+  cat_food:       { name: "Cat Food", subtypes: null },
+  xp:             { name: "XP", subtypes: null },
+  normal_ticket:  { name: "Normal Ticket", subtypes: null },
+  rare_ticket:    { name: "Rare Ticket", subtypes: null },
+  np:             { name: "NP", subtypes: null },
+  platinum_shard: { name: "Platinum Shard", subtypes: null },
+  leadership:     { name: "Leadership", subtypes: null },
+  catseye:        { name: "Catseye", subtypes: 6 },
+  catfruit:       { name: "Catfruit", subtypes: 29 },
+  battle_item:    { name: "Battle Item", subtypes: 6 },
+  catamins:       { name: "Catamins", subtypes: 3 },
+  legend_ticket:  { name: "Legend Ticket", subtypes: 4 },
+  lucky_ticket:   { name: "Lucky Ticket", subtypes: null }
+};
+
+let allOrders = {};
+let selectedOrderId = null;
+
+// Load orders on page load
+window.addEventListener('load', loadOrders);
+
+async function loadOrders() {
+  try {
+    const backendURL = document.getElementById('backendURL').value.trim() || 'http://localhost:8000';
+    const response = await fetch(backendURL + '/api/orders/list');
+    const data = await response.json();
+    
+    if (data.success && data.orders) {
+      allOrders = data.orders;
+      displayOrders();
+    } else {
+      document.getElementById('ordersList').innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">ไม่พบออเดอร์</p>';
+    }
+  } catch (error) {
+    console.error('Error loading orders:', error);
+    document.getElementById('ordersList').innerHTML = '<p style="color: #f44; text-align: center; padding: 20px;">❌ ไม่สามารถโหลด API ได้</p>';
+  }
+}
+
+function displayOrders() {
+  const ordersList = document.getElementById('ordersList');
+  const orders = Object.values(allOrders);
+  
+  if (orders.length === 0) {
+    ordersList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">ไม่มีออเดอร์</p>';
+    return;
+  }
+  
+  ordersList.innerHTML = orders.map(order => `
+    <div class="order-card ${selectedOrderId === order.order_id ? 'active' : ''}" onclick="selectOrder('${order.order_id}')">
+      <div class="order-header">
+        <div class="order-id">#${order.order_id}</div>
+        <div class="order-status ${order.status}">${order.status === 'done' ? '✅ สำเร็จ' : '⏳ รอดำเนิน'}</div>
+      </div>
+      <div class="order-info">
+        <div>💰 ฿${order.amount}</div>
+        <div>📦 ${order.items.length} รายการ</div>
+        <div style="font-size: 11px; margin-top: 8px;">${new Date(order.created_at).toLocaleString('th-TH')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectOrder(orderId) {
+  selectedOrderId = orderId;
+  const order = allOrders[orderId];
+  
+  if (!order) return;
+  
+  // Update display
+  document.getElementById('noOrderSelected').style.display = 'none';
+  document.getElementById('orderDetails').style.display = 'block';
+  
+  // Set codes
+  document.getElementById('transferCodeBox').textContent = order.transfer_code;
+  document.getElementById('confirmCodeBox').textContent = order.confirmation_code;
+  
+  // Set items
+  const itemsList = document.getElementById('itemsList');
+  itemsList.innerHTML = order.items.map(item => `
+    <div style="padding: 6px 0;">• ${ITEM_CONFIG[item.key]?.name || item.key}: ${item.amount}</div>
+  `).join('');
+  
+  // Set country
+  document.getElementById('bcsfeCountry').value = order.country;
+  
+  displayOrders();
+}
+
+function updateSubTypes() {
+  const itemType = document.getElementById('itemType').value;
+  const subTypeGroup = document.getElementById('subTypeGroup');
+  const subTypeSelect = document.getElementById('subType');
+  
+  if (!itemType || !ITEM_CONFIG[itemType].subtypes) {
+    subTypeGroup.style.display = 'none';
+    return;
+  }
+  
+  const count = ITEM_CONFIG[itemType].subtypes;
+  subTypeSelect.innerHTML = '';
+  
+  for (let i = 1; i <= count; i++) {
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = `Type ${i}`;
+    subTypeSelect.appendChild(option);
+  }
+  
+  subTypeGroup.style.display = 'flex';
+}
+
+function copyToClipboard(elementId) {
+  const element = document.getElementById(elementId);
+  const text = element.textContent;
+  
+  navigator.clipboard.writeText(text).then(() => {
+    showNotification('✅ คัดลอกแล้ว');
+  }).catch(err => {
+    console.error('Copy failed:', err);
+  });
+}
+
+async function runBCSFE() {
+  if (!selectedOrderId) {
+    showNotification('❌ กรุณาเลือกออเดอร์');
+    return;
+  }
+  
+  const order = allOrders[selectedOrderId];
+  const backendURL = document.getElementById('backendURL').value.trim();
+  const itemType = document.getElementById('itemType').value;
+  const amount = parseInt(document.getElementById('itemAmount').value) || 0;
+  const subType = document.getElementById('subType').value;
+  const country = document.getElementById('bcsfeCountry').value;
+  
+  if (!itemType || amount <= 0) {
+    showNotification('❌ กรุณากรอกข้อมูลให้ครบ');
+    return;
+  }
+  
+  try {
+    showNotification('⏳ กำลังประมวลผล...');
+    
+    const response = await fetch(backendURL + '/api/test/bcsfe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        transfer_code: order.transfer_code,
+        confirmation_code: order.confirmation_code,
+        item: itemType,
+        amount: amount,
+        sub_type: subType ? parseInt(subType) : null,
+        country: country
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      const resultSection = document.getElementById('resultSection');
+      document.getElementById('newTransferCode').innerHTML = `📝 <strong>Transfer Code ใหม่:</strong><br>${result.new_transfer_code}`;
+      document.getElementById('newConfirmCode').innerHTML = `🔐 <strong>Confirmation Code ใหม่:</strong><br>${result.new_confirmation_code}`;
+      document.getElementById('resultSummary').innerHTML = result.summary.map(s => `✅ ${s.item}: +${s.amount}`).join('<br>');
+      resultSection.classList.add('success');
+      
+      showNotification('✅ สำเร็จ!');
+    } else {
+      showNotification('❌ ' + (result.error || 'ผิดพลาด'));
+    }
+  } catch (error) {
+    showNotification('❌ ไม่สามารถเข้าถึง API ได้');
+    console.error('Error:', error);
+  }
+}
+
+function openBCSFETest() {
+  window.open('test_no_payment.html', '_blank');
+}
+
+function showNotification(message) {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #1a1a2e;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out;
+  `;
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  setTimeout(() => notification.remove(), 3000);
+}
+
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideIn {
+    from { transform: translateX(400px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+`;
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>

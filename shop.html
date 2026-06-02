@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ร้านขาย - Battle Cats Shop</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">🐱 BATTLE CATS SHOP</a>
+    <ul class="nav-links">
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="shop.html" class="active">ร้านขาย</a></li>
+      <li><a href="characters.html">ปลดล็อคแมว</a></li>
+      <li><a href="stages.html">ปลดล็อคด่าน</a></li>
+      <li><a href="orders.html">ออเดอร์</a></li>
+    </ul>
+    <div class="nav-cart">
+      🛒
+      <span class="cart-badge" id="cartCount">0</span>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <h1 class="section-title">🛍️ ร้านขาย</h1>
+
+  <!-- CAT FOOD SECTION -->
+  <h2 class="section-title">🐱 Cat Food</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <span class="card-tag tag-hot">HOT</span>
+      <div class="card-emoji">🐱</div>
+      <div class="card-name">Cat Food x10,000</div>
+      <div class="card-desc">เติม Cat Food 10,000 หน่วย</div>
+      <div class="card-price"><span class="price-now">฿10</span><span class="price-old">฿30</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Cat Food x10,000', 10)">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-hot">HOT</span>
+      <div class="card-emoji">🐱</div>
+      <div class="card-name">Cat Food x20,000</div>
+      <div class="card-desc">เติม Cat Food 20,000 หน่วย</div>
+      <div class="card-price"><span class="price-now">฿19</span><span class="price-old">฿45</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Cat Food x20,000', 19)">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🐱</div>
+      <div class="card-name">Cat Food x30,000</div>
+      <div class="card-desc">เติม Cat Food 30,000 หน่วย</div>
+      <div class="card-price"><span class="price-now">฿25</span><span class="price-old">฿65</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Cat Food x30,000', 25)">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-super">MEGA</span>
+      <div class="card-emoji">🐱</div>
+      <div class="card-name">Cat Food x45,000</div>
+      <div class="card-desc">เติม Cat Food 45,000 หน่วย</div>
+      <div class="card-price"><span class="price-now">฿35</span><span class="price-old">฿90</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Cat Food x45,000', 35)">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- XP SECTION -->
+  <h2 class="section-title">⚡ XP</h2>
+  <div class="grid grid-4 grid-center">
+    <div class="card">
+      <div class="card-emoji">🧠</div>
+      <div class="card-name">XP x99,999,999</div>
+      <div class="card-desc">เพิ่ม XP จำนวนสูงสุดในครั้งเดียว</div>
+      <div class="card-price"><span class="price-now">฿25</span><span class="price-old">฿480</span></div>
+      <button class="btn btn-primary" onclick="addToCart('XP x99,999,999', 25)">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- NORMAL TICKET SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">🎫 Normal Ticket</h2>
+  <div class="grid grid-4"> 
+    <div class="card">
+      <span class="card-tag tag-rare">RARE</span>
+      <div class="card-picture"><img src="pictures/Normal Ticket.png" width="200"></div>
+      <div class="card-name">Normal Ticket x100</div>
+      <div class="card-desc">โอกาสได้แมวดี</div>
+      <div class="card-price"><span class="price-now">฿10</span><span class="price-old">฿150</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Normal Ticket x100', 10)" style="width:100%; margin-top: auto;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-rare">RARE</span>
+      <div class="card-picture"><img src="pictures/Normal Ticket1.png" width="200"></div>
+      <div class="card-name">Normal Ticket x500</div>
+      <div class="card-desc">ลุ้นแมวหายาก</div>
+      <div class="card-price"><span class="price-now">฿29</span><span class="price-old">฿400</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Normal Ticket x500', 29)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-super">SUPER</span>
+      <div class="card-picture"><img src="pictures/Normal Ticket2.png" width="200"></div>
+      <div class="card-name">Normal Ticket x1000</div>
+      <div class="card-desc">ปลอดภัยไม่โดนแบน</div>
+      <div class="card-price"><span class="price-now">฿49</span><span class="price-old">฿520</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Normal Ticket x1000', 49)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-super">MEGA คุ้มที่สุด</span>
+      <div class="card-picture"><img src="pictures/Normal Ticket3.png" width="200"></div>
+      <div class="card-name">Normal Ticket x2999</div>
+      <div class="card-desc">ลุ้น Super Rare 1 ตัว!</div>
+      <div class="card-price"><span class="price-now">฿99</span><span class="price-old">฿850</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Normal Ticket x2999', 99)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- RARE TICKET SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">🎫 Rare Ticket (Trade)</h2>
+  <div class="grid grid-4"> 
+    <div class="card">
+      <span class="card-tag tag-rare">TRADE</span>
+      <div class="card-emoji">🎫</div>
+      <div class="card-name">Rare Ticket x50</div>
+      <div class="card-desc">ใช้ Route Trade เพื่อปลอดภัย</div>
+      <div class="card-price"><span class="price-now">฿15</span><span class="price-old">฿220</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Rare Ticket x50', 15)" style="width:100%; margin-top: auto;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-rare">TRADE</span>
+      <div class="card-emoji">🎫</div>
+      <div class="card-name">Rare Ticket x100</div>
+      <div class="card-desc">ลุ้นแมวหายาก ด้วยตั๋ว Rare</div>
+      <div class="card-price"><span class="price-now">฿25</span><span class="price-old">฿360</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Rare Ticket x100', 25)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-super">TRADE</span>
+      <div class="card-emoji">🎫</div>
+      <div class="card-name">Rare Ticket x200</div>
+      <div class="card-desc">ชุดใหญ่ของ Rare Ticket</div>
+      <div class="card-price"><span class="price-now">฿45</span><span class="price-old">฿520</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Rare Ticket x200', 45)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-super">TRADE</span>
+      <div class="card-emoji">🎫</div>
+      <div class="card-name">Rare Ticket x299</div>
+      <div class="card-desc">ชุด Rare Ticket สูงสุด</div>
+      <div class="card-price"><span class="price-now">฿59</span><span class="price-old">฿650</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Rare Ticket x299', 59)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- BATTLE ITEM SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">🥊 Battle Item</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-emoji">🥊</div>
+      <div class="card-name">Battle Item x100</div>
+      <div class="card-desc">เลือกประเภท Battle Item (1-6)</div>
+      <div class="card-price"><span class="price-now">฿10</span><span class="price-old">฿120</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Battle Item x100', 10)" style="width:100%; margin-top: auto;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🥊</div>
+      <div class="card-name">Battle Item x500</div>
+      <div class="card-desc">เลือกประเภท Battle Item (1-6)</div>
+      <div class="card-price"><span class="price-now">฿39</span><span class="price-old">฿280</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Battle Item x500', 39)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🥊</div>
+      <div class="card-name">Battle Item x5000</div>
+      <div class="card-desc">เลือกประเภท Battle Item (1-6)</div>
+      <div class="card-price"><span class="price-now">฿199</span><span class="price-old">฿520</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Battle Item x5000', 199)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🥊</div>
+      <div class="card-name">Battle Item x9,999</div>
+      <div class="card-desc">เลือกประเภท Battle Item (1-6)</div>
+      <div class="card-price"><span class="price-now">฿299</span><span class="price-old">฿760</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Battle Item x9,999', 299)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- NP SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">💰 NP</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-emoji">💰</div>
+      <div class="card-name">NP x100</div>
+      <div class="card-desc">เพิ่มเงินในเกมทันที</div>
+      <div class="card-price"><span class="price-now">฿5</span><span class="price-old">฿80</span></div>
+      <button class="btn btn-primary" onclick="addToCart('NP x100', 5)" style="width:100%; margin-top: auto;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">💰</div>
+      <div class="card-name">NP x1,000</div>
+      <div class="card-desc">เพิ่ม NP สะสม</div>
+      <div class="card-price"><span class="price-now">฿29</span><span class="price-old">฿200</span></div>
+      <button class="btn btn-primary" onclick="addToCart('NP x1,000', 29)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">💰</div>
+      <div class="card-name">NP x5,000</div>
+      <div class="card-desc">เหมาะสำหรับซื้อของใหญ่</div>
+      <div class="card-price"><span class="price-now">฿99</span><span class="price-old">฿380</span></div>
+      <button class="btn btn-primary" onclick="addToCart('NP x5,000', 99)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">💰</div>
+      <div class="card-name">NP x9,999</div>
+      <div class="card-desc">ยอด NP สูงสุด</div>
+      <div class="card-price"><span class="price-now">฿159</span><span class="price-old">฿550</span></div>
+      <button class="btn btn-primary" onclick="addToCart('NP x9,999', 159)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- PLATINUM SHARD SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">🔷 Platinum Shard</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-emoji">🔷</div>
+      <div class="card-name">Platinum Shard x10</div>
+      <div class="card-desc">สะสมเพื่อรับ Platinum Ticket</div>
+      <div class="card-price"><span class="price-now">฿10</span><span class="price-old">฿80</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Platinum Shard x10', 10)" style="width:100%; margin-top: auto;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🔷</div>
+      <div class="card-name">Platinum Shard x30</div>
+      <div class="card-desc">ชุดกลางสำหรับหลักบอร์ด</div>
+      <div class="card-price"><span class="price-now">฿25</span><span class="price-old">฿190</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Platinum Shard x30', 25)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🔷</div>
+      <div class="card-name">Platinum Shard x40</div>
+      <div class="card-desc">ชุดใหญ่ใกล้แลกตั๋วทอง</div>
+      <div class="card-price"><span class="price-now">฿30</span><span class="price-old">฿260</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Platinum Shard x40', 30)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🔷</div>
+      <div class="card-name">Platinum Shard x50</div>
+      <div class="card-desc">คุ้มที่สุดสำหรับ Platinum Ticket</div>
+      <div class="card-price"><span class="price-now">฿35</span><span class="price-old">฿320</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Platinum Shard x50', 35)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- LEADERSHIP SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">📈 Leadership</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-emoji">📈</div>
+      <div class="card-name">Leadership x100</div>
+      <div class="card-desc">เพิ่ม Leadership เพื่อทีมแข็งแรง</div>
+      <div class="card-price"><span class="price-now">฿5</span><span class="price-old">฿110</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Leadership x100', 5)" style="width:100%; margin-top: auto;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">📈</div>
+      <div class="card-name">Leadership x1,000</div>
+      <div class="card-desc">เพิ่ม Leadership สำหรับการต่อสู้</div>
+      <div class="card-price"><span class="price-now">฿15</span><span class="price-old">฿240</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Leadership x1,000', 15)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">📈</div>
+      <div class="card-name">Leadership x5,000</div>
+      <div class="card-desc">ชุดใหญ่สำหรับการ์ดทีม</div>
+      <div class="card-price"><span class="price-now">฿59</span><span class="price-old">฿420</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Leadership x5,000', 59)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">📈</div>
+      <div class="card-name">Leadership x9,999</div>
+      <div class="card-desc">เต็ม Leadership สูงสุด</div>
+      <div class="card-price"><span class="price-now">฿99</span><span class="price-old">฿620</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Leadership x9,999', 99)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- CATSEYE SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">💠 Catseye</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-emoji">💠</div>
+      <div class="card-name">Catseye x100</div>
+      <div class="card-desc">เลือกประเภท Catseye (1-6)</div>
+      <div class="card-price"><span class="price-now">฿20</span><span class="price-old">฿150</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Catseye x100', 20)" style="width:100%; margin-top: auto;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">💠</div>
+      <div class="card-name">Catseye x500</div>
+      <div class="card-desc">เลือกประเภท Catseye (1-6)</div>
+      <div class="card-price"><span class="price-now">฿79</span><span class="price-old">฿330</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Catseye x500', 79)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">💠</div>
+      <div class="card-name">Catseye x5000</div>
+      <div class="card-desc">เลือกประเภท Catseye (1-6)</div>
+      <div class="card-price"><span class="price-now">฿299</span><span class="price-old">฿520</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Catseye x5000', 299)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">💠</div>
+      <div class="card-name">Catseye x9,999</div>
+      <div class="card-desc">เลือกประเภท Catseye (1-6)</div>
+      <div class="card-price"><span class="price-now">฿399</span><span class="price-old">฿760</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Catseye x9,999', 399)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- CATFRUIT SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">🍎 Catfruit (ผลไม้แมว)</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-emoji">🍎</div>
+      <div class="card-name">Catfruit x100</div>
+      <div class="card-desc">เลือกประเภท Catfruit (1-29)</div>
+      <div class="card-price"><span class="price-now">฿20</span><span class="price-old">฿150</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Catfruit x100', 20)" style="width:100%; margin-top: auto;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🍎</div>
+      <div class="card-name">Catfruit x500</div>
+      <div class="card-desc">เลือกประเภท Catfruit (1-29)</div>
+      <div class="card-price"><span class="price-now">฿79</span><span class="price-old">฿330</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Catfruit x500', 79)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🍎</div>
+      <div class="card-name">Catfruit x5000</div>
+      <div class="card-desc">เลือกประเภท Catfruit (1-29)</div>
+      <div class="card-price"><span class="price-now">฿299</span><span class="price-old">฿520</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Catfruit x5000', 299)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🍎</div>
+      <div class="card-name">Catfruit x9,999</div>
+      <div class="card-desc">เลือกประเภท Catfruit (1-29)</div>
+      <div class="card-price"><span class="price-now">฿399</span><span class="price-old">฿760</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Catfruit x9,999', 399)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- CATAMINS SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">🧪 Catamins</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-emoji">🧪</div>
+      <div class="card-name">Catamins x100</div>
+      <div class="card-desc">เลือกประเภท Catamins (1-3)</div>
+      <div class="card-price"><span class="price-now">฿20</span><span class="price-old">฿120</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Catamins x100', 20)" style="width:100%; margin-top: auto;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🧪</div>
+      <div class="card-name">Catamins x500</div>
+      <div class="card-desc">เลือกประเภท Catamins (1-3)</div>
+      <div class="card-price"><span class="price-now">฿79</span><span class="price-old">฿280</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Catamins x500', 79)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🧪</div>
+      <div class="card-name">Catamins x5000</div>
+      <div class="card-desc">เลือกประเภท Catamins (1-3)</div>
+      <div class="card-price"><span class="price-now">฿299</span><span class="price-old">฿520</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Catamins x5000', 299)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🧪</div>
+      <div class="card-name">Catamins x9,999</div>
+      <div class="card-desc">เลือกประเภท Catamins (1-3)</div>
+      <div class="card-price"><span class="price-now">฿399</span><span class="price-old">฿760</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Catamins x9,999', 399)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- LEGEND TICKET SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">🏆 Legend Ticket</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-emoji">🏆</div>
+      <div class="card-name">Legend Ticket x1</div>
+      <div class="card-desc">เพิ่มจำนวน Legend Ticket</div>
+      <div class="card-price"><span class="price-now">฿25</span><span class="price-old">฿120</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Legend Ticket x1', 25)" style="width:100%; margin-top: auto;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🏆</div>
+      <div class="card-name">Legend Ticket x2</div>
+      <div class="card-desc">เพิ่มจำนวน Legend Ticket</div>
+      <div class="card-price"><span class="price-now">฿45</span><span class="price-old">฿220</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Legend Ticket x2', 45)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🏆</div>
+      <div class="card-name">Legend Ticket x3</div>
+      <div class="card-desc">เพิ่มจำนวน Legend Ticket</div>
+      <div class="card-price"><span class="price-now">฿60</span><span class="price-old">฿300</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Legend Ticket x3', 60)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🏆</div>
+      <div class="card-name">Legend Ticket x4</div>
+      <div class="card-desc">เพิ่มจำนวน Legend Ticket</div>
+      <div class="card-price"><span class="price-now">฿75</span><span class="price-old">฿360</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Legend Ticket x4', 75)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- LUCKY TICKET SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">🎲 Lucky Ticket</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-emoji">🎲</div>
+      <div class="card-name">Lucky Ticket x100</div>
+      <div class="card-desc">กด sub_enter=1 ก่อนรับ</div>
+      <div class="card-price"><span class="price-now">฿10</span><span class="price-old">฿190</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Lucky Ticket x100', 10)" style="width:100%; margin-top: auto;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🎲</div>
+      <div class="card-name">Lucky Ticket x500</div>
+      <div class="card-desc">กด sub_enter=1 ก่อนรับ</div>
+      <div class="card-price"><span class="price-now">฿29</span><span class="price-old">฿420</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Lucky Ticket x500', 29)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🎲</div>
+      <div class="card-name">Lucky Ticket x1000</div>
+      <div class="card-desc">กด sub_enter=1 ก่อนรับ</div>
+      <div class="card-price"><span class="price-now">฿49</span><span class="price-old">฿650</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Lucky Ticket x1000', 49)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <div class="card-emoji">🎲</div>
+      <div class="card-name">Lucky Ticket x2999</div>
+      <div class="card-desc">กด sub_enter=1 ก่อนรับ</div>
+      <div class="card-price"><span class="price-now">฿99</span><span class="price-old">฿980</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Lucky Ticket x2999', 99)" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>🐱 Battle Cats Shop</h4>
+        <p style="font-size: 13px; line-height: 1.6;">บริการร้านขายไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
+      </div>
+      <div class="footer-col">
+        <h4>บริการ</h4>
+        <ul>
+          <li><a href="shop.html">ร้านขาย</a></li>
+          <li><a href="characters.html">ปลดล็อคแมว</a></li>
+          <li><a href="stages.html">ปลดล็อคด่าน</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>ติดต่อเรา</h4>
+        <ul>
+          <li><a href="#">📱 Line: @battlecats</a></li>
+          <li><a href="#">💬 Discord: BattleCats</a></li>
+          <li><a href="#">📘 Facebook: BattleCatsShop</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Battle Cats Shop · บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+const PRODUCT_MAP = {
+  'Cat Food x10,000': { key: 'cat_food', amount: 10000 },
+  'Cat Food x20,000': { key: 'cat_food', amount: 20000 },
+  'Cat Food x30,000': { key: 'cat_food', amount: 30000 },
+  'Cat Food x45,000': { key: 'cat_food', amount: 45000 },
+  'XP x99,999,999': { key: 'xp', amount: 99999999 },
+  'Normal Ticket x100': { key: 'normal_ticket', amount: 100 },
+  'Normal Ticket x500': { key: 'normal_ticket', amount: 500 },
+  'Normal Ticket x1000': { key: 'normal_ticket', amount: 1000 },
+  'Normal Ticket x2999': { key: 'normal_ticket', amount: 2999 },
+  'Rare Ticket x50': { key: 'rare_ticket', amount: 50 },
+  'Rare Ticket x100': { key: 'rare_ticket', amount: 100 },
+  'Rare Ticket x200': { key: 'rare_ticket', amount: 200 },
+  'Rare Ticket x299': { key: 'rare_ticket', amount: 299 },
+  'NP x100': { key: 'np', amount: 100 },
+  'NP x1,000': { key: 'np', amount: 1000 },
+  'NP x5,000': { key: 'np', amount: 5000 },
+  'NP x9,999': { key: 'np', amount: 9999 },
+  'Platinum Shard x10': { key: 'platinum_shard', amount: 10 },
+  'Platinum Shard x30': { key: 'platinum_shard', amount: 30 },
+  'Platinum Shard x40': { key: 'platinum_shard', amount: 40 },
+  'Platinum Shard x50': { key: 'platinum_shard', amount: 50 },
+  'Leadership x100': { key: 'leadership', amount: 100 },
+  'Leadership x1,000': { key: 'leadership', amount: 1000 },
+  'Leadership x5,000': { key: 'leadership', amount: 5000 },
+  'Leadership x9,999': { key: 'leadership', amount: 9999 },
+  'Catseye x100': { key: 'catseye', amount: 100 },
+  'Catseye x500': { key: 'catseye', amount: 500 },
+  'Catseye x5000': { key: 'catseye', amount: 5000 },
+  'Catseye x9,999': { key: 'catseye', amount: 9999 },
+  'Catfruit x100': { key: 'catfruit', amount: 100 },
+  'Catfruit x500': { key: 'catfruit', amount: 500 },
+  'Catfruit x5000': { key: 'catfruit', amount: 5000 },
+  'Catfruit x9,999': { key: 'catfruit', amount: 9999 },
+  'Battle Item x100': { key: 'battle_item', amount: 100 },
+  'Battle Item x500': { key: 'battle_item', amount: 500 },
+  'Battle Item x5000': { key: 'battle_item', amount: 5000 },
+  'Battle Item x9,999': { key: 'battle_item', amount: 9999 },
+  'Catamins x100': { key: 'catamins', amount: 100 },
+  'Catamins x500': { key: 'catamins', amount: 500 },
+  'Catamins x5000': { key: 'catamins', amount: 5000 },
+  'Catamins x9,999': { key: 'catamins', amount: 9999 },
+  'Legend Ticket x1': { key: 'legend_ticket', amount: 1 },
+  'Legend Ticket x2': { key: 'legend_ticket', amount: 2 },
+  'Legend Ticket x3': { key: 'legend_ticket', amount: 3 },
+  'Legend Ticket x4': { key: 'legend_ticket', amount: 4 },
+  'Lucky Ticket x100': { key: 'lucky_ticket', amount: 100 },
+  'Lucky Ticket x500': { key: 'lucky_ticket', amount: 500 },
+  'Lucky Ticket x1000': { key: 'lucky_ticket', amount: 1000 },
+  'Lucky Ticket x2999': { key: 'lucky_ticket', amount: 2999 },
+};
+
+function addToCart(itemName, price) {
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const product = PRODUCT_MAP[itemName] || { key: itemName.toLowerCase().replace(/[^a-z0-9]+/g, '_'), amount: 1 };
+  cart.push({ key: product.key, name: itemName, amount: product.amount, price: price, supported: product.supported !== false });
+  localStorage.setItem('cart', JSON.stringify(cart));
+  document.getElementById('cartCount').textContent = cart.length;
+  alert(`✅ เพิ่ม ${itemName} ลงการ์ทแล้ว!`);
+}
+
+// Update cart count on page load
+window.addEventListener('load', () => {
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  document.getElementById('cartCount').textContent = cart.length;
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  if (link.href === window.location.href) {
+    link.classList.add('active');
+  }
+});
+</script>
+
+</body>
+</html>

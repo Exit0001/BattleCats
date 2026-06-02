@@ -1,1315 +1,234 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Battle Cats – Cat Database</title>
-<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#0f0720;--surface:#1a0f35;--card:#231545;--border:rgba(255,214,0,0.15);--yellow:#FFD600;--orange:#FF6B00;--purple:#9B59F5;--text:#f0e8ff;--muted:rgba(240,232,255,0.55)}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;overflow:hidden}
-body.ready{overflow:auto}
-
-/* ═══════════════ PRELOADER ═══════════════ */
-#preloader{
-  position:fixed;inset:0;z-index:9999;
-  background:radial-gradient(ellipse at 50% 40%, #2d0a5c 0%, #0f0720 70%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
-  transition:opacity 0.6s ease, transform 0.6s ease;
-}
-#preloader.hide{opacity:0;pointer-events:none;transform:scale(1.04)}
-
-/* Bouncing cats row */
-.cats-row{display:flex;gap:16px;margin-bottom:32px;align-items:flex-end;height:80px}
-.cat-bounce{
-  font-size:42px;
-  animation:catBounce 0.7s ease-in-out infinite alternate;
-  filter:drop-shadow(0 0 12px rgba(255,214,0,0.5));
-}
-.cat-bounce:nth-child(1){animation-delay:0s}
-.cat-bounce:nth-child(2){animation-delay:0.15s}
-.cat-bounce:nth-child(3){animation-delay:0.3s}
-.cat-bounce:nth-child(4){animation-delay:0.45s}
-.cat-bounce:nth-child(5){animation-delay:0.6s}
-@keyframes catBounce{
-  from{transform:translateY(0) rotate(-5deg) scale(1)}
-  to{transform:translateY(-28px) rotate(5deg) scale(1.1)}
-}
-
-.pre-title{
-  font-family:'Bangers',cursive;
-  font-size:46px;letter-spacing:4px;
-  color:var(--yellow);
-  text-shadow:3px 3px 0 var(--orange),6px 6px 0 rgba(0,0,0,0.5);
-  margin-bottom:6px;
-}
-.pre-sub{
-  font-size:13px;font-weight:700;
-  color:var(--muted);margin-bottom:28px;
-}
-
-/* Progress bar */
-.pre-bar-wrap{
-  width:320px;background:rgba(255,255,255,0.08);
-  border-radius:20px;height:10px;overflow:hidden;
-  border:1px solid rgba(255,214,0,0.2);
-  margin-bottom:12px;
-}
-.pre-bar-fill{
-  height:100%;width:0%;border-radius:20px;
-  background:linear-gradient(90deg,#FF6B00,#FFD600,#FF6B00);
-  background-size:200% 100%;
-  animation:shimmer 1.5s linear infinite;
-  transition:width 0.25s ease;
-}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-.pre-pct{
-  font-family:'Bangers',cursive;font-size:28px;letter-spacing:2px;
-  color:var(--yellow);margin-bottom:4px;
-}
-.pre-count{font-size:12px;font-weight:700;color:var(--muted)}
-
-/* Pulse dots */
-.dots{display:flex;gap:8px;margin-top:20px}
-.dot{
-  width:8px;height:8px;border-radius:50%;
-  background:var(--yellow);opacity:0.3;
-  animation:dotPulse 1.2s ease-in-out infinite;
-}
-.dot:nth-child(1){animation-delay:0s}
-.dot:nth-child(2){animation-delay:0.2s}
-.dot:nth-child(3){animation-delay:0.4s}
-@keyframes dotPulse{0%,100%{opacity:0.2;transform:scale(0.8)}50%{opacity:1;transform:scale(1.2)}}
-
-/* ═══════════════ MAIN CONTENT ═══════════════ */
-#main-content{opacity:0;transition:opacity 0.5s ease}
-#main-content.show{opacity:1}
-
-.header{
-  background:linear-gradient(135deg,#1a0f35 0%,#3b0070 60%,#1a0f35 100%);
-  border-bottom:2px solid rgba(255,214,0,0.25);
-  padding:28px 32px 20px;text-align:center;
-}
-.header h1{
-  font-family:'Bangers',cursive;font-size:52px;letter-spacing:3px;
-  color:var(--yellow);text-shadow:3px 3px 0 var(--orange),6px 6px 0 rgba(0,0,0,0.5);
-  line-height:1;margin-bottom:4px;
-}
-.header p{color:var(--muted);font-size:13px;font-weight:700}
-
-.controls{
-  display:flex;gap:12px;align-items:center;flex-wrap:wrap;
-  padding:16px 32px;background:var(--surface);
-  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;
-}
-.search-wrap{position:relative;flex:1;min-width:180px}
-.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
-.controls input[type="text"]{
-  width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;
-  color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;
-  padding:10px 14px 10px 40px;outline:none;transition:border-color 0.2s;
-}
-.controls input[type="text"]:focus{border-color:var(--yellow)}
-.controls input::placeholder{color:var(--muted)}
-.tier-btns{display:flex;gap:6px;flex-wrap:wrap}
-.tier-btn{
-  font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;
-  padding:6px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.1);
-  cursor:pointer;transition:all 0.15s;background:var(--card);color:var(--muted);
-}
-.tier-btn:hover{border-color:var(--yellow);color:var(--yellow)}
-.tier-btn.active{color:#1a0f35;border-color:transparent}
-.tier-btn[data-t=""].active{background:var(--yellow)}
-.tier-btn[data-t="N"].active{background:#b4b2a9}
-.tier-btn[data-t="EX"].active{background:#85B7EB}
-.tier-btn[data-t="RR"].active{background:#97C459}
-.tier-btn[data-t="SR"].active{background:#EF9F27}
-.tier-btn[data-t="UR"].active{background:#F0997B}
-.tier-btn[data-t="LR"].active{background:#AFA9EC}
-.count-label{font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap;margin-left:auto}
-.count-label span{color:var(--yellow)}
-
-.table-wrap{padding:20px 32px;overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:14px}
-thead th{
-  text-align:left;padding:10px 16px;color:var(--muted);
-  font-weight:900;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
-  border-bottom:1px solid var(--border);background:var(--surface);
-}
-tbody tr{border-bottom:1px solid rgba(255,214,0,0.06);transition:background 0.1s;cursor:default}
-tbody tr:hover{background:rgba(155,89,245,0.12)}
-td{padding:9px 16px}
-.id-cell{color:var(--muted);font-variant-numeric:tabular-nums;font-weight:700;width:58px;font-size:13px}
-.name-cell{font-weight:700}
-.tier-badge{display:inline-block;font-size:10px;font-weight:900;padding:3px 9px;border-radius:20px;letter-spacing:0.5px}
-.t-N{background:#b4b2a9;color:#2c2c2a}
-.t-EX{background:#85B7EB;color:#042C53}
-.t-RR{background:#97C459;color:#173404}
-.t-SR{background:#EF9F27;color:#412402}
-.t-UR{background:#F0997B;color:#4A1B0C}
-.t-LR{background:#AFA9EC;color:#26215C}
-.wiki-link{color:var(--purple);text-decoration:none;font-size:12px;font-weight:700;opacity:0.8;transition:opacity 0.15s}
-.wiki-link:hover{opacity:1;text-decoration:underline}
-.no-results{text-align:center;padding:60px 20px;color:var(--muted);font-size:16px;font-weight:700}
-.no-results span{font-size:40px;display:block;margin-bottom:12px}
-
-/* ── TOOLTIP ── */
-#tooltip{
-  position:fixed;pointer-events:none;z-index:9999;
-  background:linear-gradient(145deg,#1a0f35 0%,#3b0070 100%);
-  border:2px solid rgba(255,214,0,0.45);border-radius:16px;padding:16px 14px 12px;
-  width:190px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.75);display:none;
-}
-#tooltip .tip-img-area{width:140px;height:140px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
-#tooltip img{max-width:140px;max-height:140px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 0 10px rgba(255,214,0,0.45))}
-#tooltip .tip-loading{color:var(--muted);font-size:12px;font-weight:700}
-#tooltip .tip-name{font-family:'Bangers',cursive;font-size:16px;color:var(--yellow);letter-spacing:1px;line-height:1.2;margin-bottom:4px}
-#tooltip .tip-row{display:flex;justify-content:center;gap:8px;align-items:center}
-#tooltip .tip-id{font-size:11px;color:var(--muted);font-weight:700}
-
-.footer{text-align:center;padding:22px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);margin-top:20px}
-.footer a{color:var(--purple);text-decoration:none}
-
-/* Remaining-load mini bar (after preloader closes, for 90→100%) */
-#mini-bar{
-  position:fixed;top:0;left:0;right:0;height:3px;z-index:8000;
-  background:transparent;pointer-events:none;
-  transition:opacity 0.4s;
-}
-#mini-bar-fill{
-  height:100%;width:0%;
-  background:linear-gradient(90deg,#FF6B00,#FFD600);
-  transition:width 0.3s ease;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battle Cats Shop - ร้านขายไอเทมเกม</title>
+  <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
 
-<!-- ══════════ PRELOADER ══════════ -->
-<div id="preloader">
-  <div class="cats-row">
-    <span class="cat-bounce">🐱</span>
-    <span class="cat-bounce">⚔️</span>
-    <span class="cat-bounce">🐈</span>
-    <span class="cat-bounce">💥</span>
-    <span class="cat-bounce">🐾</span>
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">🐱 BATTLE CATS SHOP</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">หน้าแรก</a></li>
+      <li><a href="shop.html">ร้านขาย</a></li>
+      <li><a href="characters.html">ปลดล็อคแมว</a></li>
+      <li><a href="stages.html">ปลดล็อคด่าน</a></li>
+      <li><a href="orders.html">ออเดอร์</a></li>
+    </ul>
+    <div class="nav-cart">
+      🛒
+      <span class="cart-badge" id="cartCount">0</span>
+    </div>
   </div>
-  <div class="pre-title">BATTLE CATS DB</div>
-  <div class="pre-sub">กำลังโหลดข้อมูลแมวนักรบ...</div>
-  <div class="pre-bar-wrap">
-    <div class="pre-bar-fill" id="pre-fill"></div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO SECTION -->
+  <div class="hero">
+    <div class="badge-hot">🎮 เกมส์ยอดฮิตทั่วโลก</div>
+    <h1 class="hero-title">BATTLE CATS<br>SHOP</h1>
+    <p class="hero-sub">ไอเทม • แคท • แคตฟู้ด • ด่านราคาสุดคุ้ม!</p>
+    <div class="hero-emoji"></div>
+    <button class="btn btn-primary" onclick="window.location.href='shop.html'">🛍️ ดูสินค้าทั้งหมด</button>
   </div>
-  <div class="pre-pct" id="pre-pct">0%</div>
-  <div class="pre-count" id="pre-count">0 / 775 ตัว</div>
-  <div class="dots">
-    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+
+  <!-- FLASH SALE BANNER -->
+  <div class="banner-flash">
+    <div>
+      <div class="banner-text">FLASH SALE 50% OFF!</div>
+      <div class="banner-sub">โปรพิเศษวันนี้เท่านั้น ไม่รอแล้วนะ</div>
+    </div>
+    <div class="timer-box">
+      <div class="timer-unit"><span class="timer-num" id="t-h">05</span><span class="timer-label">ชม.</span></div>
+      <span class="timer-sep">:</span>
+      <div class="timer-unit"><span class="timer-num" id="t-m">59</span><span class="timer-label">นาที</span></div>
+      <span class="timer-sep">:</span>
+      <div class="timer-unit"><span class="timer-num" id="t-s">43</span><span class="timer-label">วิ</span></div>
+    </div>
   </div>
+
+  <!-- FEATURED PRODUCTS -->
+  <h2 class="section-title">🎯 สินค้าขายดี <span>HOT</span></h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <span class="card-tag tag-super">SUPER</span>
+      <div class="card-emoji">🐈‍⬛</div>
+      <div class="card-name">Dark Valkyrie Cat</div>
+      <div class="card-desc">แคทหายากระดับ Super Rare</div>
+      <div class="card-price"><span class="price-now">฿199</span><span class="price-old">฿399</span></div>
+      <button class="btn btn-primary" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-hot">HOT</span>
+      <div class="card-emoji">🐱</div>
+      <div class="card-name">Cat Food x120</div>
+      <div class="card-desc">เติมพลัง Gacha รัวๆ</div>
+      <div class="card-price"><span class="price-now">฿149</span><span class="price-old">฿250</span></div>
+      <button class="btn btn-primary" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-rare">RARE</span>
+      <div class="card-emoji">⚡</div>
+      <div class="card-name">Energy Pack x50</div>
+      <div class="card-desc">เล่นต่อได้ทั้งวัน</div>
+      <div class="card-price"><span class="price-now">฿89</span><span class="price-old">฿150</span></div>
+      <button class="btn btn-primary" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+
+    <div class="card">
+      <span class="card-tag tag-super">MEGA</span>
+      <div class="card-emoji">💎</div>
+      <div class="card-name">Rare Cat Capsule x11</div>
+      <div class="card-desc">ลุ้น Super Rare 1 ตัว!</div>
+      <div class="card-price"><span class="price-now">฿349</span><span class="price-old">฿599</span></div>
+      <button class="btn btn-primary" style="width:100%;">เพิ่มลงการ์ท</button>
+    </div>
+  </div>
+
+  <!-- SERVICES SECTION -->
+  <h2 class="section-title">🚀 บริการของเรา</h2>
+  <div class="grid grid-3">
+    <div class="card" style="text-align: center;">
+      <div class="card-emoji">🛒</div>
+      <div class="card-name">ร้านขาย</div>
+      <div class="card-desc">ซื้อไอเทมและ Cat Food</div>
+      <button class="btn btn-outline" onclick="window.location.href='shop.html'" style="width:100%;">ไปที่ร้าน</button>
+    </div>
+
+    <div class="card" style="text-align: center;">
+      <div class="card-emoji">🐱</div>
+      <div class="card-name">ปลดล็อคแมว</div>
+      <div class="card-desc">ปลดล็อคตัวแมวหายาก</div>
+      <button class="btn btn-outline" onclick="window.location.href='characters.html'" style="width:100%;">ดูแมว</button>
+    </div>
+
+    <div class="card" style="text-align: center;">
+      <div class="card-emoji">📍</div>
+      <div class="card-name">ปลดล็อคด่าน</div>
+      <div class="card-desc">เล่นด่านที่ติดได้เลย</div>
+      <button class="btn btn-outline" onclick="window.location.href='stages.html'" style="width:100%;">ดูด่าน</button>
+    </div>
+  </div>
+
+  <!-- TRUST SIGNALS -->
+  <h2 class="section-title">✨ ทำไมต้องเลือกเรา</h2>
+  <div class="trust-row">
+    <div class="trust-card">
+      <div class="trust-icon">⚡</div>
+      <div class="trust-title">ส่งทันที</div>
+      <div class="trust-sub">รับไอเทมใน 5 นาที</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">🔒</div>
+      <div class="trust-title">ปลอดภัย 100%</div>
+      <div class="trust-sub">ไม่โดนแบน การันตี</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">💬</div>
+      <div class="trust-title">24/7 Support</div>
+      <div class="trust-sub">ทักได้ตลอดเวลา</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">💳</div>
+      <div class="trust-title">ชำระง่าย</div>
+      <div class="trust-sub">QR Code & TrueMoney</div>
+    </div>
+  </div>
+
+  <!-- REVIEWS -->
+  <h2 class="section-title">⭐ รีวิวจากลูกค้า</h2>
+  <div class="review-row">
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">ได้ของไวมาก ไม่ถึง 3 นาทีก็ได้แล้ว ซื้อซ้ำแน่นอน!</div>
+      <div class="review-user">🐾 NinjaKung_TH</div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">ราคาถูกสุดในตลาด แถมมีโปรทุกวัน ไม่ซื้อก็บ้าแล้ว</div>
+      <div class="review-user">🐾 CatMaster_666</div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★☆</div>
+      <div class="review-text">Dark Valkyrie สุดโหด pass ด่านที่ติดมาตลอดได้เลย</div>
+      <div class="review-user">🐾 BattleQueen_55</div>
+    </div>
+  </div>
+
 </div>
 
-<!-- ══════════ MINI BAR (90→100%) ══════════ -->
-<div id="mini-bar"><div id="mini-bar-fill"></div></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>🐱 Battle Cats Shop</h4>
+        <p style="font-size: 13px; line-height: 1.6;">บริการร้านขายไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
+      </div>
+      <div class="footer-col">
+        <h4>บริการ</h4>
+        <ul>
+          <li><a href="shop.html">ร้านขาย</a></li>
+          <li><a href="characters.html">ปลดล็อคแมว</a></li>
+          <li><a href="stages.html">ปลดล็อคด่าน</a></li>
+          <li><a href="orders.html">ออเดอร์ของฉัน</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>ติดต่อเรา</h4>
+        <ul>
+          <li><a href="#">📱 Line: @battlecats</a></li>
+          <li><a href="#">💬 Discord: BattleCats</a></li>
+          <li><a href="#">📘 Facebook: BattleCatsShop</a></li>
+          <li><a href="#">🎵 TikTok: @battlecatsth</a></li>
+        </ul>
+      </div>
+    </div>
 
-<!-- ══════════ MAIN CONTENT ══════════ -->
-<div id="main-content">
-<div class="header">
-  <h1>🐱 BATTLE CATS DB</h1>
-  <p>ฐานข้อมูลตัวละครทั้งหมด 861 ตัว — เอาเมาส์ชี้เพื่อดูรูป</p>
-</div>
+    <div class="social-row">
+      <div class="social-pill">🌍 ภาษาไทย</div>
+      <div class="social-pill">✅ ได้รับการตรวจสอบ</div>
+      <div class="social-pill">⭐ 2,000+ ผู้ใช้</div>
+    </div>
 
-<div class="controls">
-  <div class="search-wrap">
-    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-    <input type="text" id="q" placeholder="ค้นหาชื่อตัวละคร หรือเลข ID..." oninput="filter()">
+    <div class="footer-bottom">
+      <p>© 2025 Battle Cats Shop · บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</p>
+    </div>
   </div>
-  <div class="tier-btns">
-    <button class="tier-btn active" data-t="" onclick="setTier(this)">ทั้งหมด</button>
-    <button class="tier-btn" data-t="N"  onclick="setTier(this)">N</button>
-    <button class="tier-btn" data-t="EX" onclick="setTier(this)">EX</button>
-    <button class="tier-btn" data-t="RR" onclick="setTier(this)">RR</button>
-    <button class="tier-btn" data-t="SR" onclick="setTier(this)">SR</button>
-    <button class="tier-btn" data-t="UR" onclick="setTier(this)">UR</button>
-    <button class="tier-btn" data-t="LR" onclick="setTier(this)">LR</button>
-  </div>
-  <div class="count-label">แสดง <span id="shown">0</span> / <span id="total">861</span> ตัว</div>
-</div>
-
-<div class="table-wrap">
-  <table>
-    <thead><tr><th>#</th><th>Tier</th><th>ชื่อตัวละคร</th><th>Wiki</th></tr></thead>
-    <tbody id="tbody"></tbody>
-  </table>
-  <div class="no-results" id="no-results" style="display:none">
-    <span>🐾</span>ไม่พบตัวละครที่ค้นหา
-  </div>
-</div>
-
-<div class="footer">
-  ข้อมูลและรูปภาพจาก
-  <a href="https://battlecats.miraheze.org/wiki/Battle_Cats_Wiki" target="_blank">The Battle Cats Wiki – Miraheze</a>
-</div>
-</div><!-- /main-content -->
-
-<!-- TOOLTIP -->
-<div id="tooltip">
-  <div class="tip-img-area" id="tip-img-area"><div class="tip-loading">กำลังโหลด...</div></div>
-  <div class="tip-name" id="tip-name"></div>
-  <div class="tip-row">
-    <span class="tier-badge" id="tip-tier-badge"></span>
-    <span class="tip-id" id="tip-id"></span>
-  </div>
-</div>
+</footer>
 
 <script>
-const DATA = [
-[0,"N","Cat"],[1,"N","Tank Cat"],[2,"N","Axe Cat"],[3,"N","Gross Cat"],[4,"N","Cow Cat"],[5,"N","Bird Cat"],[6,"N","Fish Cat"],[7,"N","Lizard Cat"],[8,"N","Titan Cat"],[9,"EX","Actress Cat"],[10,"EX","Kung Fu Cat"],[11,"EX","Mr."],[12,"EX","Bondage Cat"],[13,"EX","Dom Cat"],[14,"EX","Cats in a Box"],[15,"EX","Panties Cat"],[16,"EX","Moneko"],[17,"EX","Tricycle Cat"],[18,"EX","Ninja Cat"],[19,"EX","Zombie Cat"],[20,"EX","Samurai Cat"],[21,"EX","Sumo Cat"],[22,"EX","Boogie Cat"],[23,"EX","Skirt Cat"],[24,"EX","Valkyrie Cat"],[25,"EX","Bahamut Cat"],[26,"EX","Kerihime"],[27,"EX","Cat Princess"],[28,"EX","Capsule Cat"],[29,"EX","Masked Cat"],[30,"SR","Bodhisattva Cat"],[31,"SR","Delinquent Cat"],[32,"SR","Hip Hop Cat"],[33,"SR","Kotatsu Cat"],[34,"UR","Nekoluga"],[35,"SR","Nerd Cat"],[36,"SR","Swimmer Cat"],[37,"RR","Pogo Cat"],[38,"RR","Wheel Cat"],[39,"SR","Apple Cat"],[40,"SR","Bath Cat"],[41,"RR","Salon Cat"],[42,"UR","Ice Cat"],[43,"UR","Cat Machine"],[44,"UR","Lesser Demon Cat"],[45,"EX","Maiko Cat"],[46,"RR","Jurassic Cat"],[47,"RR","Viking Cat"],[48,"RR","Pirate Cat"],[49,"RR","Thief Cat"],[50,"RR","Bishop Cat"],[51,"RR","Fortune Teller Cat"],[52,"RR","Shaman Cat"],[53,"UR","Evangelist Cat"],[54,"EX","Type 10"],[55,"RR","Witch Cat"],[56,"RR","Archer Cat"],[57,"UR","Marauder Cat"],[58,"RR","Swordsman Cat"],[59,"UR","Baby Cat"],[60,"RR","Bronze Cat"],[61,"SR","Sushi Cat"],[62,"EX","Toy Machine Cat"],[63,"RR","Sports Day Cat"],[64,"RR","Swordsman"],[65,"RR","Cow Princess"],[66,"UR","PPT48"],[67,"RR","Li'l Gau"],[68,"SR","Reaper"],[69,"SR","Sleeping Beauty Punt"],[70,"RR","Salaryman Cat"],[71,"UR","Sanada Yukimura"],[72,"UR","Maeda Keiji"],[73,"UR","Oda Nobunaga"],[74,"RR","Reindeer Fish Cat"],[75,"UR","Windy"],[76,"UR","Thundia"],[77,"RR","Droid Cat"],[78,"RR","Space Cat"],[79,"RR","Adult Cat"],[80,"RR","Evil Cat"],[81,"RR","Doll Cats"],[82,"EX","Blue Shinobi"],[83,"UR","Sodom"],[84,"UR","Megidora"],[85,"UR","Vars"],[86,"UR","Kamukura"],[87,"UR","Raiden"],[88,"RR","Rope Jump Cat"],[89,"UR","Nimue"],[90,"UR","Monkey King"],[91,"SR","Crazed Cat"],[92,"SR","Crazed Tank Cat"],[93,"SR","Crazed Axe Cat"],[94,"SR","Crazed Gross Cat"],[95,"SR","Crazed Cow Cat"],[96,"SR","Crazed Bird Cat"],[97,"SR","Crazed Fish Cat"],[98,"SR","Crazed Lizard Cat"],[99,"SR","Crazed Titan Cat"],[100,"RR","Maiden Cat"],[101,"EX","Clone Elle"],[102,"EX","Red Marron"],[103,"EX","Cabaret Cat"],[104,"RR","Koi Cat"],[105,"UR","Kuu"],[106,"UR","Kai"],[107,"UR","Coppermine"],[108,"EX","Cat Bros"],[109,"RR","Madam Bride"],[110,"RR","Celesse"],[111,"RR","Nono"],[112,"RR","Olga"],[113,"RR","Norn"],[114,"RR","Yoichi"],[115,"RR","Serum"],[116,"RR","Fuu"],[117,"SR","Aura"],[118,"SR","Rei"],[119,"UR","Wyvern"],[120,"EX","Healer"],[121,"EX","Merc"],[122,"RR","Vacation Queen"],[123,"EX","Bean Cats"],[124,"UR","Date Masamune"],[125,"UR","Takeda Shingen"],[126,"RR","Clockwork Cat"],[127,"EX","Flower Cat"],[128,"RR","Vengeful Cat"],[129,"SR","Gold Cat"],[130,"EX","Ururun Wolf"],[131,"SR","Neneko"],[132,"RR","Kung Fu Cat X"],[133,"EX","Hikakin"],[134,"UR","Urashima Taro"],[135,"UR","The Grateful Crane"],[136,"UR","Momotaro"],[137,"UR","Kasa Jizo"],[138,"UR","Princess Kaguya"],[139,"EX","Nekondo"],[140,"EX","Squish Ball Cat"],[141,"EX","God"],[142,"EX","Tutorial Cat"],[143,"UR","Nurse Cat"],[144,"SR","Cat Base Mini"],[145,"RR","Cat Gunslinger"],[146,"RR","Stilts Cat"],[147,"RR","Tin Cat"],[148,"RR","Rocker Cat"],[149,"RR","Mer-Cat"],[150,"SR","Juliet Cat"],[151,"SR","Weightlifter Cat"],[152,"SR","Figure Skating Cats"],[153,"SR","Cat Toaster"],[154,"RR","Hoop Cat"],[155,"UR","Chicken Cat"],[156,"RR","Dragon League Swordsman"],[157,"EX","Nubobo"],[158,"UR","Uesugi Kenshin"],[159,"UR","Kalisa"],[160,"SR","Yurinchi"],[161,"UR","Crazed Princess Punt"],[162,"EX","Sho Ayanokoji"],[163,"EX","Hikaru Saotome"],[164,"EX","Hitomi Saionji"],[165,"EX","Hoshi Grandmarnier"],[166,"EX","Shouchikubai Shiratori"],[167,"RR","Yankee Cat"],[168,"UR","Asiluga"],[169,"UR","Kubiluga"],[170,"UR","Tecoluga"],[171,"UR","Balaluga"],[172,"EX","Li'l Nyandam"],[173,"SR","Baby Mola"],[174,"UR","Mola King"],[175,"EX","Meowla Meowla"],[176,"RR","Marshmallow Cat"],[177,"UR","Dioramos"],[178,"EX","Mob Cat"],[179,"RR","Takuya & Yuki"],[180,"UR","Mystery Girl Yuki"],[181,"EX","Yuki Cat"],[182,"EX","Cuckoo Crew 12"],[183,"RR","Cat Kart R"],[184,"EX","Mr. Ninja"],[185,"UR","Hearscht"],[186,"UR","Cornelia"],[187,"UR","Juvens"],[188,"UR","Mystica"],[189,"SR","Alois"],[190,"SR","Citrouille"],[191,"EX","Titi"],[192,"EX","Yamaoka Minori"],[193,"EX","Nakamura Kanae"],[194,"UR","Akira"],[195,"UR","Mekako Saionji"],[196,"UR","Catman"],[197,"RR","Psychocat"],[198,"RR","Onmyoji Cat"],[199,"SR","Surfer Cat"],[200,"SR","Metal Cat"],[201,"RR","Drumcorps Cat"],[202,"EX","Baozi Cat"],[203,"UR","Kachi-Kachi"],[204,"EX","Felyne"],[205,"EX","Sheria - Kirin"],[206,"EX","Rathalos"],[207,"EX","Rathian"],[208,"EX","Kirin Cat"],[209,"EX","Li'l Cat"],[210,"EX","Li'l Tank Cat"],[211,"EX","Li'l Axe Cat"],[212,"UR","The White Rabbit"],[213,"EX","Catburger"],[214,"RR","HYAKUTARO"],[215,"RR","MARCO"],[216,"RR","TARMA"],[217,"RR","ERI"],[218,"RR","FIO"],[219,"SR","SV-001"],[220,"SR","ALLEN O'NEIL"],[221,"RR","MARS PEOPLE"],[222,"UR","HUGE HERMIT"],[223,"UR","JUPITER KING"],[224,"UR","DONALD MORDEN"],[225,"UR","HI-DO"],[226,"UR","Warlock and Pierre"],[227,"RR","Pumpcat"],[228,"SR","Gloomy Neneko"],[229,"UR","Hallowindy"],[230,"UR","Spooky Thundia"],[231,"EX","Oden"],[232,"RR","Junior God of Light - Valkyrie"],[233,"RR","Junior God Brynhildr"],[234,"RR","Junior God Suruzu"],[235,"SR","Goddess of Abundance - Freya"],[236,"UR","God of War - Odin"],[237,"SR","Freshman Cat Jobs"],[238,"SR","Rich Cat III"],[239,"SR","Sniper the Recruit"],[240,"UR","Togeluga"],[241,"UR","Frosty Kai"],[242,"UR","Santa Kuu"],[243,"UR","Holy Coppermine"],[244,"RR","A Gift of Cats"],[245,"EX","Li'l Gross Cat"],[246,"EX","Li'l Cow Cat"],[247,"EX","Li'l Bird Cat"],[248,"EX","Undead Cat"],[249,"RR","Castle Guard"],[250,"RR","Castle Horseman"],[251,"RR","Ashura"],[252,"RR","Battle Balloon"],[253,"RR","Dragon Rider"],[254,"RR","Pretty Cat"],[255,"RR","Cyclops"],[256,"EX","Golem"],[257,"UR","Thunder God Zeus"],[258,"UR","Anubis the Protector"],[259,"UR","Radiant Aphrodite"],[260,"SR","Catway"],[261,"UR","Hayabusa"],[262,"EX","Nyamusu"],[263,"EX","Pochi"],[264,"EX","Kuromi"],[265,"EX","Setsuko"],[266,"EX","Nebaaru-kun"],[267,"SR","Catornado"],[268,"EX","Red Riding Mina"],[269,"UR","Baby Gao"],[270,"UR","Crazed Yuki"],[271,"UR","Shining Amaterasu"],[272,"UR","Splendid Ganesha"],[273,"SR","Cheerleader Cat"],[274,"UR","Tropical Kalisa"],[275,"UR","Midsummer Rabbit"],[276,"SR","Sunny Neneko"],[277,"RR","Funghi"],[278,"EX","Tanky"],[279,"EX","White Cat"],[280,"EX","Fortressy"],[281,"RR","Futenyan"],[282,"RR","Awa-Odori Cat"],[283,"UR","Pai-Pai"],[284,"SR","Express Cat"],[285,"EX","Crazed Baozi Cat"],[286,"UR","Strike Unit R.E.I."],[287,"SR","Little Leaguer Cat"],[288,"UR","Madoka Kaname"],[289,"UR","Homura Akemi"],[290,"UR","Sayaka Miki"],[291,"UR","Mami Tomoe"],[292,"UR","Kyoko Sakura"],[293,"SR","Kyubey"],[294,"RR","Madoka Cat"],[295,"RR","Homura Cat"],[296,"RR","Sayaka Cat"],[297,"RR","Mami Cat"],[298,"RR","Kyoko Cat"],[299,"RR","Li'l Madoka"],[300,"EX","Li'l Homura"],[301,"RR","Kyubey Cat"],[302,"UR","Lilith Cat"],[303,"RR","Food Stall Cat"],[304,"UR","Mighty Kat-A-Pult"],[305,"UR","Mighty Drednot"],[306,"UR","Mighty Bomburr"],[307,"SR","Vaulter Cat"],[308,"RR","Gardener Cat"],[309,"EX","Neko Hakase"],[310,"UR","Yuletide Nurse"],[311,"EX","Li'l Fish Cat"],[312,"EX","Li'l Lizard Cat"],[313,"EX","Li'l Titan Cat"],[314,"SR","Years-End Neneko"],[315,"RR","PIKOTARO"],[316,"UR","Wrathful Poseidon"],[317,"EX","CPAC"],[318,"UR","Miko Mitama"],[319,"RR","Killer Cat"],[320,"RR","Hiroshi Mihara"],[321,"EX","Nazousagi"],[322,"UR","Sarukani"],[323,"EX","Miyamoku Musashi"],[324,"RR","Curling Cat"],[325,"RR","Welterweight Cat"],[326,"UR","Mobius"],[327,"SR","Belial"],[328,"EX","Happy 100"],[329,"RR","Eggy Cat"],[330,"UR","Springtime Kenshin"],[331,"UR","Bunny & Canard"],[332,"SR","Easter Neneko"],[333,"UR","Shadow Gao"],[334,"UR","Trickster Himeyuri"],[335,"UR","Sea Maiden Ruri"],[336,"UR","Queen Reika"],[337,"UR","HMS Princess"],[338,"UR","Imagawa Yoshimoto"],[339,"EX","Iron Wall Cat"],[340,"RR","Redhead Yuki Cat"],[341,"UR","Lost World Yuki"],[342,"EX","Maneki Cat"],[343,"RR","Slug Jockey Cat"],[344,"SR","Orthos"],[345,"UR","Michelia"],[346,"UR","Todomeki"],[347,"EX","Gudetama Cat"],[348,"RR","Gudetama Plate"],[349,"SR","Gudegude Pudding"],[350,"UR","Nisetama Army"],[351,"UR","Twinstars"],[352,"EX","Hermit Cat"],[353,"RR","Cat Slave Chocolate"],[354,"UR","Seashore Kai"],[355,"UR","Mighty Rekon Korps"],[356,"EX","Nora"],[357,"UR","Wolfchild Deale"],[358,"UR","Graveflower Verbena"],[359,"UR","Bora"],[360,"UR","Mizli"],[361,"UR","Aer"],[362,"UR","Saber"],[363,"UR","Rin Tohsaka"],[364,"UR","Illyasviel"],[365,"UR","Archer"],[366,"UR","Lancer"],[367,"UR","Rider"],[368,"UR","Gilgamesh"],[369,"EX","Saber the Cat"],[370,"RR","Sakura the Cat"],[371,"RR","Rin the Cat"],[372,"RR","Illya the Cat"],[373,"RR","Li'l Shirou"],[374,"EX","Li'l Sakura"],[375,"EX","Coin Cat"],[376,"RR","Rover Cat"],[377,"SR","Fencer Cat"],[378,"UR","Dark Mitama"],[379,"RR","Volley Cat"],[380,"UR","D'artanyan"],[381,"EX","Farmer Cat"],[382,"RR","Glass Cat"],[383,"EX","Masked Yulala"],[384,"EX","Satori Hikami & Cat"],[385,"RR","Akio Yabe"],[386,"RR","Sairi Nijitani"],[387,"RR","Misaki Konno"],[388,"RR","Ren Katagiri"],[389,"RR","Karin Nekozuka"],[390,"SR","Aoi Hayakawa"],[391,"SR","Mizuki Tachibana"],[392,"SR","Hijiri Rokudo"],[393,"UR","Saki Nijima"],[394,"UR","Subaru Hoshi"],[395,"UR","Miyabi Oyama"],[396,"UR","Ganglion"],[397,"UR","Sakura Sonic"],[398,"EX","Honeyto-kun"],[399,"RR","Mentori"],[400,"EX","Imoto"],[401,"UR","Voli"],[402,"RR","Shinji & Cat"],[403,"EX","Gendo & Fuyutsuki Cats"],[404,"RR","Giraffe Unit-01"],[405,"EX","Kaworu & Cat"],[406,"RR","Rei Cat"],[407,"RR","Asuka Cat"],[408,"RR","Mari Cat"],[409,"SR","Rei Ayanami"],[410,"SR","Asuka Langley"],[411,"SR","Mari Illustrious"],[412,"UR","EVA Unit-00"],[413,"UR","EVA Unit-01"],[414,"UR","EVA Unit-02"],[415,"UR","Shinji Cat"],[416,"UR","Moon Operators"],[417,"UR","Mighty Thermae D-Lux"],[418,"EX","Crazed Moneko"],[419,"RR","Pokota"],[420,"RR","Ovis"],[421,"RR","Coco"],[422,"RR","Moe Uzumasa & Cat"],[423,"RR","Saki Matsuga & Cat"],[424,"RR","Misa Ono & Cat"],[425,"EX","Rei Uzumasa & Cat"],[426,"EX","Mecha-Bun"],[427,"UR","Cat Clan Heroes"],[428,"RR","Souma Cat"],[429,"SR","Otaku Geek Cat"],[430,"UR","Gude-Cat Machine"],[431,"UR","Detective Vigler"],[432,"RR","Betakkuma"],[433,"EX","Nekokkuma"],[434,"EX","White Swordsman Cat"],[435,"UR","Li'l Valkyrie"],[436,"UR","Nobiluga"],[437,"EX","Cat God the Great"],[438,"UR","Waverider Kuu"],[439,"UR","Empress Chronos"],[440,"UR","Bebe"],[441,"UR","D'arktanyan"],[442,"RR","Lone Cat and Kitten"],[443,"SR","Driller Cat"],[444,"SR","Piledriver Cat"],[445,"SR","Cutter Cat"],[446,"SR","Backhoe Cat"],[447,"SR","Miter Saw Cat"],[448,"LR","Musashi Miyamoto"],[449,"LR","Jeanne"],[450,"LR","High Lord Babel"],[451,"LR","Ushiwakamaru"],[452,"RR","Primordial Cat"],[453,"EX","Kitarou"],[454,"EX","Medama-Oyaji"],[455,"LR","Wonder MOMOCO"],[456,"UR","Sakura Matou"],[457,"EX","Shirou the Cat"],[458,"RR","Archer the Cat"],[459,"RR","Rider the Cat"],[460,"SR","Kotomine & Gilgamesh Cats"],[461,"LR","Legeluga"],[462,"EX","Filibuster Cat X"],[463,"LR","Mighty Kristul Muu"],[464,"EX","Dogumaru"],[465,"RR","Maji Cat & Cat Tour Group"],[466,"LR","Black Zeus"],[467,"UR","Super Zeus"],[468,"UR","Holy Phoenix"],[469,"UR","Super Devil"],[470,"UR","Satanmaria"],[471,"UR","Heracrist"],[472,"SR","Fiendish Nero"],[473,"RR","Prince Yamato"],[474,"EX","Rosary Angel"],[475,"EX","Wakamiko Cat"],[476,"EX","Cat Devil"],[477,"EX","Nekonosuke"],[478,"LR","Lumina"],[479,"EX","Gummy Cat"],[480,"RR","Neko-Musume"],[481,"LR","Doktor Heaven"],[482,"UR","Benevolent Souma"],[483,"RR","Kano & Souma"],[484,"UR","Li'l Valkyrie Dark"],[485,"UR","Calette"],[486,"SR","Hina"],[487,"UR","EVA Unit-08"],[488,"UR","AAA Wunder"],[489,"SR","Misato Katsuragi"],[490,"SR","Ritsuko Akagi"],[491,"SR","Rei Ayanami (???)"],[492,"RR","HAPPI"],[493,"LR","Gaia the Creator"],[494,"UR","Seabreeze Coppermine"],[495,"RR","Matador Cat"],[496,"UR","Narita Kaihime"],[497,"EX","Shakurel Cat"],[498,"EX","Shakurel Lion"],[499,"EX","Shakurel Tiger"],[500,"EX","Shakurel Panda"],[501,"RR","Cat Bros"],[502,"UR","Myrcia"],[503,"RR","2D Cat"],[504,"EX","Fatherly Cat"],[505,"UR","Relentless Gladios"],[506,"UR","Eyewaltz"],[507,"RR","Mightycat"],[508,"RR","Ryu Cat"],[509,"EX","Chun-Li Cat"],[510,"LR","Akuma"],[511,"UR","Ryu"],[512,"UR","Chun-Li"],[513,"UR","Guile"],[514,"UR","Zangief"],[515,"UR","Blanka"],[516,"UR","Dhalsim"],[517,"UR","Ken"],[518,"RR","Akuma Giraffe"],[519,"UR","Lasvoss"],[520,"SR","Good-Luck Ebisu"],[521,"RR","Medusa Cat"],[522,"SR","Nymph Cat"],[523,"RR","Wushu Cat"],[524,"RR","Sorakara"],[525,"UR","Kintaro"],[526,"UR","Snow Angel Twinstars"],[527,"RR","Slime Cat"],[528,"RR","Cossack Cat"],[529,"UR","Kasli the Scourge"],[530,"UR","Herme"],[531,"RR","Teacher BearCat"],[532,"EX","Urs & Fenrir"],[533,"UR","Sharpshooter Saki"],[534,"UR","Hades the Punisher"],[535,"UR","Hatsune Miku"],[536,"UR","Sakura Miku"],[537,"UR","Kagamine Rin & Len"],[538,"RR","Miku Cat"],[539,"RR","Rugby Cat"],[540,"RR","U.F.O. Cat"],[541,"EX","Yakisoba Cat"],[542,"EX","Cat Boy"],[543,"UR","Kasli the Bane"],[544,"LR","Kyosaka Nanaho"],[545,"RR","Phantom Cat"],[546,"UR","Papaluga"],[547,"UR","Night Oracle Rei"],[548,"UR","The 4th Angel"],[549,"UR","The 6th Angel"],[550,"UR","The 10th Angel"],[551,"UR","The 9th Angel"],[552,"RR","Kaworu Cat"],[553,"RR","Bakery Cat"],[554,"EX","Master Uril"],[555,"UR","Shaman Khan"],[556,"SR","Holy Knight Alibaba"],[557,"EX","Heavenly Jack"],[558,"EX","Gacha Cat"],[559,"UR","Hell Warden Emma"],[560,"UR","Megurine Luka"],[561,"SR","MEIKO & Cat"],[562,"RR","Luka Cat"],[563,"UR","Squirtgun Saki"],[564,"UR","Summerluga"],[565,"SR","Suntan Cat"],[566,"SR","Lifeguard Cats"],[567,"EX","Li'l Clops Cat Egg"],[568,"EX","Idi:N"],[569,"UR","Gravi"],[570,"UR","Skull Rider Vars"],[571,"UR","E. Honda"],[572,"UR","Balrog"],[573,"UR","Vega"],[574,"UR","Sagat"],[575,"UR","M. Bison"],[576,"SR","C. Honda"],[577,"RR","Balrog Cat"],[578,"RR","Vega Cat"],[579,"RR","Sagat Cat"],[580,"RR","M. Bison Cat"],[581,"RR","Stone Cat"],[582,"UR","Hatsune Miku: MM2020 Osaka"],[583,"UR","Hatsune Miku: MM2020 Tokyo"],[584,"UR","Keiji Claus"],[585,"UR","Baby Garu"],[586,"LR","Emperor Cat"],[587,"UR","Sweet Aphrodite"],[588,"UR","First-Love Myrcia"],[589,"SR","Valentine's Neneko"],[590,"UR","Snow Miku 2021"],[591,"SR","KAITO & Cat"],[592,"RR","Neko Rin"],[593,"RR","Neko Len"],[594,"UR","Mighty Aethur Ltd."],[595,"UR","Blooming Kamukura"],[596,"UR","Ranma Saotome (M)"],[597,"UR","Akane Tendo"],[598,"UR","Ryoga Hibiki (Pig)"],[599,"UR","Shampoo (Cat)"],[600,"UR","Mousse (Duck)"],[601,"SR","Happosai"],[602,"SR","Ukyo Kuonji (GR)"],[603,"SR","Tatewaki Kuno (Gi)"],[604,"RR","Ranma Cat (M)"],[605,"RR","Akane Cat"],[606,"EX","Panda Cat"],[607,"UR","Adventurer Kanna"],[608,"EX","Wafer Cat"],[609,"UR","Dark Aegis Garu"],[610,"EX","Gold Brick Cat"],[611,"RR","Godzilla Cat"],[612,"UR","Princess Cat"],[613,"EX","Elder Mask Doron"],[614,"UR","Kaguya of the Coast"],[615,"EX","Kabuto Cat"],[616,"EX","Kuwagata Cat"],[617,"UR","Summoner Satoru"],[618,"UR","Amakusa Shiro"],[619,"UR","Lilin"],[620,"UR","Hevijak the Wicked"],[621,"RR","Aku Researcher"],[622,"EX","Jagando Jr."],[623,"RR","Pied Piper Cat"],[624,"UR","Kunio-kun"],[625,"UR","Furiluga"],[626,"EX","Cat Giraffe Modoki"],[627,"EX","Catnip Tricky"],[628,"EX","Catnip Dragon"],[629,"SR","Brainwashed Cat"],[630,"RR","Calligraphy Cat"],[631,"UR","Yamii"],[632,"UR","Mighty Deth-Troy-R"],[633,"UR","Shitakiri Sparrow"],[634,"UR","White Knight Cyclops"],[635,"EX","Million-Dollar Cat"],[636,"SR","Brainwashed Tank Cat"],[637,"EX","Sora & Cat"],[638,"RR","Nana & Cat"],[639,"RR","Emilia & Cat"],[640,"EX","Ann & Cat"],[641,"UR","Iz the Dancer"],[642,"UR","Lucifer the Fallen"],[643,"N","Superfeline"],[644,"UR","Sweet Love Mekako"],[645,"SR","Brainwashed Axe Cat"],[646,"EX","Firecracker Cat"],[647,"UR","Terun"],[648,"UR","Lovestruck Lesser Demon"],[649,"UR","Hattori Hanzo"],[650,"EX","Secret Crush Cat"],[651,"EX","Tomboy Lion Cat"],[652,"EX","Chalkboard Eraser Cat"],[653,"EX","Elder Beast Naala"],[654,"SR","Brainwashed Gross Cat"],[655,"UR","Bliza"],[656,"EX","Ancient Egg: N001"],[657,"UR","Iz the Dancer of Grief"],[658,"RR","Ancient Egg: N101"],[659,"RR","Ancient Egg: N102"],[660,"UR","Sea Serpent Daliasan"],[661,"UR","Chronos the Bride"],[662,"SR","Brainwashed Cow Cat"],[663,"RR","Ancient Egg: N103"],[664,"RR","Ancient Egg: N104"],[665,"EX","Ancient Egg: N201"],[666,"UR","Night Beach Lilin"],[667,"SR","Brainwashed Bird Cat"],[668,"UR","Cat Tengu"],[669,"EX","Ancient Egg: N003"],[670,"EX","Ancient Egg: N202"],[671,"UR","Ranma Saotome (Leotard)"],[672,"SR","Genma Saotome (Panda)"],[673,"UR","Cheetah Cat"],[674,"UR","Mighty Carrowsell"],[675,"RR","Ancient Egg: N105"],[676,"RR","Ancient Egg: N106"],[677,"RR","Osamu Mikumo & Cat"],[678,"RR","Yuma Kuga & Cat"],[679,"EX","Chika Amatori & Cat"],[680,"UR","Sakura"],[681,"UR","Luke"],[682,"UR","Spectral Goth Vega"],[683,"UR","Count Yukimura"],[684,"SR","Brainwashed Fish Cat"],[685,"EX","Ancient Egg: N004"],[686,"UR","Goddess of Light Sirius"],[687,"UR","Reindeer Terun"],[688,"SR","Brainwashed Lizard Cat"],[689,"EX","Meditation Cat"],[690,"UR","Child of Destiny Phono"],[691,"EX","Ancient Egg: N000"],[692,"UR","Issun Boshi"],[693,"UR","White Butler Vigler"],[694,"SR","Brainwashed Titan Cat"],[695,"RR","Killer Tank Cat"],[696,"EX","Class Rep Cat"],[697,"RR","Ancient Egg: N107"],[698,"UR","Thunder Jack"],[699,"UR","Rabbit Satoru"],[700,"EX","Ancient Egg: N005"],[701,"RR","Kamen Rider Cat"],[702,"RR","Cat Godzilla"],[703,"RR","Evangelion Cat"],[704,"RR","Ultraman Cat"],[705,"UR","King of Doom Phono"],[706,"SR","Ancient Egg: N108"],[707,"RR","Ancient Egg: N109"],[708,"RR","Jetpack Cat"],[709,"UR","One-Eyed Asuka"],[710,"UR","EVA Unit-13"],[711,"UR","Betrothed Balaluga"],[712,"UR","Kaoluga"],[713,"EX","Ancient Egg: N203"],[714,"UR","Coastal Explorer Kanna"],[715,"UR","Mighty Sphinx Korps"],[716,"SR","Ancient Egg: N111"],[717,"RR","Ancient Egg: N110"],[718,"RR","Maize Cat"],[719,"UR","Tekachi"],[720,"EX","Ancient Egg: N006"],[721,"UR","High School Kingpin Riki"],[722,"UR","Hatsune Miku XVI"],[723,"UR","Lightmother Aset"],[724,"RR","Ancient Egg: N112"],[725,"UR","Ninja Girl Tomoe"],[726,"EX","Medal King"],[727,"UR","SOL DAE ROKKER"],[728,"EX","Master of Mind Soractes"],[729,"EX","Summon 1"],[730,"EX","Ancient Egg: N204"],[731,"LR","Daybreaker Izanagi"],[732,"LR","Summon 2"],[733,"UR","Pegasa"],[734,"UR","Summon 3"],[735,"EX","Principal Cat"],[736,"UR","Frozen Rose Cat"],[737,"UR","Floral Kalisa"],[738,"LR","Izanami of Dusk"],[739,"LR","Summon 4"],[740,"EX","Trash Cat"],[741,"UR","Voluptuous Peony - Daji"],[742,"RR","Mollyanna Cat"],[743,"RR","Madhead"],[744,"EX","Felix the Cat Duke Cat"],[745,"EX","Dotty Cat"],[746,"UR","Kenshin Himura"],[747,"UR","Sanosuke Sagara"],[748,"UR","Aoshi Shinomori"],[749,"UR","Hajime Saito"],[750,"SR","Li'l Kaoru"],[751,"SR","Li'l Yahiko"],[752,"RR","Kenshin Cat"],[753,"EX","Kaoru Cat"],[754,"UR","Akechi Mitsuhide"],[755,"UR","Summon 5"],[756,"UR","Cake Machine"],[757,"EX","Ancient Egg: N205"],[758,"UR","Trixi the Merc"],[759,"UR","Music Fest Thundia"],[760,"UR","Gunduros"],[761,"UR","Summon 6"],[762,"UR","Heavenly God Super Zeus"],[763,"UR","Dynasaurus Cat"],[764,"UR","Summon 7"],[765,"EX","Ancient Egg: N206"],[766,"EX","Sardine"],[767,"EX","Squid"],[768,"UR","Taitenki"],[769,"UR","Hanasaka Cat"],[770,"UR","Summon 8"],[771,"EX","Master of Life Dr. Nova"],[772,"UR","Pumpkin Sodom"],[773,"SR","Mummy Sumo"],[774,"UR","Mech Patrol Axel"],[775,"UR","Summon 9"],[776,"EX","Lieutenant Cat"],[777,"UR","Winter General Kaihime"],[778,"UR","Madoka Cat & Homura"],[779,"UR","Celestial Child Luna"],[780,"RR","Bowler Cat"],[781,"UR","Mamoluga"],[782,"UR","Summon 10"],[783,"UR","Koneko"],[784,"EX","Choco Capsule"],[785,"RR","Killer Gross Cat"],[786,"UR","The Amazing Catman"],[787,"UR","Netherworld Nymph Lunacia"],[788,"EX","Stealth Cat"],[789,"UR","Baki Hanma"],[790,"UR","Retsu Kaioh"],[791,"UR","Kaoru Hanayama"],[792,"UR","Katsumi Orochi"],[793,"UR","Jack Hammer"],[794,"SR","Ogre Cat"],[795,"EX","Li'l Baki"],[796,"EX","Baki Cat"],[797,"EX","Kaioh Cat"],[798,"EX","Doppo Cat"],[799,"UR","Mighty Morta-Loncha"],[800,"UR","Summon 11"],[801,"EX","Master of Logic Newton"],[802,"EX","Summon 12"],[803,"UR","Sonic"],[804,"UR","Tails"],[805,"UR","Knuckles"],[806,"UR","Shadow"],[807,"RR","Sonic Cat"],[808,"EX","Tails Cat"],[809,"RR","Shadow Cat"],[810,"UR","Agent Staal"],[811,"UR","Victorious Skanda"],[812,"UR","Summon 13"],[813,"EX","Tasmanian Giant Crab"],[814,"UR","Mass Production EVA"],[815,"LR","Moonshade Kaworu"],[816,"LR","Summon 14"],[817,"UR","Komori"],[818,"UR","Summon 15"],[819,"RR","Carpenter Cat"],[820,"UR","Seaside Pegasa"],[821,"UR","Summon 16"],[822,"EX","Consultant Cat"],[823,"EX","Manager Cat & Clerk Cat"],[824,"UR","Sorceress Sidmi"],[825,"UR","Summon 17"],[826,"UR","Cammy"],[827,"UR","Juri"],[828,"SR","Zangief Cat"],[829,"SR","Jamie Cat"],[830,"UR","Raclesa"],[831,"EX","Scarf Cat"],[832,"EX","Hat Cat"],[833,"EX","Helmet Cat"],[834,"EX","Goggle Cat"],[835,"EX","Ribbon Cat"],[836,"UR","Nyanko-Oh"],[837,"UR","Squire Luno"],[838,"UR","Summon 18"],[839,"UR","Summon 19"],[840,"UR","Tanjiro Kamado"],[841,"UR","Nezuko Kamado"],[842,"UR","Zenitsu Agatsuma"],[843,"UR","Inosuke Hashibira"],[844,"UR","Giyu Tomioka"],[845,"UR","Shinobu Kocho"],[846,"UR","Kyojuro Rengoku"],[847,"SR","Li'l Sakonji Urokodaki"],[848,"RR","Tanjiro Cat"],[849,"EX","Nezuko Cat"],[850,"UR","Fuma Kotaro"],[851,"RR","Paperboy Cat"],[852,"RR","Killer Cowbird Cat"],[853,"EX","Occultist Cat"],[854,"EX","Master of Selection Darvin"],[855,"EX","Summon 20"],[856,"RR","Nyanko Village Cat"],[857,"EX","Barista Cat"],[858,"EX","Commander Cat (13th)"],[859,"UR","Lone Moon Lunos"],[860,"UR","Summon 21"]
-];
-
-const IMG_URLS=[
-"https://static.miraheze.org/battlecatswiki/9/94/000_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d8/001_1.png",
-"https://static.miraheze.org/battlecatswiki/8/80/002_1.png",
-"https://static.miraheze.org/battlecatswiki/d/da/003_1.png",
-"https://static.miraheze.org/battlecatswiki/d/de/004_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e8/005_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6a/006_1.png",
-"https://static.miraheze.org/battlecatswiki/3/37/007_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2d/008_1.png",
-"https://static.miraheze.org/battlecatswiki/6/61/009_1.png",
-"https://static.miraheze.org/battlecatswiki/1/10/010_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8e/011_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7b/012_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ef/013_1.png",
-"https://static.miraheze.org/battlecatswiki/8/87/014_1.png",
-"https://static.miraheze.org/battlecatswiki/9/93/015_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7a/016_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0f/017_1.png",
-"https://static.miraheze.org/battlecatswiki/4/47/018_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e9/019_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0a/020_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2d/021_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d0/022_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6b/023_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e6/024_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c0/025_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ea/026_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5a/027_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3e/028_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d3/029_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bf/030_1.png",
-"https://static.miraheze.org/battlecatswiki/1/16/031_1.png",
-"https://static.miraheze.org/battlecatswiki/3/36/032_1.png",
-"https://static.miraheze.org/battlecatswiki/5/50/033_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6d/034_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2a/035_1.png",
-"https://static.miraheze.org/battlecatswiki/0/06/036_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a7/037_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ae/038_1.png",
-"https://static.miraheze.org/battlecatswiki/0/02/039_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bd/040_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0a/041_1.png",
-"https://static.miraheze.org/battlecatswiki/0/03/042_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7d/043_1.png",
-"https://static.miraheze.org/battlecatswiki/7/79/044_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a0/045_1.png",
-"https://static.miraheze.org/battlecatswiki/5/59/046_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1a/047_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a1/048_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e8/049_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f1/050_1.png",
-"https://static.miraheze.org/battlecatswiki/1/10/051_1.png",
-"https://static.miraheze.org/battlecatswiki/9/99/052_1.png",
-"https://static.miraheze.org/battlecatswiki/5/56/053_1.png",
-"https://static.miraheze.org/battlecatswiki/6/60/054_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7c/055_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3c/056_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a9/057_1.png",
-"https://static.miraheze.org/battlecatswiki/8/82/058_1.png",
-"https://static.miraheze.org/battlecatswiki/3/34/059_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8e/060_1.png",
-"https://static.miraheze.org/battlecatswiki/5/52/061_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e7/062_1.png",
-"https://static.miraheze.org/battlecatswiki/8/87/063_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9a/064_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f1/065_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e4/066_1.png",
-"https://static.miraheze.org/battlecatswiki/8/88/067_1.png",
-"https://static.miraheze.org/battlecatswiki/5/53/068_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8a/069_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a6/070_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fd/071_1.png",
-"https://static.miraheze.org/battlecatswiki/d/db/072_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a4/073_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a6/074_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f4/075_1.png",
-"https://static.miraheze.org/battlecatswiki/3/32/076_1.png",
-"https://static.miraheze.org/battlecatswiki/8/81/077_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5a/078_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0f/079_1.png",
-"https://static.miraheze.org/battlecatswiki/5/56/080_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4c/081_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ef/082_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e3/083_1.png",
-"https://static.miraheze.org/battlecatswiki/6/67/084_1.png",
-"https://static.miraheze.org/battlecatswiki/3/37/085_1.png",
-"https://static.miraheze.org/battlecatswiki/6/60/086_1.png",
-"https://static.miraheze.org/battlecatswiki/4/42/087_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a5/088_1.png",
-"https://static.miraheze.org/battlecatswiki/4/45/089_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ed/090_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bc/091_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3e/092_1.png",
-"https://static.miraheze.org/battlecatswiki/9/97/093_1.png",
-"https://static.miraheze.org/battlecatswiki/7/74/094_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1f/095_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7c/096_1.png",
-"https://static.miraheze.org/battlecatswiki/9/99/097_1.png",
-"https://static.miraheze.org/battlecatswiki/9/99/098_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1f/099_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2b/100_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3e/101_1.png",
-"https://static.miraheze.org/battlecatswiki/3/36/102_1.png",
-"https://static.miraheze.org/battlecatswiki/1/13/103_1.png",
-"https://static.miraheze.org/battlecatswiki/c/cc/104_1.png",
-"https://static.miraheze.org/battlecatswiki/0/08/105_1.png",
-"https://static.miraheze.org/battlecatswiki/2/23/106_1.png",
-"https://static.miraheze.org/battlecatswiki/5/58/107_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9a/108_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2d/109_1.png",
-"https://static.miraheze.org/battlecatswiki/d/de/110_1.png",
-"https://static.miraheze.org/battlecatswiki/0/05/111_1.png",
-"https://static.miraheze.org/battlecatswiki/2/29/112_1.png",
-"https://static.miraheze.org/battlecatswiki/7/78/113_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bc/114_1.png",
-"https://static.miraheze.org/battlecatswiki/4/45/115_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c1/116_1.png",
-"https://static.miraheze.org/battlecatswiki/0/04/117_1.png",
-"https://static.miraheze.org/battlecatswiki/9/92/118_1.png",
-"https://static.miraheze.org/battlecatswiki/9/95/119_1.png",
-"https://static.miraheze.org/battlecatswiki/3/33/120_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4d/121_1.png",
-"https://static.miraheze.org/battlecatswiki/3/30/122_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6d/123_1.png",
-"https://static.miraheze.org/battlecatswiki/6/65/124_1.png",
-"https://static.miraheze.org/battlecatswiki/d/df/125_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f4/126_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a3/127_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a2/128_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7b/129_1.png",
-"https://static.miraheze.org/battlecatswiki/5/53/130_1.png",
-"https://static.miraheze.org/battlecatswiki/2/27/131_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d3/132_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0c/133_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7a/134_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1d/135_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9b/136_1.png",
-"https://static.miraheze.org/battlecatswiki/4/49/137_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3e/138_1.png",
-"https://static.miraheze.org/battlecatswiki/9/96/139_1.png",
-"https://static.miraheze.org/battlecatswiki/2/23/140_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b1/141_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bb/142_1.png",
-"https://static.miraheze.org/battlecatswiki/3/38/143_1.png",
-"https://static.miraheze.org/battlecatswiki/6/64/144_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1c/145_1.png",
-"https://static.miraheze.org/battlecatswiki/6/62/146_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2d/147_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a8/148_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f8/149_1.png",
-"https://static.miraheze.org/battlecatswiki/7/78/150_1.png",
-"https://static.miraheze.org/battlecatswiki/1/10/151_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1e/152_1.png",
-"https://static.miraheze.org/battlecatswiki/0/07/153_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8c/154_1.png",
-"https://static.miraheze.org/battlecatswiki/9/97/155_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ed/156_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a2/157_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a8/158_1.png",
-"https://static.miraheze.org/battlecatswiki/1/19/159_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a9/160_1.png",
-"https://static.miraheze.org/battlecatswiki/2/27/161_1.png",
-"https://static.miraheze.org/battlecatswiki/5/59/162_1.png",
-"https://static.miraheze.org/battlecatswiki/4/49/163_1.png",
-"https://static.miraheze.org/battlecatswiki/c/ca/164_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7c/165_1.png",
-"https://static.miraheze.org/battlecatswiki/3/34/166_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0d/167_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f4/168_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a1/169_1.png",
-"https://static.miraheze.org/battlecatswiki/0/04/170_1.png",
-"https://static.miraheze.org/battlecatswiki/3/33/171_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1c/172_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ae/173_1.png",
-"https://static.miraheze.org/battlecatswiki/0/04/174_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3f/175_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fe/176_1.png",
-"https://static.miraheze.org/battlecatswiki/1/18/177_1.png",
-"https://static.miraheze.org/battlecatswiki/9/99/178_1.png",
-"https://static.miraheze.org/battlecatswiki/9/98/179_1.png",
-"https://static.miraheze.org/battlecatswiki/f/ff/180_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e6/181_1.png",
-"https://static.miraheze.org/battlecatswiki/9/95/182_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ed/183_1.png",
-"https://static.miraheze.org/battlecatswiki/0/04/184_1.png",
-"https://static.miraheze.org/battlecatswiki/4/42/185_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3e/186_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2e/187_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fb/188_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9d/189_1.png",
-"https://static.miraheze.org/battlecatswiki/4/44/190_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f9/191_1.png",
-"https://static.miraheze.org/battlecatswiki/0/06/192_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d1/193_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f5/194_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e2/195_1.png",
-"https://static.miraheze.org/battlecatswiki/d/dd/196_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f4/197_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6c/198_1.png",
-"https://static.miraheze.org/battlecatswiki/8/81/199_1.png",
-"https://static.miraheze.org/battlecatswiki/0/03/200_1.png",
-"https://static.miraheze.org/battlecatswiki/0/01/201_1.png",
-"https://static.miraheze.org/battlecatswiki/4/46/202_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fa/203_1.png",
-"https://static.miraheze.org/battlecatswiki/5/57/204_1.png",
-"https://static.miraheze.org/battlecatswiki/1/11/205_1.png",
-"https://static.miraheze.org/battlecatswiki/7/73/206_1.png",
-"https://static.miraheze.org/battlecatswiki/7/70/207_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a6/208_1.png",
-"https://static.miraheze.org/battlecatswiki/d/df/209_1.png",
-"https://static.miraheze.org/battlecatswiki/1/14/210_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a8/211_1.png",
-"https://static.miraheze.org/battlecatswiki/3/36/212_1.png",
-"https://static.miraheze.org/battlecatswiki/9/98/213_1.png",
-"https://static.miraheze.org/battlecatswiki/9/97/214_1.png",
-"https://static.miraheze.org/battlecatswiki/d/db/215_1.png",
-"https://static.miraheze.org/battlecatswiki/c/cf/216_1.png",
-"https://static.miraheze.org/battlecatswiki/9/99/217_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bd/218_1.png",
-"https://static.miraheze.org/battlecatswiki/1/12/219_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c0/220_1.png",
-"https://static.miraheze.org/battlecatswiki/5/58/221_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9e/222_1.png",
-"https://static.miraheze.org/battlecatswiki/9/95/223_1.png",
-"https://static.miraheze.org/battlecatswiki/2/24/224_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f5/225_1.png",
-"https://static.miraheze.org/battlecatswiki/6/67/226_1.png",
-"https://static.miraheze.org/battlecatswiki/d/dd/227_1.png",
-"https://static.miraheze.org/battlecatswiki/4/40/228_1.png",
-"https://static.miraheze.org/battlecatswiki/c/ce/229_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0f/230_1.png",
-"https://static.miraheze.org/battlecatswiki/d/dc/231_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b1/232_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5c/233_1.png",
-"https://static.miraheze.org/battlecatswiki/4/40/234_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d2/235_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d7/236_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2f/237_1.png",
-"https://static.miraheze.org/battlecatswiki/2/27/238_1.png",
-"https://static.miraheze.org/battlecatswiki/7/70/239_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ad/240_1.png",
-"https://static.miraheze.org/battlecatswiki/d/da/241_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8f/242_1.png",
-"https://static.miraheze.org/battlecatswiki/c/cd/243_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0e/244_1.png",
-"https://static.miraheze.org/battlecatswiki/4/49/245_1.png",
-"https://static.miraheze.org/battlecatswiki/9/90/246_1.png",
-"https://static.miraheze.org/battlecatswiki/1/11/247_1.png",
-"https://static.miraheze.org/battlecatswiki/0/03/248_1.png",
-"https://static.miraheze.org/battlecatswiki/2/26/249_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8c/250_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3d/251_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f4/252_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7d/253_1.png",
-"https://static.miraheze.org/battlecatswiki/8/85/254_1.png",
-"https://static.miraheze.org/battlecatswiki/8/89/255_1.png",
-"https://static.miraheze.org/battlecatswiki/9/92/256_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a2/257_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e9/258_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ef/259_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d4/260_1.png",
-"https://static.miraheze.org/battlecatswiki/3/31/261_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e1/262_1.png",
-"https://static.miraheze.org/battlecatswiki/8/88/263_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3f/264_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c2/265_1.png",
-"https://static.miraheze.org/battlecatswiki/7/72/266_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d6/267_1.png",
-"https://static.miraheze.org/battlecatswiki/4/45/268_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a8/269_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7e/270_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1b/271_1.png",
-"https://static.miraheze.org/battlecatswiki/8/82/272_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b7/273_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d9/274_1.png",
-"https://static.miraheze.org/battlecatswiki/0/07/275_1.png",
-"https://static.miraheze.org/battlecatswiki/8/83/276_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e5/277_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a2/278_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4c/279_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5d/280_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b6/281_1.png",
-"https://static.miraheze.org/battlecatswiki/2/26/282_1.png",
-"https://static.miraheze.org/battlecatswiki/2/28/283_1.png",
-"https://static.miraheze.org/battlecatswiki/c/cc/284_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f3/285_1.png",
-"https://static.miraheze.org/battlecatswiki/4/41/286_1.png",
-"https://static.miraheze.org/battlecatswiki/4/43/287_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f1/288_1.png",
-"https://static.miraheze.org/battlecatswiki/1/16/289_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fd/290_1.png",
-"https://static.miraheze.org/battlecatswiki/1/19/291_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9c/292_1.png",
-"https://static.miraheze.org/battlecatswiki/0/03/293_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d0/294_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d1/295_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b0/296_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f4/297_1.png",
-"https://static.miraheze.org/battlecatswiki/c/cd/298_1.png",
-"https://static.miraheze.org/battlecatswiki/9/91/299_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b9/300_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c6/301_1.png",
-"https://static.miraheze.org/battlecatswiki/7/79/302_1.png",
-"https://static.miraheze.org/battlecatswiki/9/98/303_1.png",
-"https://static.miraheze.org/battlecatswiki/7/75/304_1.png",
-"https://static.miraheze.org/battlecatswiki/1/17/305_1.png",
-"https://static.miraheze.org/battlecatswiki/6/67/306_1.png",
-"https://static.miraheze.org/battlecatswiki/8/82/307_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b3/308_1.png",
-"https://static.miraheze.org/battlecatswiki/2/20/309_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5e/310_1.png",
-"https://static.miraheze.org/battlecatswiki/2/20/311_1.png",
-"https://static.miraheze.org/battlecatswiki/3/39/312_1.png",
-"https://static.miraheze.org/battlecatswiki/1/19/313_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7f/314_1.png",
-"https://static.miraheze.org/battlecatswiki/8/84/315_1.png",
-"https://static.miraheze.org/battlecatswiki/6/62/316_1.png",
-"https://static.miraheze.org/battlecatswiki/8/84/317_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0f/318_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2b/319_1.png",
-"https://static.miraheze.org/battlecatswiki/6/63/320_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fc/321_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e3/322_1.png",
-"https://static.miraheze.org/battlecatswiki/0/00/323_1.png",
-"https://static.miraheze.org/battlecatswiki/5/52/324_1.png",
-"https://static.miraheze.org/battlecatswiki/c/ce/325_1.png",
-"https://static.miraheze.org/battlecatswiki/4/43/326_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7a/327_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c3/328_1.png",
-"https://static.miraheze.org/battlecatswiki/7/79/329_1.png",
-"https://static.miraheze.org/battlecatswiki/6/62/330_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b1/331_1.png",
-"https://static.miraheze.org/battlecatswiki/2/26/332_1.png",
-"https://static.miraheze.org/battlecatswiki/2/26/333_1.png",
-"https://static.miraheze.org/battlecatswiki/8/84/334_1.png",
-"https://static.miraheze.org/battlecatswiki/8/87/335_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7c/336_1.png",
-"https://static.miraheze.org/battlecatswiki/0/08/337_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d6/338_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0f/339_1.png",
-"https://static.miraheze.org/battlecatswiki/c/ca/340_1.png",
-"https://static.miraheze.org/battlecatswiki/9/93/341_1.png",
-"https://static.miraheze.org/battlecatswiki/9/96/342_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c3/343_1.png",
-"https://static.miraheze.org/battlecatswiki/8/85/344_1.png",
-"https://static.miraheze.org/battlecatswiki/1/10/345_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c3/346_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f4/347_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ec/348_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c5/349_1.png",
-"https://static.miraheze.org/battlecatswiki/4/40/350_1.png",
-"https://static.miraheze.org/battlecatswiki/9/96/351_1.png",
-"https://static.miraheze.org/battlecatswiki/1/13/352_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9a/353_1.png",
-"https://static.miraheze.org/battlecatswiki/8/86/354_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c0/355_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0e/356_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d7/357_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7d/358_1.png",
-"https://static.miraheze.org/battlecatswiki/2/24/359_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c2/360_1.png",
-"https://static.miraheze.org/battlecatswiki/5/55/361_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7d/362_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9a/363_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bc/364_1.png",
-"https://static.miraheze.org/battlecatswiki/7/75/365_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a8/366_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3f/367_1.png",
-"https://static.miraheze.org/battlecatswiki/c/cc/368_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9a/369_1.png",
-"https://static.miraheze.org/battlecatswiki/d/df/370_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d8/371_1.png",
-"https://static.miraheze.org/battlecatswiki/d/dc/372_1.png",
-"https://static.miraheze.org/battlecatswiki/1/15/373_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f8/374_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3c/375_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bc/376_1.png",
-"https://static.miraheze.org/battlecatswiki/5/53/377_1.png",
-"https://static.miraheze.org/battlecatswiki/5/55/378_1.png",
-"https://static.miraheze.org/battlecatswiki/0/02/379_1.png",
-"https://static.miraheze.org/battlecatswiki/4/42/380_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ea/381_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6d/382_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c7/383_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c0/384_1.png",
-"https://static.miraheze.org/battlecatswiki/8/84/385_1.png",
-"https://static.miraheze.org/battlecatswiki/9/95/386_1.png",
-"https://static.miraheze.org/battlecatswiki/2/20/387_1.png",
-"https://static.miraheze.org/battlecatswiki/1/13/388_1.png",
-"https://static.miraheze.org/battlecatswiki/2/21/389_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5c/390_1.png",
-"https://static.miraheze.org/battlecatswiki/5/58/391_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b6/392_1.png",
-"https://static.miraheze.org/battlecatswiki/3/36/393_1.png",
-"https://static.miraheze.org/battlecatswiki/7/78/394_1.png",
-"https://static.miraheze.org/battlecatswiki/2/26/395_1.png",
-"https://static.miraheze.org/battlecatswiki/3/39/396_1.png",
-"https://static.miraheze.org/battlecatswiki/7/72/397_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e0/398_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f2/399_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8a/400_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2e/401_1.png",
-"https://static.miraheze.org/battlecatswiki/6/69/402_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3b/403_1.png",
-"https://static.miraheze.org/battlecatswiki/d/db/404_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fe/405_1.png",
-"https://static.miraheze.org/battlecatswiki/5/56/406_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1a/407_1.png",
-"https://static.miraheze.org/battlecatswiki/7/70/408_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7d/409_1.png",
-"https://static.miraheze.org/battlecatswiki/b/ba/410_1.png",
-"https://static.miraheze.org/battlecatswiki/5/54/411_1.png",
-"https://static.miraheze.org/battlecatswiki/6/68/412_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d2/413_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3f/414_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6b/415_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d5/416_1.png",
-"https://static.miraheze.org/battlecatswiki/2/29/417_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3e/418_1.png",
-"https://static.miraheze.org/battlecatswiki/5/52/419_1.png",
-"https://static.miraheze.org/battlecatswiki/a/aa/420_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a1/421_1.png",
-"https://static.miraheze.org/battlecatswiki/8/80/422_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4f/423_1.png",
-"https://static.miraheze.org/battlecatswiki/2/25/424_1.png",
-"https://static.miraheze.org/battlecatswiki/2/26/425_1.png",
-"https://static.miraheze.org/battlecatswiki/b/be/426_1.png",
-"https://static.miraheze.org/battlecatswiki/6/67/427_1.png",
-"https://static.miraheze.org/battlecatswiki/9/91/428_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4b/429_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e8/430_1.png",
-"https://static.miraheze.org/battlecatswiki/6/61/431_1.png",
-"https://static.miraheze.org/battlecatswiki/7/79/432_1.png",
-"https://static.miraheze.org/battlecatswiki/1/14/433_1.png",
-"https://static.miraheze.org/battlecatswiki/d/dd/434_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2a/435_1.png",
-"https://static.miraheze.org/battlecatswiki/d/de/436_1.png",
-"https://static.miraheze.org/battlecatswiki/a/af/437_1.png",
-"https://static.miraheze.org/battlecatswiki/9/99/438_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2b/439_1.png",
-"https://static.miraheze.org/battlecatswiki/c/cb/440_1.png",
-"https://static.miraheze.org/battlecatswiki/2/27/441_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7e/442_1.png",
-"https://static.miraheze.org/battlecatswiki/2/22/443_1.png",
-"https://static.miraheze.org/battlecatswiki/8/85/444_1.png",
-"https://static.miraheze.org/battlecatswiki/d/da/445_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1d/446_1.png",
-"https://static.miraheze.org/battlecatswiki/9/90/447_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bf/448_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2d/449_1.png",
-"https://static.miraheze.org/battlecatswiki/6/68/450_1.png",
-"https://static.miraheze.org/battlecatswiki/d/de/451_1.png",
-"https://static.miraheze.org/battlecatswiki/9/97/452_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9e/453_1.png",
-"https://static.miraheze.org/battlecatswiki/8/87/454_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b3/455_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7e/456_1.png",
-"https://static.miraheze.org/battlecatswiki/9/97/457_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8a/458_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2d/459_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5a/460_1.png",
-"https://static.miraheze.org/battlecatswiki/1/16/461_1.png",
-"https://static.miraheze.org/battlecatswiki/1/12/462_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b7/463_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d8/464_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8c/465_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e3/466_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9d/467_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2a/468_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9c/469_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a3/470_1.png",
-"https://static.miraheze.org/battlecatswiki/3/37/471_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7b/472_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9d/473_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9b/474_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c1/475_1.png",
-"https://static.miraheze.org/battlecatswiki/9/99/476_1.png",
-"https://static.miraheze.org/battlecatswiki/3/30/477_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6b/478_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5d/479_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8c/480_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a8/481_1.png",
-"https://static.miraheze.org/battlecatswiki/5/53/482_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0c/483_1.png",
-"https://static.miraheze.org/battlecatswiki/4/45/484_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d0/485_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2b/486_1.png",
-"https://static.miraheze.org/battlecatswiki/2/27/487_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8f/488_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bb/489_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e6/490_1.png",
-"https://static.miraheze.org/battlecatswiki/6/61/491_1.png",
-"https://static.miraheze.org/battlecatswiki/6/69/492_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9f/493_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7f/494_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d0/495_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4e/496_1.png",
-"https://static.miraheze.org/battlecatswiki/9/94/497_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fb/498_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1c/499_1.png",
-"https://static.miraheze.org/battlecatswiki/6/60/500_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e6/501_1.png",
-"https://static.miraheze.org/battlecatswiki/1/17/502_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ac/503_1.png",
-"https://static.miraheze.org/battlecatswiki/7/71/504_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a6/505_1.png",
-"https://static.miraheze.org/battlecatswiki/9/90/506_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3f/507_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d0/508_1.png",
-"https://static.miraheze.org/battlecatswiki/7/79/509_1.png",
-"https://static.miraheze.org/battlecatswiki/b/be/510_1.png",
-"https://static.miraheze.org/battlecatswiki/8/86/511_1.png",
-"https://static.miraheze.org/battlecatswiki/6/64/512_1.png",
-"https://static.miraheze.org/battlecatswiki/9/94/513_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7e/514_1.png",
-"https://static.miraheze.org/battlecatswiki/0/03/515_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a3/516_1.png",
-"https://static.miraheze.org/battlecatswiki/2/27/517_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a7/518_1.png",
-"https://static.miraheze.org/battlecatswiki/2/20/519_1.png",
-"https://static.miraheze.org/battlecatswiki/0/09/520_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8d/521_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9c/522_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d8/523_1.png",
-"https://static.miraheze.org/battlecatswiki/7/78/524_1.png",
-"https://static.miraheze.org/battlecatswiki/4/47/525_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ec/526_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2f/527_1.png",
-"https://static.miraheze.org/battlecatswiki/a/aa/528_1.png",
-"https://static.miraheze.org/battlecatswiki/9/95/529_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7b/530_1.png",
-"https://static.miraheze.org/battlecatswiki/4/47/531_1.png",
-"https://static.miraheze.org/battlecatswiki/3/30/532_1.png",
-"https://static.miraheze.org/battlecatswiki/3/33/533_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1f/534_1.png",
-"https://static.miraheze.org/battlecatswiki/4/42/535_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5e/536_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e4/537_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b3/538_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a3/539_1.png",
-"https://static.miraheze.org/battlecatswiki/d/df/540_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0a/541_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8f/542_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c9/543_1.png",
-"https://static.miraheze.org/battlecatswiki/2/29/544_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ac/545_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b5/546_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c4/547_1.png",
-"https://static.miraheze.org/battlecatswiki/8/83/548_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8b/549_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3b/550_1.png",
-"https://static.miraheze.org/battlecatswiki/2/28/551_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f8/552_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3d/553_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6a/554_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a2/555_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fd/556_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b2/557_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e0/558_1.png",
-"https://static.miraheze.org/battlecatswiki/5/54/559_1.png",
-"https://static.miraheze.org/battlecatswiki/9/91/560_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c0/561_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5e/562_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6a/563_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a8/564_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6f/565_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8e/566_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a6/567_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d0/568_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fd/569_1.png",
-"https://static.miraheze.org/battlecatswiki/3/32/570_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f2/571_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b5/572_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4e/573_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6c/574_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a7/575_1.png",
-"https://static.miraheze.org/battlecatswiki/0/07/576_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e5/577_1.png",
-"https://static.miraheze.org/battlecatswiki/6/68/578_1.png",
-"https://static.miraheze.org/battlecatswiki/9/94/579_1.png",
-"https://static.miraheze.org/battlecatswiki/8/89/580_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fa/581_1.png",
-"https://static.miraheze.org/battlecatswiki/4/45/582_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c0/583_1.png",
-"https://static.miraheze.org/battlecatswiki/0/07/584_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f1/585_1.png",
-"https://static.miraheze.org/battlecatswiki/6/61/586_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2f/587_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e9/588_1.png",
-"https://static.miraheze.org/battlecatswiki/c/ce/589_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3d/590_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4b/591_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fa/592_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bf/593_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e4/594_1.png",
-"https://static.miraheze.org/battlecatswiki/4/43/595_1.png",
-"https://static.miraheze.org/battlecatswiki/8/86/596_1.png",
-"https://static.miraheze.org/battlecatswiki/8/88/597_1.png",
-"https://static.miraheze.org/battlecatswiki/2/29/598_1.png",
-"https://static.miraheze.org/battlecatswiki/6/61/599_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5a/600_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a2/601_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ae/602_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d4/603_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e9/604_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1d/605_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3c/606_1.png",
-"https://static.miraheze.org/battlecatswiki/8/83/607_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8c/608_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bb/609_1.png",
-"https://static.miraheze.org/battlecatswiki/8/87/610_1.png",
-"https://static.miraheze.org/battlecatswiki/4/43/611_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b5/612_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e8/613_1.png",
-"https://static.miraheze.org/battlecatswiki/3/38/614_1.png",
-"https://static.miraheze.org/battlecatswiki/8/82/615_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0d/616_1.png",
-"https://static.miraheze.org/battlecatswiki/0/00/617_1.png",
-"https://static.miraheze.org/battlecatswiki/6/61/618_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0c/619_1.png",
-"https://static.miraheze.org/battlecatswiki/8/80/620_1.png",
-"https://static.miraheze.org/battlecatswiki/5/54/621_1.png",
-"https://static.miraheze.org/battlecatswiki/8/85/622_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d9/623_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8b/624_1.png",
-"https://static.miraheze.org/battlecatswiki/1/16/625_1.png",
-"https://static.miraheze.org/battlecatswiki/2/23/626_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e0/627_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0f/628_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bf/629_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8c/630_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ab/631_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ab/632_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f5/633_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d4/634_1.png",
-"https://static.miraheze.org/battlecatswiki/6/65/635_1.png",
-"https://static.miraheze.org/battlecatswiki/7/76/636_1.png",
-"https://static.miraheze.org/battlecatswiki/6/60/637_1.png",
-"https://static.miraheze.org/battlecatswiki/6/65/638_1.png",
-"https://static.miraheze.org/battlecatswiki/9/92/639_1.png",
-"https://static.miraheze.org/battlecatswiki/3/39/640_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ef/641_1.png",
-"https://static.miraheze.org/battlecatswiki/6/66/642_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d8/643_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c0/644_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a0/645_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d9/646_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4a/647_1.png",
-"https://static.miraheze.org/battlecatswiki/2/28/648_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4c/649_1.png",
-"https://static.miraheze.org/battlecatswiki/6/65/650_1.png",
-"https://static.miraheze.org/battlecatswiki/3/35/651_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d7/652_1.png",
-"https://static.miraheze.org/battlecatswiki/9/92/653_1.png",
-"https://static.miraheze.org/battlecatswiki/1/10/654_1.png",
-"https://static.miraheze.org/battlecatswiki/6/61/655_1.png",
-"https://static.miraheze.org/battlecatswiki/0/07/656_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6e/657_1.png",
-"https://static.miraheze.org/battlecatswiki/0/06/658_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2c/659_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6f/660_1.png",
-"https://static.miraheze.org/battlecatswiki/0/01/661_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b1/662_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9e/663_1.png",
-"https://static.miraheze.org/battlecatswiki/6/61/664_1.png",
-"https://static.miraheze.org/battlecatswiki/c/cb/665_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ed/666_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a5/667_1.png",
-"https://static.miraheze.org/battlecatswiki/7/79/668_1.png",
-"https://static.miraheze.org/battlecatswiki/b/be/669_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c2/670_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6e/671_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c1/672_1.png",
-"https://static.miraheze.org/battlecatswiki/5/54/673_1.png",
-"https://static.miraheze.org/battlecatswiki/7/74/674_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ac/675_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0f/676_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fb/677_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8c/678_1.png",
-"https://static.miraheze.org/battlecatswiki/8/82/679_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d1/680_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9b/681_1.png",
-"https://static.miraheze.org/battlecatswiki/7/78/682_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ac/683_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ab/684_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ee/685_1.png",
-"https://static.miraheze.org/battlecatswiki/e/eb/686_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1a/687_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3b/688_1.png",
-"https://static.miraheze.org/battlecatswiki/2/21/689_1.png",
-"https://static.miraheze.org/battlecatswiki/7/79/690_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ea/691_1.png",
-"https://static.miraheze.org/battlecatswiki/8/80/692_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4c/693_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8b/694_1.png",
-"https://static.miraheze.org/battlecatswiki/9/98/695_1.png",
-"https://static.miraheze.org/battlecatswiki/7/76/696_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f4/697_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9f/698_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fc/699_1.png",
-"https://static.miraheze.org/battlecatswiki/0/07/700_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d9/701_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5c/702_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e2/703_1.png",
-"https://static.miraheze.org/battlecatswiki/6/67/704_1.png",
-"https://static.miraheze.org/battlecatswiki/e/eb/705_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1f/706_1.png",
-"https://static.miraheze.org/battlecatswiki/5/55/707_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b4/708_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3e/709_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ef/710_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c8/711_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0d/712_1.png",
-"https://static.miraheze.org/battlecatswiki/1/19/713_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ac/714_1.png",
-"https://static.miraheze.org/battlecatswiki/6/61/715_1.png",
-"https://static.miraheze.org/battlecatswiki/2/22/716_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4d/717_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ad/718_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ac/719_1.png",
-"https://static.miraheze.org/battlecatswiki/0/09/720_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b6/721_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4e/722_1.png",
-"https://static.miraheze.org/battlecatswiki/5/56/723_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b3/724_1.png",
-"https://static.miraheze.org/battlecatswiki/1/13/725_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b7/726_1.png",
-"https://static.miraheze.org/battlecatswiki/5/55/727_1.png",
-"https://static.miraheze.org/battlecatswiki/0/02/728_1.png",
-"https://static.miraheze.org/battlecatswiki/2/24/729_1.png",
-"https://static.miraheze.org/battlecatswiki/6/66/730_1.png",
-"https://static.miraheze.org/battlecatswiki/a/af/731_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0b/732_1.png",
-"https://static.miraheze.org/battlecatswiki/0/06/733_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f5/734_1.png",
-"https://static.miraheze.org/battlecatswiki/8/88/735_1.png",
-"https://static.miraheze.org/battlecatswiki/6/69/736_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5b/737_1.png",
-"https://static.miraheze.org/battlecatswiki/1/11/738_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6f/739_1.png",
-"https://static.miraheze.org/battlecatswiki/7/72/740_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bf/741_1.png",
-"https://static.miraheze.org/battlecatswiki/2/26/742_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a9/743_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5a/744_1.png",
-"https://static.miraheze.org/battlecatswiki/9/9d/745_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0d/746_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c9/747_1.png",
-"https://static.miraheze.org/battlecatswiki/d/dd/748_1.png",
-"https://static.miraheze.org/battlecatswiki/9/92/749_1.png",
-"https://static.miraheze.org/battlecatswiki/9/90/750_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e1/751_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ae/752_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c4/753_1.png",
-"https://static.miraheze.org/battlecatswiki/8/80/754_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4c/755_1.png",
-"https://static.miraheze.org/battlecatswiki/5/53/756_1.png",
-"https://static.miraheze.org/battlecatswiki/5/52/757_1.png",
-"https://static.miraheze.org/battlecatswiki/7/70/758_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1b/759_1.png",
-"https://static.miraheze.org/battlecatswiki/1/1a/760_1.png",
-"https://static.miraheze.org/battlecatswiki/e/ec/761_1.png",
-"https://static.miraheze.org/battlecatswiki/0/03/762_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3d/763_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5b/764_1.png",
-"https://static.miraheze.org/battlecatswiki/9/90/765_1.png",
-"https://static.miraheze.org/battlecatswiki/0/03/766_1.png",
-"https://static.miraheze.org/battlecatswiki/1/14/767_1.png",
-"https://static.miraheze.org/battlecatswiki/9/95/768_1.png",
-"https://static.miraheze.org/battlecatswiki/7/76/769_1.png",
-"https://static.miraheze.org/battlecatswiki/c/cb/770_1.png",
-"https://static.miraheze.org/battlecatswiki/a/ae/771_1.png",
-"https://static.miraheze.org/battlecatswiki/8/89/772_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d0/773_1.png",
-"https://static.miraheze.org/battlecatswiki/4/40/774_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4e/775_1.png",
-"https://static.miraheze.org/battlecatswiki/8/86/776_1.png",
-"https://static.miraheze.org/battlecatswiki/6/60/777_1.png",
-"https://static.miraheze.org/battlecatswiki/4/47/778_1.png",
-"https://static.miraheze.org/battlecatswiki/9/96/779_1.png",
-"https://static.miraheze.org/battlecatswiki/9/90/780_1.png",
-"https://static.miraheze.org/battlecatswiki/2/21/781_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f4/782_1.png",
-"https://static.miraheze.org/battlecatswiki/0/02/783_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7b/784_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f1/785_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b2/786_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4d/787_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6d/788_1.png",
-"https://static.miraheze.org/battlecatswiki/7/75/789_1.png",
-"https://static.miraheze.org/battlecatswiki/f/f8/790_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b5/791_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fa/792_1.png",
-"https://static.miraheze.org/battlecatswiki/8/88/793_1.png",
-"https://static.miraheze.org/battlecatswiki/6/69/794_1.png",
-"https://static.miraheze.org/battlecatswiki/2/20/795_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a5/796_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4e/797_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5f/798_1.png",
-"https://static.miraheze.org/battlecatswiki/d/df/799_1.png",
-"https://static.miraheze.org/battlecatswiki/6/64/800_1.png",
-"https://static.miraheze.org/battlecatswiki/1/12/801_1.png",
-"https://static.miraheze.org/battlecatswiki/a/a8/802_1.png",
-"https://static.miraheze.org/battlecatswiki/5/52/803_1.png",
-"https://static.miraheze.org/battlecatswiki/e/e8/804_1.png",
-"https://static.miraheze.org/battlecatswiki/c/cf/805_1.png",
-"https://static.miraheze.org/battlecatswiki/b/be/806_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5a/807_1.png",
-"https://static.miraheze.org/battlecatswiki/1/12/808_1.png",
-"https://static.miraheze.org/battlecatswiki/0/0c/809_1.png",
-"https://static.miraheze.org/battlecatswiki/9/96/810_1.png",
-"https://static.miraheze.org/battlecatswiki/d/db/811_1.png",
-"https://static.miraheze.org/battlecatswiki/1/18/812_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7d/813_1.png",
-"https://static.miraheze.org/battlecatswiki/4/42/814_1.png",
-"https://static.miraheze.org/battlecatswiki/f/fa/815_1.png",
-"https://static.miraheze.org/battlecatswiki/d/da/816_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b6/817_1.png",
-"https://static.miraheze.org/battlecatswiki/a/aa/818_1.png",
-"https://static.miraheze.org/battlecatswiki/9/98/819_1.png",
-"https://static.miraheze.org/battlecatswiki/4/46/820_1.png",
-"https://static.miraheze.org/battlecatswiki/6/6c/821_1.png",
-"https://static.miraheze.org/battlecatswiki/4/41/822_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7e/823_1.png",
-"https://static.miraheze.org/battlecatswiki/1/16/824_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7d/825_1.png",
-"https://static.miraheze.org/battlecatswiki/6/68/826_1.png",
-"https://static.miraheze.org/battlecatswiki/a/af/827_1.png",
-"https://static.miraheze.org/battlecatswiki/4/46/828_1.png",
-"https://static.miraheze.org/battlecatswiki/d/d6/829_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2d/830_1.png",
-"https://static.miraheze.org/battlecatswiki/3/39/831_1.png",
-"https://static.miraheze.org/battlecatswiki/4/41/832_1.png",
-"https://static.miraheze.org/battlecatswiki/b/ba/833_1.png",
-"https://static.miraheze.org/battlecatswiki/1/13/834_1.png",
-"https://static.miraheze.org/battlecatswiki/3/3e/835_1.png",
-"https://static.miraheze.org/battlecatswiki/4/4f/836_1.png",
-"https://static.miraheze.org/battlecatswiki/2/2d/837_1.png",
-"https://static.miraheze.org/battlecatswiki/3/33/838_1.png",
-"https://static.miraheze.org/battlecatswiki/7/71/839_1.png",
-"https://static.miraheze.org/battlecatswiki/6/64/840_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5d/841_1.png",
-"https://static.miraheze.org/battlecatswiki/c/c0/842_1.png",
-"https://static.miraheze.org/battlecatswiki/9/95/843_1.png",
-"https://static.miraheze.org/battlecatswiki/1/18/844_1.png",
-"https://static.miraheze.org/battlecatswiki/9/97/845_1.png",
-"https://static.miraheze.org/battlecatswiki/1/10/846_1.png",
-"https://static.miraheze.org/battlecatswiki/b/b9/847_1.png",
-"https://static.miraheze.org/battlecatswiki/3/39/848_1.png",
-"https://static.miraheze.org/battlecatswiki/5/50/849_1.png",
-"https://static.miraheze.org/battlecatswiki/3/30/850_1.png",
-"https://static.miraheze.org/battlecatswiki/c/ca/851_1.png",
-"https://static.miraheze.org/battlecatswiki/1/14/852_1.png",
-"https://static.miraheze.org/battlecatswiki/8/8e/853_1.png",
-"https://static.miraheze.org/battlecatswiki/7/7e/854_1.png",
-"https://static.miraheze.org/battlecatswiki/5/53/855_1.png",
-"https://static.miraheze.org/battlecatswiki/9/94/856_1.png",
-"https://static.miraheze.org/battlecatswiki/5/5e/857_1.png",
-"https://static.miraheze.org/battlecatswiki/b/bc/858_1.png",
-"https://static.miraheze.org/battlecatswiki/3/38/859_1.png",
-"https://static.miraheze.org/battlecatswiki/4/49/860_1.png"
-];
-
-function imgUrl(id){ return IMG_URLS[id]||''; }
-
-function wikiPage(name){
-  const MAP={
-    "Cat":"Cat_(Normal_Cat)","Tank Cat":"Tank_Cat_(Normal_Cat)",
-    "Axe Cat":"Axe_Cat_(Normal_Cat)","Gross Cat":"Gross_Cat_(Normal_Cat)",
-    "Cow Cat":"Cow_Cat_(Normal_Cat)","Bird Cat":"Bird_Cat_(Normal_Cat)",
-    "Fish Cat":"Fish_Cat_(Normal_Cat)","Lizard Cat":"Lizard_Cat_(Normal_Cat)",
-    "Titan Cat":"Titan_Cat_(Normal_Cat)"
-  };
-  const page=MAP[name]||name.replace(/ /g,'_');
-  return 'https://battlecats.miraheze.org/wiki/'+encodeURIComponent(page);
+let h = 5, m = 59, s = 43;
+function tick() {
+  s--;
+  if (s < 0) { s = 59; m--; }
+  if (m < 0) { m = 59; h--; }
+  if (h < 0) { h = 5; m = 59; s = 59; }
+  document.getElementById('t-h').textContent = String(h).padStart(2,'0');
+  document.getElementById('t-m').textContent = String(m).padStart(2,'0');
+  document.getElementById('t-s').textContent = String(s).padStart(2,'0');
 }
+setInterval(tick, 1000);
 
-const imgCache={};
-let activeTier='';
-
-/* ═══════════ PRELOADER LOGIC ═══════════ */
-const TOTAL_CATS = DATA.length;          // 861
-const PHASE1_TARGET = Math.floor(TOTAL_CATS * 0.90); // 90% = ~775
-const BATCH = 20;
-const BATCH_MS = 80;
-
-const preFill  = document.getElementById('pre-fill');
-const prePct   = document.getElementById('pre-pct');
-const preCount = document.getElementById('pre-count');
-const preloader= document.getElementById('preloader');
-const mainContent = document.getElementById('main-content');
-const miniBarFill = document.getElementById('mini-bar-fill');
-
-preCount.textContent = '0 / '+PHASE1_TARGET+' ตัว';
-
-let loadedCount = 0;
-let preloaderDone = false;
-
-function onImageSettled(id, src){
-  imgCache[id] = src;
-  loadedCount++;
-
-  // update preloader bar (0 → 90%)
-  if(!preloaderDone){
-    const pct = Math.min(Math.round((loadedCount/PHASE1_TARGET)*100), 100);
-    preFill.style.width = pct+'%';
-    prePct.textContent = pct+'%';
-    preCount.textContent = loadedCount+' / '+PHASE1_TARGET+' ตัว';
-
-    if(loadedCount >= PHASE1_TARGET){
-      preloaderDone = true;
-      dismissPreloader();
-    }
-  } else {
-    // after preloader → update mini top bar (90% → 100%)
-    const remaining = TOTAL_CATS - PHASE1_TARGET;
-    const doneAfter = loadedCount - PHASE1_TARGET;
-    const pct90 = 90 + Math.round((doneAfter/remaining)*10);
-    miniBarFill.style.width = Math.min(pct90,100)+'%';
-    if(loadedCount >= TOTAL_CATS){
-      setTimeout(()=>{ document.getElementById('mini-bar').style.opacity='0'; },800);
-    }
+// Set active nav link
+document.querySelectorAll('.nav-links a').forEach(link => {
+  if (link.href === window.location.href) {
+    link.classList.add('active');
   }
-}
+});
 
-function dismissPreloader(){
-  preFill.style.width='100%';
-  prePct.textContent='100%';
-  preCount.textContent=PHASE1_TARGET+' / '+PHASE1_TARGET+' ตัว';
-  setTimeout(()=>{
-    preloader.classList.add('hide');
-    mainContent.classList.add('show');
-    document.body.classList.add('ready');
-    // mini bar starts at 90%
-    miniBarFill.style.width='90%';
-    // render table now
-    filter();
-    // continue loading remaining 10%
-    loadRange(PHASE1_TARGET, TOTAL_CATS-1);
-  }, 350);
-  setTimeout(()=>{ preloader.style.display='none'; }, 1000);
-}
-
-function loadBatch(ids){
-  ids.forEach(idx=>{
-    const id = DATA[idx][0];
-    if(imgCache[id]){ onImageSettled(id, imgCache[id]); return; }
-    const img = new Image();
-    img.onload = ()=>onImageSettled(id, img.src);
-    img.onerror=()=>onImageSettled(id, 'error');
-    img.src = imgUrl(id);
-  });
-}
-
-function loadRange(start, end){
-  let i = start;
-  function step(){
-    if(i>end) return;
-    const batch=[];
-    for(let j=0;j<BATCH&&i<=end;j++,i++) batch.push(i);
-    loadBatch(batch);
-    setTimeout(step, BATCH_MS);
-  }
-  step();
-}
-
-// Start loading phase 1 immediately (indices 0 → PHASE1_TARGET-1)
-loadRange(0, PHASE1_TARGET-1);
-
-/* ═══════════ TABLE ═══════════ */
-function setTier(btn){
-  document.querySelectorAll('.tier-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  activeTier=btn.dataset.t;
-  filter();
-}
-
-function filter(){
-  const q=document.getElementById('q').value.toLowerCase().trim();
-  const tbody=document.getElementById('tbody');
-  const noRes=document.getElementById('no-results');
-  const filtered=DATA.filter(r=>{
-    const tok=!activeTier||r[1]===activeTier;
-    const nok=r[2].toLowerCase().includes(q)||String(r[0]).includes(q);
-    return tok&&nok;
-  });
-  document.getElementById('shown').textContent=filtered.length;
-  if(!filtered.length){ tbody.innerHTML=''; noRes.style.display='block'; return; }
-  noRes.style.display='none';
-  tbody.innerHTML=filtered.map(([id,tier,name])=>
-    `<tr onmouseenter="showTip(event,${id},'${name.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}','${tier}')"
-         onmouseleave="hideTip()" onmousemove="moveTip(event)">
-      <td class="id-cell">${id}</td>
-      <td><span class="tier-badge t-${tier}">${tier}</span></td>
-      <td class="name-cell">${name}</td>
-      <td><a class="wiki-link" href="${wikiPage(name)}" target="_blank" onclick="event.stopPropagation()">Wiki ↗</a></td>
-    </tr>`
-  ).join('');
-}
-
-/* ═══════════ TOOLTIP ═══════════ */
-const tip=document.getElementById('tooltip');
-const tipImgArea=document.getElementById('tip-img-area');
-const tipName=document.getElementById('tip-name');
-const tipBadge=document.getElementById('tip-tier-badge');
-const tipId=document.getElementById('tip-id');
-const TIER_CLS={N:'t-N',EX:'t-EX',RR:'t-RR',SR:'t-SR',UR:'t-UR',LR:'t-LR'};
-
-function showTip(e,id,name,tier){
-  tipName.textContent=name;
-  tipBadge.textContent=tier;
-  tipBadge.className='tier-badge '+(TIER_CLS[tier]||'');
-  tipId.textContent='# '+id;
-  const cached=imgCache[id];
-  if(cached==='error'){
-    tipImgArea.innerHTML='<div class="tip-loading">🐾 ไม่มีรูป</div>';
-  } else if(cached){
-    tipImgArea.innerHTML=`<img src="${cached}" alt="${name}">`;
-  } else {
-    tipImgArea.innerHTML='<div class="tip-loading">กำลังโหลด...</div>';
-    const img=new Image();
-    img.onload=()=>{ imgCache[id]=img.src; if(tip.style.display!=='none') tipImgArea.innerHTML=`<img src="${img.src}" alt="${name}">`; };
-    img.onerror=()=>{ imgCache[id]='error'; if(tip.style.display!=='none') tipImgArea.innerHTML='<div class="tip-loading">🐾 ไม่มีรูป</div>'; };
-    img.src=imgUrl(id);
-  }
-  tip.style.display='block';
-  moveTip(e);
-}
-
-function moveTip(e){
-  const pad=18;
-  let x=e.clientX+pad, y=e.clientY+pad;
-  const tw=190,th=230;
-  if(x+tw>window.innerWidth-pad) x=e.clientX-tw-pad;
-  if(y+th>window.innerHeight-pad) y=e.clientY-th-pad;
-  tip.style.left=x+'px'; tip.style.top=y+'px';
-}
-
-function hideTip(){ tip.style.display='none'; }
-
-document.getElementById('total').textContent=TOTAL_CATS;
+// Update cart count on load
+window.addEventListener('load', () => {
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  document.getElementById('cartCount').textContent = cart.length;
+});
 </script>
+
 </body>
 </html>
