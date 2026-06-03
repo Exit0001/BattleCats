@@ -8,7 +8,7 @@ var DB = window.supabase.createClient(
 // ║  PromptPay — ใส่เบอร์โทรหรือเลขประจำตัวที่นี่    ║
 // ║  เช่น '0812345678' หรือ '1234567890123'          ║
 // ╚══════════════════════════════════════════════════╝
-var PROMPTPAY_ID = ''; // ← ใส่เบอร์ PromptPay ของคุณ
+var PROMPTPAY_ID = '0634515901'; // ← ใส่เบอร์ PromptPay ของคุณ
 
 // ── PromptPay QR Generator (EMVCo standard) ────────────────────
 var PromptPay = (function () {

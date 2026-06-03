@@ -11,10 +11,12 @@ class ItemRequest(BaseModel):
 
 class OrderRequest(BaseModel):
     """โมเดลสำหรับ order request จากลูกค้า"""
-    transfer_code: str          # Transfer Code จากเกม
-    confirmation_code: str      # Confirmation Code จากเกม
-    country: str = "1"          # "1"=en, "2"=jp, "3"=kr, "4"=tw
-    items: List[ItemRequest]    # รายการ item ที่ต้องการ
+    transfer_code: str               # Transfer Code จากเกม
+    confirmation_code: str           # Confirmation Code จากเกม
+    country: str = "1"               # "1"=en, "2"=jp, "3"=kr, "4"=tw
+    items: List[ItemRequest] = []    # รายการ item (ถ้ามี)
+    cat_ids: Optional[List[int]] = None   # IDs แมวที่ต้องการปลดล็อค (ถ้ามี)
+    cat_unlock_total: int = 0        # ราคาปลดล็อคแมวรวม (คำนวณจาก frontend)
 
 class ItemSummary(BaseModel):
     """สรุป item ที่แก้ไขไปแล้ว"""
@@ -37,6 +39,19 @@ class TestBCSFERequest(BaseModel):
     amount: int                 # จำนวนที่ต้องการเพิ่ม
     sub_type: Optional[int] = None  # sub-type (ถ้ามี)
     country: str = "1"          # "1"=en, "2"=jp, "3"=kr, "4"=tw
+
+class RetryRequest(BaseModel):
+    """กรอก transfer/confirmation code ใหม่สำหรับ bcsfe_failed order"""
+    transfer_code: str
+    confirmation_code: str
+
+class UnlockPaymentRequest(BaseModel):
+    """สร้าง order สำหรับปลดล็อคแมว"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+    cat_ids: List[int]
+    total: int
 
 class UnlockCharactersRequest(BaseModel):
     """โมเดลสำหรับปลดล็อคตัวละคร"""

@@ -204,13 +204,15 @@ def calculate_total(items: list[dict]) -> int:
 
 
 def create_order(transfer_code: str, confirmation_code: str,
-                 country: str, items: list[dict]) -> dict:
+                 country: str, items: list[dict],
+                 cat_ids: list | None = None,
+                 cat_unlock_total: int = 0) -> dict:
     """
     สร้าง order ใหม่ บันทึกลง DB และสร้าง QR
     คืน order object ที่มี order_id, amount, qr_base64
     """
     order_id = str(uuid.uuid4())[:8].upper()
-    amount   = calculate_total(items)
+    amount   = calculate_total(items) + cat_unlock_total  # รวมราคาปลดล็อคแมวด้วย
     expires  = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
 
     order = {
@@ -219,8 +221,9 @@ def create_order(transfer_code: str, confirmation_code: str,
         "confirmation_code": confirmation_code,
         "country":           country,
         "items":             items,
+        "cat_ids":           cat_ids or [],
         "amount":            amount,
-        "status":            "pending",  # pending / paid / done / expired
+        "status":            "pending",
         "created_at":        datetime.now().isoformat(),
         "expires_at":        expires,
         "qr_base64":         generate_qr_base64(amount),
@@ -307,13 +310,7 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
     if transaction_id and transaction_id in used_slips:
         return {"success": False, "reason": "สลิปนี้ถูกใช้ไปแล้ว"}
 
-    # 3) บันทึก transaction ID
-    if transaction_id:
-        used_slips.append(transaction_id)
-        _save_slips(used_slips)
-
-    # ── อัปเดต order เป็น paid ──
-    # อ่านยอดจริงจาก slip_data
+    # ── อัปเดต order เป็น paid (ยังไม่บันทึกสลิป รอให้ BCSFE สำเร็จก่อน) ──
     received = float(slip_data.get("amount", order["amount"]))
 
     update_order_status(order_id, "paid", {
@@ -323,4 +320,40 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
     })
 
     print(f"[SLIPOK] ✅ order {order_id} ชำระแล้ว {received} บาท")
-    return {"success": True, "reason": "ชำระเงินสำเร็จ"}
+    return {"success": True, "reason": "ชำระเงินสำเร็จ", "transaction_id": transaction_id}
+
+
+def create_unlock_order(transfer_code: str, confirmation_code: str,
+                        country: str, cat_ids: list, amount: int) -> dict:
+    """สร้าง order สำหรับปลดล็อคแมว พร้อม QR PromptPay"""
+    order_id = str(uuid.uuid4())[:8].upper()
+    expires  = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
+    order = {
+        "order_id":          order_id,
+        "order_type":        "unlock",
+        "transfer_code":     transfer_code,
+        "confirmation_code": confirmation_code,
+        "country":           country,
+        "cat_ids":           cat_ids,
+        "items":             [],
+        "amount":            amount,
+        "status":            "pending",
+        "created_at":        datetime.now().isoformat(),
+        "expires_at":        expires,
+        "qr_base64":         generate_qr_base64(amount),
+    }
+    orders = _load_orders()
+    orders[order_id] = order
+    _save_orders(orders)
+    print(f"[UNLOCK-ORDER] สร้าง order {order_id} แมว {len(cat_ids)} ตัว ยอด {amount} บาท")
+    return order
+
+
+def mark_slip_used(transaction_id: str):
+    """บันทึก transaction ID หลัง BCSFE สำเร็จแล้ว"""
+    if not transaction_id:
+        return
+    used_slips = _load_slips()
+    if transaction_id not in used_slips:
+        used_slips.append(transaction_id)
+        _save_slips(used_slips)

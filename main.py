@@ -2,24 +2,69 @@
 
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, Response
 import os
+import httpx
+import asyncio
 import shutil
 from pathlib import Path
 from datetime import datetime
-from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest
+from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest
 from runner import BCSFERunner
 from config import ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES
 from payment import (
     ITEM_PRICE,
     create_order as create_payment_order,
+    create_unlock_order,
     get_order,
     is_order_expired,
     update_order_status,
     verify_slip,
+    mark_slip_used,
 )
 
 # Import เพิ่มเติมสำหรับ /api/orders/list
 from payment import ORDER_DB
+
+# ── Cat image proxy — disk cache ──────────────────────────────
+CAT_CACHE_DIR = Path("pictures/cats")
+CAT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+# semaphore ป้องกัน fetch พร้อมกันมากเกิน
+_fetch_sem = asyncio.Semaphore(8)
+
+HEADERS = {"User-Agent": "BattleCatsShop/1.0 (image-proxy)"}
+
+# URL patterns — Miraheze เท่านั้น (Fandom block hotlink 403)
+# pattern 1: Gatyachara_{id:03d}_f.png  → cats ทั่วไป 836+ ตัว
+# pattern 2: Uni{id}_s00.png            → Ancient Egg series และ special cats
+def _cat_img_urls(cat_id: int) -> list[str]:
+    p3 = f"{cat_id:03d}"
+    return [
+        f"https://battlecats.miraheze.org/wiki/Special:FilePath/Gatyachara_{p3}_f.png",
+        f"https://battlecats.miraheze.org/wiki/Special:FilePath/Uni{cat_id}_s00.png",
+    ]
+
+
+async def _fetch_cat_image(cat_id: int) -> bytes | None:
+    cache_path = CAT_CACHE_DIR / f"{cat_id}.png"
+    if cache_path.exists():
+        return cache_path.read_bytes()
+
+    async with _fetch_sem:
+        async with httpx.AsyncClient(timeout=10, follow_redirects=True) as client:
+            for url in _cat_img_urls(cat_id):
+                try:
+                    r = await client.get(url, headers=HEADERS)
+                    ct = r.headers.get("content-type", "")
+                    if r.status_code == 200 and ct.startswith("image"):
+                        cache_path.write_bytes(r.content)
+                        return r.content
+                except Exception:
+                    continue
+    return None
+
 
 # โฟลเดอร์เก็บ backup save files
 BACKUP_DIR = Path("saves_backup")
@@ -78,9 +123,12 @@ def get_items():
 
 @app.post("/api/payment/create")
 async def payment_create(order: OrderRequest):
-    """สร้าง order สำหรับการชำระด้วย QR และเก็บข้อมูลไว้ใน DB"""
-    if not order.items or len(order.items) == 0:
-        raise HTTPException(status_code=400, detail="ต้องเลือก item อย่างน้อย 1 ชิ้น")
+    """สร้าง order — รองรับ items, cat_ids, หรือทั้งสองพร้อมกัน"""
+    has_items  = bool(order.items)
+    has_unlock = bool(order.cat_ids)
+
+    if not has_items and not has_unlock:
+        raise HTTPException(status_code=400, detail="ต้องเลือก item หรือแมวที่จะปลดล็อคอย่างน้อย 1 รายการ")
 
     if order.country not in COUNTRIES:
         raise HTTPException(status_code=400, detail=f"Country ไม่ถูกต้อง: {order.country}")
@@ -98,14 +146,73 @@ async def payment_create(order: OrderRequest):
         confirmation_code=order.confirmation_code,
         country=order.country,
         items=[{"key": item.key, "amount": item.amount} for item in order.items],
+        cat_ids=order.cat_ids,
+        cat_unlock_total=order.cat_unlock_total,
     )
 
     return {
         "order_id": payment_order["order_id"],
-        "amount": payment_order["amount"],
+        "amount":   payment_order["amount"],
         "qr_base64": payment_order["qr_base64"],
         "expires_at": payment_order["expires_at"],
     }
+
+@app.post("/api/payment/create-unlock")
+async def payment_create_unlock(body: UnlockPaymentRequest):
+    """สร้าง order ปลดล็อคแมว พร้อม QR PromptPay"""
+    if not body.cat_ids:
+        raise HTTPException(status_code=400, detail="ต้องเลือกแมวอย่างน้อย 1 ตัว")
+    if body.total <= 0:
+        raise HTTPException(status_code=400, detail="ยอดชำระต้องมากกว่า 0")
+
+    order = create_unlock_order(
+        transfer_code=body.transfer_code,
+        confirmation_code=body.confirmation_code,
+        country=body.country,
+        cat_ids=body.cat_ids,
+        amount=body.total,
+    )
+    return {
+        "order_id":   order["order_id"],
+        "amount":     order["amount"],
+        "qr_base64":  order["qr_base64"],
+        "expires_at": order["expires_at"],
+    }
+
+
+def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
+    """รัน BCSFE ทั้ง 2 steps (items → unlock) คืน {success, new_tc, new_cc, summary, error}"""
+    has_items  = bool(order.get("items"))
+    has_unlock = bool(order.get("cat_ids")) or order.get("order_type") == "unlock"
+    cur_tc, cur_cc = tc, cc
+    summary = []
+
+    if has_items:
+        runner = BCSFERunner(transfer=cur_tc, confirm=cur_cc, country=order["country"])
+        result = runner.run(order["items"])
+        if not result["success"]:
+            return {"success": False, "error": result["error"]}
+        codes = result["new_transfer_code"]
+        cur_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+        cur_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+        summary += [{"item": ITEM_MAP[i["key"]]["label"], "amount": i["amount"]}
+                    for i in order["items"] if i["key"] in ITEM_MAP]
+        print(f"[BCSFE] ✅ Items done → tc={cur_tc}")
+
+    if has_unlock:
+        cat_ids = order.get("cat_ids") or []
+        runner2 = BCSFERunner(transfer=cur_tc, confirm=cur_cc, country=order["country"])
+        result2 = runner2.run_unlock_characters(cat_ids)
+        if not result2["success"]:
+            return {"success": False, "error": result2["error"]}
+        codes2 = result2["new_transfer_code"]
+        cur_tc = codes2.get("transfer") if isinstance(codes2, dict) else codes2
+        cur_cc = codes2.get("confirmation") if isinstance(codes2, dict) else None
+        summary.append({"item": f"ปลดล็อคแมว {len(cat_ids)} ตัว", "amount": len(cat_ids)})
+        print(f"[BCSFE] ✅ Unlock done → tc={cur_tc}")
+
+    return {"success": True, "new_tc": cur_tc, "new_cc": cur_cc, "summary": summary}
+
 
 @app.post("/api/payment/verify/{order_id}")
 async def payment_verify(order_id: str, slip: UploadFile = File(...)):
@@ -117,7 +224,12 @@ async def payment_verify(order_id: str, slip: UploadFile = File(...)):
     if is_order_expired(order):
         raise HTTPException(status_code=400, detail="order หมดอายุแล้ว กรุณาสั่งใหม่")
 
-    if order["status"] in ("paid", "done"):
+    # bcsfe_failed = ชำระแล้วแต่ code ผิด → บอก frontend ให้แสดง retry form
+    if order["status"] == "bcsfe_failed":
+        return {"success": False, "bcsfe_failed": True,
+                "error": "สลิปผ่านแล้วแต่ Code ไม่ถูกต้อง กรุณากรอก Code ใหม่"}
+
+    if order["status"] in ("paid", "done", "retrying"):
         raise HTTPException(status_code=400, detail="order นี้ดำเนินการแล้ว")
 
     slip_bytes = await slip.read()
@@ -125,40 +237,30 @@ async def payment_verify(order_id: str, slip: UploadFile = File(...)):
     if not slip_result["success"]:
         raise HTTPException(status_code=400, detail=slip_result["reason"])
 
+    transaction_id = slip_result.get("transaction_id", "")
+
     try:
-        runner = BCSFERunner(
-            transfer=order["transfer_code"],
-            confirm=order["confirmation_code"],
-            country=order["country"],
-        )
-        bcsfe_result = runner.run(order["items"])
+        step_result = _run_bcsfe_steps(order, order["transfer_code"], order["confirmation_code"])
 
-        if bcsfe_result["success"]:
-            codes = bcsfe_result.get("new_transfer_code", {})
-            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
-            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+        if not step_result["success"]:
+            update_order_status(order_id, "bcsfe_failed", {"error": step_result["error"]})
+            return {"success": False, "bcsfe_failed": True, "error": step_result["error"]}
 
-            backup_save(new_tc or order["transfer_code"])
-            update_order_status(order_id, "done", {
-                "new_transfer_code": new_tc,
-                "new_confirmation_code": new_cc,
-                "done_at": datetime.now().isoformat(),
-            })
+        new_tc, new_cc = step_result["new_tc"], step_result["new_cc"]
+        mark_slip_used(transaction_id)
+        backup_save(new_tc or order["transfer_code"])
+        update_order_status(order_id, "done", {
+            "new_transfer_code":     new_tc,
+            "new_confirmation_code": new_cc,
+            "done_at":               datetime.now().isoformat(),
+        })
 
-            summary = [
-                {"item": ITEM_MAP[i["key"]]["label"], "amount": i["amount"]}
-                for i in order["items"] if i["key"] in ITEM_MAP
-            ]
-
-            return {
-                "success": True,
-                "new_transfer_code": new_tc,
-                "new_confirmation_code": new_cc,
-                "summary": summary,
-            }
-
-        update_order_status(order_id, "bcsfe_failed", {"error": bcsfe_result["error"]})
-        raise HTTPException(status_code=500, detail=bcsfe_result["error"])
+        return {
+            "success":               True,
+            "new_transfer_code":     new_tc,
+            "new_confirmation_code": new_cc,
+            "summary":               step_result["summary"],
+        }
 
     except HTTPException:
         raise
@@ -170,12 +272,16 @@ def payment_status(order_id: str):
     order = get_order(order_id)
     if not order:
         raise HTTPException(status_code=404, detail="ไม่พบ order")
-    return {
-        "order_id": order_id,
-        "status": order["status"],
-        "amount": order["amount"],
+    resp = {
+        "order_id":   order_id,
+        "status":     order["status"],
+        "amount":     order["amount"],
         "expires_at": order["expires_at"],
     }
+    if order["status"] == "done":
+        resp["new_transfer_code"]     = order.get("new_transfer_code")
+        resp["new_confirmation_code"] = order.get("new_confirmation_code")
+    return resp
 
 @app.post("/api/order", response_model=OrderResponse)
 async def place_order(order: OrderRequest):
@@ -587,6 +693,85 @@ async def talents_characters(request: UnlockCharactersRequest):
 
 # ============= Utility Routes =============
 
+@app.get("/api/cat-image/{cat_id}")
+async def cat_image(cat_id: int):
+    """เสิร์ฟรูปแมวจาก disk cache หรือ fetch จาก wiki แล้วบันทึก"""
+    cache_path = CAT_CACHE_DIR / f"{cat_id}.png"
+
+    # disk hit → เสิร์ฟทันที
+    if cache_path.exists():
+        return FileResponse(str(cache_path), media_type="image/png",
+                            headers={"Cache-Control": "public, max-age=604800"})
+
+    data = await _fetch_cat_image(cat_id)
+    if data is None:
+        raise HTTPException(status_code=404, detail="ไม่พบรูปแมว")
+
+    return Response(data, media_type="image/png",
+                    headers={"Cache-Control": "public, max-age=604800"})
+
+
+@app.get("/api/cat-image/prewarm")
+async def prewarm_cat_images():
+    """เริ่ม background pre-download รูปที่ยังไม่มีใน cache"""
+    asyncio.create_task(_prewarm_all())
+    cached = sum(1 for f in CAT_CACHE_DIR.glob("*.png"))
+    return {"message": "กำลัง pre-download รูปแมวทั้งหมดใน background", "already_cached": cached}
+
+
+async def _prewarm_all():
+    missing = [i for i in range(861) if not (CAT_CACHE_DIR / f"{i}.png").exists()]
+    if not missing:
+        print("[CAT-IMG] ✅ Cache ครบทุกตัวแล้ว")
+        return
+    print(f"[CAT-IMG] 🔄 Pre-warming {len(missing)} รูปที่ยังไม่มี cache...")
+    await asyncio.gather(*[_fetch_cat_image(i) for i in missing], return_exceptions=True)
+    cached = sum(1 for f in CAT_CACHE_DIR.glob("*.png"))
+    print(f"[CAT-IMG] ✅ Pre-warm เสร็จ — cached {cached}/861")
+
+
+@app.post("/api/payment/retry/{order_id}")
+async def payment_retry(order_id: str, body: RetryRequest):
+    """ลองใหม่ด้วย Transfer/Confirmation Code ใหม่ สำหรับ order ที่ BCSFE ล้มเหลว"""
+    order = get_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="ไม่พบ order นี้")
+
+    if order["status"] not in ("bcsfe_failed", "paid"):
+        raise HTTPException(
+            status_code=400,
+            detail=f"ไม่สามารถลองใหม่ได้ สถานะปัจจุบัน: {order['status']}"
+        )
+
+    update_order_status(order_id, "retrying", {
+        "transfer_code":     body.transfer_code,
+        "confirmation_code": body.confirmation_code,
+    })
+
+    try:
+        # ใช้ code ใหม่จาก retry form
+        step_result = _run_bcsfe_steps(order, body.transfer_code, body.confirmation_code)
+
+        if not step_result["success"]:
+            update_order_status(order_id, "bcsfe_failed", {"error": step_result["error"]})
+            raise HTTPException(status_code=500, detail=step_result["error"])
+
+        new_tc, new_cc = step_result["new_tc"], step_result["new_cc"]
+        backup_save(new_tc or body.transfer_code)
+        update_order_status(order_id, "done", {
+            "new_transfer_code":     new_tc,
+            "new_confirmation_code": new_cc,
+            "done_at":               datetime.now().isoformat(),
+        })
+        return {"success": True, "new_transfer_code": new_tc, "new_confirmation_code": new_cc,
+                "summary": step_result["summary"]}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"เกิดข้อผิดพลาด: {e}")
+
+
 @app.get("/health")
 def health_check():
     """ตรวจสอบสุขภาพ server"""
@@ -594,13 +779,31 @@ def health_check():
 
 @app.get("/")
 def root():
-    """ตรวจสอบว่า server ทำงานอยู่"""
-    return {"status": "ok", "message": "BCSFE Order System is running"}
+    return FileResponse("index.html")
+
+@app.get("/{page}.html")
+def serve_html(page: str):
+    path = f"{page}.html"
+    if Path(path).exists():
+        return FileResponse(path)
+    raise HTTPException(status_code=404, detail="Not found")
+
+# Static files (CSS, JS, images) — ต้อง mount หลัง API routes
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+app.mount("/pictures", StaticFiles(directory="pictures"), name="pictures")
+
+@app.on_event("startup")
+async def startup_prewarm():
+    cached = sum(1 for _ in CAT_CACHE_DIR.glob("*.png"))
+    print(f"[CAT-IMG] cache มีอยู่แล้ว {cached}/861 รูป")
+    if cached < 861:
+        asyncio.create_task(_prewarm_all())
+
 
 # ============= Main =============
 
 if __name__ == "__main__":
     import uvicorn
     print("🚀 BCSFE Order System เริ่มต้น...")
-    print("📍 เปิด http://localhost:8000/docs")
+    print("📍 เปิดหน้าเว็บ: http://localhost:8000")
     uvicorn.run(app, host="0.0.0.0", port=8000)

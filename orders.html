@@ -65,8 +65,7 @@
           <span id="totalPrice" style="font-weight: 700; color: #E8002A; font-size: 22px;">฿0</span>
         </div>
 
-        <div style="border-top: 1px solid rgba(255,255,255,0.12); padding-top: 16px; margin-bottom: 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.6;">
-          <p>🔧 ระบบนี้ยังไม่เรียกเก็บเงินจริง (bypass payment flow)</p>
+        <div id="orderTypeHint" style="border-top: 1px solid rgba(255,255,255,0.12); padding-top: 16px; margin-bottom: 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.6;">
           <p>📌 ระบุ Transfer Code, Confirmation Code และเซิร์ฟเวอร์ให้ครบ เพื่อสั่งงาน BCSFE ต่อ</p>
         </div>
 
@@ -92,18 +91,6 @@
             <option value="3">KR (เกาหลี)</option>
             <option value="4">TW (ไต้หวัน)</option>
           </select>
-        </div>
-
-        <div style="margin-bottom: 16px;">
-          <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">ชื่อ / Username *</label>
-          <input type="text" id="username" placeholder="ชื่อของคุณ" 
-            style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,0.06); color: white;">
-        </div>
-
-        <div style="margin-bottom: 20px;">
-          <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Line ID / Discord *</label>
-          <input type="text" id="contact" placeholder="@line_id หรือ Discord username" 
-            style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,0.06); color: white;">
         </div>
 
         <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 16px; margin-bottom: 18px; font-size: 13px; color: var(--text-secondary);">
@@ -219,14 +206,37 @@
 <div class="modal" id="successModal">
   <div class="modal-content" style="max-width: 500px; text-align: center;">
     <div class="modal-body" style="padding: 40px 20px;">
-      <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
-      <h2 style="font-family: 'Kanit', sans-serif; font-size: 24px; color: #22c55e; margin-bottom: 12px;">ออเดอร์สำเร็จ!</h2>
+      <div id="modal-icon" style="font-size: 48px; margin-bottom: 16px;">✅</div>
+      <h2 id="modal-title" style="font-family: 'Kanit', sans-serif; font-size: 24px; color: #22c55e; margin-bottom: 12px;">ออเดอร์สำเร็จ!</h2>
       <p style="color: #666; margin-bottom: 12px;">ออเดอร์ #<span id="orderID" style="font-weight: 700; color: #FF6B00;">BC-001</span></p>
-      <p id="resultSummary" style="font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 20px;">ระบบ BCSFE กำลังดำเนินการอัตโนมัติ หากสำเร็จจะได้ Transfer Code ใหม่</p>
-      <div style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; border-radius: 12px; padding: 18px; margin-bottom: 18px; color: #1f2937;">
+      <p id="resultSummary" style="font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 20px;"></p>
+
+      <!-- Success: แสดง Transfer Code ใหม่ -->
+      <div id="modal-success-box" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; border-radius: 12px; padding: 18px; margin-bottom: 18px; color: #1f2937;">
         <div style="margin-bottom: 10px;"><strong>Transfer Code ใหม่:</strong> <span id="newTransferCode">-</span></div>
         <div><strong>Confirmation Code ใหม่:</strong> <span id="newConfirmCode">-</span></div>
       </div>
+
+      <!-- Error: retry form -->
+      <div id="modal-retry-box" style="display:none; text-align:left; background:#fff3f3; border:1px solid #fca5a5; border-radius:12px; padding:18px; margin-bottom:18px;">
+        <p style="color:#991b1b; font-size:13px; margin-bottom:14px;">💡 เงินของคุณปลอดภัย — กรอก Transfer Code และ Confirmation Code ใหม่แล้วลองใหม่อีกครั้ง</p>
+        <div style="margin-bottom:10px;">
+          <label style="display:block; font-size:12px; font-weight:700; color:#666; margin-bottom:4px;">Transfer Code ใหม่</label>
+          <input type="text" id="retry-tc" placeholder="ABCD1234EFGH5678"
+            style="width:100%; padding:8px 10px; border:1px solid #d1d5db; border-radius:8px; font-family:monospace; box-sizing:border-box;">
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block; font-size:12px; font-weight:700; color:#666; margin-bottom:4px;">Confirmation Code ใหม่</label>
+          <input type="text" id="retry-cc" placeholder="12345678"
+            style="width:100%; padding:8px 10px; border:1px solid #d1d5db; border-radius:8px; font-family:monospace; box-sizing:border-box;">
+        </div>
+        <button id="retryBtn" onclick="retryBCSFE()"
+          style="width:100%; padding:10px; background:#dc2626; color:#fff; border:none; border-radius:8px; font-family:'Kanit',sans-serif; font-size:14px; font-weight:700; cursor:pointer;">
+          🔄 ลองใหม่อีกครั้ง
+        </button>
+        <div id="retryMsg" style="display:none; margin-top:10px; font-size:13px;"></div>
+      </div>
+
       <div style="background: #e5f6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px; margin-bottom: 18px; color: #0f172a; text-align: left;">
         <p style="margin-bottom: 8px;"><strong>สรุปรายการ:</strong></p>
         <div id="orderSummary" style="font-size: 13px; line-height: 1.6;"></div>
@@ -238,6 +248,7 @@
 
 <script>
 var _currentOrderId = null;
+var _paymentLocked  = false;  // true = QR ขึ้นแล้ว ห้ามแก้ตะกร้า
 
 // ── Compress image before upload ──────────────────────────────
 function compressImage(file, maxPx, quality) {
@@ -260,39 +271,65 @@ function compressImage(file, maxPx, quality) {
 }
 
 function displayCart() {
-  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  let cartHTML = '';
-  let total = 0;
+  var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  var cartHTML = '';
+  var total = 0;
 
   if (cart.length === 0) {
     document.getElementById('cartItems').innerHTML = '<p style="color: #666; text-align: center;">ตะกร้าสินค้าว่าง</p>';
     document.getElementById('totalItems').textContent = '0 รายการ';
     document.getElementById('totalPrice').textContent = '฿0';
     document.getElementById('cartCount').textContent = '0';
+    _updateOrderTypeHint([]);
     return;
   }
 
-  cart.forEach((item, index) => {
+  cart.forEach(function(item, index) {
     total += item.price;
-    const amountText = item.amount ? ` • จำนวน ${item.amount.toLocaleString()}` : '';
-    cartHTML += `
-      <div style="border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <div style="font-weight: 700; font-size: 14px;">${item.name}${amountText}</div>
-          <div style="font-size: 12px; color: #666;">฿${item.price.toLocaleString()}</div>
-        </div>
-        <button onclick="removeFromCart(${index})" style="background: #ffebee; color: #e8002a; border: none; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">ลบ</button>
-      </div>
-    `;
+    var isUnlock = item.key === 'unlock_cat';
+    var imgHtml = isUnlock
+      ? '<img src="/api/cat-image/' + item.cat_id + '" style="width:40px;height:40px;border-radius:8px;object-fit:cover;margin-right:10px;background:#1a0a2e;" onerror="this.style.display=\'none\'">'
+      : '';
+    var amountText = (!isUnlock && item.amount) ? ' • จำนวน ' + item.amount.toLocaleString() : '';
+    cartHTML +=
+      '<div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">' +
+        '<div style="display:flex;align-items:center;">' +
+          imgHtml +
+          '<div>' +
+            '<div style="font-weight:700;font-size:14px;">' + item.name + amountText + '</div>' +
+            '<div style="font-size:12px;color:#888;">฿' + item.price.toLocaleString() + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<button onclick="removeFromCart(' + index + ')" style="background:#ffebee;color:#e8002a;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px;">ลบ</button>' +
+      '</div>';
   });
 
   document.getElementById('cartItems').innerHTML = cartHTML;
   document.getElementById('totalItems').textContent = cart.length + ' รายการ';
   document.getElementById('totalPrice').textContent = '฿' + total.toLocaleString();
   document.getElementById('cartCount').textContent = cart.length;
+  _updateOrderTypeHint(cart);
+}
+
+function _updateOrderTypeHint(cart) {
+  var hint = document.getElementById('orderTypeHint');
+  if (!hint) return;
+  var hasUnlock = cart.some(function(i){ return i.key === 'unlock_cat'; });
+  var hasItems  = cart.some(function(i){ return i.key !== 'unlock_cat'; });
+  if (hasUnlock && hasItems) {
+    hint.innerHTML = '<p style="color:#60a5fa;">🛍️🐱 ตะกร้านี้มีทั้ง <strong>ไอเทม</strong> และ <strong>ปลดล็อคแมว</strong> — ระบบจะเพิ่มของก่อน แล้วปลดล็อคแมวอัตโนมัติ</p>';
+  } else if (hasUnlock) {
+    hint.innerHTML = '<p style="color:#4ade80;">🐱 ตะกร้านี้เป็นคำสั่ง <strong>ปลดล็อคแมว</strong> — ชำระเงินแล้วระบบจะปลดล็อคอัตโนมัติ</p>';
+  } else {
+    hint.innerHTML = '<p>📌 ระบุ Transfer Code, Confirmation Code และเซิร์ฟเวอร์ให้ครบ เพื่อสั่งงาน BCSFE ต่อ</p>';
+  }
 }
 
 function removeFromCart(index) {
+  if (_paymentLocked) {
+    alert('⚠️ ไม่สามารถแก้ตะกร้าได้ เพราะ QR ชำระเงินถูกสร้างไปแล้ว\nหากต้องการเปลี่ยน กรุณา refresh หน้าเพื่อเริ่มใหม่');
+    return;
+  }
   let cart = JSON.parse(localStorage.getItem('cart') || '[]');
   cart.splice(index, 1);
   localStorage.setItem('cart', JSON.stringify(cart));
@@ -306,42 +343,52 @@ function setSubmitState(isSubmitting) {
   button.textContent = isSubmitting ? 'กำลังส่งคำสั่ง...' : '🚀 ชำระเงินเลย';
 }
 
-// ── Checkout: save order → show QR ──────────────────────────
+// ── Checkout: call API → show QR ─────────────────────────────
 async function checkout() {
   var transferCode = document.getElementById('transferCode').value.trim();
   var confirmCode  = document.getElementById('confirmCode').value.trim();
   var server       = document.getElementById('server').value;
-  var username     = document.getElementById('username').value.trim();
-  var contact      = document.getElementById('contact').value.trim();
   var cart         = JSON.parse(localStorage.getItem('cart') || '[]');
 
-  if (!transferCode || !confirmCode || !server || !username || !contact) {
-    alert('❌ กรุณากรอกข้อมูลให้ครบ!'); return;
+  if (!transferCode || !confirmCode || !server) {
+    alert('❌ กรุณากรอก Transfer Code, Confirmation Code และเลือก Server!'); return;
   }
   if (cart.length === 0) { alert('❌ ตะกร้าว่างเปล่า!'); return; }
 
   setSubmitState(true);
   try {
-    var total    = cart.reduce(function(s, i) { return s + i.price; }, 0);
-    var authUser = (window.AUTH && AUTH.getCurrentUser()) || null;
+    var total    = cart.reduce(function(s,i){ return s + i.price; }, 0);
+    var items    = cart.filter(function(i){ return i.key !== 'unlock_cat'; })
+                       .map(function(i){ return { key: i.key, amount: i.amount }; });
+    var catItems = cart.filter(function(i){ return i.key === 'unlock_cat'; });
+    var catIds   = catItems.length ? catItems.map(function(i){ return i.cat_id; }) : null;
 
-    var res = await DB.from('orders').insert([{
-      auth_user:     authUser,
-      username:      username,
-      transfer_code: transferCode,
-      confirm_code:  confirmCode,
-      server:        server,
-      contact:       contact,
-      items:         cart,
-      total:         total,
-      status:        'pending_payment',
-    }]).select().single();
+    var catUnlockTotal = catItems.reduce(function(s,i){ return s + i.price; }, 0);
 
-    if (res.error) throw res.error;
-    _currentOrderId = res.data.id;
-    showPaymentSection(res.data.id, total);
+    var res = await fetch('/api/payment/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        transfer_code:      transferCode,
+        confirmation_code:  confirmCode,
+        country:            server,
+        items:              items,
+        cat_ids:            catIds,
+        cat_unlock_total:   catUnlockTotal,
+      }),
+    });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'สร้าง order ไม่สำเร็จ');
+
+    _currentOrderId = data.order_id;
+
+    var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+    hist.unshift({ id: data.order_id, total: data.amount, items: cart, created_at: new Date().toISOString() });
+    localStorage.setItem('bc_order_history', JSON.stringify(hist.slice(0, 20)));
+
+    showPaymentSection(data.order_id, data.amount, data.qr_base64);
   } catch (err) {
-    alert('❌ สร้างออเดอร์ไม่สำเร็จ: ' + (err.message || err));
+    alert('❌ สร้าง order ไม่สำเร็จ: ' + (err.message || err));
     console.error(err);
   } finally {
     setSubmitState(false);
@@ -349,28 +396,33 @@ async function checkout() {
 }
 
 // ── Show QR payment section ───────────────────────────────────
-function showPaymentSection(orderId, total) {
+function showPaymentSection(orderId, total, qr_base64) {
+  _paymentLocked = true;
+  // เปลี่ยนปุ่มลบทุกอันเป็น lock icon
+  document.querySelectorAll('#cartItems button').forEach(function(btn) {
+    btn.textContent = '🔒';
+    btn.style.background = 'rgba(255,255,255,0.08)';
+    btn.style.color = 'rgba(255,255,255,0.35)';
+    btn.style.cursor = 'not-allowed';
+  });
+  // ซ่อนปุ่ม checkout และ "ต่อไปเลือกสินค้า"
+  var checkoutBtn = document.getElementById('checkoutBtn');
+  if (checkoutBtn) { checkoutBtn.style.display = 'none'; }
   document.getElementById('paymentSection').style.display = 'block';
-  document.getElementById('pay-orderId').textContent = orderId.substring(0, 8).toUpperCase();
+  document.getElementById('pay-orderId').textContent = orderId;
   document.getElementById('pay-amount').textContent   = '฿' + total.toLocaleString();
 
-  // Render PromptPay QR
   var qrEl = document.getElementById('qrCanvas');
   qrEl.innerHTML = '';
-  var qrStr = (window.PromptPay && window.PROMPTPAY_ID)
-    ? PromptPay.qrString(PROMPTPAY_ID, total)
-    : null;
-
-  if (qrStr && window.QRCode) {
-    new QRCode(qrEl, {
-      text: qrStr, width: 220, height: 220,
-      colorDark: '#000000', colorLight: '#ffffff',
-    });
+  if (qr_base64) {
+    var img = document.createElement('img');
+    img.src = 'data:image/png;base64,' + qr_base64;
+    img.style.cssText = 'width:220px;height:220px;border-radius:10px;display:block;';
+    qrEl.appendChild(img);
   } else {
-    qrEl.innerHTML = '<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:10px;font-size:13px;color:#666;text-align:center;padding:16px;">⚠️ กรุณาตั้งค่า PROMPTPAY_ID ใน supabase-client.js</div>';
+    qrEl.innerHTML = '<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:10px;font-size:13px;color:#666;text-align:center;padding:16px;">⚠️ ไม่สามารถสร้าง QR Code ได้</div>';
   }
 
-  // Scroll to payment section
   document.getElementById('paymentSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
@@ -389,52 +441,64 @@ function onSlipChange() {
   reader.readAsDataURL(file);
 }
 
-// ── Submit slip → update order status ─────────────────────────
+// ── Submit slip → verify with SlipOK → run BCSFE ──────────────
 async function submitSlip() {
   var file = document.getElementById('slipInput').files[0];
   if (!file || !_currentOrderId) { alert('❌ กรุณาเลือกไฟล์สลิปก่อน'); return; }
 
   var btn = document.getElementById('submitSlipBtn');
   var msg = document.getElementById('slipMsg');
-  btn.disabled = true; btn.textContent = '⏳ กำลังส่ง...';
-  msg.style.display = 'none';
+  btn.disabled = true; btn.textContent = '⏳ กำลังตรวจสอบสลิป...';
+  msg.style.display = 'block';
+  msg.style.color = 'rgba(255,255,255,0.6)';
+  msg.textContent = '🔍 กำลังตรวจสอบสลิปกับ SlipOK...';
 
   try {
-    // Compress image (max 900px, 0.72 quality) → base64
-    var b64 = await compressImage(file, 900, 0.72);
+    var formData = new FormData();
+    formData.append('slip', file, file.name);
 
-    var res = await DB.from('orders').update({
-      slip_data: b64,
-      status:    'pending_confirm',
-      paid_at:   new Date().toISOString(),
-    }).eq('id', _currentOrderId);
+    var res = await fetch('/api/payment/verify/' + _currentOrderId, {
+      method: 'POST',
+      body: formData,
+    });
+    var data = await res.json();
 
-    if (res.error) throw res.error;
+    if (!res.ok) {
+      // slip error (400) — ยังไม่ได้รับเงิน ให้ลองส่งสลิปใหม่
+      throw new Error(data.detail || 'ยืนยันสลิปไม่สำเร็จ');
+    }
 
-    // Notify Discord
-    var orderData = {
-      id: _currentOrderId, status: 'pending_confirm',
-      username: document.getElementById('username').value.trim(),
-      total: JSON.parse(localStorage.getItem('cart') || '[]').reduce(function(s,i){ return s+i.price; }, 0),
-      items: JSON.parse(localStorage.getItem('cart') || '[]'),
-      transfer_code: document.getElementById('transferCode').value.trim(),
-      confirm_code:  document.getElementById('confirmCode').value.trim(),
-      contact:       document.getElementById('contact').value.trim(),
-      server:        document.getElementById('server').value,
-    };
-    if (window.NOTIFY) NOTIFY.discord(orderData);
+    var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+    var currentOrder = hist.find(function(o) { return o.id === _currentOrderId; });
 
+    // บันทึก new codes ลง localStorage history ทันทีที่สำเร็จ
+    if (data.success && data.new_transfer_code) {
+      hist = hist.map(function(o) {
+        if (o.id !== _currentOrderId) return o;
+        return Object.assign({}, o, {
+          new_transfer_code:     data.new_transfer_code,
+          new_confirmation_code: data.new_confirmation_code,
+        });
+      });
+      localStorage.setItem('bc_order_history', JSON.stringify(hist));
+    }
+
+    _paymentLocked = false;
     localStorage.removeItem('cart');
     displayCart();
-
     document.getElementById('paymentSection').style.display = 'none';
-    showSuccessModal(_currentOrderId,
-      JSON.parse('[]'),
-      orderData.total);
+    var checkoutBtn = document.getElementById('checkoutBtn');
+    if (checkoutBtn) checkoutBtn.style.display = '';
 
-    msg.style.display = 'block';
-    msg.style.color = '#4ade80';
-    msg.textContent = '✅ ส่งสลิปสำเร็จ! รอทีมงานยืนยัน 5–15 นาที';
+    if (data.bcsfe_failed) {
+      showSuccessModal(_currentOrderId, currentOrder ? currentOrder.items : [], { success: false });
+      msg.style.color = '#f59e0b';
+      msg.textContent = '⚠️ สลิปผ่านแล้ว กรุณากรอก Transfer/Confirmation Code ใหม่ใน popup';
+    } else {
+      showSuccessModal(_currentOrderId, currentOrder ? currentOrder.items : [], data);
+      msg.style.color = '#4ade80';
+      msg.textContent = '✅ ชำระเงินสำเร็จ! ระบบดำเนินการอัตโนมัติแล้ว';
+    }
 
   } catch (err) {
     msg.style.display = 'block';
@@ -459,31 +523,18 @@ function switchOrderTab(tab) {
   if (!isOrder) renderHistory();
 }
 
-// ── History render (Supabase) ─────────────────────────────────
+// ── History render (localStorage + API) ──────────────────────
 async function renderHistory() {
   var prompt  = document.getElementById('hist-login-prompt');
   var content = document.getElementById('hist-content');
-
-  if (!window.AUTH || !AUTH.isLoggedIn()) {
-    prompt.style.display  = 'block';
-    content.style.display = 'none';
-    return;
-  }
   prompt.style.display  = 'none';
   content.style.display = 'block';
   content.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.45);">⏳ กำลังโหลด...</div>';
 
   try {
-    var authUser = AUTH.getCurrentUser();
-    var res = await DB.from('orders')
-      .select('*')
-      .eq('auth_user', authUser)
-      .order('created_at', { ascending: false });
+    var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
 
-    if (res.error) throw res.error;
-    var orders = res.data || [];
-
-    if (!orders.length) {
+    if (!hist.length) {
       content.innerHTML =
         '<div style="text-align:center;padding:70px 20px;color:rgba(255,255,255,0.45);">' +
         '<div style="font-size:52px;margin-bottom:16px;">📋</div>' +
@@ -493,7 +544,31 @@ async function renderHistory() {
       return;
     }
 
-    var STATUS_COLOR = { pending:'#facc15', processing:'#60a5fa', done:'#4ade80', cancelled:'#f87171' };
+    var orders = await Promise.all(hist.map(async function(order) {
+      try {
+        var r = await fetch('/api/payment/status/' + order.id);
+        var d = await r.json();
+        var extra = { status: d.status || 'unknown' };
+        // รับ codes จาก API (เชื่อถือได้กว่า localStorage)
+        if (d.new_transfer_code)     extra.new_transfer_code     = d.new_transfer_code;
+        if (d.new_confirmation_code) extra.new_confirmation_code = d.new_confirmation_code;
+        return Object.assign({}, order, extra);
+      } catch (e) {
+        return Object.assign({}, order, { status: 'unknown' });
+      }
+    }));
+
+    var STATUS_LABEL = {
+      pending:      '⏳ รอชำระเงิน',
+      paid:         '💳 ชำระแล้ว กำลังดำเนินการ',
+      done:         '✅ เสร็จสิ้น',
+      expired:      '⌛ หมดอายุ',
+      bcsfe_failed: '❌ ดำเนินการไม่สำเร็จ',
+    };
+    var STATUS_COLOR = {
+      pending:'#facc15', paid:'#60a5fa', done:'#4ade80',
+      expired:'#94a3b8', bcsfe_failed:'#f87171',
+    };
 
     content.innerHTML = orders.map(function(order) {
       var items = (order.items || []).map(function(item) {
@@ -504,13 +579,23 @@ async function renderHistory() {
       }).join('');
 
       var total   = (order.total || 0).toLocaleString();
-      var dateStr = order.created_at
-        ? new Date(order.created_at).toLocaleString('th-TH')
-        : '-';
-      var shortId = (order.id || 'N/A').substring(0, 8).toUpperCase();
+      var dateStr = order.created_at ? new Date(order.created_at).toLocaleString('th-TH') : '-';
+      var shortId = (order.id || 'N/A').toUpperCase();
       var status  = order.status || 'pending';
       var statusColor = STATUS_COLOR[status] || '#facc15';
-      var statusLabel = { pending:'⏳ รอดำเนินการ', processing:'🔧 กำลังดำเนินการ', done:'✅ เสร็จสิ้น', cancelled:'❌ ยกเลิก' }[status] || status;
+      var statusLabel = STATUS_LABEL[status] || status;
+
+      // กล่อง Transfer Code ใหม่ (เฉพาะ done)
+      var codeBox = '';
+      if (status === 'done' && order.new_transfer_code) {
+        codeBox =
+          '<div style="margin-top:12px;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:12px 14px;">' +
+          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Transfer Code ใหม่</div>' +
+          '<div style="font-family:monospace;font-size:14px;color:#FFD84E;word-break:break-all;margin-bottom:6px;">' + order.new_transfer_code + '</div>' +
+          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+          '<div style="font-family:monospace;font-size:14px;color:#FFD84E;">' + (order.new_confirmation_code || '-') + '</div>' +
+          '</div>';
+      }
 
       return '<div style="background:linear-gradient(180deg,rgba(22,6,46,0.92),rgba(34,4,64,0.92));' +
         'border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px 24px;' +
@@ -518,10 +603,11 @@ async function renderHistory() {
         'onmouseover="this.style.borderColor=\'rgba(139,61,255,0.35)\'" ' +
         'onmouseout="this.style.borderColor=\'rgba(255,255,255,0.06)\'">' +
         '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">' +
-        '<div>' +
+        '<div style="flex:1;min-width:0;">' +
         '<div style="font-size:12px;color:rgba(255,255,255,0.42);margin-bottom:4px;">📅 ' + dateStr + '</div>' +
         '<div style="font-family:\'Russo One\',sans-serif;font-size:14px;color:var(--yellow);margin-bottom:8px;">#' + shortId + '</div>' +
         (items ? '<div style="margin-bottom:6px;">' + items + '</div>' : '') +
+        codeBox +
         '</div>' +
         '<div style="text-align:right;flex-shrink:0;">' +
         '<div style="font-family:\'Russo One\',sans-serif;font-size:24px;color:var(--red);">฿' + total + '</div>' +
@@ -537,22 +623,82 @@ async function renderHistory() {
   }
 }
 
-function showSuccessModal(orderId, cart, total) {
-  document.getElementById('orderID').textContent = (orderId || '').substring(0, 8).toUpperCase();
-  document.getElementById('resultSummary').textContent = 'ออเดอร์ถูกบันทึกเรียบร้อยแล้ว ทีมงานจะดำเนินการภายใน 5–15 นาที';
-  document.getElementById('newTransferCode').textContent = 'รอทีมงานดำเนินการ';
-  document.getElementById('newConfirmCode').textContent  = 'รอทีมงานดำเนินการ';
+function showSuccessModal(orderId, cart, result) {
+  document.getElementById('orderID').textContent = (orderId || '').toUpperCase();
+
+  var isSuccess = result && result.success !== false && result.new_transfer_code;
+  var isBcsfeFail = !isSuccess;
+
+  // icon + title
+  document.getElementById('modal-icon').textContent  = isSuccess ? '✅' : '⚠️';
+  document.getElementById('modal-title').textContent = isSuccess ? 'ออเดอร์สำเร็จ!' : 'ชำระเงินสำเร็จ — กรุณาแก้ไข Code';
+  document.getElementById('modal-title').style.color = isSuccess ? '#22c55e' : '#f59e0b';
+
+  document.getElementById('resultSummary').textContent = isSuccess
+    ? 'BCSFE ดำเนินการสำเร็จ! ใช้ Transfer Code ใหม่เพื่อโหลด Save ในเกม'
+    : 'เงินของคุณถูกรับแล้ว แต่ Transfer/Confirmation Code ไม่ถูกต้อง กรุณากรอกใหม่';
+
+  document.getElementById('modal-success-box').style.display = isSuccess ? 'block' : 'none';
+  document.getElementById('modal-retry-box').style.display   = isBcsfeFail ? 'block' : 'none';
+
+  if (isSuccess) {
+    document.getElementById('newTransferCode').textContent = result.new_transfer_code || '-';
+    document.getElementById('newConfirmCode').textContent  = result.new_confirmation_code || '-';
+  }
 
   var summaryEl = document.getElementById('orderSummary');
-  if (cart && cart.length) {
-    summaryEl.innerHTML = (cart || []).map(function(i) {
+  if (result && result.summary && result.summary.length) {
+    summaryEl.innerHTML = result.summary.map(function(s) {
+      return '<div>' + s.item + ' x' + (s.amount || 0).toLocaleString() + '</div>';
+    }).join('');
+  } else if (cart && cart.length) {
+    summaryEl.innerHTML = cart.map(function(i) {
       return '<div>' + (i.name || '') + ' — ฿' + (i.price || 0).toLocaleString() + '</div>';
-    }).join('') + '<div style="margin-top:8px;font-weight:700;">รวม ฿' + (total || 0).toLocaleString() + '</div>';
+    }).join('');
   } else {
     summaryEl.textContent = '-';
   }
 
   document.getElementById('successModal').classList.add('active');
+}
+
+async function retryBCSFE() {
+  var tc  = document.getElementById('retry-tc').value.trim();
+  var cc  = document.getElementById('retry-cc').value.trim();
+  var msg = document.getElementById('retryMsg');
+  var btn = document.getElementById('retryBtn');
+
+  if (!tc || !cc) { alert('❌ กรุณากรอกทั้ง Transfer Code และ Confirmation Code'); return; }
+
+  btn.disabled = true; btn.textContent = '⏳ กำลังดำเนินการ...';
+  msg.style.display = 'block';
+  msg.style.color = 'rgba(0,0,0,0.5)';
+  msg.textContent = '🔄 กำลังรัน BCSFE ด้วย Code ใหม่...';
+
+  try {
+    var res = await fetch('/api/payment/retry/' + _currentOrderId, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc }),
+    });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'ลองใหม่ไม่สำเร็จ');
+
+    // สำเร็จ — สลับ UI เป็น success
+    document.getElementById('modal-retry-box').style.display   = 'none';
+    document.getElementById('modal-success-box').style.display = 'block';
+    document.getElementById('modal-icon').textContent  = '✅';
+    document.getElementById('modal-title').textContent = 'ออเดอร์สำเร็จ!';
+    document.getElementById('modal-title').style.color = '#22c55e';
+    document.getElementById('resultSummary').textContent = 'BCSFE ดำเนินการสำเร็จ! ใช้ Transfer Code ใหม่เพื่อโหลด Save ในเกม';
+    document.getElementById('newTransferCode').textContent = data.new_transfer_code || '-';
+    document.getElementById('newConfirmCode').textContent  = data.new_confirmation_code || '-';
+
+  } catch (err) {
+    msg.style.color = '#dc2626';
+    msg.textContent = '❌ ' + (err.message || err) + ' — ตรวจสอบ Code แล้วลองใหม่';
+    btn.disabled = false; btn.textContent = '🔄 ลองใหม่อีกครั้ง';
+  }
 }
 
 function submitOrder() {

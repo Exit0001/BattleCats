@@ -287,12 +287,12 @@ var TIER_LABEL = { N:'Normal', EX:'EX', RR:'Rare', SR:'Super Rare', UR:'Uber Rar
 
 // ── Image URLs ─────────────────────────────────────────────────
 // Primary:  Fandom wiki  Special:FilePath  (browser follows redirect automatically)
-// Fallback: Miraheze wiki Special:FilePath
+// รูปแมวผ่าน proxy server (ลอง f00 และ _1.png อัตโนมัติ + cache)
 function catImgPrimary(id) {
-  return 'https://battle-cats.fandom.com/wiki/Special:FilePath/' + String(id).padStart(3,'0') + '_1.png';
+  return '/api/cat-image/' + id;
 }
 function catImgFallback(id) {
-  return 'https://battlecats.miraheze.org/wiki/Special:FilePath/' + String(id).padStart(3,'0') + '_1.png';
+  return 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><text y="60" font-size="60">🐱</text></svg>';
 }
 
 // ── Price by tier ──────────────────────────────────────────────
@@ -319,7 +319,7 @@ function renderCatCards(list) {
     return '<div class="cat-card">' +
       '<div class="cat-img-wrap">' +
         '<img src="' + img1 + '" alt="' + name + '" loading="lazy"' +
-          ' onerror="this.src=\'' + img2 + '\';this.onerror=function(){this.style.display=\'none\';this.parentNode.textContent=\'🐱\';};">' +
+          ' onerror="this.onerror=null;this.parentNode.innerHTML=\'<span style=&quot;font-size:48px;line-height:80px;&quot;>🐱</span>\';">' +
       '</div>' +
       '<div class="cat-id">#' + id + '</div>' +
       '<span class="cat-tier-badge" style="color:' + col + ';background:' + bg + ';border-color:' + col + '88;">' + label + '</span>' +
@@ -358,10 +358,9 @@ function applyFilters() {
     var matchQ    = !q || (r[2]||'').toLowerCase().includes(q) || String(r[0]).includes(q);
     return matchTier && matchQ;
   });
-  var show = res.slice(0, 300);
-  renderCatCards(show);
+  renderCatCards(res);
   document.getElementById('resultCount').textContent =
-    'แสดง ' + show.length + ' จาก ' + res.length + ' ตัว (ทั้งหมด ' + window.catsData.length + ' ตัว)';
+    'แสดง ' + res.length + ' จาก ' + window.catsData.length + ' ตัว';
 }
 
 function resetSearch() {
@@ -380,7 +379,15 @@ function resetSearch() {
 function unlockCustom(id) {
   var entry = (window.catsData || []).find(function(r){ return r[0] === id; });
   if (!entry) { alert('ไม่พบตัวละคร'); return; }
-  addToCart('Unlock: ' + entry[2] + ' (#' + id + ')', priceForTier(entry[1]));
+  var name = entry[2], tier = entry[1], price = priceForTier(tier);
+  var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  if (cart.find(function(i){ return i.cat_id === id; })) {
+    alert(name + ' อยู่ในตะกร้าแล้ว!'); return;
+  }
+  cart.push({ key: 'unlock_cat', cat_id: id, name: 'ปลดล็อค: ' + name + ' (#' + id + ')', tier: tier, amount: 1, price: price });
+  localStorage.setItem('cart', JSON.stringify(cart));
+  document.getElementById('cartCount').textContent = cart.length;
+  alert('✅ เพิ่ม ' + name + ' ลงตะกร้าแล้ว!');
 }
 
 function addToCart(itemName, price) {
