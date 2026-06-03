@@ -5,12 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ออเดอร์ - Battle Cats Shop</title>
   <link rel="stylesheet" href="assets/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
+<script>
+// Route guard — ตรวจทั้ง Supabase Auth และ localStorage auth
+(function(){
+  var ok = false;
+  try { if (JSON.parse(localStorage.getItem('bc_session'))) ok = true; } catch(e){}
+  try { if (localStorage.getItem('sb-jpzceuxeelnwthaitkcw-auth-token')) ok = true; } catch(e){}
+  if (!ok) window.location.replace('login.html');
+})();
+</script>
 
 <nav class="navbar">
   <div class="nav-container">
-    <a href="index.html" class="nav-logo">🐱 BATTLE CATS SHOP</a>
+    <a href="index.html" class="nav-logo"><img src="pictures/icon cat.png" style="height:20px;vertical-align:middle;margin-right:5px;"> BATTLE CATS SHOP</a>
     <ul class="nav-links">
       <li><a href="index.html">หน้าแรก</a></li>
       <li><a href="shop.html">ร้านขาย</a></li>
@@ -29,6 +40,16 @@
 
   <h1 class="section-title">🛒 ระบบสั่งซื้อ BCSFE</h1>
 
+  <!-- ── Order / History tabs ── -->
+  <div style="display:flex;gap:0;background:rgba(255,255,255,0.04);border-radius:12px;padding:4px;margin-bottom:24px;max-width:400px;">
+    <button id="otab-order" onclick="switchOrderTab('order')"
+      style="flex:1;padding:10px;border:none;border-radius:9px;background:rgba(139,61,255,0.5);color:#fff;font-family:'Kanit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(139,61,255,0.3);transition:all .25s;">🛒 สั่งซื้อ</button>
+    <button id="otab-history" onclick="switchOrderTab('history')"
+      style="flex:1;padding:10px;border:none;border-radius:9px;background:transparent;color:rgba(255,255,255,0.55);font-family:'Kanit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;">📋 ประวัติ</button>
+  </div>
+
+  <!-- ── Order panel ── -->
+  <div id="panel-order">
   <div class="grid grid-2">
     <div>
       <div class="card" style="padding: 28px;">
@@ -89,28 +110,46 @@
           <strong style="color: #ffb347;">⚠️ สำคัญ:</strong> อย่า Login เข้าเกมขณะรอการทำ edit จะทำให้ Transfer Code หมดอายุ!
         </div>
 
-        <button class="btn btn-primary" id="checkoutBtn" onclick="checkout()" style="width: 100%; margin-bottom: 12px;">🚀 สร้างคำสั่งชำระเงิน</button>
+        <button class="btn btn-primary" id="checkoutBtn" onclick="checkout()" style="width: 100%; margin-bottom: 12px;">💳 ดำเนินการชำระเงิน</button>
         <button class="btn btn-outline" onclick="window.location.href='shop.html'" style="width: 100%;">ต่อไปเลือกสินค้าเพิ่ม</button>
 
-        <div id="paymentSection" style="display: none; margin-top: 24px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 20px;">
-          <h3 style="font-size: 18px; margin-bottom: 16px;">💳 ชำระเงินผ่าน QR PromptPay</h3>
-          <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:center;">
-            <div style="flex:1; min-width:220px; color:#f5f5f5; font-size:14px; line-height:1.5;">
-              <div>Order ID: <strong id="paymentOrderId"></strong></div>
-              <div>ยอดที่ต้องชำระ: <strong id="paymentAmount"></strong></div>
-              <div>หมดเวลา: <strong id="paymentExpires"></strong></div>
-              <div id="paymentMessage" style="margin-top:12px; color:#facc15;"></div>
+        <!-- ── PromptPay Payment Section ── -->
+        <div id="paymentSection" style="display:none; margin-top:24px;">
+          <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.3);border-radius:18px;padding:24px;">
+            <h3 style="font-family:'Russo One',sans-serif;font-size:17px;color:#FFD84E;margin-bottom:18px;letter-spacing:0.5px;">💳 ชำระเงินผ่าน PromptPay</h3>
+
+            <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;">
+              <!-- QR Code -->
+              <div style="flex-shrink:0;text-align:center;">
+                <div id="qrCanvas" style="background:#fff;padding:12px;border-radius:14px;display:inline-block;box-shadow:0 0 24px rgba(124,58,237,0.3);"></div>
+                <div style="margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);">สแกนด้วยแอปธนาคาร</div>
+              </div>
+
+              <!-- Order info -->
+              <div style="flex:1;min-width:180px;font-family:'Chakra Petch',sans-serif;font-size:13px;">
+                <div style="margin-bottom:8px;color:rgba(210,190,255,0.6);">Order ID</div>
+                <div id="pay-orderId" style="font-family:'Russo One',sans-serif;font-size:13px;color:#FFD84E;margin-bottom:14px;word-break:break-all;"></div>
+                <div style="margin-bottom:4px;color:rgba(210,190,255,0.6);">ยอดที่ต้องชำระ</div>
+                <div id="pay-amount" style="font-family:'Russo One',sans-serif;font-size:28px;color:#FF4D92;margin-bottom:16px;"></div>
+                <div style="background:rgba(251,191,36,0.10);border:1px solid rgba(251,191,36,0.28);border-radius:10px;padding:10px;color:#FCD34D;font-size:12px;line-height:1.6;">
+                  ⚠️ อย่าปิดหน้านี้จนกว่าจะอัปโหลดสลิปเสร็จ
+                </div>
+              </div>
             </div>
-            <div style="min-width:220px; text-align:center;">
-              <img id="paymentQr" src="" alt="QR PromptPay" style="width:100%; max-width:260px; border:1px solid rgba(255,255,255,0.12); border-radius:14px; background:#111; padding:12px;" />
+
+            <!-- Slip upload -->
+            <div style="margin-top:20px;">
+              <label style="display:block;font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;color:rgba(210,190,255,0.55);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">อัปโหลดสลิปการโอน</label>
+              <input type="file" id="slipInput" accept="image/*"
+                style="width:100%;padding:10px 12px;border:1px solid rgba(124,58,237,0.28);border-radius:10px;background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;"
+                onchange="onSlipChange()">
+              <div id="slipPreview" style="display:none;margin-top:10px;border-radius:10px;overflow:hidden;max-height:180px;text-align:center;">
+                <img id="slipImg" src="" style="max-height:180px;border-radius:10px;object-fit:contain;">
+              </div>
+              <button class="btn btn-primary" id="submitSlipBtn" onclick="submitSlip()" disabled
+                style="width:100%;margin-top:14px;">📤 ส่งสลิปยืนยันการชำระ</button>
+              <div id="slipMsg" style="display:none;margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:13px;"></div>
             </div>
-          </div>
-          <div style="margin-top:20px;">
-            <label style="display:block; font-size:12px; font-weight:700; color: var(--text-secondary); margin-bottom:6px;">อัปโหลดสลิปการโอน</label>
-            <input type="file" id="slipInput" accept="image/*" style="width:100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: rgba(255,255,255,0.06); color: white;" onchange="toggleSlipButton()" />
-            <button class="btn btn-primary" id="verifyBtn" onclick="verifyPayment()" disabled style="width:100%; margin-top:12px;">ยืนยันการชำระเงิน</button>
-            <div id="paymentError" style="display:none; color:#ff6b6b; margin-top:12px; font-size:13px;"></div>
-            <div id="paymentSuccess" style="display:none; color:#4ade80; margin-top:12px; font-size:13px;"></div>
           </div>
         </div>
       </div>
@@ -125,6 +164,23 @@
       </div>
     </div>
   </div>
+  </div><!-- /panel-order -->
+
+  <!-- ── History panel ── -->
+  <div id="panel-history" style="display:none;">
+
+    <!-- Not logged in -->
+    <div id="hist-login-prompt" style="display:none;text-align:center;padding:70px 20px;">
+      <div style="font-size:52px;margin-bottom:16px;">🔒</div>
+      <p style="font-size:18px;color:rgba(255,255,255,0.75);margin-bottom:8px;">กรุณาเข้าสู่ระบบก่อน</p>
+      <p style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:24px;">เพื่อดูประวัติการสั่งซื้อของคุณ</p>
+      <a href="login.html" class="btn btn-primary">🔑 เข้าสู่ระบบ</a>
+    </div>
+
+    <!-- Logged in: order list -->
+    <div id="hist-content" style="display:none;"></div>
+
+  </div><!-- /panel-history -->
 
 </div>
 
@@ -133,7 +189,7 @@
   <div class="footer-content">
     <div class="footer-grid">
       <div class="footer-col">
-        <h4>🐱 Battle Cats Shop</h4>
+        <h4><img src="pictures/icon cat.png" style="height:1.1em;vertical-align:middle;margin-right:5px;"> Battle Cats Shop</h4>
         <p style="font-size: 13px; line-height: 1.6;">บริการร้านขายไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
       </div>
       <div class="footer-col">
@@ -181,102 +237,26 @@
 </div>
 
 <script>
-const API_BASE_URL = 'http://localhost:8000';
-let currentOrderId = null;
-let pendingPaymentOrder = null;
-let paymentTimer = null;
+var _currentOrderId = null;
 
-function formatCurrency(value) {
-  return '฿' + value.toLocaleString();
-}
-
-function setPaymentMessage(text) {
-  const el = document.getElementById('paymentMessage');
-  if (!el) return;
-  el.textContent = text;
-}
-
-function setPaymentError(text) {
-  const el = document.getElementById('paymentError');
-  const ok = document.getElementById('paymentSuccess');
-  if (!el || !ok) return;
-  el.textContent = text;
-  el.style.display = text ? 'block' : 'none';
-  ok.style.display = 'none';
-}
-
-function setPaymentSuccess(text) {
-  const el = document.getElementById('paymentSuccess');
-  const err = document.getElementById('paymentError');
-  if (!el || !err) return;
-  el.textContent = text;
-  el.style.display = text ? 'block' : 'none';
-  err.style.display = 'none';
-}
-
-function startPaymentCountdown(expiresAt) {
-  const el = document.getElementById('paymentExpires');
-  if (!el) return;
-  if (paymentTimer) {
-    clearInterval(paymentTimer);
-    paymentTimer = null;
-  }
-
-  function tick() {
-    const diff = new Date(expiresAt) - new Date();
-    if (diff <= 0) {
-      el.textContent = 'หมดเวลาแล้ว';
-      setPaymentMessage('QR หมดเวลาแล้ว กรุณาสร้างคำสั่งใหม่');
-      clearInterval(paymentTimer);
-      paymentTimer = null;
-      document.getElementById('verifyBtn').disabled = true;
-      return;
-    }
-    const minutes = Math.floor(diff / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-    el.textContent = `${minutes} นาที ${seconds.toString().padStart(2, '0')} วินาที`;
-  }
-
-  tick();
-  paymentTimer = setInterval(tick, 1000);
-}
-
-function toggleSlipButton() {
-  const file = document.getElementById('slipInput').files[0];
-  document.getElementById('verifyBtn').disabled = !file;
-}
-
-function showPaymentSection(order, cart) {
-  currentOrderId = order.order_id;
-  pendingPaymentOrder = {
-    id: order.order_id,
-    transferCode: document.getElementById('transferCode').value.trim(),
-    confirmCode: document.getElementById('confirmCode').value.trim(),
-    server: document.getElementById('server').value,
-    username: document.getElementById('username').value.trim(),
-    contact: document.getElementById('contact').value.trim(),
-    items: cart,
-    total: cart.reduce((sum, item) => sum + item.price, 0),
-  };
-
-  document.getElementById('paymentOrderId').textContent = order.order_id;
-  document.getElementById('paymentAmount').textContent = formatCurrency(order.amount);
-  document.getElementById('paymentQr').src = `data:image/png;base64,${order.qr_base64}`;
-  document.getElementById('paymentSection').style.display = 'block';
-  document.getElementById('slipInput').value = '';
-  document.getElementById('verifyBtn').disabled = true;
-  setPaymentError('');
-  setPaymentSuccess('กรุณาสแกน QR แล้วอัปโหลดสลิปเพื่อยืนยันการชำระ');
-  startPaymentCountdown(order.expires_at);
-}
-
-function hidePaymentSection() {
-  const section = document.getElementById('paymentSection');
-  if (section) section.style.display = 'none';
-  if (paymentTimer) {
-    clearInterval(paymentTimer);
-    paymentTimer = null;
-  }
+// ── Compress image before upload ──────────────────────────────
+function compressImage(file, maxPx, quality) {
+  return new Promise(function (resolve) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = new Image();
+      img.onload = function () {
+        var ratio = Math.min(maxPx / img.width, maxPx / img.height, 1);
+        var canvas = document.createElement('canvas');
+        canvas.width  = Math.round(img.width  * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 function displayCart() {
@@ -326,145 +306,250 @@ function setSubmitState(isSubmitting) {
   button.textContent = isSubmitting ? 'กำลังส่งคำสั่ง...' : '🚀 ชำระเงินเลย';
 }
 
+// ── Checkout: save order → show QR ──────────────────────────
 async function checkout() {
-  let transferCode = document.getElementById('transferCode').value.trim();
-  let confirmCode = document.getElementById('confirmCode').value.trim();
-  let server = document.getElementById('server').value;
-  let username = document.getElementById('username').value.trim();
-  let contact = document.getElementById('contact').value.trim();
-  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  var transferCode = document.getElementById('transferCode').value.trim();
+  var confirmCode  = document.getElementById('confirmCode').value.trim();
+  var server       = document.getElementById('server').value;
+  var username     = document.getElementById('username').value.trim();
+  var contact      = document.getElementById('contact').value.trim();
+  var cart         = JSON.parse(localStorage.getItem('cart') || '[]');
 
   if (!transferCode || !confirmCode || !server || !username || !contact) {
-    alert('❌ กรุณากรอกข้อมูลให้ครบ!');
-    return;
+    alert('❌ กรุณากรอกข้อมูลให้ครบ!'); return;
   }
-
-  if (cart.length === 0) {
-    alert('❌ ตะกร้าว่างเปล่า!');
-    return;
-  }
-
-  const unsupportedItems = cart.filter(item => item.supported === false || !item.key);
-  if (unsupportedItems.length > 0) {
-    alert('❌ ในตะกร้ามีสินค้าที่ไม่รองรับ BCSFE: ' + unsupportedItems.map(i => i.name || 'ไม่ระบุสินค้า').join(', ') + '\nกรุณาลบก่อนกดชำระเงิน');
-    return;
-  }
+  if (cart.length === 0) { alert('❌ ตะกร้าว่างเปล่า!'); return; }
 
   setSubmitState(true);
-
-  const payload = {
-    transfer_code: transferCode,
-    confirmation_code: confirmCode,
-    country: server,
-    items: cart.map(item => ({ key: item.key || item.name, amount: item.amount || 1 })),
-  };
-
   try {
-    const response = await fetch(`${API_BASE_URL}/api/payment/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    const data = await response.json();
+    var total    = cart.reduce(function(s, i) { return s + i.price; }, 0);
+    var authUser = (window.AUTH && AUTH.getCurrentUser()) || null;
 
-    if (!response.ok) {
-      throw new Error(data.detail || data.error || 'เกิดข้อผิดพลาดจากระบบ');
-    }
+    var res = await DB.from('orders').insert([{
+      auth_user:     authUser,
+      username:      username,
+      transfer_code: transferCode,
+      confirm_code:  confirmCode,
+      server:        server,
+      contact:       contact,
+      items:         cart,
+      total:         total,
+      status:        'pending_payment',
+    }]).select().single();
 
-    showPaymentSection(data, cart);
-    setPaymentMessage('ระบบสร้างคำสั่งชำระเงินเรียบร้อยแล้ว กรุณาสแกน QR และอัปโหลดสลิป');
-  } catch (error) {
-    alert('❌ ' + error.message);
-    console.error(error);
+    if (res.error) throw res.error;
+    _currentOrderId = res.data.id;
+    showPaymentSection(res.data.id, total);
+  } catch (err) {
+    alert('❌ สร้างออเดอร์ไม่สำเร็จ: ' + (err.message || err));
+    console.error(err);
   } finally {
     setSubmitState(false);
   }
 }
 
-async function verifyPayment() {
-  if (!currentOrderId) {
-    setPaymentError('ไม่พบคำสั่งชำระเงิน กรุณาสร้างคำสั่งใหม่');
-    return;
+// ── Show QR payment section ───────────────────────────────────
+function showPaymentSection(orderId, total) {
+  document.getElementById('paymentSection').style.display = 'block';
+  document.getElementById('pay-orderId').textContent = orderId.substring(0, 8).toUpperCase();
+  document.getElementById('pay-amount').textContent   = '฿' + total.toLocaleString();
+
+  // Render PromptPay QR
+  var qrEl = document.getElementById('qrCanvas');
+  qrEl.innerHTML = '';
+  var qrStr = (window.PromptPay && window.PROMPTPAY_ID)
+    ? PromptPay.qrString(PROMPTPAY_ID, total)
+    : null;
+
+  if (qrStr && window.QRCode) {
+    new QRCode(qrEl, {
+      text: qrStr, width: 220, height: 220,
+      colorDark: '#000000', colorLight: '#ffffff',
+    });
+  } else {
+    qrEl.innerHTML = '<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:10px;font-size:13px;color:#666;text-align:center;padding:16px;">⚠️ กรุณาตั้งค่า PROMPTPAY_ID ใน supabase-client.js</div>';
   }
 
-  const fileInput = document.getElementById('slipInput');
-  const file = fileInput.files[0];
-  if (!file) {
-    setPaymentError('กรุณาอัปโหลดสลิปก่อน');
-    return;
-  }
+  // Scroll to payment section
+  document.getElementById('paymentSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 
-  document.getElementById('verifyBtn').disabled = true;
-  setPaymentError('');
-  setPaymentSuccess('กำลังตรวจสอบสลิป กรุณารอสักครู่...');
+// ── Slip preview ──────────────────────────────────────────────
+function onSlipChange() {
+  var file = document.getElementById('slipInput').files[0];
+  var btn  = document.getElementById('submitSlipBtn');
+  if (!file) { btn.disabled = true; return; }
+  btn.disabled = false;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var preview = document.getElementById('slipPreview');
+    document.getElementById('slipImg').src = e.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
 
-  const formData = new FormData();
-  formData.append('slip', file);
+// ── Submit slip → update order status ─────────────────────────
+async function submitSlip() {
+  var file = document.getElementById('slipInput').files[0];
+  if (!file || !_currentOrderId) { alert('❌ กรุณาเลือกไฟล์สลิปก่อน'); return; }
+
+  var btn = document.getElementById('submitSlipBtn');
+  var msg = document.getElementById('slipMsg');
+  btn.disabled = true; btn.textContent = '⏳ กำลังส่ง...';
+  msg.style.display = 'none';
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/payment/verify/${currentOrderId}`, {
-      method: 'POST',
-      body: formData,
-    });
-    const data = await response.json();
+    // Compress image (max 900px, 0.72 quality) → base64
+    var b64 = await compressImage(file, 900, 0.72);
 
-    if (!response.ok) {
-      throw new Error(data.detail || data.error || 'ตรวจสอบสลิปไม่สำเร็จ');
-    }
+    var res = await DB.from('orders').update({
+      slip_data: b64,
+      status:    'pending_confirm',
+      paid_at:   new Date().toISOString(),
+    }).eq('id', _currentOrderId);
 
-    saveOrder({
-      id: currentOrderId,
-      date: new Date().toLocaleString('th-TH'),
-      transferCode,
-      confirmCode,
-      server,
-      username,
-      contact,
-      items: pendingPaymentOrder?.items || [],
-      total: pendingPaymentOrder?.total || 0,
-      status: 'ชำระเงินและสั่ง BCSFE สำเร็จ',
-      result: {
-        newTransferCode: data.new_transfer_code || '-',
-        newConfirmCode: data.new_confirmation_code || '-',
-        summary: data.summary || [],
-      },
-    });
+    if (res.error) throw res.error;
+
+    // Notify Discord
+    var orderData = {
+      id: _currentOrderId, status: 'pending_confirm',
+      username: document.getElementById('username').value.trim(),
+      total: JSON.parse(localStorage.getItem('cart') || '[]').reduce(function(s,i){ return s+i.price; }, 0),
+      items: JSON.parse(localStorage.getItem('cart') || '[]'),
+      transfer_code: document.getElementById('transferCode').value.trim(),
+      confirm_code:  document.getElementById('confirmCode').value.trim(),
+      contact:       document.getElementById('contact').value.trim(),
+      server:        document.getElementById('server').value,
+    };
+    if (window.NOTIFY) NOTIFY.discord(orderData);
 
     localStorage.removeItem('cart');
     displayCart();
-    showSuccessModal(currentOrderId, data);
-    hidePaymentSection();
-  } catch (error) {
-    setPaymentError(error.message);
-    setPaymentSuccess('');
-    console.error(error);
-  } finally {
-    document.getElementById('verifyBtn').disabled = false;
+
+    document.getElementById('paymentSection').style.display = 'none';
+    showSuccessModal(_currentOrderId,
+      JSON.parse('[]'),
+      orderData.total);
+
+    msg.style.display = 'block';
+    msg.style.color = '#4ade80';
+    msg.textContent = '✅ ส่งสลิปสำเร็จ! รอทีมงานยืนยัน 5–15 นาที';
+
+  } catch (err) {
+    msg.style.display = 'block';
+    msg.style.color = '#f87171';
+    msg.textContent = '❌ ' + (err.message || err);
+    btn.disabled = false; btn.textContent = '📤 ส่งสลิปยืนยันการชำระ';
   }
 }
 
-function saveOrder(order) {
-  let orders = JSON.parse(localStorage.getItem('orders') || '[]');
-  orders.push(order);
-  localStorage.setItem('orders', JSON.stringify(orders));
+function saveOrder() {} // deprecated
+
+// ── Tab system ────────────────────────────────────────────────
+var _ACTIVE_TAB_STYLE   = 'flex:1;padding:10px;border:none;border-radius:9px;background:rgba(139,61,255,0.5);color:#fff;font-family:\'Kanit\',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(139,61,255,0.3);transition:all .25s;';
+var _INACTIVE_TAB_STYLE = 'flex:1;padding:10px;border:none;border-radius:9px;background:transparent;color:rgba(255,255,255,0.55);font-family:\'Kanit\',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;';
+
+function switchOrderTab(tab) {
+  var isOrder = tab === 'order';
+  document.getElementById('panel-order').style.display   = isOrder ? 'block' : 'none';
+  document.getElementById('panel-history').style.display = isOrder ? 'none'  : 'block';
+  document.getElementById('otab-order').style.cssText    = isOrder ? _ACTIVE_TAB_STYLE   : _INACTIVE_TAB_STYLE;
+  document.getElementById('otab-history').style.cssText  = isOrder ? _INACTIVE_TAB_STYLE : _ACTIVE_TAB_STYLE;
+  if (!isOrder) renderHistory();
 }
 
-function showSuccessModal(orderID, data) {
-  document.getElementById('orderID').textContent = orderID;
-  document.getElementById('resultSummary').textContent = 'ระบบ BCSFE จัดการเสร็จสิ้นแล้ว';
-  document.getElementById('newTransferCode').textContent = data.new_transfer_code || '-';
-  document.getElementById('newConfirmCode').textContent = data.new_confirmation_code || '-';
+// ── History render (Supabase) ─────────────────────────────────
+async function renderHistory() {
+  var prompt  = document.getElementById('hist-login-prompt');
+  var content = document.getElementById('hist-content');
 
-  const summaryEl = document.getElementById('orderSummary');
-  summaryEl.innerHTML = '';
-  if (Array.isArray(data.summary) && data.summary.length > 0) {
-    data.summary.forEach(item => {
-      const row = document.createElement('div');
-      row.textContent = `${item.item} +${item.amount.toLocaleString()}`;
-      summaryEl.appendChild(row);
-    });
+  if (!window.AUTH || !AUTH.isLoggedIn()) {
+    prompt.style.display  = 'block';
+    content.style.display = 'none';
+    return;
+  }
+  prompt.style.display  = 'none';
+  content.style.display = 'block';
+  content.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.45);">⏳ กำลังโหลด...</div>';
+
+  try {
+    var authUser = AUTH.getCurrentUser();
+    var res = await DB.from('orders')
+      .select('*')
+      .eq('auth_user', authUser)
+      .order('created_at', { ascending: false });
+
+    if (res.error) throw res.error;
+    var orders = res.data || [];
+
+    if (!orders.length) {
+      content.innerHTML =
+        '<div style="text-align:center;padding:70px 20px;color:rgba(255,255,255,0.45);">' +
+        '<div style="font-size:52px;margin-bottom:16px;">📋</div>' +
+        '<p style="font-size:18px;margin-bottom:8px;">ยังไม่มีประวัติการสั่งซื้อ</p>' +
+        '<p style="font-size:13px;">สั่งซื้อสินค้าเพื่อดูประวัติที่นี่</p>' +
+        '</div>';
+      return;
+    }
+
+    var STATUS_COLOR = { pending:'#facc15', processing:'#60a5fa', done:'#4ade80', cancelled:'#f87171' };
+
+    content.innerHTML = orders.map(function(order) {
+      var items = (order.items || []).map(function(item) {
+        return '<span style="display:inline-block;background:rgba(255,255,255,0.06);' +
+          'border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.82);' +
+          'padding:3px 11px;border-radius:20px;font-size:12px;margin:2px;">' +
+          (item.name || '') + '</span>';
+      }).join('');
+
+      var total   = (order.total || 0).toLocaleString();
+      var dateStr = order.created_at
+        ? new Date(order.created_at).toLocaleString('th-TH')
+        : '-';
+      var shortId = (order.id || 'N/A').substring(0, 8).toUpperCase();
+      var status  = order.status || 'pending';
+      var statusColor = STATUS_COLOR[status] || '#facc15';
+      var statusLabel = { pending:'⏳ รอดำเนินการ', processing:'🔧 กำลังดำเนินการ', done:'✅ เสร็จสิ้น', cancelled:'❌ ยกเลิก' }[status] || status;
+
+      return '<div style="background:linear-gradient(180deg,rgba(22,6,46,0.92),rgba(34,4,64,0.92));' +
+        'border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px 24px;' +
+        'margin-bottom:14px;transition:border-color .25s;" ' +
+        'onmouseover="this.style.borderColor=\'rgba(139,61,255,0.35)\'" ' +
+        'onmouseout="this.style.borderColor=\'rgba(255,255,255,0.06)\'">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">' +
+        '<div>' +
+        '<div style="font-size:12px;color:rgba(255,255,255,0.42);margin-bottom:4px;">📅 ' + dateStr + '</div>' +
+        '<div style="font-family:\'Russo One\',sans-serif;font-size:14px;color:var(--yellow);margin-bottom:8px;">#' + shortId + '</div>' +
+        (items ? '<div style="margin-bottom:6px;">' + items + '</div>' : '') +
+        '</div>' +
+        '<div style="text-align:right;flex-shrink:0;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;font-size:24px;color:var(--red);">฿' + total + '</div>' +
+        '<div style="font-size:12px;color:' + statusColor + ';margin-top:4px;">' + statusLabel + '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+    }).join('');
+
+  } catch (err) {
+    content.innerHTML = '<div style="text-align:center;padding:40px;color:#f87171;">❌ โหลดประวัติไม่ได้: ' + (err.message || err) + '</div>';
+    console.error(err);
+  }
+}
+
+function showSuccessModal(orderId, cart, total) {
+  document.getElementById('orderID').textContent = (orderId || '').substring(0, 8).toUpperCase();
+  document.getElementById('resultSummary').textContent = 'ออเดอร์ถูกบันทึกเรียบร้อยแล้ว ทีมงานจะดำเนินการภายใน 5–15 นาที';
+  document.getElementById('newTransferCode').textContent = 'รอทีมงานดำเนินการ';
+  document.getElementById('newConfirmCode').textContent  = 'รอทีมงานดำเนินการ';
+
+  var summaryEl = document.getElementById('orderSummary');
+  if (cart && cart.length) {
+    summaryEl.innerHTML = (cart || []).map(function(i) {
+      return '<div>' + (i.name || '') + ' — ฿' + (i.price || 0).toLocaleString() + '</div>';
+    }).join('') + '<div style="margin-top:8px;font-weight:700;">รวม ฿' + (total || 0).toLocaleString() + '</div>';
   } else {
-    summaryEl.textContent = 'ไม่มีสรุปรายการ';
+    summaryEl.textContent = '-';
   }
 
   document.getElementById('successModal').classList.add('active');
@@ -485,5 +570,9 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 });
 </script>
 
+<script src="assets/supabase-client.js"></script>
+<script src="assets/notify.js"></script>
+<script src="assets/auth.js"></script>
+<script src="assets/animations.js"></script>
 </body>
 </html>

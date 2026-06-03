@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Battle Cats Shop</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    .order-card {
+      background: rgba(14,6,32,0.88);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 20px 22px;
+      margin-bottom: 12px;
+      transition: border-color 0.18s;
+    }
+    .order-card:hover { border-color: rgba(124,58,237,0.38); }
+
+    .order-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .order-id {
+      font-family: 'Russo One', sans-serif;
+      font-size: 14px;
+      color: var(--yellow);
+    }
+    .order-meta {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(210,190,255,0.5);
+      margin-top: 4px;
+    }
+    .order-total {
+      font-family: 'Russo One', sans-serif;
+      font-size: 22px;
+      color: var(--red);
+    }
+
+    .order-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      padding: 14px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      margin-bottom: 14px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+    }
+    .detail-label { color: rgba(210,190,255,0.45); margin-bottom: 3px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; }
+    .detail-value { color: #EDE6FF; font-weight: 600; word-break: break-all; }
+
+    .item-pill {
+      background: rgba(124,58,237,0.12);
+      border: 1px solid rgba(124,58,237,0.25);
+      color: #C4B5FD;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin: 2px;
+    }
+
+    .status-select {
+      padding: 7px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(124,58,237,0.35);
+      background: rgba(124,58,237,0.12);
+      color: #EDE6FF;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .status-select:focus { outline: none; border-color: rgba(124,58,237,0.65); }
+
+    .save-btn {
+      padding: 7px 18px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #7C3AED, #F43F5E);
+      color: #fff;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: filter 0.18s, transform 0.18s;
+    }
+    .save-btn:hover    { filter: brightness(1.1); transform: translateY(-1px); }
+    .save-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .stat-mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(124,58,237,0.10);
+      border: 1px solid rgba(124,58,237,0.22);
+      border-radius: 10px;
+      padding: 7px 16px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(210,190,255,0.75);
+    }
+    .stat-mini b { color: var(--yellow); font-family: 'Russo One', sans-serif; font-size: 16px; }
+
+    .s-tab {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: transparent;
+      color: rgba(210,190,255,0.6);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .s-tab:hover  { background: rgba(124,58,237,0.15); color: #fff; }
+    .s-tab.active { background: rgba(124,58,237,0.40); color: #fff;
+                    border-color: rgba(124,58,237,0.55); }
+
+    /* Slip thumbnail */
+    .slip-thumb {
+      width: 80px; height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid rgba(124,58,237,0.3);
+      transition: transform 0.2s;
+    }
+    .slip-thumb:hover { transform: scale(1.08); }
+
+    /* Slip lightbox */
+    #slipLightbox {
+      display: none;
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.88);
+      align-items: center; justify-content: center;
+    }
+    #slipLightbox.open { display: flex; }
+    #slipLightbox img  { max-width: 90vw; max-height: 90vh; border-radius: 12px; }
+  </style>
+</head>
+<body>
+
+<!-- Slip lightbox -->
+<div id="slipLightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="" alt="slip">
+</div>
+
+<!-- Main Admin Panel -->
+<div id="adminMain">
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo"><img src="pictures/icon cat.png" style="height:20px;vertical-align:middle;margin-right:5px;"> BATTLE CATS SHOP</a>
+    <ul class="nav-links">
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="admin.html" class="active" style="color:#FDA4AF;">🛡️ Admin</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <a href="index.html" style="padding:6px 14px;border-radius:10px;border:1px solid rgba(124,58,237,0.3);background:rgba(124,58,237,0.10);color:#C4B5FD;font-family:'Chakra Petch',sans-serif;font-size:12px;text-decoration:none;">← หน้าแรก</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:24px;">
+    <h1 class="section-title" style="margin-bottom:0;">🛡️ จัดการออเดอร์</h1>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;" id="statsRow">
+      <span class="stat-mini">⏳ โหลด...</span>
+    </div>
+  </div>
+
+  <!-- Status filter -->
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;" id="tabsRow">
+    <button class="s-tab active" onclick="filterOrders('all',this)">ทั้งหมด</button>
+    <button class="s-tab" style="color:#FBBF24;" onclick="filterOrders('pending_payment',this)">💳 รอชำระ</button>
+    <button class="s-tab" style="color:#A78BFA;" onclick="filterOrders('pending_confirm',this)">📋 รอยืนยัน</button>
+    <button class="s-tab" style="color:#60A5FA;" onclick="filterOrders('processing',this)">🔧 กำลังทำ</button>
+    <button class="s-tab" style="color:#4ADE80;" onclick="filterOrders('done',this)">✅ Done</button>
+    <button class="s-tab" style="color:#F87171;" onclick="filterOrders('cancelled',this)">❌ ยกเลิก</button>
+    <button class="s-tab" style="color:#94A3B8;" onclick="filterOrders('test',this)">🧪 Test</button>
+  </div>
+
+  <!-- Search -->
+  <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+    <input id="searchInput" type="text" placeholder="ค้นหา username, transfer code, contact..."
+      style="flex:1;min-width:200px;padding:10px 14px;border-radius:12px;border:1px solid rgba(124,58,237,0.28);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;"
+      oninput="renderOrders()">
+    <button class="save-btn" onclick="loadOrders()" style="padding:10px 20px;">🔄 รีเฟรช</button>
+  </div>
+
+  <div id="orderCount" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.45);margin-bottom:14px;"></div>
+  <div id="orderList"><div style="text-align:center;padding:60px;color:rgba(210,190,255,0.4);">⏳ กำลังโหลด...</div></div>
+
+</div>
+</div><!-- /adminMain -->
+
+<script src="assets/supabase-client.js"></script>
+<script>
+var _allOrders   = [];
+var _filterStatus = 'all';
+var _adminUser   = null;
+
+var STATUS_COLOR = {
+  pending_payment:'#FBBF24', pending_confirm:'#A78BFA',
+  processing:'#60A5FA', done:'#4ADE80', cancelled:'#F87171',
+  pending:'#FBBF24', test:'#94A3B8'
+};
+var STATUS_LABEL = {
+  pending_payment:'💳 รอชำระ', pending_confirm:'📋 รอยืนยัน',
+  processing:'🔧 กำลังทำ', done:'✅ Done', cancelled:'❌ ยกเลิก',
+  pending:'⏳ Pending', test:'🧪 Test'
+};
+
+// ── Admin Login ───────────────────────────────────────────────
+async function adminLogin() {
+  var user = document.getElementById('adminUser').value.trim();
+  var pass = document.getElementById('adminPass').value;
+  var btn  = document.getElementById('loginBtn');
+  if (!user || !pass) { showErr('กรอก username และ password'); return; }
+
+  btn.disabled = true; btn.textContent = '⏳ กำลังตรวจสอบ...';
+
+  try {
+    // รอ DB พร้อม (กรณีโหลดช้า)
+    var waited = 0;
+    while (!window.DB && waited < 3000) {
+      await new Promise(function(r){ setTimeout(r, 100); });
+      waited += 100;
+    }
+    if (!window.DB) { showErr('เชื่อมต่อ Supabase ไม่ได้ — รีเฟรชแล้วลองใหม่'); return; }
+
+    var hash = btoa(unescape(encodeURIComponent(pass)));
+
+    // 1) ตรวจ username + password ก่อน
+    var credRes = await DB.from('profiles')
+      .select('username, is_admin, password_hash')
+      .eq('username', user)
+      .maybeSingle();
+
+    if (credRes.error) throw new Error('DB error: ' + credRes.error.message);
+    if (!credRes.data)  { showErr('ไม่พบ username "' + user + '"'); return; }
+    if (credRes.data.password_hash !== hash) { showErr('password ไม่ถูกต้อง'); return; }
+    if (!credRes.data.is_admin) { showErr('บัญชีนี้ไม่มีสิทธิ์ Admin — รัน sql/payment_and_admin.sql ก่อน'); return; }
+
+    _adminUser = credRes.data.username;
+    sessionStorage.setItem('bc_admin', _adminUser);
+    showAdminPanel();
+
+  } catch (e) {
+    showErr('❌ ' + (e.message || e));
+  } finally {
+    btn.disabled = false; btn.textContent = 'เข้าสู่ระบบ Admin';
+  }
+}
+
+function showErr(msg) {
+  var el = document.getElementById('authErr');
+  el.textContent = '❌ ' + msg;
+  el.style.display = 'block';
+}
+
+function showAdminPanel() {
+  document.getElementById('authGate').style.display  = 'none';
+  document.getElementById('adminMain').style.display = 'block';
+  document.getElementById('adminUserLabel').textContent = '👤 ' + _adminUser;
+  loadOrders();
+}
+
+function adminLogout() {
+  sessionStorage.removeItem('bc_admin');
+  window.location.reload();
+}
+
+// Enter key on password
+document.getElementById('adminPass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') adminLogin();
+});
+
+// ── Load Orders ───────────────────────────────────────────────
+async function loadOrders() {
+  document.getElementById('orderList').innerHTML =
+    '<div style="text-align:center;padding:60px;color:rgba(210,190,255,0.4);">⏳ กำลังโหลด...</div>';
+  try {
+    var res = await DB.from('orders').select('*').order('created_at', { ascending: false });
+    if (res.error) throw res.error;
+    _allOrders = res.data || [];
+    updateStats();
+    renderOrders();
+  } catch (e) {
+    document.getElementById('orderList').innerHTML =
+      '<div style="text-align:center;padding:60px;color:#F87171;">❌ ' + e.message + '</div>';
+  }
+}
+
+function filterOrders(status, btn) {
+  _filterStatus = status;
+  document.querySelectorAll('.s-tab').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderOrders();
+}
+
+function renderOrders() {
+  var q = (document.getElementById('searchInput').value || '').toLowerCase();
+  var list = _allOrders.filter(function(o) {
+    var matchS = _filterStatus === 'all' || o.status === _filterStatus;
+    var matchQ = !q ||
+      (o.username||'').toLowerCase().includes(q) ||
+      (o.contact||'').toLowerCase().includes(q)  ||
+      (o.id||'').toLowerCase().includes(q)        ||
+      (o.transfer_code||'').toLowerCase().includes(q);
+    return matchS && matchQ;
+  });
+
+  document.getElementById('orderCount').textContent =
+    'แสดง ' + list.length + ' / ' + _allOrders.length + ' ออเดอร์';
+
+  if (!list.length) {
+    document.getElementById('orderList').innerHTML =
+      '<div style="text-align:center;padding:60px;color:rgba(210,190,255,0.35);">ไม่พบออเดอร์</div>';
+    return;
+  }
+
+  document.getElementById('orderList').innerHTML = list.map(function(o) {
+    var shortId = (o.id||'').substring(0,8).toUpperCase();
+    var date    = o.created_at ? new Date(o.created_at).toLocaleString('th-TH') : '-';
+    var items   = (o.items||[]).map(function(i) {
+      return '<span class="item-pill">' + (i.name||'-') + '</span>';
+    }).join('') || '<span class="item-pill" style="opacity:0.4;">-</span>';
+
+    var col = STATUS_COLOR[o.status] || '#fff';
+    var lbl = STATUS_LABEL[o.status] || o.status;
+
+    var slipHtml = o.slip_data
+      ? '<div style="margin-top:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.45);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">สลิปการโอน</div>' +
+        '<img class="slip-thumb" src="' + o.slip_data + '" onclick="openLightbox(\'' + o.id + '\')" alt="slip"></div>'
+      : '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.3);margin-top:8px;">ยังไม่มีสลิป</div>';
+
+    return '<div class="order-card" id="card-' + o.id + '">' +
+      '<div class="order-top">' +
+        '<div>' +
+          '<div class="order-id">#' + shortId + '</div>' +
+          '<div class="order-meta">📅 ' + date + ' &nbsp;|&nbsp; 👤 ' + (o.username||'-') + '</div>' +
+        '</div>' +
+        '<div style="text-align:right;">' +
+          '<div class="order-total">฿' + (o.total||0).toLocaleString() + '</div>' +
+          '<div style="font-size:12px;color:' + col + ';margin-top:4px;">' + lbl + '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="order-details">' +
+        '<div><div class="detail-label">Transfer Code</div><div class="detail-value" style="font-family:monospace;">' + (o.transfer_code||'-') + '</div></div>' +
+        '<div><div class="detail-label">Confirm Code</div><div class="detail-value" style="font-family:monospace;">'  + (o.confirm_code ||'-') + '</div></div>' +
+        '<div><div class="detail-label">Server</div><div class="detail-value">' + (o.server ||'-') + '</div></div>' +
+        '<div><div class="detail-label">ติดต่อ</div><div class="detail-value">'  + (o.contact||'-') + '</div></div>' +
+      '</div>' +
+
+      '<div style="margin-bottom:12px;">' + items + '</div>' +
+      slipHtml +
+
+      '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;">' +
+        '<select class="status-select" id="sel-' + o.id + '">' +
+          ['pending_payment','pending_confirm','processing','done','cancelled','test'].map(function(s) {
+            return '<option value="' + s + '"' + (o.status===s?' selected':'') + '>' + (STATUS_LABEL[s]||s) + '</option>';
+          }).join('') +
+        '</select>' +
+        '<button class="save-btn" onclick="updateStatus(\'' + o.id + '\')" id="btn-' + o.id + '">บันทึก</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── Update status ─────────────────────────────────────────────
+async function updateStatus(orderId) {
+  var sel = document.getElementById('sel-' + orderId);
+  var btn = document.getElementById('btn-' + orderId);
+  btn.disabled = true; btn.textContent = '⏳';
+  try {
+    var res = await DB.from('orders').update({ status: sel.value }).eq('id', orderId);
+    if (res.error) throw res.error;
+    var idx = _allOrders.findIndex(function(o){ return o.id === orderId; });
+    if (idx !== -1) _allOrders[idx].status = sel.value;
+    btn.textContent = '✅'; btn.style.background = '#4ADE80';
+    updateStats();
+    setTimeout(function() { btn.textContent='บันทึก'; btn.style.background=''; btn.disabled=false; }, 1500);
+  } catch(e) {
+    btn.textContent = '❌'; btn.style.background = '#F87171';
+    setTimeout(function() { btn.textContent='บันทึก'; btn.style.background=''; btn.disabled=false; }, 2000);
+  }
+}
+
+// ── Stats + Revenue ───────────────────────────────────────────
+function updateStats() {
+  var counts = {};
+  var revenue = 0;
+  _allOrders.forEach(function(o) {
+    counts[o.status] = (counts[o.status]||0) + 1;
+    if (o.status === 'done') revenue += (o.total||0);
+  });
+
+  document.getElementById('statsRow').innerHTML =
+    '<span class="stat-mini"><b>' + _allOrders.length + '</b> ทั้งหมด</span>' +
+    '<span class="stat-mini" style="border-color:rgba(251,191,36,0.3);color:#FBBF24;"><b>' + (counts['pending_payment']||0) + '</b> รอชำระ</span>' +
+    '<span class="stat-mini" style="border-color:rgba(167,139,250,0.3);color:#A78BFA;"><b>' + (counts['pending_confirm']||0) + '</b> รอยืนยัน</span>' +
+    '<span class="stat-mini" style="border-color:rgba(74,222,128,0.3);color:#4ADE80;"><b>' + (counts['done']||0) + '</b> Done</span>' +
+    '<span class="stat-mini" style="border-color:rgba(255,77,146,0.3);color:var(--red);font-size:14px;"><b>฿' + revenue.toLocaleString() + '</b> รายได้</span>';
+}
+
+// ── Slip lightbox ─────────────────────────────────────────────
+function openLightbox(orderId) {
+  var order = _allOrders.find(function(o){ return o.id === orderId; });
+  if (!order || !order.slip_data) return;
+  document.getElementById('lightboxImg').src = order.slip_data;
+  document.getElementById('slipLightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('slipLightbox').classList.remove('open');
+}
+
+// ── Init ──────────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  var saved = sessionStorage.getItem('bc_admin');
+  if (saved) {
+    _adminUser = saved;
+    showAdminPanel();
+  }
+});
+</script>
+</body>
+</html>

@@ -143,6 +143,270 @@ class BCSFERunner:
             self._write_log()
             return {"success": False, "error": f"❌ {e}"}
 
+    def run_unlock_characters(self, cat_ids: list) -> dict:
+        """ปลดล็อคตัวละครตาม ID ที่ระบุ ผ่าน BCSFE"""
+        try:
+            os.makedirs(os.path.dirname(self.log_file), exist_ok=True)
+            print(f"[BCSFE] ══ unlock characters ({len(cat_ids)} ตัว) ══")
+
+            import os as _os
+            env = _os.environ.copy()
+            env["PYTHONIOENCODING"] = "utf-8"
+            env["PYTHONUTF8"] = "1"
+            env["BCSFE_DISABLE_DIALOGS"] = "1"
+            env["NO_COLOR"] = "1"
+
+            self.process = subprocess.Popen(
+                ["python", "-m", "bcsfe"],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                bufsize=0,
+                env=env,
+            )
+
+            threading.Thread(
+                target=self._reader_char,
+                args=(self.process.stdout,),
+                daemon=True,
+            ).start()
+
+            if HAS_PYAUTOGUI:
+                threading.Thread(target=self._dialog_killer, daemon=True).start()
+
+            self._handle_update_prompts()
+
+            # ── Download save (เหมือน run()) ──
+            self._wait_send("Input a number between", "1", "เมนูหลัก → Download save")
+            self._wait_send("Enter Transfer Code", self.transfer, "Transfer Code")
+            self._wait_send("Enter Confirmation Code", self.confirm, "Confirmation Code")
+            self._wait_new("4. tw", timeout=15)
+            self._wait_new("Select country code", timeout=15)
+            time.sleep(0.3)
+            self._send(self.country, f"Country → {self.country}")
+
+            result = self._wait_any(
+                ["Features:", "Failed to download", "debug info"],
+                timeout=30,
+            )
+            if result in (1, 2):
+                self._send("n", "ปฏิเสธ debug info")
+                self._kill()
+                self._write_log()
+                return {"success": False, "error": "❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว"}
+
+            print("[BCSFE] ✅ Download save สำเร็จ!")
+
+            # ── Features → 3 (cat / special skills) ──
+            self._wait_send("Features:", "3", "Features → 3 (cat / special skills)")
+
+            # ── cat/special skills → 2 (unlock character) ──
+            self._wait_send("Input:", "2", "cat/special skills → 2 (unlock character)")
+
+            # ── unlock character → 4 (Select cats by id) ──
+            self._wait_send("Input:", "4", "unlock character → 4 (Select cats by id)")
+
+            # ── ส่ง ID list ──
+            ids_str = " ".join(str(i) for i in cat_ids)
+            print(f"[BCSFE]   Cat IDs: {ids_str[:80]}{'...' if len(ids_str) > 80 else ''}")
+            self._wait_send("Enter cat ids", ids_str, f"IDs ({len(cat_ids)} ตัว)")
+
+            # ── Finished selecting? → y ──
+            self._wait_send("Have you finished selecting cats", "y", "finished → y")
+
+            # ── Unlock or Remove? → 1 (Unlock Cats) ──
+            self._wait_send("Do you want to Unlock or Remove cats", "1", "Unlock or Remove → 1 (Unlock)")
+
+            # ── Save Management ──
+            self._wait_send("Save Management", "1", "เข้า Save Management")
+            self._wait_send("Upload save file to server", "3", "Upload to server")
+
+            idx = self._wait_any(
+                ["Getting account", "Save save file", "(y/n)"],
+                timeout=15,
+            )
+            if idx in (1, 2):
+                self._send("y", "ยืนยัน save ก่อน upload")
+
+            codes = self._wait_for_codes(timeout=90)
+            self._exit_bcsfe()
+            self._write_log()
+
+            if codes:
+                print(f"[BCSFE] ✅ Unlock characters สำเร็จ! Transfer: {codes['transfer']}")
+                return {"success": True, "new_transfer_code": codes}
+            else:
+                self._print_last_log()
+                return {"success": False, "error": "ไม่พบ Transfer Code ใหม่ในผลลัพธ์"}
+
+        except TimeoutError as e:
+            self._kill()
+            self._write_log()
+            return {"success": False, "error": f"⏱️ Timeout: {e}"}
+        except Exception as e:
+            self._kill()
+            self._write_log()
+            return {"success": False, "error": f"❌ {e}"}
+
+    # ── shared helper ──────────────────────────────────────────
+    def _start_and_download(self) -> dict:
+        """เริ่ม BCSFE + download save → return {"success": True/False}"""
+        import os as _os
+        env = _os.environ.copy()
+        env["PYTHONIOENCODING"] = "utf-8"
+        env["PYTHONUTF8"]       = "1"
+        env["BCSFE_DISABLE_DIALOGS"] = "1"
+        env["NO_COLOR"]         = "1"
+
+        self.process = subprocess.Popen(
+            ["python", "-m", "bcsfe"],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True, encoding="utf-8", errors="replace", bufsize=0, env=env,
+        )
+        threading.Thread(target=self._reader_char, args=(self.process.stdout,), daemon=True).start()
+        if HAS_PYAUTOGUI:
+            threading.Thread(target=self._dialog_killer, daemon=True).start()
+
+        self._handle_update_prompts()
+        self._wait_send("Input a number between", "1",          "เมนูหลัก → Download save")
+        self._wait_send("Enter Transfer Code",     self.transfer, "Transfer Code")
+        self._wait_send("Enter Confirmation Code", self.confirm,  "Confirmation Code")
+        self._wait_new("4. tw", timeout=15)
+        self._wait_new("Select country code", timeout=15)
+        time.sleep(0.3)
+        self._send(self.country, f"Country → {self.country}")
+
+        result = self._wait_any(["Features:", "Failed to download", "debug info"], timeout=30)
+        if result in (1, 2):
+            self._send("n", "ปฏิเสธ debug info")
+            return {"success": False, "error": "❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว"}
+
+        print("[BCSFE] ✅ Download save สำเร็จ!")
+        return {"success": True}
+
+    def _select_cats_by_id(self, submenu_no: str, submenu_label: str, cat_ids: list):
+        """นำทางไปยัง sub-menu แล้วเลือก cats by id"""
+        self._wait_send("Features:",  "3",          "Features → 3 (cat / special skills)")
+        self._wait_send("Input:",      submenu_no,   f"cat/special → {submenu_no} ({submenu_label})")
+        self._wait_send("Input:",      "4",          "→ 4 (Select cats by id)")
+        ids_str = " ".join(str(i) for i in cat_ids)
+        print(f"[BCSFE]   IDs: {ids_str[:80]}{'...' if len(ids_str) > 80 else ''}")
+        self._wait_send("Enter cat ids", ids_str, f"IDs ({len(cat_ids)} ตัว)")
+        self._wait_send("Have you finished selecting cats", "y", "finished → y")
+
+    def _save_and_upload(self) -> dict:
+        """Save Management → Upload → return codes"""
+        self._wait_send("Save Management", "1", "Save Management → 1")
+        self._wait_send("Upload save file to server", "3", "Upload → 3")
+        idx = self._wait_any(["Getting account", "Save save file", "(y/n)"], timeout=15)
+        if idx in (1, 2):
+            self._send("y", "ยืนยัน save")
+        codes = self._wait_for_codes(timeout=90)
+        self._exit_bcsfe()
+        self._write_log()
+        if codes:
+            return {"success": True, "new_transfer_code": codes}
+        self._print_last_log()
+        return {"success": False, "error": "ไม่พบ Transfer Code ใหม่"}
+
+    # ── upgrade characters ─────────────────────────────────────
+    def run_upgrade_characters(self, cat_ids: list) -> dict:
+        """อัพเกรดตัวละครถึง max level"""
+        try:
+            os.makedirs(os.path.dirname(self.log_file), exist_ok=True)
+            print(f"[BCSFE] ══ upgrade characters ({len(cat_ids)} ตัว) ══")
+            init = self._start_and_download()
+            if not init["success"]:
+                self._kill(); self._write_log(); return init
+
+            self._select_cats_by_id("3", "Upgrade Cats", cat_ids)
+            # หลัง y → BCSFE ถามระดับ → ส่ง max
+            self._wait_send("Enter a", "max", "Enter level → max")
+
+            return self._save_and_upload()
+
+        except TimeoutError as e:
+            self._kill(); self._write_log()
+            return {"success": False, "error": f"⏱️ Timeout: {e}"}
+        except Exception as e:
+            self._kill(); self._write_log()
+            return {"success": False, "error": f"❌ {e}"}
+
+    # ── true form characters ───────────────────────────────────
+    def run_true_form_characters(self, cat_ids: list) -> dict:
+        """True Form ตัวละคร"""
+        try:
+            os.makedirs(os.path.dirname(self.log_file), exist_ok=True)
+            print(f"[BCSFE] ══ true form characters ({len(cat_ids)} ตัว) ══")
+            init = self._start_and_download()
+            if not init["success"]:
+                self._kill(); self._write_log(); return init
+
+            self._select_cats_by_id("4", "True Form Cats", cat_ids)
+            # หลัง y → "1. True Form Cats / 2. Remove" → ส่ง 1
+            self._wait_send("Do you want to", "1", "True Form → 1")
+
+            return self._save_and_upload()
+
+        except TimeoutError as e:
+            self._kill(); self._write_log()
+            return {"success": False, "error": f"⏱️ Timeout: {e}"}
+        except Exception as e:
+            self._kill(); self._write_log()
+            return {"success": False, "error": f"❌ {e}"}
+
+    # ── ultra form characters ──────────────────────────────────
+    def run_ultra_form_characters(self, cat_ids: list) -> dict:
+        """Ultra Form ตัวละคร (4th Form)"""
+        try:
+            os.makedirs(os.path.dirname(self.log_file), exist_ok=True)
+            print(f"[BCSFE] ══ ultra form characters ({len(cat_ids)} ตัว) ══")
+            init = self._start_and_download()
+            if not init["success"]:
+                self._kill(); self._write_log(); return init
+
+            self._select_cats_by_id("6", "Ultra Form Cats", cat_ids)
+            # หลัง y → "1. Ultra Form / 2. Remove" → ส่ง 1
+            self._wait_send("Do you want to", "1", "Ultra Form → 1")
+
+            return self._save_and_upload()
+
+        except TimeoutError as e:
+            self._kill(); self._write_log()
+            return {"success": False, "error": f"⏱️ Timeout: {e}"}
+        except Exception as e:
+            self._kill(); self._write_log()
+            return {"success": False, "error": f"❌ {e}"}
+
+    # ── talents max characters ─────────────────────────────────
+    def run_talents_max_characters(self, cat_ids: list) -> dict:
+        """Max Talents ตัวละคร"""
+        try:
+            os.makedirs(os.path.dirname(self.log_file), exist_ok=True)
+            print(f"[BCSFE] ══ talents max characters ({len(cat_ids)} ตัว) ══")
+            init = self._start_and_download()
+            if not init["success"]:
+                self._kill(); self._write_log(); return init
+
+            self._select_cats_by_id("8", "Upgrade Talents Cats", cat_ids)
+            # หลัง y → "1. Upgrade / 2. Remove" → ส่ง 1
+            self._wait_send("Do you want to Upgrade or Remove", "1", "Upgrade Talents → 1")
+            # → "1. Upgrade / 2. Max Upgrade" → ส่ง 2
+            self._wait_send("Input:", "2", "Max Upgrade → 2")
+
+            return self._save_and_upload()
+
+        except TimeoutError as e:
+            self._kill(); self._write_log()
+            return {"success": False, "error": f"⏱️ Timeout: {e}"}
+        except Exception as e:
+            self._kill(); self._write_log()
+            return {"success": False, "error": f"❌ {e}"}
+
     def _edit_item(self, item: dict):
         cfg = ITEM_MAP.get(item["key"])
         if not cfg:

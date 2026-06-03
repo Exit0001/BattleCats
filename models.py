@@ -37,3 +37,10 @@ class TestBCSFERequest(BaseModel):
     amount: int                 # จำนวนที่ต้องการเพิ่ม
     sub_type: Optional[int] = None  # sub-type (ถ้ามี)
     country: str = "1"          # "1"=en, "2"=jp, "3"=kr, "4"=tw
+
+class UnlockCharactersRequest(BaseModel):
+    """โมเดลสำหรับปลดล็อคตัวละคร"""
+    transfer_code: str          # Transfer Code จากเกม
+    confirmation_code: str      # Confirmation Code จากเกม
+    country: str = "1"          # "1"=en, "2"=jp, "3"=kr, "4"=tw
+    cat_ids: List[int]          # รายการ ID ตัวละครที่ต้องการปลดล็อค

@@ -6,7 +6,7 @@ import os
 import shutil
 from pathlib import Path
 from datetime import datetime
-from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest
+from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest
 from runner import BCSFERunner
 from config import ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES
 from payment import (
@@ -421,6 +421,169 @@ async def test_bcsfe(request: TestBCSFERequest):
             "success": False,
             "error": error_msg
         }
+
+@app.post("/api/unlock/characters")
+async def unlock_characters(request: UnlockCharactersRequest):
+    """ปลดล็อคตัวละครตาม cat_ids ผ่าน BCSFE"""
+    try:
+        transfer_code     = request.transfer_code.strip()
+        confirmation_code = request.confirmation_code.strip()
+        country           = request.country
+        cat_ids           = request.cat_ids
+
+        if not transfer_code or not confirmation_code:
+            return {"success": False, "error": "Transfer Code และ Confirmation Code ห้ามว่าง"}
+        if not cat_ids:
+            return {"success": False, "error": "ต้องระบุ cat_ids อย่างน้อย 1 ตัว"}
+        if country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {country}"}
+
+        print(f"\n{'='*60}")
+        print(f"[UNLOCK-CHARS] 🐱 ปลดล็อค {len(cat_ids)} ตัวละคร")
+        print(f"  Transfer Code: {transfer_code[:8]}...")
+        print(f"  Country: {COUNTRIES[country]}")
+        print(f"  IDs: {str(cat_ids[:10])}{'...' if len(cat_ids) > 10 else ''}")
+        print(f"{'='*60}\n")
+
+        runner = BCSFERunner(
+            transfer=transfer_code,
+            confirm=confirmation_code,
+            country=country,
+        )
+        result = runner.run_unlock_characters(cat_ids)
+
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or transfer_code)
+            print(f"[UNLOCK-CHARS] ✅ สำเร็จ!")
+            return {
+                "success": True,
+                "new_transfer_code": new_tc,
+                "new_confirmation_code": new_cc,
+                "unlocked_count": len(cat_ids),
+            }
+        else:
+            print(f"[UNLOCK-CHARS] ❌ ล้มเหลว: {result['error']}")
+            return {"success": False, "error": result.get("error", "Unknown error")}
+
+    except Exception as e:
+        error_msg = f"เกิดข้อผิดพลาด: {str(e)}"
+        print(f"[UNLOCK-CHARS] ❌ {error_msg}")
+        return {"success": False, "error": error_msg}
+
+@app.post("/api/upgrade/characters")
+async def upgrade_characters(request: UnlockCharactersRequest):
+    """อัพเกรดตัวละครถึง max level"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if not request.cat_ids:
+            return {"success": False, "error": "ต้องระบุ cat_ids อย่างน้อย 1 ตัว"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+
+        print(f"\n[UPGRADE-CHARS] ⬆️ upgrade {len(request.cat_ids)} ตัวละคร")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = runner.run_upgrade_characters(request.cat_ids)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "count": len(request.cat_ids)}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+
+@app.post("/api/trueform/characters")
+async def trueform_characters(request: UnlockCharactersRequest):
+    """True Form ตัวละคร"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if not request.cat_ids:
+            return {"success": False, "error": "ต้องระบุ cat_ids อย่างน้อย 1 ตัว"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+
+        print(f"\n[TRUEFORM-CHARS] ✨ true form {len(request.cat_ids)} ตัวละคร")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = runner.run_true_form_characters(request.cat_ids)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "count": len(request.cat_ids)}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+
+@app.post("/api/ultraform/characters")
+async def ultraform_characters(request: UnlockCharactersRequest):
+    """Ultra Form ตัวละคร (4th Form)"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if not request.cat_ids:
+            return {"success": False, "error": "ต้องระบุ cat_ids อย่างน้อย 1 ตัว"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+
+        print(f"\n[ULTRAFORM-CHARS] 💥 ultra form {len(request.cat_ids)} ตัวละคร")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = runner.run_ultra_form_characters(request.cat_ids)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "count": len(request.cat_ids)}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+
+@app.post("/api/talents/characters")
+async def talents_characters(request: UnlockCharactersRequest):
+    """Max Talents ตัวละคร"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if not request.cat_ids:
+            return {"success": False, "error": "ต้องระบุ cat_ids อย่างน้อย 1 ตัว"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+
+        print(f"\n[TALENTS-CHARS] 🌟 talents max {len(request.cat_ids)} ตัวละคร")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = runner.run_talents_max_characters(request.cat_ids)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "count": len(request.cat_ids)}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
 
 # ============= Utility Routes =============
 

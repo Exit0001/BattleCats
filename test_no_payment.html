@@ -5,132 +5,175 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🧪 ทดสอบระบบ - Battle Cats Shop</title>
   <link rel="stylesheet" href="assets/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
-    .test-badge {
-      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      display: inline-block;
-      margin-bottom: 20px;
-      font-weight: bold;
-      font-size: 16px;
-      animation: pulse 1.5s infinite;
+    /* ── Test-specific styles (dark theme) ── */
+    .test-warn-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(251,191,36,0.10);
+      border: 1px solid rgba(251,191,36,0.35);
+      border-radius: 14px;
+      padding: 14px 20px;
+      margin-bottom: 28px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      color: #FCD34D;
     }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.05); }
-    }
-    
+
     .test-section {
-      background: #f8f9ff;
-      border: 3px dashed #FF6B6B;
-      border-radius: 12px;
-      padding: 20px;
-      margin: 20px 0;
+      background: rgba(14,6,32,0.85);
+      border: 1px dashed rgba(244,63,94,0.40);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
     }
-    
-    .test-item {
-      background: white;
-      border: 2px solid #FFE5E5;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 10px 0;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .test-item:hover {
-      background: #FFF5F5;
-      border-color: #FF6B6B;
-      transform: translateY(-3px);
-    }
-    
-    .test-item-title {
-      font-weight: bold;
-      font-size: 18px;
-      color: #333;
-      margin-bottom: 5px;
-    }
-    
-    .test-item-desc {
-      color: #666;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-    
-    .test-button {
-      background: linear-gradient(135deg, #4CAF50, #45a049);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.3s;
+
+    .test-section-title {
+      font-family: 'Russo One', sans-serif;
       font-size: 16px;
+      color: #FDA4AF;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
     }
-    
-    .test-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+
+    .test-product-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: border-color 0.18s, background 0.18s;
     }
-    
-    .success-message {
-      background: #d4edda;
-      color: #155724;
-      padding: 15px;
-      border-radius: 6px;
-      margin: 10px 0;
-      border-left: 4px solid #28a745;
+    .test-product-card:hover {
+      border-color: rgba(124,58,237,0.45);
+      background: rgba(124,58,237,0.08);
     }
-    
-    .warning-message {
-      background: #fff3cd;
-      color: #856404;
-      padding: 15px;
-      border-radius: 6px;
-      margin: 10px 0;
-      border-left: 4px solid #ffc107;
-    }
-    
-    .order-result {
-      background: #e7f3ff;
-      border: 2px solid #2196F3;
-      border-radius: 8px;
-      padding: 15px;
-      margin: 15px 0;
-      font-family: monospace;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-    
-    .test-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 15px;
-      margin: 20px 0;
-    }
-    
-    .stat-box {
-      background: white;
-      border-radius: 8px;
-      padding: 15px;
-      text-align: center;
-      border: 2px solid #E0E0E0;
-    }
-    
-    .stat-number {
-      font-size: 32px;
-      font-weight: bold;
-      color: #FF6B6B;
-    }
-    
-    .stat-label {
-      color: #666;
-      margin-top: 5px;
+    .test-product-name {
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 700;
       font-size: 14px;
+      color: #EDE6FF;
+      margin-bottom: 3px;
+    }
+    .test-product-desc {
+      font-size: 12px;
+      color: rgba(210,190,255,0.55);
+    }
+    .test-product-price {
+      font-family: 'Russo One', sans-serif;
+      font-size: 16px;
+      color: #FF4D92;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-box {
+      background: rgba(124,58,237,0.10);
+      border: 1px solid rgba(124,58,237,0.25);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-number {
+      font-family: 'Russo One', sans-serif;
+      font-size: 28px;
+      color: #FFD84E;
+      text-shadow: 0 0 16px rgba(255,216,78,0.35);
+    }
+    .stat-label {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      color: rgba(210,190,255,0.55);
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .cart-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .cart-item-row:last-child { border-bottom: none; }
+
+    .debug-box {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: 'Chakra Petch', monospace;
+      font-size: 12px;
+      color: #86EFAC;
+      max-height: 280px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.7;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .form-label {
+      display: block;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(210,190,255,0.55);
+      margin-bottom: 7px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(124,58,237,0.25);
+      border-radius: 10px;
+      color: #EDE6FF;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: rgba(124,58,237,0.65);
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.14);
+    }
+    .form-input::placeholder { color: rgba(210,190,255,0.30); }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .status-dot.ok  { background: #4ADE80; box-shadow: 0 0 6px rgba(74,222,128,0.6); }
+    .status-dot.err { background: #F87171; box-shadow: 0 0 6px rgba(248,113,113,0.6); }
+    .status-dot.loading { background: #FBBF24; animation: bc-paw-pulse 1s ease-in-out infinite; }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -138,36 +181,45 @@
 
 <nav class="navbar">
   <div class="nav-container">
-    <a href="index.html" class="nav-logo">🐱 BATTLE CATS SHOP</a>
+    <a href="index.html" class="nav-logo"><img src="pictures/icon cat.png" style="height:20px;vertical-align:middle;margin-right:5px;"> BATTLE CATS SHOP</a>
     <ul class="nav-links">
       <li><a href="index.html">หน้าแรก</a></li>
       <li><a href="shop.html">ร้านขาย</a></li>
       <li><a href="characters.html">ปลดล็อคแมว</a></li>
       <li><a href="stages.html">ปลดล็อคด่าน</a></li>
       <li><a href="orders.html">ออเดอร์</a></li>
-      <li><a href="test_no_payment.html" style="color: #FF6B6B; font-weight: bold;">🧪 ทดสอบ</a></li>
+      <li><a href="test_no_payment.html" class="active" style="color:#FDA4AF;">🧪 ทดสอบ</a></li>
     </ul>
+    <div class="nav-cart" onclick="window.location.href='orders.html'" style="cursor:pointer;">
+      🛒
+      <span class="cart-badge" id="cartCount">0</span>
+    </div>
   </div>
 </nav>
 
 <div class="container">
-  <div class="test-badge">🧪 โหมดทดสอบระบบ - ไม่ต้องจ่ายเงิน 🧪</div>
 
-  <h1 class="section-title">🎮 ห้องทดสอบระบบ Battle Cats Shop</h1>
-  
-  <div class="warning-message">
-    ⚠️ หน้านี้ใช้สำหรับทดสอบระบบเท่านั้น ข้อมูลในห้องทดสอบ <strong>ไม่เก็บลงฐานข้อมูลจริง</strong>
+  <!-- Header -->
+  <h1 class="section-title">🧪 ห้องทดสอบระบบ</h1>
+  <div class="test-warn-banner">
+    ⚠️ หน้านี้ใช้สำหรับทดสอบระบบเท่านั้น — ออเดอร์จะถูกบันทึกลง Supabase ด้วย <code style="background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:4px;">status: "test"</code>
+  </div>
+
+  <!-- Supabase status -->
+  <div id="dbStatus" style="display:flex;align-items:center;gap:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.65);margin-bottom:20px;">
+    <span class="status-dot loading" id="dbDot"></span>
+    <span id="dbStatusText">กำลังเชื่อมต่อ Supabase...</span>
   </div>
 
   <!-- STATS -->
-  <div class="test-stats">
+  <div class="stat-grid">
     <div class="stat-box">
       <div class="stat-number" id="orderCount">0</div>
-      <div class="stat-label">ออเดอร์ที่สร้าง</div>
+      <div class="stat-label">ออเดอร์ session นี้</div>
     </div>
     <div class="stat-box">
-      <div class="stat-number" id="itemCount">0</div>
-      <div class="stat-label">ไอเทมทั้งหมด</div>
+      <div class="stat-number" id="cartItemCount">0</div>
+      <div class="stat-label">ของในตะกร้า</div>
     </div>
     <div class="stat-box">
       <div class="stat-number" id="totalPrice">฿0</div>
@@ -177,570 +229,879 @@
 
   <!-- TEST PRODUCTS -->
   <div class="test-section">
-    <h2 style="color: #FF6B6B; margin-top: 0;">📦 สินค้าทดสอบ</h2>
-    
-    <div class="test-item" onclick="testAddItem('Cat Food x10', 10, 10000)">
-      <div class="test-item-title">🐱 Cat Food x10</div>
-      <div class="test-item-desc">เติม Cat Food 10,000 หน่วย</div>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-weight: bold; color: #4CAF50;">฿10</span>
-        <button class="test-button" onclick="event.stopPropagation(); testAddItem('Cat Food x10', 10, 10000)">+ เพิ่มลงการ์ท</button>
+    <div class="test-section-title">📦 สินค้าทดสอบ</div>
+
+    <div class="test-product-card">
+      <div><div class="test-product-name"><img src="pictures/icon cat.png" style="height:1.1em;vertical-align:middle;margin-right:4px;"> Cat Food x10,000</div><div class="test-product-desc">max ในเกม: 45,000</div></div>
+      <div style="display:flex;align-items:center;">
+        <span class="test-product-price">฿10</span>
+        <button class="btn btn-primary" style="padding:6px 16px;font-size:12px;"
+          onclick="testAddItem('Cat Food x10,000', 10, 'cat_food', 10000)">+ เพิ่ม</button>
       </div>
     </div>
 
-    <div class="test-item" onclick="testAddItem('Cat Food x20', 18, 20000)">
-      <div class="test-item-title">🐱 Cat Food x20</div>
-      <div class="test-item-desc">เติม Cat Food 20,000 หน่วย</div>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-weight: bold; color: #4CAF50;">฿18</span>
-        <button class="test-button" onclick="event.stopPropagation(); testAddItem('Cat Food x20', 18, 20000)">+ เพิ่มลงการ์ท</button>
+    <div class="test-product-card">
+      <div><div class="test-product-name">🧠 XP x99,999,999</div><div class="test-product-desc">max ในเกม: 99,999,999</div></div>
+      <div style="display:flex;align-items:center;">
+        <span class="test-product-price">฿25</span>
+        <button class="btn btn-primary" style="padding:6px 16px;font-size:12px;"
+          onclick="testAddItem('XP x99,999,999', 25, 'xp', 99999999)">+ เพิ่ม</button>
       </div>
     </div>
 
-    <div class="test-item" onclick="testAddItem('XP x1', 19, 1000)">
-      <div class="test-item-title">⭐ XP x1</div>
-      <div class="test-item-desc">เติม XP 1,000 หน่วย</div>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-weight: bold; color: #4CAF50;">฿19</span>
-        <button class="test-button" onclick="event.stopPropagation(); testAddItem('XP x1', 19, 1000)">+ เพิ่มลงการ์ท</button>
+    <div class="test-product-card">
+      <div><div class="test-product-name">🎫 Normal Ticket x2999</div><div class="test-product-desc">max ในเกม: 2,999</div></div>
+      <div style="display:flex;align-items:center;">
+        <span class="test-product-price">฿99</span>
+        <button class="btn btn-primary" style="padding:6px 16px;font-size:12px;"
+          onclick="testAddItem('Normal Ticket x2999', 99, 'normal_ticket', 2999)">+ เพิ่ม</button>
       </div>
     </div>
 
-    <div class="test-item" onclick="testAddItem('Normal Ticket x5', 19, 5)">
-      <div class="test-item-title">🎟️ Normal Ticket x5</div>
-      <div class="test-item-desc">บัตรเล่น 5 ใบ</div>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-weight: bold; color: #4CAF50;">฿19</span>
-        <button class="test-button" onclick="event.stopPropagation(); testAddItem('Normal Ticket x5', 19, 5)">+ เพิ่มลงการ์ท</button>
+    <div class="test-product-card">
+      <div><div class="test-product-name">🎫 Rare Ticket x299</div><div class="test-product-desc">max ในเกม: 299</div></div>
+      <div style="display:flex;align-items:center;">
+        <span class="test-product-price">฿59</span>
+        <button class="btn btn-primary" style="padding:6px 16px;font-size:12px;"
+          onclick="testAddItem('Rare Ticket x299', 59, 'rare_ticket', 299)">+ เพิ่ม</button>
       </div>
     </div>
 
-    <div class="test-item" onclick="testAddItem('Rare Ticket x3', 49, 3)">
-      <div class="test-item-title">✨ Rare Ticket x3</div>
-      <div class="test-item-desc">บัตรสุ่มหายาก 3 ใบ</div>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-weight: bold; color: #FF6B6B;">฿49</span>
-        <button class="test-button" onclick="event.stopPropagation(); testAddItem('Rare Ticket x3', 49, 3)">+ เพิ่มลงการ์ท</button>
+    <div class="test-product-card">
+      <div><div class="test-product-name">💰 NP x9,999</div><div class="test-product-desc">max ในเกม: 9,999</div></div>
+      <div style="display:flex;align-items:center;">
+        <span class="test-product-price">฿159</span>
+        <button class="btn btn-primary" style="padding:6px 16px;font-size:12px;"
+          onclick="testAddItem('NP x9,999', 159, 'np', 9999)">+ เพิ่ม</button>
       </div>
     </div>
   </div>
 
-  <!-- BCSFE SYSTEM TEST -->
+  <!-- CART -->
   <div class="test-section">
-    <h2 style="color: #FF6B6B; margin-top: 0;">⚙️ ตั้งค่า Backend Server</h2>
-    
-    <div style="margin: 15px 0;">
-      <label style="display: block; font-weight: bold; margin-bottom: 5px;">🌐 Backend URL:</label>
-      <input type="text" id="backendURL" placeholder="เช่น http://localhost:8000" value="http://localhost:8000" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
-      <div style="color: #666; font-size: 12px; margin-top: 5px;">💡 ใส่ URL ของ FastAPI backend server</div>
+    <div class="test-section-title">🛒 ตะกร้าสินค้า (ทดสอบ)</div>
+    <div id="testCartList">
+      <p style="color:rgba(210,190,255,0.4);text-align:center;padding:20px;font-family:'Chakra Petch',sans-serif;font-size:13px;">ตะกร้าว่างเปล่า</p>
     </div>
+    <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+      <button class="btn btn-primary" style="flex:1;" onclick="testCreateOrder()">✅ ยืนยันคำสั่งซื้อ (บันทึก Supabase)</button>
+      <button class="btn btn-outline"  onclick="testClearCart()">🗑️ ล้างตะกร้า</button>
+    </div>
+  </div>
+
+  <!-- ORDER FORM (เพื่อทดสอบ checkout จริง) -->
+  <div class="test-section">
+    <div class="test-section-title">📝 ฟอร์มออเดอร์ทดสอบ (บันทึกลง Supabase)</div>
+
+    <div class="form-row">
+      <div>
+        <label class="form-label">Transfer Code</label>
+        <input type="text" id="tc-transferCode" class="form-input" placeholder="TEST1234567890">
+      </div>
+      <div>
+        <label class="form-label">Confirmation Code</label>
+        <input type="text" id="tc-confirmCode" class="form-input" placeholder="TEST12345678">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div>
+        <label class="form-label">Server</label>
+        <select id="tc-server" class="form-input">
+          <option value="">-- เลือก --</option>
+          <option value="1">EN (Global / TH / EU)</option>
+          <option value="2">JP (ญี่ปุ่น)</option>
+          <option value="3">KR (เกาหลี)</option>
+          <option value="4">TW (ไต้หวัน)</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">ชื่อ / Username</label>
+        <input type="text" id="tc-username" class="form-input" placeholder="ชื่อทดสอบ">
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <label class="form-label">Line ID / Discord</label>
+      <input type="text" id="tc-contact" class="form-input" placeholder="@test_user">
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;" onclick="testFullCheckout()">
+      🚀 ทดสอบ checkout เต็มรูปแบบ (บันทึก Supabase)
+    </button>
   </div>
 
   <!-- BCSFE SYSTEM TEST -->
   <div class="test-section">
-    <h2 style="color: #FF6B6B; margin-top: 0;">🎮 ทดสอบระบบ BCSFE (เพิ่มของเข้าเกม)</h2>
-    
-    <div class="warning-message">
-      ⚠️ สำหรับใช้งานนี้ต้องมี Transfer Code และ Confirmation Code จากเกม Battle Cats ให้ตรวจสอบว่า BCSFE ได้ติดตั้งแล้ว
+    <div class="test-section-title">⚙️ ทดสอบ BCSFE Backend</div>
+
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:12px;margin-bottom:16px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;">
+      ⚠️ ต้องมี FastAPI backend ทำงานอยู่ที่ URL ที่กำหนด
     </div>
 
-    <!-- Transfer & Confirmation Code Input -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+    <div style="margin-bottom:14px;">
+      <label class="form-label">Backend URL</label>
+      <input type="text" id="backendURL" class="form-input" value="http://localhost:8000" placeholder="http://localhost:8000">
+    </div>
+
+    <div class="form-row">
       <div>
-        <label style="display: block; font-weight: bold; margin-bottom: 5px;">📝 Transfer Code:</label>
-        <input type="text" id="transferCode" placeholder="เช่น 123456789012345" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
+        <label class="form-label">Transfer Code</label>
+        <input type="text" id="bcsfe-transferCode" class="form-input" placeholder="ABCD1234EFGH5678">
       </div>
       <div>
-        <label style="display: block; font-weight: bold; margin-bottom: 5px;">🔐 Confirmation Code:</label>
-        <input type="text" id="confirmCode" placeholder="เช่น abcdefghij123456" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
+        <label class="form-label">Confirmation Code</label>
+        <input type="text" id="bcsfe-confirmCode" class="form-input" placeholder="12345678">
       </div>
     </div>
 
-    <!-- Item Selection -->
-    <div style="margin: 15px 0;">
-      <label style="display: block; font-weight: bold; margin-bottom: 5px;">📦 เลือกประเภทของ:</label>
-      <select id="itemType" onchange="onItemTypeChange()" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
+    <div style="margin-bottom:14px;">
+      <label class="form-label">ประเภทของ</label>
+      <select id="itemType" class="form-input" onchange="onItemTypeChange()">
         <option value="">-- เลือกของ --</option>
         <option value="cat_food">🐱 Cat Food (Max: 45,000)</option>
-        <option value="xp">⭐ XP (Max: 99,999,999)</option>
-        <option value="normal_ticket">🎟️ Normal Ticket (Max: 2,999)</option>
-        <option value="rare_ticket">✨ Rare Ticket (Max: 299)</option>
+        <option value="xp">🧠 XP (Max: 99,999,999)</option>
+        <option value="normal_ticket">🎫 Normal Ticket (Max: 2,999)</option>
+        <option value="rare_ticket">🎫 Rare Ticket (Max: 299)</option>
         <option value="np">💰 NP (Max: 9,999)</option>
-        <option value="platinum_shard">💎 Platinum Shard (Max: 59)</option>
-        <option value="leadership">👑 Leadership (Max: 9,999)</option>
-        <option value="catseye">👁️ Catseye (Max: 9,999)</option>
+        <option value="platinum_shard">🔷 Platinum Shard (Max: 89)</option>
+        <option value="leadership">📈 Leadership (Max: 9,999)</option>
+        <option value="catseye">💠 Catseye (Max: 9,999)</option>
         <option value="catfruit">🍎 Catfruit (Max: 9,999)</option>
-        <option value="battle_item">⚔️ Battle Item (Max: 9,999)</option>
-        <option value="catamins">💊 Catamins (Max: 9,999)</option>
+        <option value="battle_item">🥊 Battle Item (Max: 9,999)</option>
+        <option value="catamins">🧪 Catamins (Max: 9,999)</option>
         <option value="legend_ticket">🏆 Legend Ticket (Max: 4)</option>
-        <option value="lucky_ticket">🍀 Lucky Ticket (Max: 2,999)</option>
+        <option value="lucky_ticket">🎲 Lucky Ticket (Max: 2,999)</option>
       </select>
     </div>
 
-    <!-- Sub Type Selection (for items with subtypes) -->
-    <div id="subTypeContainer" style="display: none; margin: 15px 0;">
-      <label style="display: block; font-weight: bold; margin-bottom: 5px;" id="subTypeLabel">เลือกประเภท:</label>
-      <select id="subType" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;"></select>
+    <div id="subTypeContainer" style="display:none;margin-bottom:14px;">
+      <label class="form-label" id="subTypeLabel">เลือกประเภทย่อย</label>
+      <select id="subType" class="form-input"></select>
     </div>
 
-    <!-- Amount Input -->
-    <div style="margin: 15px 0;">
-      <label style="display: block; font-weight: bold; margin-bottom: 5px;">📊 จำนวนที่ต้องการเพิ่ม:</label>
-      <input type="number" id="itemAmount" placeholder="ป้อนจำนวน" min="1" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px;">
+    <div style="margin-bottom:16px;">
+      <label class="form-label">จำนวน</label>
+      <input type="number" id="itemAmount" class="form-input" placeholder="ป้อนจำนวน" min="1">
     </div>
 
-    <!-- Execute Button -->
-    <div style="display: flex; gap: 10px; justify-content: flex-end;">
-      <button class="test-button" onclick="testBCSFE()" style="background: linear-gradient(135deg, #FF6B6B, #FF8E53); flex: 1;">🚀 ทดสอบเพิ่มของ</button>
-    </div>
+    <button class="btn btn-primary" style="width:100%;" onclick="testBCSFE()">🚀 ทดสอบเพิ่มของ</button>
   </div>
 
-  <!-- CART PREVIEW -->
+  <!-- UNLOCK CHARACTER FLOW -->
   <div class="test-section">
-    <h2 style="color: #FF6B6B; margin-top: 0;">🛒 ตะกร้าสินค้า</h2>
-    <div id="cartList" style="min-height: 100px; border: 1px solid #ddd; border-radius: 6px; padding: 10px; background: white;">
-      <p style="color: #999; text-align: center;">ตะกร้าว่างเปล่า</p>
+    <div class="test-section-title"><img src="pictures/icon cat.png" style="height:1.1em;vertical-align:middle;margin-right:5px;"> ปลดล็อคตัวละคร</div>
+
+    <!-- Step indicators -->
+    <div style="display:flex;margin-bottom:22px;border-radius:12px;overflow:hidden;border:1px solid rgba(124,58,237,0.2);">
+      <div id="si-1" style="flex:1;text-align:center;padding:10px 6px;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;background:rgba(124,58,237,0.35);color:#EDE6FF;border-right:1px solid rgba(124,58,237,0.2);">1 รหัสเกม</div>
+      <div id="si-2" style="flex:1;text-align:center;padding:10px 6px;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;background:transparent;color:rgba(210,190,255,0.35);border-right:1px solid rgba(124,58,237,0.2);">2 เลือกแมว</div>
+      <div id="si-3" style="flex:1;text-align:center;padding:10px 6px;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;background:transparent;color:rgba(210,190,255,0.35);">3 ปลดล็อค</div>
     </div>
-    <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
-      <button class="test-button" onclick="testCreateOrder()" style="background: linear-gradient(135deg, #2196F3, #1976D2);">✅ ยืนยันการสั่งซื้อ (ทดสอบ)</button>
-      <button class="test-button" onclick="testClearCart()" style="background: #999;">🗑️ ล้างตะกร้า</button>
+
+    <!-- ── STEP 1: Game Codes ──────────────────────────── -->
+    <div id="uc-s1">
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-bottom:14px;">กรอก Transfer Code และ Confirmation Code ของลูกค้า</div>
+      <div class="form-row">
+        <div>
+          <label class="form-label">Transfer Code</label>
+          <input type="text" id="uc-tc" class="form-input" placeholder="ABCD1234EFGH5678">
+        </div>
+        <div>
+          <label class="form-label">Confirmation Code</label>
+          <input type="text" id="uc-cc" class="form-input" placeholder="12345678">
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="form-label">Server</label>
+        <select id="uc-srv" class="form-input">
+          <option value="1">EN (Global / TH / EU)</option>
+          <option value="2">JP (ญี่ปุ่น)</option>
+          <option value="3">KR (เกาหลี)</option>
+          <option value="4">TW (ไต้หวัน)</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%;" onclick="ucNext(1)">ถัดไป →</button>
+    </div>
+
+    <!-- ── STEP 2: Select Characters ─────────────────── -->
+    <div id="uc-s2" style="display:none;">
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-bottom:12px;">ค้นหาและเลือกตัวละครที่ต้องการปลดล็อค</div>
+
+      <input type="text" id="uc-q" class="form-input" placeholder="ค้นหาชื่อหรือ ID เช่น 86, Valkyrie…" style="margin-bottom:8px;" oninput="ucSearch()">
+      <div id="uc-qres" style="display:none;max-height:210px;overflow-y:auto;border:1px solid rgba(124,58,237,0.22);border-radius:10px;margin-bottom:14px;"></div>
+
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;">เลือกแล้ว (<span id="uc-cnt">0</span>)</span>
+          <button onclick="ucClearSel()" style="padding:3px 10px;border-radius:8px;border:1px solid rgba(244,63,94,0.3);background:rgba(244,63,94,0.08);color:#FDA4AF;font-family:'Chakra Petch',sans-serif;font-size:11px;cursor:pointer;">ล้าง</button>
+        </div>
+        <div id="uc-tags" style="display:flex;flex-wrap:wrap;gap:5px;min-height:38px;padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px dashed rgba(124,58,237,0.2);">
+          <span id="uc-empty" style="color:rgba(210,190,255,0.3);font-family:'Chakra Petch',sans-serif;font-size:12px;align-self:center;">ยังไม่ได้เลือก</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label class="form-label">หรือพิมพ์ ID ตรงๆ (เว้นวรรค, range เช่น 1-43, หรือ all)</label>
+        <input type="text" id="uc-manual" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43  หรือ  all">
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline" onclick="ucGo(1)">← กลับ</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="ucNext(2)">ถัดไป →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Review & Execute ───────────────────── -->
+    <div id="uc-s3" style="display:none;">
+      <div id="uc-summary" style="background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:13px;"></div>
+
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <label class="form-label" style="margin:0;">ID List (สำหรับ BCSFE)</label>
+          <button onclick="ucCopyIds()" style="padding:3px 12px;border-radius:8px;border:1px solid rgba(124,58,237,0.3);background:rgba(124,58,237,0.1);color:#C4B5FD;font-family:'Chakra Petch',sans-serif;font-size:11px;cursor:pointer;">📋 Copy</button>
+        </div>
+        <div id="uc-idlist" class="debug-box" style="color:#FFD84E;font-size:13px;max-height:72px;"></div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="ucExecute()">🚀 ปลดล็อคผ่าน BCSFE API</button>
+
+      <div id="uc-result" style="display:none;margin-bottom:10px;"></div>
+
+      <button class="btn btn-outline" style="width:100%;" onclick="ucReset()">← เริ่มใหม่</button>
     </div>
   </div>
 
-  <!-- ORDER RESULT -->
-  <div id="orderResult" style="display: none;">
-    <div class="test-section">
-      <h2 style="color: #4CAF50; margin-top: 0;">✅ ผลลัพธ์ของการสั่งซื้อ</h2>
-      <div class="order-result" id="orderResultContent"></div>
-      <button class="test-button" onclick="testNewOrder()" style="margin-top: 15px; width: 100%;">🔄 ทดสอบคำสั่งซื้อใหม่</button>
-    </div>
-  </div>
-
-  <!-- TEST FUNCTIONS -->
+  <!-- ── UPGRADE CHARACTER ─────────────────────────────────── -->
   <div class="test-section">
-    <h2 style="color: #FF6B6B; margin-top: 0;">⚙️ ฟังก์ชันทดสอบ</h2>
-    
-    <div class="test-item">
-      <div class="test-item-title">🔧 ทดสอบการสร้าง QR Code</div>
-      <div class="test-item-desc">ทำการสร้าง QR Code สำหรับการจ่ายเงิน (ทดสอบ)</div>
-      <button class="test-button" onclick="testGenerateQR()">🔗 สร้าง QR Code ทดสอบ</button>
+    <div class="test-section-title">⬆️ อัพเกรดตัวละคร (Max Level)</div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="ug-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="ug-cc" class="form-input" placeholder="12345678"></div>
     </div>
-
-    <div class="test-item">
-      <div class="test-item-title">📝 ทดสอบการเช็ครายการที่จ่ายแล้ว</div>
-      <div class="test-item-desc">ตรวจสอบการจ่ายเงินของคำสั่งซื้อที่สร้างแล้ว</div>
-      <button class="test-button" onclick="testCheckPayment()">📊 เช็คสถานะการจ่ายเงิน</button>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="ug-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
     </div>
-
-    <div class="test-item">
-      <div class="test-item-title">💾 ดูข้อมูลระบบทั้งหมด</div>
-      <div class="test-item-desc">ดูข้อมูล localStorage และข้อมูลทั้งหมดในระบบ</div>
-      <button class="test-button" onclick="testShowSystemData()">📂 ดูข้อมูลระบบ</button>
-    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Cat IDs (เว้นวรรค, range เช่น 1-43, หรือ all)</label><input type="text" id="ug-ids" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43  หรือ  all"></div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runCatAction('ug','upgrade/characters','⬆️ อัพเกรด')">⬆️ อัพเกรดถึง Max Level</button>
+    <div id="ug-result" style="display:none;"></div>
   </div>
 
-  <!-- DEBUG INFO -->
-  <div id="debugInfo" style="display: none;">
-    <div class="test-section">
-      <h2 style="color: #FF9800; margin-top: 0;">🐛 ข้อมูลการ DEBUG</h2>
-      <div class="order-result" id="debugContent"></div>
-      <button class="test-button" onclick="closeDebugInfo()" style="margin-top: 15px;">✖️ ปิด</button>
+  <!-- ── TRUE FORM CHARACTER ────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">✨ True Form ตัวละคร</div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="tf-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="tf-cc" class="form-input" placeholder="12345678"></div>
     </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="tf-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Cat IDs (เว้นวรรค, range เช่น 1-43, หรือ all)</label><input type="text" id="tf-ids" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43  หรือ  all"></div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runCatAction('tf','trueform/characters','✨ True Form')">✨ True Form ตัวละคร</button>
+    <div id="tf-result" style="display:none;"></div>
   </div>
 
-  <div style="height: 40px;"></div>
+  <!-- ── ULTRA FORM CHARACTER ───────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">💥 Ultra Form ตัวละคร (4th Form)</div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="uf-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="uf-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="uf-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Cat IDs (เว้นวรรค, range เช่น 1-43, หรือ all)</label><input type="text" id="uf-ids" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43  หรือ  all"></div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runCatAction('uf','ultraform/characters','💥 Ultra Form')">💥 Ultra Form ตัวละคร</button>
+    <div id="uf-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── TALENTS MAX CHARACTER ──────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🌟 Max Talents ตัวละคร</div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="tl-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="tl-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="tl-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Cat IDs (เว้นวรรค, range เช่น 1-43, หรือ all)</label><input type="text" id="tl-ids" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43  หรือ  all"></div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runCatAction('tl','talents/characters','🌟 Max Talents')">🌟 Max Talents ตัวละคร</button>
+    <div id="tl-result" style="display:none;"></div>
+  </div>
+
+  <!-- SYSTEM DATA -->
+  <div class="test-section">
+    <div class="test-section-title">🐛 Debug / ข้อมูลระบบ</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+      <button class="btn btn-outline" style="flex:1;" onclick="debugLocalStorage()">💾 localStorage</button>
+      <button class="btn btn-outline" style="flex:1;" onclick="debugSession()">👤 Session</button>
+      <button class="btn btn-outline" style="flex:1;" onclick="debugSupabase()">🗄️ Supabase orders</button>
+    </div>
+    <div id="debugBox" class="debug-box" style="display:none;"></div>
+  </div>
 
 </div>
 
+<!-- Toast notification -->
+<div id="testToast" style="position:fixed;bottom:28px;right:24px;z-index:9999;display:none;
+  background:rgba(14,6,32,0.97);border:1px solid rgba(124,58,237,0.45);border-radius:14px;
+  padding:13px 20px;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#EDE6FF;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);max-width:320px;transition:opacity 0.3s;"></div>
+
+<script src="assets/supabase-client.js"></script>
+<script src="assets/characters_data.js"></script>
 <script>
-// Test System Variables
-let testCart = [];
-let testOrders = [];
-let orderCounter = 0;
+var testCart   = [];
+var testOrders = 0;
 
-// Add item to cart
-function testAddItem(name, price, quantity) {
-  testCart.push({
-    name: name,
-    price: price,
-    quantity: quantity,
-    id: Math.random().toString(36).substr(2, 9)
-  });
-  updateCartDisplay();
-  showMessage(`✅ เพิ่ม "${name}" ลงตะกร้าแล้ว`);
+// ── Toast ────────────────────────────────────────────────────
+var _toastTimer = null;
+function toast(msg, type) {
+  var el = document.getElementById('testToast');
+  var colors = { ok:'#4ADE80', err:'#F87171', warn:'#FCD34D', info:'#60A5FA' };
+  el.style.borderColor = 'rgba(124,58,237,0.45)';
+  el.style.color = colors[type || 'info'] || '#EDE6FF';
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.opacity = '1';
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() {
+    el.style.opacity = '0';
+    setTimeout(function(){ el.style.display = 'none'; }, 300);
+  }, 3000);
 }
 
-// Update cart display
-function updateCartDisplay() {
-  const cartList = document.getElementById('cartList');
-  const itemCount = testCart.length;
-  const totalPrice = testCart.reduce((sum, item) => sum + item.price, 0);
-  
-  if (itemCount === 0) {
-    cartList.innerHTML = '<p style="color: #999; text-align: center;">ตะกร้าว่างเปล่า</p>';
-  } else {
-    cartList.innerHTML = testCart.map((item, index) => `
-      <div style="display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
-        <div>
-          <strong>${item.name}</strong> x${item.quantity}
-          <div style="color: #666; font-size: 12px;">฿${item.price}</div>
-        </div>
-        <button class="test-button" style="padding: 6px 12px; font-size: 12px; background: #F44336;" onclick="testRemoveItem(${index})">✕</button>
-      </div>
-    `).join('');
+// ── Supabase connection check ────────────────────────────────
+async function checkDB() {
+  var dot  = document.getElementById('dbDot');
+  var text = document.getElementById('dbStatusText');
+  try {
+    var res = await DB.from('orders').select('id', { count: 'exact', head: true });
+    if (res.error) throw res.error;
+    dot.className  = 'status-dot ok';
+    text.textContent = 'Supabase เชื่อมต่อสำเร็จ ✓';
+    toast('✅ Supabase พร้อมใช้งาน', 'ok');
+  } catch(e) {
+    dot.className  = 'status-dot err';
+    text.textContent = 'Supabase: ' + (e.message || 'เชื่อมต่อไม่ได้');
+    toast('❌ Supabase: ' + (e.message || 'error'), 'err');
   }
-  
-  document.getElementById('itemCount').textContent = itemCount;
-  document.getElementById('totalPrice').textContent = '฿' + totalPrice;
 }
 
-// Remove item from cart
-function testRemoveItem(index) {
-  testCart.splice(index, 1);
-  updateCartDisplay();
+// ── Cart helpers ─────────────────────────────────────────────
+function testAddItem(name, price, key, amount) {
+  testCart.push({ name:name, price:price, key:key, amount:amount });
+  renderTestCart();
+  toast('✅ เพิ่ม ' + name, 'ok');
 }
 
-// Clear cart
+function testRemoveItem(i) {
+  testCart.splice(i, 1);
+  renderTestCart();
+}
+
 function testClearCart() {
   testCart = [];
-  updateCartDisplay();
-  document.getElementById('orderResult').style.display = 'none';
-  showMessage('🗑️ ล้างตะกร้าแล้ว');
+  renderTestCart();
+  toast('🗑️ ล้างตะกร้าแล้ว', 'warn');
 }
 
-// Create order
-function testCreateOrder() {
-  if (testCart.length === 0) {
-    showMessage('❌ ตะกร้าว่างเปล่า กรุณาเพิ่มสินค้า');
+function renderTestCart() {
+  var el    = document.getElementById('testCartList');
+  var total = testCart.reduce(function(s,i){ return s + i.price; }, 0);
+  document.getElementById('cartItemCount').textContent = testCart.length;
+  document.getElementById('totalPrice').textContent    = '฿' + total.toLocaleString();
+
+  if (!testCart.length) {
+    el.innerHTML = '<p style="color:rgba(210,190,255,0.4);text-align:center;padding:20px;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">ตะกร้าว่างเปล่า</p>';
     return;
   }
-  
-  orderCounter++;
-  const orderId = 'TEST-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
-  const totalPrice = testCart.reduce((sum, item) => sum + item.price, 0);
-  
-  const order = {
-    orderId: orderId,
-    items: [...testCart],
-    totalPrice: totalPrice,
-    createdAt: new Date().toLocaleString('th-TH'),
-    status: 'ทดสอบเสร็จสิ้น ✅',
-    simulatedPayment: true
-  };
-  
-  testOrders.push(order);
-  
-  // Display result
-  document.getElementById('orderResultContent').innerHTML = `
-    <div style="line-height: 1.8;">
-      <strong>📦 Order ID:</strong> <span style="color: #2196F3; font-weight: bold;">${order.orderId}</span><br>
-      <strong>💰 ราคารวม:</strong> <span style="color: #4CAF50; font-weight: bold;">฿${order.totalPrice}</span><br>
-      <strong>📅 เวลา:</strong> ${order.createdAt}<br>
-      <strong>✅ สถานะ:</strong> ${order.status}<br>
-      <strong>📋 สินค้า:</strong><br>
-      <div style="margin-left: 20px;">
-        ${order.items.map(item => `• ${item.name} - ฿${item.price}`).join('<br>')}
-      </div><br>
-      <strong>💡 ผลลัพธ์:</strong> <span style="color: #4CAF50;">การซื้อสำเร็จโดยไม่ต้องชำระเงิน ✅</span>
-    </div>
-  `;
-  
-  document.getElementById('orderResult').style.display = 'block';
-  document.getElementById('orderCount').textContent = testOrders.length;
-  
-  testClearCart();
-  showMessage('✅ สร้างคำสั่งซื้อสำเร็จ! (ทดสอบ)');
+  el.innerHTML = testCart.map(function(item, i) {
+    return '<div class="cart-item-row">' +
+      '<div>' +
+        '<div style="font-family:\'Chakra Petch\',sans-serif;font-weight:700;font-size:13px;color:#EDE6FF;">' + item.name + '</div>' +
+        '<div style="font-size:11px;color:rgba(210,190,255,0.45);">จำนวน: ' + (item.amount||'').toLocaleString() + '</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:10px;">' +
+        '<span style="font-family:\'Russo One\',sans-serif;color:#FF4D92;">฿' + item.price + '</span>' +
+        '<button class="btn btn-outline" style="padding:4px 10px;font-size:11px;border-color:rgba(244,63,94,0.4);color:#FDA4AF;" onclick="testRemoveItem(' + i + ')">✕</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
-// New order
-function testNewOrder() {
-  document.getElementById('orderResult').style.display = 'none';
+// ── Create test order (saves to Supabase) ─────────────────────
+async function testCreateOrder() {
+  if (!testCart.length) { toast('❌ ตะกร้าว่างเปล่า', 'err'); return; }
+  var btn = event.target;
+  btn.disabled = true; btn.textContent = '⏳ กำลังบันทึก...';
+
+  try {
+    var total    = testCart.reduce(function(s,i){ return s+i.price; }, 0);
+    var authUser = (window.AUTH && AUTH.getCurrentUser()) || 'test_user';
+
+    var res = await DB.from('orders').insert([{
+      auth_user:     authUser,
+      username:      'TEST: ' + authUser,
+      transfer_code: 'TEST_CODE',
+      confirm_code:  'TEST_CONF',
+      server:        '1',
+      contact:       'test',
+      items:         testCart,
+      total:         total,
+      status:        'test',
+    }]).select().single();
+
+    if (res.error) throw res.error;
+    testOrders++;
+    document.getElementById('orderCount').textContent = testOrders;
+
+    var shortId = res.data.id.substring(0,8).toUpperCase();
+    toast('✅ บันทึกสำเร็จ #' + shortId, 'ok');
+    showDebug('✅ Order saved to Supabase\nID: ' + res.data.id + '\nStatus: test\nTotal: ฿' + total);
+    testClearCart();
+  } catch(e) {
+    toast('❌ ' + (e.message || e), 'err');
+    showDebug('❌ Error: ' + (e.message || JSON.stringify(e)));
+  } finally {
+    btn.disabled = false; btn.textContent = '✅ ยืนยันคำสั่งซื้อ (บันทึก Supabase)';
+  }
 }
 
-// Generate QR Code test
-function testGenerateQR() {
-  const qrData = {
-    paymentMethod: 'PromptPay',
-    promptPayId: '0634515901',
-    amount: testCart.reduce((sum, item) => sum + item.price, 0) || 100,
-    note: 'TEST_' + Date.now(),
-    timestamp: new Date().toISOString()
-  };
-  
-  document.getElementById('debugContent').innerHTML = `
-    <div style="line-height: 1.8;">
-      <strong>🔗 ข้อมูล QR Code (ทดสอบ):</strong><br><br>
-      <pre>${JSON.stringify(qrData, null, 2)}</pre><br>
-      <strong>💡 ในระบบจริง:</strong> QR Code จะถูกสร้างจากข้อมูลนี้ เพื่อให้ผู้ใช้สแกนและจ่ายเงิน<br>
-      <strong>ใน โหมดทดสอบ:</strong> ข้อมูลนี้จะข้ามขั้นตอนการจ่ายเงิน
-    </div>
-  `;
-  document.getElementById('debugInfo').style.display = 'block';
-  showMessage('🔗 ข้อมูล QR Code ถูกสร้าง (ดูใน DEBUG INFO)');
+// ── Full checkout test ────────────────────────────────────────
+async function testFullCheckout() {
+  var transferCode = document.getElementById('tc-transferCode').value.trim();
+  var confirmCode  = document.getElementById('tc-confirmCode').value.trim();
+  var server       = document.getElementById('tc-server').value;
+  var username     = document.getElementById('tc-username').value.trim();
+  var contact      = document.getElementById('tc-contact').value.trim();
+
+  if (!transferCode || !confirmCode || !server || !username || !contact) {
+    toast('❌ กรอกข้อมูลให้ครบก่อน', 'err'); return;
+  }
+
+  var fakeCart = [
+    { name:'Test Item A', price:99,  key:'cat_food',  amount:10000 },
+    { name:'Test Item B', price:149, key:'xp',        amount:99999999 },
+  ];
+  var total    = fakeCart.reduce(function(s,i){ return s+i.price; }, 0);
+  var authUser = (window.AUTH && AUTH.getCurrentUser()) || 'test_user';
+
+  var btn = event.target;
+  btn.disabled = true; btn.textContent = '⏳ กำลังทดสอบ...';
+
+  try {
+    var res = await DB.from('orders').insert([{
+      auth_user:     authUser,
+      username:      username,
+      transfer_code: transferCode,
+      confirm_code:  confirmCode,
+      server:        server,
+      contact:       contact,
+      items:         fakeCart,
+      total:         total,
+      status:        'test',
+    }]).select().single();
+
+    if (res.error) throw res.error;
+    toast('✅ checkout test สำเร็จ!', 'ok');
+    showDebug('✅ Full checkout test saved\nID: ' + res.data.id + '\nUsername: ' + username + '\nTransfer: ' + transferCode + '\nServer: ' + server + '\nTotal: ฿' + total);
+  } catch(e) {
+    toast('❌ ' + (e.message || e), 'err');
+    showDebug('❌ ' + (e.message || JSON.stringify(e)));
+  } finally {
+    btn.disabled = false; btn.textContent = '🚀 ทดสอบ checkout เต็มรูปแบบ (บันทึก Supabase)';
+  }
 }
 
-// Check payment test
-function testCheckPayment() {
-  const paymentInfo = {
-    totalOrders: testOrders.length,
-    allOrdersPaid: testOrders.map(order => ({
-      orderId: order.orderId,
-      status: '✅ ชำระเงินแล้ว (ทดสอบ)',
-      amount: order.totalPrice,
-      timestamp: order.createdAt
-    }))
-  };
-  
-  document.getElementById('debugContent').innerHTML = `
-    <div style="line-height: 1.8;">
-      <strong>📊 สถานะการจ่ายเงิน (ทดสอบ):</strong><br><br>
-      <pre>${JSON.stringify(paymentInfo, null, 2)}</pre><br>
-      <strong>💡 หมายเหตุ:</strong> ในโหมดทดสอบ ทุกคำสั่งซื้อจะถูกมองว่า "ชำระเงินแล้ว" โดยอัตโนมัติ
-    </div>
-  `;
-  document.getElementById('debugInfo').style.display = 'block';
-  showMessage('📊 ข้อมูลการจ่ายเงินถูกโหลด (ดูใน DEBUG INFO)');
-}
-
-// Show system data
-function testShowSystemData() {
-  const systemData = {
-    testCart: testCart,
-    testOrders: testOrders,
-    localStorage: {
-      ...localStorage
-    },
-    sessionData: {
-      totalOrders: testOrders.length,
-      totalItems: testCart.length,
-      sessionStarted: new Date().toLocaleString('th-TH')
-    }
-  };
-  
-  document.getElementById('debugContent').innerHTML = `
-    <div style="line-height: 1.8;">
-      <strong>📂 ข้อมูลระบบ (ทดสอบ):</strong><br><br>
-      <pre>${JSON.stringify(systemData, null, 2)}</pre>
-    </div>
-  `;
-  document.getElementById('debugInfo').style.display = 'block';
-}
-
-// Close debug info
-function closeDebugInfo() {
-  document.getElementById('debugInfo').style.display = 'none';
-}
-
-// Show message
-function showMessage(message) {
-  const messageEl = document.createElement('div');
-  messageEl.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 9999;
-    animation: slideIn 0.3s ease-out;
-  `;
-  messageEl.textContent = message;
-  
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes slideIn {
-      from { transform: translateX(400px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-  `;
-  document.head.appendChild(style);
-  
-  document.body.appendChild(messageEl);
-  setTimeout(() => messageEl.remove(), 3000);
-}
-
-// ═══════════════════════════════════════
-// BCSFE TEST FUNCTIONS
-// ═══════════════════════════════════════
-
-const ITEM_CONFIG = {
-  cat_food:       { name: "Cat Food", subtypes: null },
-  xp:             { name: "XP", subtypes: null },
-  normal_ticket:  { name: "Normal Ticket", subtypes: null },
-  rare_ticket:    { name: "Rare Ticket", subtypes: null },
-  np:             { name: "NP", subtypes: null },
-  platinum_shard: { name: "Platinum Shard", subtypes: null },
-  leadership:     { name: "Leadership", subtypes: null },
-  catseye:        { name: "Catseye", subtypes: 6, labels: ["Normal", "Rare", "SR", "UR", "LR", "Alien"] },
-  catfruit:       { name: "Catfruit", subtypes: 29, labels: Array.from({length: 29}, (_, i) => `Type ${i+1}`) },
-  battle_item:    { name: "Battle Item", subtypes: 6, labels: ["Type 1", "Type 2", "Type 3", "Type 4", "Type 5", "Type 6"] },
-  catamins:       { name: "Catamins", subtypes: 3, labels: ["Type 1", "Type 2", "Type 3"] },
-  legend_ticket:  { name: "Legend Ticket", subtypes: 4, labels: ["Type 1", "Type 2", "Type 3", "Type 4"] },
-  lucky_ticket:   { name: "Lucky Ticket", subtypes: null }
+// ── BCSFE backend test ────────────────────────────────────────
+var ITEM_CONFIG = {
+  cat_food:      { subtypes: null },
+  xp:            { subtypes: null },
+  normal_ticket: { subtypes: null },
+  rare_ticket:   { subtypes: null },
+  np:            { subtypes: null },
+  platinum_shard:{ subtypes: null },
+  leadership:    { subtypes: null },
+  catseye:       { subtypes: 6,  labels:['Normal','Rare','SR','UR','LR','Alien'] },
+  catfruit:      { subtypes: 29, labels: Array.from({length:29},function(_,i){ return 'Type '+(i+1); }) },
+  battle_item:   { subtypes: 6,  labels:['Type 1','Type 2','Type 3','Type 4','Type 5','Type 6'] },
+  catamins:      { subtypes: 3,  labels:['Type 1','Type 2','Type 3'] },
+  legend_ticket: { subtypes: null },
+  lucky_ticket:  { subtypes: null },
 };
 
 function onItemTypeChange() {
-  const itemType = document.getElementById('itemType').value;
-  const subTypeContainer = document.getElementById('subTypeContainer');
-  const subTypeSelect = document.getElementById('subType');
-  const subTypeLabel = document.getElementById('subTypeLabel');
-  
-  if (!itemType || !ITEM_CONFIG[itemType].subtypes) {
-    subTypeContainer.style.display = 'none';
-    return;
+  var itemType = document.getElementById('itemType').value;
+  var container = document.getElementById('subTypeContainer');
+  var sel = document.getElementById('subType');
+  var lbl = document.getElementById('subTypeLabel');
+  if (!itemType || !ITEM_CONFIG[itemType] || !ITEM_CONFIG[itemType].subtypes) {
+    container.style.display = 'none'; return;
   }
-  
-  const config = ITEM_CONFIG[itemType];
-  subTypeLabel.textContent = config.name + ' - เลือกประเภท:';
-  subTypeSelect.innerHTML = '';
-  
-  for (let i = 1; i <= config.subtypes; i++) {
-    const label = config.labels ? config.labels[i-1] : `Type ${i}`;
-    const option = document.createElement('option');
-    option.value = i;
-    option.textContent = label;
-    subTypeSelect.appendChild(option);
+  var cfg = ITEM_CONFIG[itemType];
+  lbl.textContent = 'ประเภทย่อย';
+  sel.innerHTML = '';
+  for (var i = 1; i <= cfg.subtypes; i++) {
+    var opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = cfg.labels ? cfg.labels[i-1] : 'Type '+i;
+    sel.appendChild(opt);
   }
-  
-  subTypeContainer.style.display = 'block';
+  container.style.display = 'block';
 }
 
 async function testBCSFE() {
-  const backendURL = document.getElementById('backendURL').value.trim();
-  const transferCode = document.getElementById('transferCode').value.trim();
-  const confirmCode = document.getElementById('confirmCode').value.trim();
-  const itemType = document.getElementById('itemType').value;
-  const amount = parseInt(document.getElementById('itemAmount').value) || 0;
-  const subType = document.getElementById('subType').value;
-  
-  // Validation
-  if (!backendURL) {
-    showMessage('❌ กรุณากำหนด Backend URL');
-    return;
-  }
-  
-  if (!transferCode) {
-    showMessage('❌ กรุณากรอก Transfer Code');
-    return;
-  }
-  
-  if (!confirmCode) {
-    showMessage('❌ กรุณากรอก Confirmation Code');
-    return;
-  }
-  
-  if (!itemType) {
-    showMessage('❌ กรุณาเลือกประเภทของ');
-    return;
-  }
-  
-  if (amount <= 0) {
-    showMessage('❌ กรุณากรอกจำนวนที่มากกว่า 0');
-    return;
-  }
-  
-  const itemConfig = ITEM_CONFIG[itemType];
-  if (itemConfig.subtypes && !subType) {
-    showMessage('❌ กรุณาเลือกประเภท');
-    return;
-  }
-  
-  // Show loading
-  document.getElementById('debugContent').innerHTML = `
-    <div style="text-align: center; padding: 20px;">
-      <div style="font-size: 24px; animation: spin 1s linear infinite; display: inline-block;">⏳</div>
-      <p style="margin-top: 10px; font-size: 16px;">⏳ กำลังเรียก BCSFE...</p>
-      <p style="color: #666; font-size: 12px;">Transfer Code: ${transferCode.substring(0, 8)}...</p>
-    </div>
-  `;
-  document.getElementById('debugInfo').style.display = 'block';
-  
+  var backendURL   = document.getElementById('backendURL').value.trim();
+  var transferCode = document.getElementById('bcsfe-transferCode').value.trim();
+  var confirmCode  = document.getElementById('bcsfe-confirmCode').value.trim();
+  var itemType     = document.getElementById('itemType').value;
+  var amount       = parseInt(document.getElementById('itemAmount').value) || 0;
+  var subType      = document.getElementById('subType').value;
+
+  if (!backendURL)   { toast('❌ กรุณากำหนด Backend URL', 'err'); return; }
+  if (!transferCode) { toast('❌ กรุณากรอก Transfer Code', 'err'); return; }
+  if (!confirmCode)  { toast('❌ กรุณากรอก Confirmation Code', 'err'); return; }
+  if (!itemType)     { toast('❌ กรุณาเลือกประเภทของ', 'err'); return; }
+  if (amount <= 0)   { toast('❌ กรุณากรอกจำนวนมากกว่า 0', 'err'); return; }
+
+  showDebug('⏳ กำลังเรียก BCSFE...\nURL: ' + backendURL + '/api/test/bcsfe\nItem: ' + itemType + ' x' + amount);
+
   try {
-    // Call Backend API to execute BCSFE
-    const apiURL = backendURL + '/api/test/bcsfe';
-    const response = await fetch(apiURL, {
+    var response = await fetch(backendURL + '/api/test/bcsfe', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        transfer_code: transferCode,
+        transfer_code:    transferCode,
         confirmation_code: confirmCode,
-        item: itemType,
-        amount: amount,
+        item:    itemType,
+        amount:  amount,
         sub_type: subType ? parseInt(subType) : null,
-        country: '1' // default to English
-      })
+        country: '1',
+      }),
     });
-    
-    const result = await response.json();
-    
+    var result = await response.json();
     if (result.success) {
-      document.getElementById('debugContent').innerHTML = `
-        <div style="line-height: 1.8;">
-          <strong style="color: #4CAF50;">✅ สำเร็จ!</strong><br><br>
-          <strong>📝 Transfer Code ใหม่:</strong><br>
-          <div style="background: #f5f5f5; padding: 10px; border-radius: 4px; word-break: break-all; font-family: monospace;">
-            ${result.new_transfer_code}
-          </div><br>
-          <strong>🔐 Confirmation Code ใหม่:</strong><br>
-          <div style="background: #f5f5f5; padding: 10px; border-radius: 4px; word-break: break-all; font-family: monospace;">
-            ${result.new_confirmation_code}
-          </div><br>
-          <strong>📋 สรุปการเพิ่มของ:</strong><br>
-          ${result.summary ? result.summary.map(s => `• ${s.item}: +${s.amount}`).join('<br>') : 'N/A'}<br><br>
-          <strong>💡 ขั้นตอนต่อไป:</strong><br>
-          1. อัปเดต Transfer Code และ Confirmation Code ที่ใหม่ในเกม<br>
-          2. กลับเข้าเกมเพื่อดูสินค้าที่ถูกเพิ่มเข้ามา
-        </div>
-      `;
-      showMessage('✅ เพิ่มของสำเร็จ!');
+      toast('✅ BCSFE สำเร็จ!', 'ok');
+      showDebug('✅ BCSFE Success!\nTransfer Code ใหม่:\n' + result.new_transfer_code + '\n\nConfirmation Code ใหม่:\n' + result.new_confirmation_code + '\n\nสรุป:\n' + (result.summary||[]).map(function(s){ return '• '+s.item+': +'+s.amount; }).join('\n'));
     } else {
-      document.getElementById('debugContent').innerHTML = `
-        <div style="line-height: 1.8;">
-          <strong style="color: #F44336;">❌ เกิดข้อผิดพลาด</strong><br><br>
-          <strong>ข้อผิดพลาด:</strong> ${result.error || 'Unknown error'}<br><br>
-          <strong>💡 สาเหตุที่อาจเป็นไปได้:</strong><br>
-          • Transfer Code หรือ Confirmation Code ไม่ถูกต้อง<br>
-          • BCSFE ไม่ได้ติดตั้งอย่างถูกต้อง<br>
-          • Save file ของเกมถูกเสียหายหรือหาไม่เจอ<br>
-          • เครื่องคอมพิวเตอร์ไม่มีอินเทอร์เน็ต
-        </div>
-      `;
-      showMessage('❌ เกิดข้อผิดพลาด - ' + (result.error || 'Unknown error'));
+      toast('❌ ' + (result.error||'Unknown error'), 'err');
+      showDebug('❌ BCSFE Error:\n' + (result.error||JSON.stringify(result)));
     }
-  } catch (error) {
-    document.getElementById('debugContent').innerHTML = `
-      <div style="line-height: 1.8;">
-        <strong style="color: #F44336;">❌ เข้าถึง API ไม่ได้</strong><br><br>
-        <strong>ข้อผิดพลาด:</strong> ${error.message}<br><br>
-        <strong>Backend URL:</strong> ${backendURL}<br><br>
-        <strong>💡 สาเหตุที่อาจเป็นไปได้:</strong><br>
-        • Backend server ไม่ทำงาน<br>
-        • Backend URL ไม่ถูกต้อง<br>
-        • CORS error หรือเครือข่ายปัญหา<br>
-        • ตรวจสอบว่า FastAPI server กำลังทำงานอยู่
-      </div>
-    `;
-    showMessage('❌ ไม่สามารถเข้าถึง API ได้');
+  } catch(e) {
+    toast('❌ เข้าถึง API ไม่ได้', 'err');
+    showDebug('❌ Connection failed:\n' + e.message + '\n\nตรวจสอบ:\n• Backend server กำลังทำงานอยู่?\n• URL ถูกต้อง?\n• CORS ปิดอยู่?');
   }
 }
 
-// Add CSS animation for spinning loader
-const spinStyle = document.createElement('style');
-spinStyle.textContent = `
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`;
-document.head.appendChild(spinStyle);
+// ── Debug helpers ─────────────────────────────────────────────
+function showDebug(text) {
+  var el = document.getElementById('debugBox');
+  el.style.display = 'block';
+  el.textContent = text;
+  el.scrollTop = el.scrollHeight;
+}
 
-// Initialize
-updateCartDisplay();
-showMessage('🧪 เข้าสู่โหมดทดสอบแล้ว - ไม่ต้องจ่ายเงิน!');
+function debugLocalStorage() {
+  var data = {};
+  for (var k in localStorage) {
+    if (localStorage.hasOwnProperty(k)) {
+      try { data[k] = JSON.parse(localStorage[k]); } catch(e) { data[k] = localStorage[k]; }
+    }
+  }
+  showDebug(JSON.stringify(data, null, 2));
+}
+
+function debugSession() {
+  var user = (window.AUTH && AUTH.isLoggedIn()) ? AUTH.getCurrentUser() : '(ไม่ได้ login)';
+  var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  showDebug('User: ' + user + '\nMain cart: ' + cart.length + ' items\nTest cart: ' + testCart.length + ' items\nSession orders: ' + testOrders);
+}
+
+async function debugSupabase() {
+  showDebug('⏳ โหลด orders จาก Supabase...');
+  try {
+    var user = (window.AUTH && AUTH.getCurrentUser()) || null;
+    var q = DB.from('orders').select('id,created_at,auth_user,username,total,status').order('created_at',{ascending:false}).limit(10);
+    if (user) q = q.eq('auth_user', user);
+    var res = await q;
+    if (res.error) throw res.error;
+    showDebug('📋 ล่าสุด 10 orders' + (user ? ' (user: '+user+')' : ' (all)') + '\n\n' + JSON.stringify(res.data, null, 2));
+  } catch(e) {
+    showDebug('❌ ' + (e.message || e));
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  document.getElementById('cartCount').textContent = cart.length;
+  checkDB();
+});
+
+// ── Unlock Character Flow ─────────────────────────────────────
+var _ucSel = {}; // id -> {id, tier, name}
+var _ucIds = [];
+
+var TIER_COL = { N:'#9CA3AF', EX:'#60A5FA', RR:'#4ADE80', SR:'#C4B5FD', UR:'#FBBF24', LR:'#F87171' };
+
+function ucGo(n) {
+  [1,2,3].forEach(function(i) {
+    document.getElementById('uc-s'+i).style.display = i===n ? '' : 'none';
+    var si = document.getElementById('si-'+i);
+    if (i < n) {
+      si.style.background = 'rgba(74,222,128,0.18)';
+      si.style.color = '#4ADE80';
+    } else if (i === n) {
+      si.style.background = 'rgba(124,58,237,0.35)';
+      si.style.color = '#EDE6FF';
+    } else {
+      si.style.background = 'transparent';
+      si.style.color = 'rgba(210,190,255,0.35)';
+    }
+  });
+}
+
+function ucNext(from) {
+  if (from === 1) {
+    if (!document.getElementById('uc-tc').value.trim() || !document.getElementById('uc-cc').value.trim()) {
+      toast('❌ กรอก Transfer Code และ Confirmation Code ก่อน', 'err'); return;
+    }
+    ucGo(2);
+  } else if (from === 2) {
+    var manual  = document.getElementById('uc-manual').value.trim();
+    var selIds  = Object.keys(_ucSel).map(Number);
+    if (manual) selIds = selIds.concat(ucParseManual(manual));
+    selIds = selIds.filter(function(v,i,a){ return a.indexOf(v)===i; }).sort(function(a,b){return a-b;});
+    if (!selIds.length) { toast('❌ เลือกตัวละครหรือใส่ ID ก่อน', 'err'); return; }
+    _ucIds = selIds;
+
+    var tc  = document.getElementById('uc-tc').value.trim();
+    var cc  = document.getElementById('uc-cc').value.trim();
+    var srv = document.getElementById('uc-srv').value;
+    var srvLabel = {1:'EN',2:'JP',3:'KR',4:'TW'};
+    document.getElementById('uc-summary').innerHTML =
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">' +
+      '<div><div style="color:rgba(210,190,255,0.4);font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;">Transfer Code</div><div style="font-family:monospace;color:#EDE6FF;word-break:break-all;">' + tc + '</div></div>' +
+      '<div><div style="color:rgba(210,190,255,0.4);font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;">Confirmation Code</div><div style="font-family:monospace;color:#EDE6FF;">' + cc + '</div></div>' +
+      '<div><div style="color:rgba(210,190,255,0.4);font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;">Server</div><div style="color:#EDE6FF;">' + (srvLabel[srv]||srv) + '</div></div>' +
+      '<div><div style="color:rgba(210,190,255,0.4);font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;">ตัวละคร</div><div style="color:#FFD84E;font-family:\'Russo One\',sans-serif;">' + selIds.length + ' ตัว</div></div>' +
+      '</div>';
+    document.getElementById('uc-idlist').textContent = selIds.join(' ');
+    document.getElementById('uc-result').style.display = 'none';
+    ucGo(3);
+  }
+}
+
+function ucParseManual(s) {
+  if (s.toLowerCase() === 'all') {
+    var a = [];
+    for (var i = 0; i <= 860; i++) a.push(i);
+    return a;
+  }
+  var ids = [];
+  s.split(/[\s,]+/).forEach(function(p) {
+    var r = p.match(/^(\d+)-(\d+)$/);
+    if (r) {
+      for (var i = parseInt(r[1]); i <= parseInt(r[2]); i++) ids.push(i);
+    } else {
+      var n = parseInt(p);
+      if (!isNaN(n)) ids.push(n);
+    }
+  });
+  return ids;
+}
+
+function ucSearch() {
+  var q  = document.getElementById('uc-q').value.toLowerCase().trim();
+  var el = document.getElementById('uc-qres');
+  if (!q || !window.catsData) { el.style.display = 'none'; return; }
+
+  var results = window.catsData.filter(function(r) {
+    return (r[2]||'').toLowerCase().includes(q) || String(r[0]).includes(q);
+  }).slice(0, 15);
+
+  if (!results.length) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = results.map(function(r) {
+    var id = r[0], tier = r[1], name = r[2]||'-';
+    var col  = TIER_COL[tier] || '#EDE6FF';
+    var isSel = !!_ucSel[id];
+    return '<div onclick="ucToggle(' + id + ',\'' + tier + '\',\'' + name.replace(/'/g,'\\\'') + '\')" ' +
+      'style="padding:8px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;' +
+      'border-bottom:1px solid rgba(255,255,255,0.04);background:' + (isSel ? 'rgba(124,58,237,0.25)' : 'transparent') + ';transition:background 0.15s;">' +
+      '<div>' +
+        '<span style="font-family:monospace;font-size:11px;color:rgba(210,190,255,0.35);margin-right:8px;">#' + id + '</span>' +
+        '<span style="font-family:\'Chakra Petch\',sans-serif;font-size:13px;color:#EDE6FF;">' + name + '</span>' +
+        (isSel ? '<span style="margin-left:6px;font-size:10px;color:#4ADE80;">✓</span>' : '') +
+      '</div>' +
+      '<span style="font-size:10px;color:' + col + ';font-family:\'Chakra Petch\',sans-serif;">' + tier + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+function ucToggle(id, tier, name) {
+  if (_ucSel[id]) delete _ucSel[id];
+  else _ucSel[id] = { id:id, tier:tier, name:name };
+  ucRenderTags();
+  ucSearch();
+}
+
+function ucClearSel() {
+  _ucSel = {};
+  ucRenderTags();
+  ucSearch();
+}
+
+function ucRenderTags() {
+  var keys = Object.keys(_ucSel).map(Number).sort(function(a,b){return a-b;});
+  document.getElementById('uc-cnt').textContent = keys.length;
+  var el = document.getElementById('uc-tags');
+  if (!keys.length) {
+    el.innerHTML = '<span id="uc-empty" style="color:rgba(210,190,255,0.3);font-family:\'Chakra Petch\',sans-serif;font-size:12px;align-self:center;">ยังไม่ได้เลือก</span>';
+    return;
+  }
+  el.innerHTML = keys.map(function(id) {
+    var c = _ucSel[id];
+    var col = TIER_COL[c.tier] || '#EDE6FF';
+    return '<span onclick="ucToggle(' + id + ',\'' + c.tier + '\',\'' + c.name.replace(/'/g,'\\\'') + '\')" ' +
+      'style="display:inline-flex;align-items:center;gap:4px;background:rgba(124,58,237,0.18);border:1px solid rgba(124,58,237,0.32);' +
+      'border-radius:999px;padding:3px 9px;font-family:\'Chakra Petch\',sans-serif;font-size:11px;cursor:pointer;">' +
+      '<span style="color:' + col + ';">' + c.name + '</span>' +
+      '<span style="color:rgba(210,190,255,0.35);font-size:10px;">#' + id + '</span>' +
+      '<span style="color:rgba(244,63,94,0.6);margin-left:1px;">✕</span>' +
+    '</span>';
+  }).join('');
+}
+
+function ucCopyIds() {
+  var text = document.getElementById('uc-idlist').textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    toast('📋 คัดลอก ID แล้ว', 'ok');
+  }).catch(function() { toast('❌ Copy ไม่ได้', 'err'); });
+}
+
+async function ucExecute() {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('uc-tc').value.trim();
+  var cc  = document.getElementById('uc-cc').value.trim();
+  var srv = document.getElementById('uc-srv').value;
+  var btn = event.target;
+  var res = document.getElementById('uc-result');
+
+  btn.disabled = true; btn.textContent = '⏳ กำลังปลดล็อค...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังปลดล็อค ' + _ucIds.length + ' ตัวละคร...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/unlock/characters', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, cat_ids: _ucIds }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ ปลดล็อคสำเร็จ!', 'ok');
+      res.innerHTML =
+        '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ ปลดล็อคสำเร็จ!</div>' +
+        '<div style="margin-bottom:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่ (ส่งให้ลูกค้า)</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code||'-') + '</div></div>' +
+        '<div><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code||'-') + '</div></div>' +
+        '</div>';
+      showDebug('✅ Unlock Characters\nTransfer Code ใหม่: ' + data.new_transfer_code + '\nConfirmation Code ใหม่: ' + data.new_confirmation_code + '\nตัวละคร: ' + _ucIds.length + ' ตัว\nIDs: ' + _ucIds.join(' '));
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message||e), 'err');
+    res.innerHTML =
+      '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:16px;">' +
+      '<div style="font-family:\'Russo One\',sans-serif;color:#F87171;font-size:14px;margin-bottom:8px;">❌ เชื่อมต่อ API ไม่ได้</div>' +
+      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);margin-bottom:10px;">' + (e.message||'Unknown error') + '</div>' +
+      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);">ID List:<br><span style="color:#FFD84E;font-family:monospace;">' + _ucIds.join(' ') + '</span></div>' +
+      '</div>';
+  } finally {
+    btn.disabled = false; btn.textContent = '🚀 ปลดล็อคผ่าน BCSFE API';
+  }
+}
+
+// ── Shared Cat Action Runner (upgrade / trueform / ultraform / talents) ──
+async function runCatAction(prefix, endpoint, label) {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById(prefix + '-tc').value.trim();
+  var cc  = document.getElementById(prefix + '-cc').value.trim();
+  var srv = document.getElementById(prefix + '-srv').value;
+  var rawIds = document.getElementById(prefix + '-ids').value.trim();
+
+  if (!tc || !cc) { toast('❌ กรอก Transfer Code และ Confirmation Code ก่อน', 'err'); return; }
+  if (!rawIds)    { toast('❌ ใส่ Cat IDs ก่อน', 'err'); return; }
+
+  var ids = ucParseManual(rawIds);
+  if (!ids.length) { toast('❌ IDs ไม่ถูกต้อง', 'err'); return; }
+
+  var btn = event.target;
+  var res = document.getElementById(prefix + '-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังทำ...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ ' + label + ' ' + ids.length + ' ตัวละคร...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/' + endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, cat_ids: ids }),
+    });
+    var data = await resp.json();
+
+    if (data.success) {
+      toast('✅ ' + label + ' สำเร็จ!', 'ok');
+      res.innerHTML =
+        '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ ' + label + ' สำเร็จ! (' + ids.length + ' ตัว)</div>' +
+        '<div style="margin-bottom:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code||'-') + '</div></div>' +
+        '<div><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code||'-') + '</div></div>' +
+        '</div>';
+      showDebug(label + ' Success!\nTransfer: ' + data.new_transfer_code + '\nConfirmation: ' + data.new_confirmation_code + '\nตัวละคร: ' + ids.length + ' ตัว\nIDs: ' + ids.join(' '));
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message||e), 'err');
+    res.innerHTML =
+      '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:16px;">' +
+      '<div style="font-family:\'Russo One\',sans-serif;color:#F87171;font-size:14px;margin-bottom:8px;">❌ เชื่อมต่อ API ไม่ได้</div>' +
+      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);">' + (e.message||'Unknown error') + '</div>' +
+      '</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = (label === '⬆️ อัพเกรด' ? '⬆️ อัพเกรดถึง Max Level' :
+                       label === '✨ True Form' ? '✨ True Form ตัวละคร' :
+                       label === '💥 Ultra Form' ? '💥 Ultra Form ตัวละคร' :
+                       '🌟 Max Talents ตัวละคร');
+  }
+}
+
+function ucReset() {
+  _ucSel = {}; _ucIds = [];
+  ['uc-tc','uc-cc','uc-q','uc-manual'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('uc-qres').style.display = 'none';
+  document.getElementById('uc-result').style.display = 'none';
+  ucRenderTags();
+  ucGo(1);
+}
 </script>
 
+<script src="assets/auth.js"></script>
+<script src="assets/animations.js"></script>
 </body>
 </html>

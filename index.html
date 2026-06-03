@@ -10,7 +10,7 @@
 
 <nav class="navbar">
   <div class="nav-container">
-    <a href="index.html" class="nav-logo">🐱 BATTLE CATS SHOP</a>
+    <a href="index.html" class="nav-logo"><img src="pictures/icon cat.png" style="height:20px;vertical-align:middle;margin-right:5px;"> BATTLE CATS SHOP</a>
     <ul class="nav-links">
       <li><a href="index.html" class="active">หน้าแรก</a></li>
       <li><a href="shop.html">ร้านขาย</a></li>
@@ -28,12 +28,31 @@
 <div class="container">
 
   <!-- HERO SECTION -->
-  <div class="hero">
+  <div class="hero" style="--mx:0px;--my:0px;">
     <div class="badge-hot">🎮 เกมส์ยอดฮิตทั่วโลก</div>
     <h1 class="hero-title">BATTLE CATS<br>SHOP</h1>
     <p class="hero-sub">ไอเทม • แคท • แคตฟู้ด • ด่านราคาสุดคุ้ม!</p>
-    <div class="hero-emoji"></div>
-    <button class="btn btn-primary" onclick="window.location.href='shop.html'">🛍️ ดูสินค้าทั้งหมด</button>
+    <div class="hero-emoji">🐾</div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;">
+      <button class="btn btn-primary" onclick="window.location.href='shop.html'">🛍️ ดูสินค้าทั้งหมด</button>
+      <button class="btn btn-outline" onclick="window.location.href='characters.html'"><img src="pictures/icon cat.png" style="height:1.1em;vertical-align:middle;margin-right:4px;"> ปลดล็อคแมว</button>
+    </div>
+    <div style="display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin-top:4px;">
+      <div style="text-align:center;">
+        <div style="font-family:'Russo One',sans-serif;font-size:22px;color:#FFD84E;text-shadow:0 0 18px rgba(255,216,78,0.45);">2,000+</div>
+        <div style="font-size:11px;color:rgba(210,190,255,0.6);letter-spacing:1px;text-transform:uppercase;">ลูกค้า</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,0.12);border-radius:1px;"></div>
+      <div style="text-align:center;">
+        <div style="font-family:'Russo One',sans-serif;font-size:22px;color:#FFD84E;text-shadow:0 0 18px rgba(255,216,78,0.45);">5 นาที</div>
+        <div style="font-size:11px;color:rgba(210,190,255,0.6);letter-spacing:1px;text-transform:uppercase;">ส่งสินค้า</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,0.12);border-radius:1px;"></div>
+      <div style="text-align:center;">
+        <div style="font-family:'Russo One',sans-serif;font-size:22px;color:#FFD84E;text-shadow:0 0 18px rgba(255,216,78,0.45);">100%</div>
+        <div style="font-size:11px;color:rgba(210,190,255,0.6);letter-spacing:1px;text-transform:uppercase;">ปลอดภัย</div>
+      </div>
+    </div>
   </div>
 
   <!-- FLASH SALE BANNER -->
@@ -65,7 +84,7 @@
 
     <div class="card">
       <span class="card-tag tag-hot">HOT</span>
-      <div class="card-emoji">🐱</div>
+      <div class="card-picture"><img src="pictures/icon cat.png" width="200"></div>
       <div class="card-name">Cat Food x120</div>
       <div class="card-desc">เติมพลัง Gacha รัวๆ</div>
       <div class="card-price"><span class="price-now">฿149</span><span class="price-old">฿250</span></div>
@@ -102,7 +121,7 @@
     </div>
 
     <div class="card" style="text-align: center;">
-      <div class="card-emoji">🐱</div>
+      <div class="card-picture"><img src="pictures/icon cat.png" width="200"></div>
       <div class="card-name">ปลดล็อคแมว</div>
       <div class="card-desc">ปลดล็อคตัวแมวหายาก</div>
       <button class="btn btn-outline" onclick="window.location.href='characters.html'" style="width:100%;">ดูแมว</button>
@@ -168,7 +187,7 @@
   <div class="footer-content">
     <div class="footer-grid">
       <div class="footer-col">
-        <h4>🐱 Battle Cats Shop</h4>
+        <h4><img src="pictures/icon cat.png" style="height:1.1em;vertical-align:middle;margin-right:5px;"> Battle Cats Shop</h4>
         <p style="font-size: 13px; line-height: 1.6;">บริการร้านขายไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
       </div>
       <div class="footer-col">
@@ -230,5 +249,7 @@ window.addEventListener('load', () => {
 });
 </script>
 
+<script src="assets/auth.js"></script>
+<script src="assets/animations.js"></script>
 </body>
 </html>

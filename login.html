@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เข้าสู่ระบบ - Battle Cats Shop</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: linear-gradient(160deg, rgba(18,4,44,0.98) 0%, rgba(28,4,64,0.98) 100%);
+      border: 1px solid rgba(124,58,237,0.28);
+      border-radius: 26px;
+      padding: 44px 40px 38px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 48px 120px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.04), 0 0 80px rgba(124,58,237,0.08);
+      animation: cardIn 0.5s 0.05s ease-out both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(28px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .login-logo { text-align: center; margin-bottom: 30px; }
+
+    .login-logo a {
+      font-family: 'Russo One', 'Kanit', sans-serif;
+      font-size: 20px;
+      color: var(--yellow);
+      text-decoration: none;
+      text-shadow: 0 0 24px rgba(255,216,78,0.4), 2px 2px 0 rgba(255,155,61,0.5);
+      letter-spacing: 1.5px;
+    }
+
+    .login-logo p {
+      color: rgba(210,190,255,0.45);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      margin-top: 6px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ── Tab bar ── */
+    .auth-tabs {
+      display: flex;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(124,58,237,0.18);
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 11px;
+      background: transparent;
+      color: rgba(210,190,255,0.50);
+      font-family: 'Chakra Petch', 'Kanit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.22s;
+      letter-spacing: 0.3px;
+    }
+
+    .auth-tab.active {
+      background: linear-gradient(135deg, rgba(124,58,237,0.65), rgba(159,95,255,0.55));
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(124,58,237,0.35);
+    }
+
+    /* ── Form ── */
+    .form-group { margin-bottom: 18px; }
+
+    .form-label {
+      display: block;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(210,190,255,0.55);
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(124,58,237,0.22);
+      border-radius: 12px;
+      color: #EDE6FF;
+      font-family: 'Chakra Petch', 'Kanit', sans-serif;
+      font-size: 15px;
+      transition: border-color 0.22s, box-shadow 0.22s, background 0.22s;
+      box-sizing: border-box;
+    }
+
+    .form-input::placeholder { color: rgba(210,190,255,0.30); }
+
+    .form-input:focus {
+      outline: none;
+      border-color: rgba(124,58,237,0.70);
+      background: rgba(124,58,237,0.06);
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.16);
+    }
+
+    /* ── Messages ── */
+    .msg {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      padding: 11px 16px;
+      border-radius: 10px;
+      margin-top: 14px;
+      display: none;
+      animation: msgIn 0.3s ease-out;
+      line-height: 1.5;
+    }
+
+    .msg.show { display: block; }
+
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .msg-error {
+      background: rgba(244,63,94,0.10);
+      border: 1px solid rgba(244,63,94,0.35);
+      color: #FDA4AF;
+    }
+
+    .msg-success {
+      background: rgba(74,222,128,0.08);
+      border: 1px solid rgba(74,222,128,0.30);
+      color: #86efac;
+    }
+
+    /* ── Submit button ── */
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #6D28D9 0%, #9F5FFF 45%, #F43F5E 100%);
+      color: #fff;
+      font-family: 'Chakra Petch', 'Kanit', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: transform 0.18s, box-shadow 0.22s, filter 0.18s;
+      box-shadow: 0 8px 28px rgba(124,58,237,0.38);
+      letter-spacing: 0.8px;
+    }
+
+    .submit-btn:hover  { transform: translateY(-2px); box-shadow: 0 16px 44px rgba(124,58,237,0.55); filter: brightness(1.08); }
+    .submit-btn:active { transform: scale(0.97); }
+    .submit-btn:disabled { opacity: 0.50; cursor: not-allowed; transform: none; filter: none; }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 22px;
+      color: rgba(210,190,255,0.38);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: rgba(210,190,255,0.80); }
+
+    @media (max-width: 480px) {
+      .login-card { padding: 32px 22px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-card">
+
+    <div class="login-logo">
+      <a href="index.html"><img src="pictures/icon cat.png" style="height:20px;vertical-align:middle;margin-right:5px;"> BATTLE CATS SHOP</a>
+      <p>บัญชีสมาชิก</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login"    onclick="switchTab('login')">เข้าสู่ระบบ</button>
+      <button class="auth-tab"        id="tab-register" onclick="switchTab('register')">สมัครสมาชิก</button>
+    </div>
+
+    <!-- ── Login form ── -->
+    <div id="panel-login">
+      <div class="form-group">
+        <label class="form-label">ชื่อผู้ใช้</label>
+        <input type="text" id="l-user" class="form-input" placeholder="ชื่อผู้ใช้ของคุณ" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">รหัสผ่าน</label>
+        <input type="password" id="l-pw" class="form-input" placeholder="รหัสผ่าน" autocomplete="current-password">
+      </div>
+      <div id="l-err" class="msg msg-error"></div>
+      <button class="submit-btn" id="l-btn" onclick="doLogin()">🔑 เข้าสู่ระบบ</button>
+    </div>
+
+    <!-- ── Register form ── -->
+    <div id="panel-register" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">ชื่อผู้ใช้</label>
+        <input type="text" id="r-user" class="form-input" placeholder="อย่างน้อย 3 ตัวอักษร" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">รหัสผ่าน</label>
+        <input type="password" id="r-pw" class="form-input" placeholder="อย่างน้อย 6 ตัวอักษร" autocomplete="new-password">
+      </div>
+      <div class="form-group">
+        <label class="form-label">ยืนยันรหัสผ่าน</label>
+        <input type="password" id="r-pw2" class="form-input" placeholder="รหัสผ่านอีกครั้ง" autocomplete="new-password">
+      </div>
+      <div id="r-err" class="msg msg-error"></div>
+      <div id="r-ok"  class="msg msg-success"></div>
+      <button class="submit-btn" id="r-btn" onclick="doRegister()">✨ สมัครสมาชิก</button>
+    </div>
+
+    <a href="index.html" class="back-link">← กลับหน้าแรก</a>
+  </div>
+</div>
+
+<script src="assets/auth.js"></script>
+<script>
+if (AUTH.isLoggedIn()) window.location.href = 'index.html';
+
+function switchTab(tab) {
+  var login = tab === 'login';
+  document.getElementById('tab-login').classList.toggle('active', login);
+  document.getElementById('tab-register').classList.toggle('active', !login);
+  document.getElementById('panel-login').style.display    = login ? 'block' : 'none';
+  document.getElementById('panel-register').style.display = login ? 'none'  : 'block';
+  _clearMsg();
+}
+
+function _clearMsg() {
+  ['l-err','r-err','r-ok'].forEach(function(id) {
+    var el = document.getElementById(id);
+    el.classList.remove('show');
+    el.textContent = '';
+  });
+}
+
+function _showMsg(id, text) {
+  var el = document.getElementById(id);
+  el.textContent = text;
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+}
+
+async function doLogin() {
+  _clearMsg();
+  var user = document.getElementById('l-user').value;
+  var pw   = document.getElementById('l-pw').value;
+  var btn  = document.getElementById('l-btn');
+  btn.disabled = true;
+  btn.textContent = 'กำลังตรวจสอบ...';
+
+  var res = await AUTH.login(user, pw);
+  if (res.ok) {
+    btn.textContent = '✅ สำเร็จ! กำลังพาไป...';
+    setTimeout(function () { window.location.href = 'index.html'; }, 500);
+  } else {
+    _showMsg('l-err', res.err);
+    btn.disabled = false;
+    btn.textContent = '🔑 เข้าสู่ระบบ';
+  }
+}
+
+async function doRegister() {
+  _clearMsg();
+  var user = document.getElementById('r-user').value;
+  var pw   = document.getElementById('r-pw').value;
+  var pw2  = document.getElementById('r-pw2').value;
+
+  if (pw !== pw2) { _showMsg('r-err', 'รหัสผ่านไม่ตรงกัน'); return; }
+
+  var btn = document.getElementById('r-btn');
+  btn.disabled = true;
+  btn.textContent = 'กำลังสมัคร...';
+
+  var res = await AUTH.register(user, pw);
+  if (res.ok) {
+    var loginRes = await AUTH.login(user, pw);
+    if (loginRes.ok) {
+      _showMsg('r-ok', '✅ สมัครสมาชิกสำเร็จ! กำลังพาไปหน้าแรก...');
+      setTimeout(function () { window.location.href = 'index.html'; }, 800);
+    } else {
+      _showMsg('r-ok', '✅ สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
+      setTimeout(function () { switchTab('login'); }, 1200);
+    }
+  } else {
+    _showMsg('r-err', res.err);
+    btn.disabled = false;
+    btn.textContent = '✨ สมัครสมาชิก';
+  }
+}
+
+// Enter key support
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Enter') return;
+  var loginVisible = document.getElementById('panel-login').style.display !== 'none';
+  if (loginVisible) doLogin(); else doRegister();
+});
+</script>
+
+</body>
+</html>
