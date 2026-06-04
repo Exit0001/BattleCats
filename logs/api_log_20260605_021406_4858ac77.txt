@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-05 02:14:06
+Transfer  : 4858ac778
+Confirm   : 2192
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=4858ac... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Normal Ticket: 12 → 112  (+100)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_021408_4858ac77
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: c730bc4d7 | Confirm ใหม่: 2584
+============================================================

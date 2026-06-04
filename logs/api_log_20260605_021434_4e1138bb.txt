@@ -1,0 +1,21 @@
+============================================================
+เวลา      : 2026-06-05 02:14:34
+Transfer  : 4e1138bba
+Confirm   : 1725
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=4e1138... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Catseye (6 types) +100 each:
+       type 1: 14 → 114
+       type 2: 21 → 121
+       type 3: 14 → 114
+       type 4: 14 → 114
+       type 5: 14 → 114
+       type 6: 14 → 114
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_021435_4e1138bb
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 92086902a | Confirm ใหม่: 3314
+============================================================

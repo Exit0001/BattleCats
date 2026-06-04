@@ -528,6 +528,52 @@ async def test_bcsfe(request: TestBCSFERequest):
             "error": error_msg
         }
 
+@app.post("/api/test/bcsfe/batch")
+async def test_bcsfe_batch(request: OrderRequest):
+    """
+    ทดสอบเพิ่มของหลายรายการในครั้งเดียว — download ครั้งเดียว แก้ทุก item แล้ว upload ครั้งเดียว
+    """
+    try:
+        transfer_code     = request.transfer_code.strip()
+        confirmation_code = request.confirmation_code.strip()
+        country           = request.country
+
+        if not transfer_code or not confirmation_code:
+            return {"success": False, "error": "Transfer Code และ Confirmation Code ห้ามว่าง"}
+        if country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {country}"}
+        if not request.items:
+            return {"success": False, "error": "ไม่มี item ในรายการ"}
+
+        items_list = []
+        for item in request.items:
+            if item.key not in ITEM_MAP:
+                return {"success": False, "error": f"ไม่รู้จัก item: {item.key}"}
+            cfg = ITEM_MAP[item.key]
+            if item.amount <= 0 or item.amount > cfg["max"]:
+                return {"success": False, "error": f"{cfg['label']} จำนวนไม่ถูกต้อง ({item.amount})"}
+            entry = {"key": item.key, "amount": item.amount}
+            if item.sub_type:
+                entry["sub_type"] = item.sub_type
+            items_list.append(entry)
+
+        runner = BCSFERunner(transfer=transfer_code, confirm=confirmation_code, country=country)
+        result = runner.run(items_list)
+
+        if result["success"]:
+            codes  = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or transfer_code)
+            summary = [{"item": ITEM_MAP[i["key"]]["label"], "amount": i["amount"]} for i in items_list]
+            return {"success": True, "new_transfer_code": new_tc, "new_confirmation_code": new_cc, "summary": summary}
+        else:
+            return {"success": False, "error": result.get("error", "Unknown error")}
+
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {str(e)}"}
+
+
 @app.post("/api/unlock/characters")
 async def unlock_characters(request: UnlockCharactersRequest):
     """ปลดล็อคตัวละครตาม cat_ids ผ่าน BCSFE"""

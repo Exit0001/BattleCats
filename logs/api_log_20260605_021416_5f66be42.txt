@@ -1,0 +1,21 @@
+============================================================
+เวลา      : 2026-06-05 02:14:16
+Transfer  : 5f66be42b
+Confirm   : 8633
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=5f66be... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Battle Item (6 types) +100 each:
+       type 1: 12 → 112
+       type 2: 14 → 114
+       type 3: 12 → 112
+       type 4: 12 → 112
+       type 5: 12 → 112
+       type 6: 12 → 112
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_021417_5f66be42
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: db2a5ddfa | Confirm ใหม่: 8967
+============================================================

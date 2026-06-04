@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-05 02:14:47
+Transfer  : dbf9c997f
+Confirm   : 3102
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=dbf9c9... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Legend Ticket: 0 → 1  (+1)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_021448_dbf9c997
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: fccbf876e | Confirm ใหม่: 6543
+============================================================

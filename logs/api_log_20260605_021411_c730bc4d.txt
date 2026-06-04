@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-05 02:14:11
+Transfer  : c730bc4d7
+Confirm   : 2584
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=c730bc... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Rare Ticket (Trade): 100 → 50  (+-50)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_021412_c730bc4d
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 5f66be42b | Confirm ใหม่: 8633
+============================================================

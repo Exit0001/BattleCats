@@ -1,0 +1,70 @@
+============================================================
+เวลา      : 2026-06-05 02:47:12
+Transfer  : 584834bba
+Confirm   : 5008
+Country   : en
+============================================================
+[OP] เพิ่มของ 2 รายการ
+[BCSFE] ⬇  Downloading save (transfer=584834... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Lucky Ticket [idx 0]: 2999 → 2999  (+0)
+[ITEM] Lucky Ticket [idx 1]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 2]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 3]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 4]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 5]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 6]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 7]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 8]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 9]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 10]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 11]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 12]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 13]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 14]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 15]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 16]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 17]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 18]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 19]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 20]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 21]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 22]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 23]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 24]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 25]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 26]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 27]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 28]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 29]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 30]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 31]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 32]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 33]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 34]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 35]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 36]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 37]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 38]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 39]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 40]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 41]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 42]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 43]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 44]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 45]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 46]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 47]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 48]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 49]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 50]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 51]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 52]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 53]: 1100 → 2100  (+1000)
+[ITEM] Lucky Ticket [idx 54]: 1100 → 2100  (+1000)
+[ITEM] Rare Ticket (Trade): 200 → 200  (set=100)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_024715_584834bb
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: fc41a6af4 | Confirm ใหม่: 9959
+============================================================

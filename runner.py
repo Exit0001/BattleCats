@@ -12,6 +12,7 @@ from config import ITEM_MAP
 COUNTRY_MAP = {"1": "en", "2": "jp", "3": "kr", "4": "tw"}
 
 BCSFE_SAVE_PATH = Path.home() / "Documents" / "bcsfe" / "saves" / "SAVE_DATA"
+LOG_DIR = Path("logs")
 
 
 class BCSFERunner:
@@ -19,6 +20,24 @@ class BCSFERunner:
         self.transfer = transfer.strip()
         self.confirm  = confirm.strip()
         self.country  = country.strip()
+        LOG_DIR.mkdir(exist_ok=True)
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self._log_path = LOG_DIR / f"api_log_{ts}_{self.transfer[:8]}.txt"
+        self._log_file = open(self._log_path, "w", encoding="utf-8")
+        self._log(f"{'='*60}")
+        self._log(f"เวลา      : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        self._log(f"Transfer  : {self.transfer}")
+        self._log(f"Confirm   : {self.confirm}")
+        self._log(f"Country   : {COUNTRY_MAP.get(self.country, 'en')}")
+        self._log(f"{'='*60}")
+
+    def _log(self, msg: str):
+        print(msg)
+        self._log_file.write(msg + "\n")
+        self._log_file.flush()
+
+    def _close_log(self):
+        self._log_file.close()
 
     # ──────────────────────────────────────────────────
     # helpers
@@ -31,7 +50,7 @@ class BCSFERunner:
     def _download_save(self):
         cc = self._get_cc()
         gv = core.GameVersion(120200)
-        print(f"[BCSFE] ⬇️  Downloading save (transfer={self.transfer[:6]}... cc={cc})")
+        self._log(f"[BCSFE] ⬇  Downloading save (transfer={self.transfer[:6]}... cc={cc})")
         handler, result = core.ServerHandler.from_codes(
             self.transfer, self.confirm, cc, gv, print=False, save_backup=True
         )
@@ -40,23 +59,24 @@ class BCSFERunner:
                 "❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว "
                 "กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง"
             )
-        print("[BCSFE] ✅ Download สำเร็จ")
+        self._log("[BCSFE] ✅ Download สำเร็จ")
         return handler.save_file
 
     def _upload_save(self, save_file) -> dict:
         save_path = core.SaveFile.get_saves_path().add("SAVE_DATA")
         save_file.to_file(save_path)
-        print(f"[BCSFE] 💾 บันทึก save → {save_path}")
+        self._log(f"[BCSFE] 💾 บันทึก save → {save_path}")
 
         self._backup(save_file)
 
-        print("[BCSFE] ⬆️  Uploading save...")
+        self._log("[BCSFE] ⬆  Uploading save...")
         result = core.ServerHandler(save_file).get_codes()
         if result is None:
             raise RuntimeError("❌ Upload ล้มเหลว กรุณาลองใหม่")
 
         new_tc, new_cc = result
-        print(f"[BCSFE] ✅ Transfer: {new_tc} | Confirm: {new_cc}")
+        self._log(f"[BCSFE] ✅ Transfer ใหม่: {new_tc} | Confirm ใหม่: {new_cc}")
+        self._log(f"{'='*60}")
         return {"transfer": new_tc, "confirmation": new_cc}
 
     def _backup(self, save_file):
@@ -69,9 +89,9 @@ class BCSFERunner:
             ts = datetime.now().strftime("%Y%m%d_%H%M%S")
             dest = backup_dir / f"SAVE_{ts}_{self.transfer[:8]}"
             shutil.copy2(src.to_str(), dest)
-            print(f"[BCSFE] 📁 Backup → {dest}")
+            self._log(f"[BCSFE] 📁 Backup → {dest}")
         except Exception as e:
-            print(f"[BCSFE] ⚠️  Backup ล้มเหลว: {e}")
+            self._log(f"[BCSFE] ⚠  Backup ล้มเหลว: {e}")
 
     # ──────────────────────────────────────────────────
     # item editors
@@ -92,11 +112,16 @@ class BCSFERunner:
             self._edit_array_item(save_file, key, amount, max_val, label)
             return
 
-        # ── simple scalar items ──
+        # ── lucky_ticket: ต้องดึง server event data เพื่อหา active slot ──
+        if key == "lucky_ticket":
+            self._edit_lucky_ticket(save_file, amount, max_val)
+            return
+
+        # ── simple scalar items — ทุกตัว ADD เสมอ ──
         cur = self._get_scalar(save_file, key)
-        new_val = min(cur + amount, max_val) if not cfg.get("no_add") else min(amount, max_val)
+        new_val = min(cur + amount, max_val)
         self._set_scalar(save_file, key, new_val)
-        print(f"[BCSFE] ✔ {label}: {cur} → {new_val}")
+        self._log(f"[ITEM] {label}: {cur} → {new_val}  (+{new_val - cur})")
 
     def _get_scalar(self, sf, key: str) -> int:
         mapping = {
@@ -147,6 +172,7 @@ class BCSFERunner:
             raise ValueError(f"ไม่รู้จัก array key: {key}")
 
         n = min(max_sub, len(arr))
+        before = arr[:n].copy()
         for i in range(n):
             arr[i] = min(arr[i] + amount, max_val)
 
@@ -160,7 +186,55 @@ class BCSFERunner:
             for i in range(n):
                 sf.battle_items.items[i].amount = arr[i]
 
-        print(f"[BCSFE] ✔ {label} ({n} types) → {amount} each (max {max_val})")
+        self._log(f"[ITEM] {label} ({n} types) +{amount} each:")
+        for i in range(n):
+            self._log(f"       type {i+1}: {before[i]} → {arr[i]}")
+
+    def _edit_lucky_ticket(self, save_file, amount: int, max_val: int):
+        from bcsfe.core.game.catbase.gatya_item import GatyaItemBuy, GatyaItemCategory
+        from bcsfe.core.server.event_data import ServerGatyaData
+
+        # ดาวน์โหลด event data ปัจจุบันจาก server
+        gatya_raw = core.ServerHandler(save_file).download_gatya_data()
+        if gatya_raw is None:
+            self._log("[ITEM] Lucky Ticket — ดาวน์โหลด event data ไม่ได้")
+            return
+
+        server_data = ServerGatyaData.from_data(gatya_raw)
+        if server_data is None:
+            self._log("[ITEM] Lucky Ticket — parse event data ไม่ได้")
+            return
+
+        gatya_item_buy = GatyaItemBuy(save_file)
+        if gatya_item_buy.buy is None:
+            self._log("[ITEM] Lucky Ticket — โหลด gatya item buy ไม่ได้")
+            return
+
+        edited = 0
+        seen_idx = set()  # กัน duplicate index
+        for event_item in server_data.items:
+            for gset in event_item.sets:
+                if gset.number == -1:
+                    continue
+                item = gatya_item_buy.get_by_server_id(gset.number)
+                if item is None:
+                    continue
+                if item.category != GatyaItemCategory.LUCKY_TICKETS_1.value:
+                    continue
+                idx = item.index
+                if idx in seen_idx:
+                    continue
+                seen_idx.add(idx)
+                if idx >= len(save_file.lucky_tickets):
+                    continue
+                old = save_file.lucky_tickets[idx]
+                new_val = min(old + amount, max_val)
+                save_file.lucky_tickets[idx] = new_val
+                self._log(f"[ITEM] Lucky Ticket [idx {idx}]: {old} → {new_val}  (+{new_val - old})")
+                edited += 1
+
+        if edited == 0:
+            self._log("[ITEM] Lucky Ticket — ไม่พบ event Lucky Ticket ที่ active อยู่ตอนนี้")
 
     # ──────────────────────────────────────────────────
     # public run methods
@@ -168,6 +242,7 @@ class BCSFERunner:
 
     def run(self, items: list) -> dict:
         try:
+            self._log(f"[OP] เพิ่มของ {len(items)} รายการ")
             core.core_data.init_data()
             save_file = self._download_save()
 
@@ -175,10 +250,12 @@ class BCSFERunner:
                 self._edit_item(save_file, item)
 
             codes = self._upload_save(save_file)
+            self._close_log()
             return {"success": True, "new_transfer_code": codes}
 
         except Exception as e:
-            print(f"[BCSFE] ❌ {e}")
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
             return {"success": False, "error": str(e)}
 
     def _find_cats(self, save_file, cat_ids: list):
@@ -193,11 +270,12 @@ class BCSFERunner:
 
     def run_unlock_characters(self, cat_ids: list) -> dict:
         try:
+            self._log(f"[OP] Unlock Characters จำนวน {len(cat_ids)} ตัว")
             core.core_data.init_data()
             save_file = self._download_save()
 
             cats = self._find_cats(save_file, cat_ids)
-            print(f"[BCSFE] 🔍 Found {len(cats)}/{len(cat_ids)} cats in save")
+            self._log(f"[BCSFE] พบ {len(cats)}/{len(cat_ids)} ตัวใน save")
 
             logs = []
             not_found = [i for i in cat_ids if not any(c.id == i for c in cats)]
@@ -207,16 +285,20 @@ class BCSFERunner:
                 if cat.unlocked_forms == 0:
                     cat.unlocked_forms = 1
                 logs.append(f"✔ #{cat.id} — unlocked")
+                self._log(f"[CAT] ✔ #{cat.id} — unlocked")
             for i in not_found:
                 logs.append(f"✘ #{i} — ไม่พบใน save")
+                self._log(f"[CAT] ✘ #{i} — ไม่พบใน save")
 
-            print(f"[BCSFE] ✔ Unlocked {len(cats)} cats")
+            self._log(f"[BCSFE] Unlocked {len(cats)} cats")
             codes = self._upload_save(save_file)
+            self._close_log()
             return {"success": True, "new_transfer_code": codes, "log": logs}
 
         except Exception as e:
             import traceback
-            print(f"[BCSFE] ❌ {e}\n{traceback.format_exc()}")
+            self._log(f"[BCSFE] ❌ {e}\n{traceback.format_exc()}")
+            self._close_log()
             return {"success": False, "error": str(e)}
 
     @staticmethod
@@ -230,6 +312,7 @@ class BCSFERunner:
     def run_upgrade_characters(self, cat_ids: list) -> dict:
         """Upgrade max level (with catseyes) ตาม IDs ที่ระบุ, plus = 0"""
         try:
+            self._log(f"[OP] Upgrade Characters จำนวน {len(cat_ids)} ตัว")
             core.core_data.init_data()
             save_file = self._download_save()
 
@@ -240,21 +323,27 @@ class BCSFERunner:
                 old_lv = cat.upgrade.base + 1
                 old_plus = cat.upgrade.plus
                 self._set_base_max(cat, save_file)
-                logs.append(f"✔ #{cat.id} — Lv{old_lv}+{old_plus} → Lv{cat.upgrade.base+1}+{cat.upgrade.plus}")
+                entry = f"✔ #{cat.id} — Lv{old_lv}+{old_plus} → Lv{cat.upgrade.base+1}+{cat.upgrade.plus}"
+                logs.append(entry)
+                self._log(f"[CAT] {entry}")
             for i in not_found:
                 logs.append(f"✘ #{i} — ไม่พบใน save")
-            print(f"[BCSFE] ✔ Upgraded {len(cats)}/{len(cat_ids)} cats → max, plus=0")
+                self._log(f"[CAT] ✘ #{i} — ไม่พบใน save")
+            self._log(f"[BCSFE] Upgraded {len(cats)}/{len(cat_ids)} cats → max, plus=0")
 
             codes = self._upload_save(save_file)
+            self._close_log()
             return {"success": True, "new_transfer_code": codes, "log": logs}
 
         except Exception as e:
-            print(f"[BCSFE] ❌ {e}")
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
             return {"success": False, "error": str(e)}
 
     def run_upgrade_all_characters(self) -> dict:
         """Upgrade max (with catseyes) ทุกตัวที่ unlock อยู่ในรหัส, plus = 0"""
         try:
+            self._log("[OP] Upgrade ALL unlocked cats → max, plus=0")
             core.core_data.init_data()
             save_file = self._download_save()
 
@@ -265,20 +354,24 @@ class BCSFERunner:
                     old_lv = cat.upgrade.base + 1
                     old_plus = cat.upgrade.plus
                     self._set_base_max(cat, save_file)
-                    logs.append(f"✔ #{cat.id} — Lv{old_lv}+{old_plus} → Lv{cat.upgrade.base+1}+{cat.upgrade.plus}")
+                    entry = f"✔ #{cat.id} — Lv{old_lv}+{old_plus} → Lv{cat.upgrade.base+1}+{cat.upgrade.plus}"
+                    logs.append(entry)
+                    self._log(f"[CAT] {entry}")
                     count += 1
-            print(f"[BCSFE] ✔ Upgraded all {count} unlocked cats → max, plus=0")
-            print(f"[BCSFE-DEBUG] logs length = {len(logs)}, sample = {logs[:2] if logs else 'EMPTY'}")
+            self._log(f"[BCSFE] Upgraded all {count} unlocked cats → max, plus=0")
 
             codes = self._upload_save(save_file)
+            self._close_log()
             return {"success": True, "new_transfer_code": codes, "count": count, "log": logs}
 
         except Exception as e:
-            print(f"[BCSFE] ❌ {e}")
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
             return {"success": False, "error": str(e)}
 
     def run_true_form_characters(self, cat_ids: list) -> dict:
         try:
+            self._log(f"[OP] True Form Characters จำนวน {len(cat_ids)} ตัว")
             core.core_data.init_data()
             save_file = self._download_save()
 
@@ -288,19 +381,24 @@ class BCSFERunner:
             save_file.cats.true_form_cats(save_file, cats)
             for cat in cats:
                 logs.append(f"✔ #{cat.id} — True Form applied")
+                self._log(f"[CAT] ✔ #{cat.id} — True Form applied")
             for i in not_found:
                 logs.append(f"✘ #{i} — ไม่พบใน save")
-            print(f"[BCSFE] ✔ True Form {len(cats)}/{len(cat_ids)} cats")
+                self._log(f"[CAT] ✘ #{i} — ไม่พบใน save")
+            self._log(f"[BCSFE] True Form {len(cats)}/{len(cat_ids)} cats")
 
             codes = self._upload_save(save_file)
+            self._close_log()
             return {"success": True, "new_transfer_code": codes, "log": logs}
 
         except Exception as e:
-            print(f"[BCSFE] ❌ {e}")
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
             return {"success": False, "error": str(e)}
 
     def run_ultra_form_characters(self, cat_ids: list) -> dict:
         try:
+            self._log(f"[OP] Ultra Form Characters จำนวน {len(cat_ids)} ตัว")
             core.core_data.init_data()
             save_file = self._download_save()
 
@@ -311,15 +409,19 @@ class BCSFERunner:
             save_file.cats.fourth_form_cats(save_file, cats)
             for cat in cats:
                 logs.append(f"✔ #{cat.id} — Ultra Form applied")
+                self._log(f"[CAT] ✔ #{cat.id} — Ultra Form applied")
             for i in not_found:
                 logs.append(f"✘ #{i} — ไม่พบใน save")
-            print(f"[BCSFE] ✔ Ultra Form {len(cats)}/{len(cat_ids)} cats")
+                self._log(f"[CAT] ✘ #{i} — ไม่พบใน save")
+            self._log(f"[BCSFE] Ultra Form {len(cats)}/{len(cat_ids)} cats")
 
             codes = self._upload_save(save_file)
+            self._close_log()
             return {"success": True, "new_transfer_code": codes, "log": logs}
 
         except Exception as e:
-            print(f"[BCSFE] ❌ {e}")
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
             return {"success": False, "error": str(e)}
 
     @staticmethod
@@ -347,6 +449,7 @@ class BCSFERunner:
 
     def run_talents_max_characters(self, cat_ids: list) -> dict:
         try:
+            self._log(f"[OP] Max Talents Characters จำนวน {len(cat_ids)} ตัว")
             core.core_data.init_data()
             save_file = self._download_save()
 
@@ -354,6 +457,7 @@ class BCSFERunner:
 
             talent_data = save_file.cats.read_talent_data(save_file)
             if talent_data is None:
+                self._close_log()
                 return {"success": False, "error": "ไม่สามารถโหลด talent data ได้"}
 
             logs = []
@@ -363,18 +467,23 @@ class BCSFERunner:
                 n = self._init_and_max_talents(cat, talent_data)
                 if n > 0:
                     logs.append(f"✔ #{cat.id} — {n} talents maxed")
+                    self._log(f"[CAT] ✔ #{cat.id} — {n} talents maxed")
                     count += 1
                 else:
                     logs.append(f"— #{cat.id} — ไม่มี talent data")
+                    self._log(f"[CAT] — #{cat.id} — ไม่มี talent data")
             for i in not_found:
                 logs.append(f"✘ #{i} — ไม่พบใน save")
+                self._log(f"[CAT] ✘ #{i} — ไม่พบใน save")
 
-            print(f"[BCSFE] ✔ Max Talents {count}/{len(cat_ids)} cats")
+            self._log(f"[BCSFE] Max Talents {count}/{len(cat_ids)} cats")
             codes = self._upload_save(save_file)
+            self._close_log()
             return {"success": True, "new_transfer_code": codes, "log": logs}
 
         except Exception as e:
-            print(f"[BCSFE] ❌ {e}")
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
             return {"success": False, "error": str(e)}
 
     # ── All-cats variants (ทำกับทุกตัวใน save) ────────────────
@@ -382,6 +491,7 @@ class BCSFERunner:
     def run_unlock_all(self) -> dict:
         """Unlock ทุกตัวละครในเกม"""
         try:
+            self._log("[OP] Unlock ALL cats in game")
             core.core_data.init_data()
             save_file = self._download_save()
 
@@ -395,34 +505,40 @@ class BCSFERunner:
                 logs.append(f"✔ #{cat.id} — unlocked")
                 count += 1
 
-            print(f"[BCSFE] ✔ Unlocked all {count} cats")
+            self._log(f"[BCSFE] Unlocked all {count} cats")
             codes = self._upload_save(save_file)
+            self._close_log()
             return {"success": True, "new_transfer_code": codes, "count": count, "log": logs}
 
         except Exception as e:
-            print(f"[BCSFE] ❌ {e}")
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
             return {"success": False, "error": str(e)}
 
     def run_true_form_all(self) -> dict:
         """True Form ทุกตัวที่ลูกค้ามีอยู่แล้ว"""
         try:
+            self._log("[OP] True Form ALL unlocked cats")
             core.core_data.init_data()
             save_file = self._download_save()
 
             owned = save_file.cats.get_unlocked_cats()
             save_file.cats.true_form_cats(save_file, owned)
             logs = [f"✔ #{cat.id} — True Form applied" for cat in owned]
-            print(f"[BCSFE] ✔ True Form all {len(owned)} unlocked cats")
+            self._log(f"[BCSFE] True Form all {len(owned)} unlocked cats")
             codes = self._upload_save(save_file)
+            self._close_log()
             return {"success": True, "new_transfer_code": codes, "count": len(owned), "log": logs}
 
         except Exception as e:
-            print(f"[BCSFE] ❌ {e}")
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
             return {"success": False, "error": str(e)}
 
     def run_ultra_form_all(self) -> dict:
         """Ultra Form ทุกตัวที่ลูกค้ามีอยู่แล้ว (เฉพาะที่มี 4 forms จริง)"""
         try:
+            self._log("[OP] Ultra Form ALL unlocked cats")
             core.core_data.init_data()
             save_file = self._download_save()
 
@@ -430,22 +546,26 @@ class BCSFERunner:
             # fourth_form_cats ใช้ NyankoPictureBook check total_forms — ไม่ bug แมวที่ไม่มี 4th form
             save_file.cats.fourth_form_cats(save_file, owned)
             logs = [f"✔ #{cat.id} — Ultra Form applied" for cat in owned]
-            print(f"[BCSFE] ✔ Ultra Form all {len(owned)} unlocked cats")
+            self._log(f"[BCSFE] Ultra Form all {len(owned)} unlocked cats")
             codes = self._upload_save(save_file)
+            self._close_log()
             return {"success": True, "new_transfer_code": codes, "count": len(owned), "log": logs}
 
         except Exception as e:
-            print(f"[BCSFE] ❌ {e}")
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
             return {"success": False, "error": str(e)}
 
     def run_talents_max_all(self) -> dict:
         """Max Talents ทุกตัวที่ลูกค้ามีอยู่แล้ว"""
         try:
+            self._log("[OP] Max Talents ALL unlocked cats")
             core.core_data.init_data()
             save_file = self._download_save()
 
             talent_data = save_file.cats.read_talent_data(save_file)
             if talent_data is None:
+                self._close_log()
                 return {"success": False, "error": "ไม่สามารถโหลด talent data ได้"}
 
             owned = save_file.cats.get_unlocked_cats()
@@ -455,12 +575,15 @@ class BCSFERunner:
                 n = self._init_and_max_talents(cat, talent_data)
                 if n > 0:
                     logs.append(f"✔ #{cat.id} — {n} talents maxed")
+                    self._log(f"[CAT] ✔ #{cat.id} — {n} talents maxed")
                     count += 1
 
-            print(f"[BCSFE] ✔ Max Talents all {count} cats")
+            self._log(f"[BCSFE] Max Talents all {count} cats")
             codes = self._upload_save(save_file)
+            self._close_log()
             return {"success": True, "new_transfer_code": codes, "count": count, "log": logs}
 
         except Exception as e:
-            print(f"[BCSFE] ❌ {e}")
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
             return {"success": False, "error": str(e)}

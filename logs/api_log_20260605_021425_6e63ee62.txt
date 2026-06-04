@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-05 02:14:25
+Transfer  : 6e63ee626
+Confirm   : 7803
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=6e63ee... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Platinum Shard: 99 → 99  (+0)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_021426_6e63ee62
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 0982a567e | Confirm ใหม่: 9286
+============================================================

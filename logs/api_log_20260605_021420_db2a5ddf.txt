@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-05 02:14:20
+Transfer  : db2a5ddfa
+Confirm   : 8967
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=db2a5d... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] NP: 12 → 112  (+100)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_021422_db2a5ddf
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 6e63ee626 | Confirm ใหม่: 7803
+============================================================

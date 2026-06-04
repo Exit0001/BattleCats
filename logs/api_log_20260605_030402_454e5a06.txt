@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-05 03:04:02
+Transfer  : 454e5a061
+Confirm   : 6156
+Country   : en
+============================================================
+[OP] เพิ่มของ 2 รายการ
+[BCSFE] ⬇  Downloading save (transfer=454e5a... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Rare Ticket (Trade): 0 → 50  (+50)
+[ITEM] Lucky Ticket — ไม่พบ event Lucky Ticket ที่ active อยู่ตอนนี้
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_030405_454e5a06
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 5a39a5363 | Confirm ใหม่: 5898
+============================================================

@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-05 01:56:58
+Transfer  : 4b997428e
+Confirm   : 3153
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=4b9974... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 20012 → 30012  (+10000)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_015700_4b997428
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 1228ef9cc | Confirm ใหม่: 5515
+============================================================

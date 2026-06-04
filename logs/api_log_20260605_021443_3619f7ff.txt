@@ -1,0 +1,18 @@
+============================================================
+เวลา      : 2026-06-05 02:14:43
+Transfer  : 3619f7ff1
+Confirm   : 2853
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=3619f7... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Catamins (3 types) +100 each:
+       type 1: 12 → 112
+       type 2: 24 → 124
+       type 3: 12 → 112
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_021444_3619f7ff
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: dbf9c997f | Confirm ใหม่: 3102
+============================================================

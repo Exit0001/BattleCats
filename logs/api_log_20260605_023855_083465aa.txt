@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-05 02:38:55
+Transfer  : 083465aaa
+Confirm   : 1682
+Country   : en
+============================================================
+[OP] เพิ่มของ 2 รายการ
+[BCSFE] ⬇  Downloading save (transfer=083465... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Rare Ticket (Trade): 50 → 50  (set=50)
+[ITEM] Platinum Shard: 99 → 99  (+0)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_023856_083465aa
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 3a985b05a | Confirm ใหม่: 2676
+============================================================

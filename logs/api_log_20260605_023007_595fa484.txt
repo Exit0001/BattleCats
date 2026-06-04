@@ -1,0 +1,65 @@
+============================================================
+เวลา      : 2026-06-05 02:30:07
+Transfer  : 595fa484f
+Confirm   : 9741
+Country   : en
+============================================================
+[OP] เพิ่มของ 12 รายการ
+[BCSFE] ⬇  Downloading save (transfer=595fa4... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 15 → 10015  (+10000)
+[ITEM] XP: 1 → 99999999  (+99999998)
+[ITEM] Rare Ticket (Trade): 100 → 50  (+-50)
+[ITEM] Battle Item (6 types) +100 each:
+       type 1: 12 → 112
+       type 2: 14 → 114
+       type 3: 12 → 112
+       type 4: 12 → 112
+       type 5: 12 → 112
+       type 6: 12 → 112
+[ITEM] NP: 12 → 112  (+100)
+[ITEM] Platinum Shard: 99 → 99  (+0)
+[ITEM] Leadership: 12 → 112  (+100)
+[ITEM] Catseye (6 types) +100 each:
+       type 1: 14 → 114
+       type 2: 21 → 121
+       type 3: 14 → 114
+       type 4: 14 → 114
+       type 5: 14 → 114
+       type 6: 14 → 114
+[ITEM] Catfruit (ผลไม้แมว) (29 types) +100 each:
+       type 1: 11 → 111
+       type 2: 121 → 221
+       type 3: 11 → 111
+       type 4: 11 → 111
+       type 5: 11 → 111
+       type 6: 11 → 111
+       type 7: 11 → 111
+       type 8: 11 → 111
+       type 9: 11 → 111
+       type 10: 11 → 111
+       type 11: 11 → 111
+       type 12: 11 → 111
+       type 13: 11 → 111
+       type 14: 11 → 111
+       type 15: 11 → 111
+       type 16: 11 → 111
+       type 17: 11 → 111
+       type 18: 11 → 111
+       type 19: 11 → 111
+       type 20: 11 → 111
+       type 21: 11 → 111
+       type 22: 11 → 111
+       type 23: 11 → 111
+       type 24: 11 → 111
+       type 25: 11 → 111
+       type 26: 11 → 111
+       type 27: 11 → 111
+       type 28: 11 → 111
+       type 29: 11 → 111
+[ITEM] Catamins (3 types) +100 each:
+       type 1: 12 → 112
+       type 2: 24 → 124
+       type 3: 12 → 112
+[ITEM] Legend Ticket: 0 → 1  (+1)
+[BCSFE] ❌ 'GatyaItemBuy' object has no attribute 'items'

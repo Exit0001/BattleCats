@@ -1,0 +1,9 @@
+============================================================
+เวลา      : 2026-06-05 02:28:51
+Transfer  : ccae1feb4
+Confirm   : 0117
+Country   : en
+============================================================
+[OP] เพิ่มของ 2 รายการ
+[BCSFE] ⬇  Downloading save (transfer=ccae1f... cc=en)
+[BCSFE] ❌ ❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง

@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-05 02:14:29
+Transfer  : 0982a567e
+Confirm   : 9286
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=0982a5... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Leadership: 12 → 112  (+100)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_021431_0982a567
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 4e1138bba | Confirm ใหม่: 1725
+============================================================

@@ -1,0 +1,126 @@
+============================================================
+เวลา      : 2026-06-05 02:33:30
+Transfer  : dbfd8c563
+Confirm   : 9656
+Country   : en
+============================================================
+[OP] เพิ่มของ 14 รายการ
+[BCSFE] ⬇  Downloading save (transfer=dbfd8c... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 15 → 10015  (+10000)
+[ITEM] Cat Food: 10015 → 30015  (+20000)
+[ITEM] XP: 1 → 99999999  (+99999998)
+[ITEM] Normal Ticket: 12 → 112  (+100)
+[ITEM] Rare Ticket (Trade): 100 → 50  (+-50)
+[ITEM] Battle Item (6 types) +100 each:
+       type 1: 12 → 112
+       type 2: 14 → 114
+       type 3: 12 → 112
+       type 4: 12 → 112
+       type 5: 12 → 112
+       type 6: 12 → 112
+[ITEM] NP: 12 → 112  (+100)
+[ITEM] Platinum Shard: 99 → 99  (+0)
+[ITEM] Leadership: 12 → 112  (+100)
+[ITEM] Catseye (6 types) +100 each:
+       type 1: 14 → 114
+       type 2: 21 → 121
+       type 3: 14 → 114
+       type 4: 14 → 114
+       type 5: 14 → 114
+       type 6: 14 → 114
+[ITEM] Catfruit (ผลไม้แมว) (29 types) +100 each:
+       type 1: 11 → 111
+       type 2: 121 → 221
+       type 3: 11 → 111
+       type 4: 11 → 111
+       type 5: 11 → 111
+       type 6: 11 → 111
+       type 7: 11 → 111
+       type 8: 11 → 111
+       type 9: 11 → 111
+       type 10: 11 → 111
+       type 11: 11 → 111
+       type 12: 11 → 111
+       type 13: 11 → 111
+       type 14: 11 → 111
+       type 15: 11 → 111
+       type 16: 11 → 111
+       type 17: 11 → 111
+       type 18: 11 → 111
+       type 19: 11 → 111
+       type 20: 11 → 111
+       type 21: 11 → 111
+       type 22: 11 → 111
+       type 23: 11 → 111
+       type 24: 11 → 111
+       type 25: 11 → 111
+       type 26: 11 → 111
+       type 27: 11 → 111
+       type 28: 11 → 111
+       type 29: 11 → 111
+[ITEM] Catamins (3 types) +100 each:
+       type 1: 12 → 112
+       type 2: 24 → 124
+       type 3: 12 → 112
+[ITEM] Legend Ticket: 0 → 1  (+1)
+[ITEM] Lucky Ticket [idx 0]: 2999 → 2999  (+0)
+[ITEM] Lucky Ticket [idx 1]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 2]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 3]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 4]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 5]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 6]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 7]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 8]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 9]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 10]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 11]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 12]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 13]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 14]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 15]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 16]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 17]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 18]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 19]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 20]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 21]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 22]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 23]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 24]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 25]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 26]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 27]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 28]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 29]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 30]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 31]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 32]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 33]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 34]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 35]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 36]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 37]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 38]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 39]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 40]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 41]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 42]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 43]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 44]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 45]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 46]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 47]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 48]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 49]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 50]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 51]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 52]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 53]: 0 → 100  (+100)
+[ITEM] Lucky Ticket [idx 54]: 0 → 100  (+100)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_023332_dbfd8c56
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: bf5a58880 | Confirm ใหม่: 9838
+============================================================
