@@ -10,7 +10,7 @@ import asyncio
 import shutil
 from pathlib import Path
 from datetime import datetime
-from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest
+from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest
 from runner import BCSFERunner
 from config import ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES
 from payment import (
@@ -601,7 +601,137 @@ async def upgrade_characters(request: UnlockCharactersRequest):
             new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
             backup_save(new_tc or request.transfer_code)
             return {"success": True, "new_transfer_code": new_tc,
-                    "new_confirmation_code": new_cc, "count": len(request.cat_ids)}
+                    "new_confirmation_code": new_cc, "count": len(request.cat_ids), "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+
+@app.post("/api/unlock/all")
+async def unlock_all_characters(request: AllCatsRequest):
+    """Unlock ทุกตัวละครในเกม"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+
+        print(f"\n[UNLOCK-ALL] 🐱 unlock all cats")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = runner.run_unlock_all()
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "count": result.get("count", 0), "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+
+@app.post("/api/upgrade/all")
+async def upgrade_all_characters(request: AllCatsRequest):
+    """Upgrade base max ทุกตัวที่ unlock อยู่ในรหัส"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+
+        print(f"\n[UPGRADE-ALL] ⬆️ upgrade all unlocked cats")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = runner.run_upgrade_all_characters()
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "count": result.get("count", 0), "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+
+@app.post("/api/trueform/all")
+async def trueform_all_characters(request: AllCatsRequest):
+    """True Form ทุกตัวที่ลูกค้ามีอยู่แล้ว"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+
+        print(f"\n[TRUEFORM-ALL] ✨ true form all unlocked cats")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = runner.run_true_form_all()
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "count": result.get("count", 0), "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+
+@app.post("/api/ultraform/all")
+async def ultraform_all_characters(request: AllCatsRequest):
+    """Ultra Form ทุกตัวที่ลูกค้ามีอยู่แล้ว"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+
+        print(f"\n[ULTRAFORM-ALL] 💥 ultra form all unlocked cats")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = runner.run_ultra_form_all()
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "count": result.get("count", 0), "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+
+@app.post("/api/talents/all")
+async def talents_all_characters(request: AllCatsRequest):
+    """Max Talents ทุกตัวที่ลูกค้ามีอยู่แล้ว"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+
+        print(f"\n[TALENTS-ALL] 🌟 talents max all unlocked cats")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = runner.run_talents_max_all()
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "count": result.get("count", 0), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
         return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
@@ -629,7 +759,7 @@ async def trueform_characters(request: UnlockCharactersRequest):
             new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
             backup_save(new_tc or request.transfer_code)
             return {"success": True, "new_transfer_code": new_tc,
-                    "new_confirmation_code": new_cc, "count": len(request.cat_ids)}
+                    "new_confirmation_code": new_cc, "count": len(request.cat_ids), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
         return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
@@ -657,7 +787,7 @@ async def ultraform_characters(request: UnlockCharactersRequest):
             new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
             backup_save(new_tc or request.transfer_code)
             return {"success": True, "new_transfer_code": new_tc,
-                    "new_confirmation_code": new_cc, "count": len(request.cat_ids)}
+                    "new_confirmation_code": new_cc, "count": len(request.cat_ids), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
         return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
@@ -685,7 +815,7 @@ async def talents_characters(request: UnlockCharactersRequest):
             new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
             backup_save(new_tc or request.transfer_code)
             return {"success": True, "new_transfer_code": new_tc,
-                    "new_confirmation_code": new_cc, "count": len(request.cat_ids)}
+                    "new_confirmation_code": new_cc, "count": len(request.cat_ids), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
         return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}

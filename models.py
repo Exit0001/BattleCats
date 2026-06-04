@@ -45,6 +45,12 @@ class RetryRequest(BaseModel):
     transfer_code: str
     confirmation_code: str
 
+class AllCatsRequest(BaseModel):
+    """สำหรับ action ที่ทำกับทุกตัว (ไม่ต้องระบุ IDs)"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+
 class UnlockPaymentRequest(BaseModel):
     """สร้าง order สำหรับปลดล็อคแมว"""
     transfer_code: str

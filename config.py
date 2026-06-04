@@ -10,13 +10,13 @@ ITEM_MAP = {
                         "custom_prompt": "Enter the number of rare tickets",
                         "note": "⚠️ หลังรับของ: เข้าตู้เย็น → กดใช้ทั้งหมด → แลกบัตรทอง"},
     "np":              {"menu_no": 10, "max": 9999,     "has_warning": False, "label": "NP",                  "sub_select": None},
-    "platinum_shard":  {"menu_no": 9,  "max": 59,       "has_warning": False, "label": "Platinum Shard",      "sub_select": None},
+    "platinum_shard":  {"menu_no": 9,  "max": 99,       "has_warning": False, "label": "Platinum Shard",      "sub_select": None},
     "leadership":      {"menu_no": 11, "max": 9999,     "has_warning": False, "label": "Leadership",          "sub_select": None},
     # catseye ต้องให้ลูกค้าเลือก sub-type 1-6 ก่อน (ตาม diagram diamond "เลือก 1-6")
     "catseye":         {"menu_no": 14, "max": 9999,     "has_warning": False, "label": "Catseye",             "sub_select": "1-6",
                         "sub_label": "เลือกประเภท Catseye (1=Normal, 2=Rare, 3=SR, 4=UR, 5=LR, 6=Alien)"},
     # catfruit จาก diagram: เมนู 15, เลือก sub-type 1-29
-    "catfruit":        {"menu_no": 15, "max": 9999,     "has_warning": False, "label": "Catfruit (ผลไม้แมว)", "sub_select": "1-29",
+    "catfruit":        {"menu_no": 15, "max": 998,      "has_warning": False, "label": "Catfruit (ผลไม้แมว)", "sub_select": "1-29",
                         "sub_label": "เลือกประเภท Catfruit (1-29)"},
 
     # ── 4 item ใหม่ ──
@@ -43,10 +43,10 @@ AMOUNT_OPTIONS = {
     "normal_ticket":   [100, 500, 1000, 2999],
     "rare_ticket":     [50, 100, 200, 299],
     "np":              [100, 1000, 5000, 9999],
-    "platinum_shard":  [10, 30, 40, 50],
+    "platinum_shard":  [10, 30, 60, 99],
     "leadership":      [100, 1000, 5000, 9999],
     "catseye":         [100, 500, 5000, 9999],
-    "catfruit":        [100, 500, 5000, 9999],
+    "catfruit":        [100, 300, 500, 998],
     "battle_item":     [100, 500, 5000, 9999],
     "catamins":        [100, 500, 5000, 9999],
     "legend_ticket":   [1, 2, 3, 4],
@@ -57,7 +57,7 @@ AMOUNT_OPTIONS = {
 ITEM_NOTES = {
     "rare_ticket":     "⚠️ ต้องใช้ route Trade เพื่อหลีกเลี่ยง ban",
     "cat_food":        "⚠️ Cat Food มีความเสี่ยง ban ตามเตือนของ BCSFE",
-    "platinum_shard":  "💡 ครบ 10/30/40/50 shard → ได้ Platinum Ticket",
+    "platinum_shard":  "💡 ครบ 10/30/40/60/80/99 shard → ได้ Platinum Ticket",
     "catseye":         "💡 มี 6 ประเภท (ต้องระบุประเภท)",
 }
 

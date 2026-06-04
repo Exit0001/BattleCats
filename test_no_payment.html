@@ -364,10 +364,10 @@
         <option value="normal_ticket">🎫 Normal Ticket (Max: 2,999)</option>
         <option value="rare_ticket">🎫 Rare Ticket (Max: 299)</option>
         <option value="np">💰 NP (Max: 9,999)</option>
-        <option value="platinum_shard">🔷 Platinum Shard (Max: 89)</option>
+        <option value="platinum_shard">🔷 Platinum Shard (Max: 99)</option>
         <option value="leadership">📈 Leadership (Max: 9,999)</option>
         <option value="catseye">💠 Catseye (Max: 9,999)</option>
-        <option value="catfruit">🍎 Catfruit (Max: 9,999)</option>
+        <option value="catfruit">🍎 Catfruit (Max: 998/type)</option>
         <option value="battle_item">🥊 Battle Item (Max: 9,999)</option>
         <option value="catamins">🧪 Catamins (Max: 9,999)</option>
         <option value="legend_ticket">🏆 Legend Ticket (Max: 4)</option>
@@ -474,7 +474,7 @@
 
   <!-- ── UPGRADE CHARACTER ─────────────────────────────────── -->
   <div class="test-section">
-    <div class="test-section-title">⬆️ อัพเกรดตัวละคร (Max Level)</div>
+    <div class="test-section-title">⬆️ อัพเกรดตัวละคร Max Level (Uber=60 / SR,R=50 / Normal=30 · Plus=0)</div>
     <div class="form-row">
       <div><label class="form-label">Transfer Code</label><input type="text" id="ug-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
       <div><label class="form-label">Confirmation Code</label><input type="text" id="ug-cc" class="form-input" placeholder="12345678"></div>
@@ -482,9 +482,94 @@
     <div style="margin-bottom:14px;"><label class="form-label">Server</label>
       <select id="ug-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
     </div>
-    <div style="margin-bottom:16px;"><label class="form-label">Cat IDs (เว้นวรรค, range เช่น 1-43, หรือ all)</label><input type="text" id="ug-ids" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43  หรือ  all"></div>
-    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runCatAction('ug','upgrade/characters','⬆️ อัพเกรด')">⬆️ อัพเกรดถึง Max Level</button>
+    <div style="margin-bottom:16px;"><label class="form-label">Cat IDs (เว้นวรรค, range เช่น 1-43)</label><input type="text" id="ug-ids" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43"></div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runCatAction('ug','upgrade/characters','⬆️ อัพเกรด')">⬆️ อัพเกรด Max (ระบุ ID)</button>
     <div id="ug-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── UPGRADE ALL UNLOCKED ───────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">⬆️⬆️ อัพเกรด Max ทุกตัวที่มีในรหัส</div>
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;">
+      ⚠️ Upgrade ทุกตัวที่ unlock ถึง max level ตาม rarity (Uber=60, SR/R=50, Normal=30) — Plus=0
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="uga-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="uga-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="uga-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runAllCatAction('uga','upgrade/all','⬆️ Upgrade All')">⬆️ Upgrade Max ทุกตัวในรหัส</button>
+    <div id="uga-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── UNLOCK ALL ─────────────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🐱🐱 Unlock ทุกตัวละครในเกม</div>
+    <div style="background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FDA4AF;">
+      ⚠️ Unlock <strong>ทุกตัวในเกม</strong> — ไม่ใช่แค่ตัวที่ลูกค้ามี
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="ula-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="ula-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="ula-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runAllCatAction('ula','unlock/all','🐱 Unlock All')">🐱 Unlock ทุกตัวในเกม</button>
+    <div id="ula-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── TRUE FORM ALL ──────────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">✨✨ True Form ทุกตัวที่มีในรหัส</div>
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;">
+      ⚠️ True Form เฉพาะตัวที่ลูกค้ามีอยู่แล้ว
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="tfa-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="tfa-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="tfa-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runAllCatAction('tfa','trueform/all','✨ True Form All')">✨ True Form ทุกตัวในรหัส</button>
+    <div id="tfa-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── ULTRA FORM ALL ─────────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">💥💥 Ultra Form ทุกตัวที่มีในรหัส</div>
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;">
+      ⚠️ Ultra Form เฉพาะตัวที่ลูกค้ามีอยู่แล้ว
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="ufa-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="ufa-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="ufa-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runAllCatAction('ufa','ultraform/all','💥 Ultra Form All')">💥 Ultra Form ทุกตัวในรหัส</button>
+    <div id="ufa-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── TALENTS MAX ALL ────────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🌟🌟 Max Talents ทุกตัวที่มีในรหัส</div>
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;">
+      ⚠️ Max Talents เฉพาะตัวที่ลูกค้ามีอยู่แล้ว
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="tla-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="tla-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="tla-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runAllCatAction('tla','talents/all','🌟 Talents Max All')">🌟 Max Talents ทุกตัวในรหัส</button>
+    <div id="tla-result" style="display:none;"></div>
   </div>
 
   <!-- ── TRUE FORM CHARACTER ────────────────────────────────── -->
@@ -1060,15 +1145,24 @@ async function runCatAction(prefix, endpoint, label) {
 
     if (data.success) {
       toast('✅ ' + label + ' สำเร็จ!', 'ok');
+      var logLines = (data.log || []);
+      var logHtml = logLines.length
+        ? '<div style="margin-top:14px;">' +
+          '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">📋 Log (' + logLines.length + ' รายการ)</div>' +
+          '<div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px 14px;max-height:180px;overflow-y:auto;font-family:monospace;font-size:11px;line-height:1.8;color:#86EFAC;white-space:pre;">' +
+          logLines.map(function(l){ return l.replace(/✘/g,'<span style="color:#F87171">✘</span>').replace(/✔/g,'<span style="color:#4ADE80">✔</span>').replace(/—/g,'<span style="color:rgba(210,190,255,0.4)">—</span>'); }).join('\n') +
+          '</div></div>'
+        : '';
       res.innerHTML =
         '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
         '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ ' + label + ' สำเร็จ! (' + ids.length + ' ตัว)</div>' +
         '<div style="margin-bottom:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
         '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code||'-') + '</div></div>' +
-        '<div><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+        '<div style="margin-bottom:0;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
         '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code||'-') + '</div></div>' +
+        logHtml +
         '</div>';
-      showDebug(label + ' Success!\nTransfer: ' + data.new_transfer_code + '\nConfirmation: ' + data.new_confirmation_code + '\nตัวละคร: ' + ids.length + ' ตัว\nIDs: ' + ids.join(' '));
+      showDebug(label + ' Success!\nTransfer: ' + data.new_transfer_code + '\nConfirmation: ' + data.new_confirmation_code + '\n\nLog:\n' + (data.log||[]).join('\n'));
     } else {
       throw new Error(data.error || 'Unknown error');
     }
@@ -1085,6 +1179,60 @@ async function runCatAction(prefix, endpoint, label) {
                        label === '✨ True Form' ? '✨ True Form ตัวละคร' :
                        label === '💥 Ultra Form' ? '💥 Ultra Form ตัวละคร' :
                        '🌟 Max Talents ตัวละคร');
+  }
+}
+
+// ── All-cats action (upgrade all / etc.) ────────────────────
+async function runAllCatAction(prefix, endpoint, label) {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById(prefix + '-tc').value.trim();
+  var cc  = document.getElementById(prefix + '-cc').value.trim();
+  var srv = document.getElementById(prefix + '-srv').value;
+
+  if (!tc || !cc) { toast('❌ กรอก Transfer Code และ Confirmation Code ก่อน', 'err'); return; }
+
+  var btn = event.target;
+  var res = document.getElementById(prefix + '-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังทำ...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ ' + label + ' ทุกตัวละครในรหัส...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/' + endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ ' + label + ' สำเร็จ! (' + (data.count || 0) + ' ตัว)', 'ok');
+      var logLines = (data.log || []);
+      var logHtml = logLines.length
+        ? '<div style="margin-top:14px;">' +
+          '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">📋 Log (' + logLines.length + ' รายการ)</div>' +
+          '<div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px 14px;max-height:220px;overflow-y:auto;font-family:monospace;font-size:11px;line-height:1.8;color:#86EFAC;white-space:pre;">' +
+          logLines.map(function(l){ return l.replace(/✘/g,'<span style="color:#F87171">✘</span>').replace(/✔/g,'<span style="color:#4ADE80">✔</span>').replace(/—/g,'<span style="color:rgba(210,190,255,0.4)">—</span>'); }).join('\n') +
+          '</div></div>'
+        : '';
+      res.innerHTML =
+        '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ ' + label + ' สำเร็จ! (' + (data.count || 0) + ' ตัว)</div>' +
+        '<div style="margin-bottom:8px;"><div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code || '-') + '</div></div>' +
+        '<div style="margin-bottom:0;"><div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code || '-') + '</div></div>' +
+        logHtml +
+        '</div>';
+      showDebug(label + ' Success!\nTransfer: ' + data.new_transfer_code + '\nConfirmation: ' + data.new_confirmation_code + '\n\nLog:\n' + (data.log||[]).join('\n'));
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message || e), 'err');
+    res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:16px;">' +
+      '<div style="font-family:\'Russo One\',sans-serif;color:#F87171;font-size:14px;">❌ ' + (e.message || e) + '</div></div>';
+  } finally {
+    btn.disabled = false; btn.textContent = label;
   }
 }
 

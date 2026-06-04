@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 
 from bcsfe import core
+from bcsfe.core.game.catbase.cat import Talent as BCSFETalent
 
 from config import ITEM_MAP
 
@@ -181,13 +182,14 @@ class BCSFERunner:
             return {"success": False, "error": str(e)}
 
     def _find_cats(self, save_file, cat_ids: list):
-        """หา Cat objects จาก IDs — cats.cats เป็น list เรียงตาม index == id"""
+        """หา Cat objects จาก IDs (ทุกตัว รวม locked) — ใช้สำหรับ unlock"""
         id_set = set(cat_ids)
-        result = []
-        for cat in save_file.cats.cats:
-            if cat.id in id_set:
-                result.append(cat)
-        return result
+        return [cat for cat in save_file.cats.cats if cat.id in id_set]
+
+    def _find_owned_cats(self, save_file, cat_ids: list):
+        """หา Cat objects เฉพาะตัวที่ unlocked จาก IDs — ใช้สำหรับ upgrade/form/talents"""
+        id_set = set(cat_ids)
+        return [cat for cat in save_file.cats.get_unlocked_cats() if cat.id in id_set]
 
     def run_unlock_characters(self, cat_ids: list) -> dict:
         try:
@@ -197,36 +199,79 @@ class BCSFERunner:
             cats = self._find_cats(save_file, cat_ids)
             print(f"[BCSFE] 🔍 Found {len(cats)}/{len(cat_ids)} cats in save")
 
+            logs = []
+            not_found = [i for i in cat_ids if not any(c.id == i for c in cats)]
             for cat in cats:
-                # set unlocked + ให้ form 1 ด้วยเพื่อให้ใช้งานได้จริง
                 cat.unlocked = 1
                 cat.gatya_seen = 1
                 if cat.unlocked_forms == 0:
                     cat.unlocked_forms = 1
-                print(f"[BCSFE]   ✔ cat.id={cat.id} unlocked={cat.unlocked} forms={cat.unlocked_forms}")
+                logs.append(f"✔ #{cat.id} — unlocked")
+            for i in not_found:
+                logs.append(f"✘ #{i} — ไม่พบใน save")
 
             print(f"[BCSFE] ✔ Unlocked {len(cats)} cats")
             codes = self._upload_save(save_file)
-            return {"success": True, "new_transfer_code": codes}
+            return {"success": True, "new_transfer_code": codes, "log": logs}
 
         except Exception as e:
             import traceback
             print(f"[BCSFE] ❌ {e}\n{traceback.format_exc()}")
             return {"success": False, "error": str(e)}
 
+    @staticmethod
+    def _set_base_max(cat, save_file) -> None:
+        """Set to max level WITH catseyes (e.g. level 50), plus = 0"""
+        power_up = core.PowerUpHelper(cat, save_file)
+        power_up.reset_upgrade()
+        power_up.max_upgrade()
+        cat.upgrade.plus = 0
+
     def run_upgrade_characters(self, cat_ids: list) -> dict:
+        """Upgrade max level (with catseyes) ตาม IDs ที่ระบุ, plus = 0"""
         try:
             core.core_data.init_data()
             save_file = self._download_save()
 
-            cats = self._find_cats(save_file, cat_ids)
-            max_upgrade = core.Upgrade(plus=90, base=29)  # base 30 = index 29, plus 90
+            cats = self._find_owned_cats(save_file, cat_ids)
+            logs = []
+            not_found = [i for i in cat_ids if not any(c.id == i for c in cats)]
             for cat in cats:
-                cat.set_upgrade(save_file, max_upgrade)
-            print(f"[BCSFE] ✔ Upgraded {len(cats)}/{len(cat_ids)} cats to max")
+                old_lv = cat.upgrade.base + 1
+                old_plus = cat.upgrade.plus
+                self._set_base_max(cat, save_file)
+                logs.append(f"✔ #{cat.id} — Lv{old_lv}+{old_plus} → Lv{cat.upgrade.base+1}+{cat.upgrade.plus}")
+            for i in not_found:
+                logs.append(f"✘ #{i} — ไม่พบใน save")
+            print(f"[BCSFE] ✔ Upgraded {len(cats)}/{len(cat_ids)} cats → max, plus=0")
 
             codes = self._upload_save(save_file)
-            return {"success": True, "new_transfer_code": codes}
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+
+        except Exception as e:
+            print(f"[BCSFE] ❌ {e}")
+            return {"success": False, "error": str(e)}
+
+    def run_upgrade_all_characters(self) -> dict:
+        """Upgrade max (with catseyes) ทุกตัวที่ unlock อยู่ในรหัส, plus = 0"""
+        try:
+            core.core_data.init_data()
+            save_file = self._download_save()
+
+            count = 0
+            logs = []
+            for cat in save_file.cats.cats:
+                if cat.unlocked:
+                    old_lv = cat.upgrade.base + 1
+                    old_plus = cat.upgrade.plus
+                    self._set_base_max(cat, save_file)
+                    logs.append(f"✔ #{cat.id} — Lv{old_lv}+{old_plus} → Lv{cat.upgrade.base+1}+{cat.upgrade.plus}")
+                    count += 1
+            print(f"[BCSFE] ✔ Upgraded all {count} unlocked cats → max, plus=0")
+            print(f"[BCSFE-DEBUG] logs length = {len(logs)}, sample = {logs[:2] if logs else 'EMPTY'}")
+
+            codes = self._upload_save(save_file)
+            return {"success": True, "new_transfer_code": codes, "count": count, "log": logs}
 
         except Exception as e:
             print(f"[BCSFE] ❌ {e}")
@@ -237,13 +282,18 @@ class BCSFERunner:
             core.core_data.init_data()
             save_file = self._download_save()
 
-            cats = self._find_cats(save_file, cat_ids)
+            cats = self._find_owned_cats(save_file, cat_ids)
+            logs = []
+            not_found = [i for i in cat_ids if not any(c.id == i for c in cats)]
+            save_file.cats.true_form_cats(save_file, cats)
             for cat in cats:
-                cat.true_form(save_file)
+                logs.append(f"✔ #{cat.id} — True Form applied")
+            for i in not_found:
+                logs.append(f"✘ #{i} — ไม่พบใน save")
             print(f"[BCSFE] ✔ True Form {len(cats)}/{len(cat_ids)} cats")
 
             codes = self._upload_save(save_file)
-            return {"success": True, "new_transfer_code": codes}
+            return {"success": True, "new_transfer_code": codes, "log": logs}
 
         except Exception as e:
             print(f"[BCSFE] ❌ {e}")
@@ -254,32 +304,162 @@ class BCSFERunner:
             core.core_data.init_data()
             save_file = self._download_save()
 
-            cats = self._find_cats(save_file, cat_ids)
+            cats = self._find_owned_cats(save_file, cat_ids)
+            logs = []
+            not_found = [i for i in cat_ids if not any(c.id == i for c in cats)]
+            # fourth_form_cats checks NyankoPictureBook — only applies to cats with 4 forms
+            save_file.cats.fourth_form_cats(save_file, cats)
             for cat in cats:
-                cat.unlock_fourth_form(save_file)
+                logs.append(f"✔ #{cat.id} — Ultra Form applied")
+            for i in not_found:
+                logs.append(f"✘ #{i} — ไม่พบใน save")
             print(f"[BCSFE] ✔ Ultra Form {len(cats)}/{len(cat_ids)} cats")
 
             codes = self._upload_save(save_file)
-            return {"success": True, "new_transfer_code": codes}
+            return {"success": True, "new_transfer_code": codes, "log": logs}
 
         except Exception as e:
             print(f"[BCSFE] ❌ {e}")
             return {"success": False, "error": str(e)}
+
+    @staticmethod
+    def _init_and_max_talents(cat, talent_data) -> int:
+        """init talent objects ถ้าไม่มี แล้ว set max — return จำนวน talents ที่ max"""
+        cat_skill = talent_data.get_cat_skill(cat.id)
+        if cat_skill is None:
+            return 0
+        # init talents ถ้ายังเป็น None หรือขาด talent บางตัว
+        if cat.talents is None:
+            cat.talents = [BCSFETalent(s.ability_id, 0) for s in cat_skill.skills]
+        else:
+            existing = {t.id for t in cat.talents}
+            for s in cat_skill.skills:
+                if s.ability_id not in existing:
+                    cat.talents.append(BCSFETalent(s.ability_id, 0))
+        # max levels
+        talent_count = 0
+        for s in cat_skill.skills:
+            talent = cat.get_talent_from_id(s.ability_id)
+            if talent:
+                talent.level = s.max_lv if s.max_lv > 0 else 1
+                talent_count += 1
+        return talent_count
 
     def run_talents_max_characters(self, cat_ids: list) -> dict:
         try:
             core.core_data.init_data()
             save_file = self._download_save()
 
-            cats = self._find_cats(save_file, cat_ids)
-            for cat in cats:
-                for talent in (cat.talents or []):
-                    if hasattr(talent, "max_level"):
-                        talent.level = talent.max_level
-            print(f"[BCSFE] ✔ Max Talents {len(cats)}/{len(cat_ids)} cats")
+            cats = self._find_owned_cats(save_file, cat_ids)
 
+            talent_data = save_file.cats.read_talent_data(save_file)
+            if talent_data is None:
+                return {"success": False, "error": "ไม่สามารถโหลด talent data ได้"}
+
+            logs = []
+            not_found = [i for i in cat_ids if not any(c.id == i for c in cats)]
+            count = 0
+            for cat in cats:
+                n = self._init_and_max_talents(cat, talent_data)
+                if n > 0:
+                    logs.append(f"✔ #{cat.id} — {n} talents maxed")
+                    count += 1
+                else:
+                    logs.append(f"— #{cat.id} — ไม่มี talent data")
+            for i in not_found:
+                logs.append(f"✘ #{i} — ไม่พบใน save")
+
+            print(f"[BCSFE] ✔ Max Talents {count}/{len(cat_ids)} cats")
             codes = self._upload_save(save_file)
-            return {"success": True, "new_transfer_code": codes}
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+
+        except Exception as e:
+            print(f"[BCSFE] ❌ {e}")
+            return {"success": False, "error": str(e)}
+
+    # ── All-cats variants (ทำกับทุกตัวใน save) ────────────────
+
+    def run_unlock_all(self) -> dict:
+        """Unlock ทุกตัวละครในเกม"""
+        try:
+            core.core_data.init_data()
+            save_file = self._download_save()
+
+            count = 0
+            logs = []
+            for cat in save_file.cats.cats:
+                cat.unlocked = 1
+                cat.gatya_seen = 1
+                if cat.unlocked_forms == 0:
+                    cat.unlocked_forms = 1
+                logs.append(f"✔ #{cat.id} — unlocked")
+                count += 1
+
+            print(f"[BCSFE] ✔ Unlocked all {count} cats")
+            codes = self._upload_save(save_file)
+            return {"success": True, "new_transfer_code": codes, "count": count, "log": logs}
+
+        except Exception as e:
+            print(f"[BCSFE] ❌ {e}")
+            return {"success": False, "error": str(e)}
+
+    def run_true_form_all(self) -> dict:
+        """True Form ทุกตัวที่ลูกค้ามีอยู่แล้ว"""
+        try:
+            core.core_data.init_data()
+            save_file = self._download_save()
+
+            owned = save_file.cats.get_unlocked_cats()
+            save_file.cats.true_form_cats(save_file, owned)
+            logs = [f"✔ #{cat.id} — True Form applied" for cat in owned]
+            print(f"[BCSFE] ✔ True Form all {len(owned)} unlocked cats")
+            codes = self._upload_save(save_file)
+            return {"success": True, "new_transfer_code": codes, "count": len(owned), "log": logs}
+
+        except Exception as e:
+            print(f"[BCSFE] ❌ {e}")
+            return {"success": False, "error": str(e)}
+
+    def run_ultra_form_all(self) -> dict:
+        """Ultra Form ทุกตัวที่ลูกค้ามีอยู่แล้ว (เฉพาะที่มี 4 forms จริง)"""
+        try:
+            core.core_data.init_data()
+            save_file = self._download_save()
+
+            owned = save_file.cats.get_unlocked_cats()
+            # fourth_form_cats ใช้ NyankoPictureBook check total_forms — ไม่ bug แมวที่ไม่มี 4th form
+            save_file.cats.fourth_form_cats(save_file, owned)
+            logs = [f"✔ #{cat.id} — Ultra Form applied" for cat in owned]
+            print(f"[BCSFE] ✔ Ultra Form all {len(owned)} unlocked cats")
+            codes = self._upload_save(save_file)
+            return {"success": True, "new_transfer_code": codes, "count": len(owned), "log": logs}
+
+        except Exception as e:
+            print(f"[BCSFE] ❌ {e}")
+            return {"success": False, "error": str(e)}
+
+    def run_talents_max_all(self) -> dict:
+        """Max Talents ทุกตัวที่ลูกค้ามีอยู่แล้ว"""
+        try:
+            core.core_data.init_data()
+            save_file = self._download_save()
+
+            talent_data = save_file.cats.read_talent_data(save_file)
+            if talent_data is None:
+                return {"success": False, "error": "ไม่สามารถโหลด talent data ได้"}
+
+            owned = save_file.cats.get_unlocked_cats()
+            count = 0
+            logs = []
+            for cat in owned:
+                n = self._init_and_max_talents(cat, talent_data)
+                if n > 0:
+                    logs.append(f"✔ #{cat.id} — {n} talents maxed")
+                    count += 1
+
+            print(f"[BCSFE] ✔ Max Talents all {count} cats")
+            codes = self._upload_save(save_file)
+            return {"success": True, "new_transfer_code": codes, "count": count, "log": logs}
 
         except Exception as e:
             print(f"[BCSFE] ❌ {e}")
