@@ -1,0 +1,17 @@
+============================================================
+เวลา      : 2026-06-05 23:28:05
+Transfer  : c2acae66e
+Confirm   : 2442
+Country   : en
+============================================================
+[OP] Unlock Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=c2acae... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] พบ 1/1 ตัวใน save
+[CAT] ✔ #135 — unlocked
+[BCSFE] Unlocked 1 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_77b8b6c1
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_232807_c2acae66
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 30c1cd54b | Confirm ใหม่: 6836
+============================================================

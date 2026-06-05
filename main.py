@@ -165,11 +165,18 @@ async def payment_create(order: OrderRequest):
         if item.amount > ITEM_MAP[item.key]["max"]:
             raise HTTPException(status_code=400, detail=f"{ITEM_MAP[item.key]['label']} เน€เธเธดเธเธเธณเธเธงเธเธชเธนเธเธชเธธเธ” ({ITEM_MAP[item.key]['max']})")
 
+    items_payload = []
+    for item in order.items:
+        d = {"key": item.key, "amount": item.amount}
+        if item.cat_id is not None:
+            d["cat_id"] = item.cat_id
+        items_payload.append(d)
+
     payment_order = create_payment_order(
         transfer_code=order.transfer_code,
         confirmation_code=order.confirmation_code,
         country=order.country,
-        items=[{"key": item.key, "amount": item.amount} for item in order.items],
+        items=items_payload,
         cat_ids=order.cat_ids,
         cat_unlock_total=order.cat_unlock_total,
     )
@@ -227,66 +234,148 @@ async def payment_create_unlock(body: UnlockPaymentRequest):
     }
 
 
-def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
-    """Run BCSFE steps: regular items, cat unlock, all-package operations."""
-    all_pkg_keys    = set(ALL_PACKAGE_MAP.keys())
-    all_order_items = order.get("items") or []
-    regular_items   = [i for i in all_order_items if i["key"] not in all_pkg_keys]
-    all_pkg_items   = [i for i in all_order_items if i["key"] in all_pkg_keys]
-    has_items  = bool(regular_items)
-    has_unlock = bool(order.get("cat_ids")) or order.get("order_type") == "unlock"
-    cur_tc, cur_cc = tc, cc
-    summary = []
+PER_CAT_RUNNER = {
+    "upgrade_cat":   "run_upgrade_characters",
+    "trueform_cat":  "run_true_form_characters",
+    "ultraform_cat": "run_ultra_form_characters",
+    "talents_cat":   "run_talents_max_characters",
+}
 
-    if has_items:
-        runner = BCSFERunner(transfer=cur_tc, confirm=cur_cc, country=order["country"])
-        result = runner.run(regular_items)
-        if not result["success"]:
-            return {"success": False, "error": result["error"]}
-        codes = result["new_transfer_code"]
-        cur_tc = codes.get("transfer") if isinstance(codes, dict) else codes
-        cur_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+
+def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
+    """Run BCSFE steps in strict order:
+    items → unlock (cat/all) → upgrade (cat/all) → trueform (cat/all)
+          → ultraform (cat/all) → talents (cat/all)
+    """
+    from collections import defaultdict
+
+    all_pkg_keys    = set(ALL_PACKAGE_MAP.keys())
+    per_cat_keys    = set(PER_CAT_RUNNER.keys())
+    all_order_items = order.get("items") or []
+
+    # ── Separate item categories ──
+    regular_items = [i for i in all_order_items
+                     if i["key"] not in all_pkg_keys and i["key"] not in per_cat_keys]
+    per_cat_items = [i for i in all_order_items if i["key"] in per_cat_keys]
+    all_pkg_items = [i for i in all_order_items if i["key"] in all_pkg_keys]
+
+    # Group per-cat by service key
+    per_cat_groups: dict[str, list[int]] = defaultdict(list)
+    for item in per_cat_items:
+        if item.get("cat_id") is not None:
+            per_cat_groups[item["key"]].append(item["cat_id"])
+
+    # All-package keys in this order (include legacy package_type field)
+    all_pkg_set: set[str] = {i["key"] for i in all_pkg_items}
+    if order.get("package_type") and order["package_type"] in ALL_PACKAGE_MAP:
+        all_pkg_set.add(order["package_type"])
+
+    cur_tc, cur_cc = tc, cc
+    summary: list[dict] = []
+
+    def _upd(codes):
+        nonlocal cur_tc, cur_cc
+        if isinstance(codes, dict):
+            cur_tc = codes.get("transfer", cur_tc)
+            cur_cc = codes.get("confirmation", cur_cc)
+        elif codes:
+            cur_tc = codes
+            cur_cc = None
+
+    def _runner():
+        return BCSFERunner(transfer=cur_tc, confirm=cur_cc, country=order["country"])
+
+    def _call(method, *args):
+        return getattr(_runner(), method)(*args)
+
+    # ── Step 1: Regular items (cat food, XP, tickets …) ──
+    if regular_items:
+        r = _call("run", regular_items)
+        if not r["success"]: return {"success": False, "error": r["error"]}
+        _upd(r["new_transfer_code"])
         summary += [{"item": ITEM_MAP[i["key"]]["label"], "amount": i["amount"]}
                     for i in regular_items if i["key"] in ITEM_MAP]
-        print(f"[BCSFE] Items done -> tc={cur_tc}")
+        print(f"[BCSFE] items done -> tc={cur_tc}")
 
-    if has_unlock:
-        cat_ids = order.get("cat_ids") or []
-        runner2 = BCSFERunner(transfer=cur_tc, confirm=cur_cc, country=order["country"])
-        result2 = runner2.run_unlock_characters(cat_ids)
-        if not result2["success"]:
-            return {"success": False, "error": result2["error"]}
-        codes2 = result2["new_transfer_code"]
-        cur_tc = codes2.get("transfer") if isinstance(codes2, dict) else codes2
-        cur_cc = codes2.get("confirmation") if isinstance(codes2, dict) else None
-        summary.append({"item": f"Unlock {len(cat_ids)} cats", "amount": len(cat_ids)})
-        print(f"[BCSFE] Unlock done -> tc={cur_tc}")
+    # ── Step 2: Unlock ──
+    cat_ids = order.get("cat_ids") or []
+    if cat_ids or order.get("order_type") == "unlock":
+        r = _call("run_unlock_characters", cat_ids)
+        if not r["success"]: return {"success": False, "error": r["error"]}
+        _upd(r["new_transfer_code"])
+        summary.append({"item": f"ปลดล็อค {len(cat_ids)} ตัว", "amount": len(cat_ids)})
+        print(f"[BCSFE] unlock_cat done -> tc={cur_tc}")
 
-    for pkg_item in all_pkg_items:
-        key = pkg_item["key"]
-        cfg = ALL_PACKAGE_MAP[key]
-        runner_pkg = BCSFERunner(transfer=cur_tc, confirm=cur_cc, country=order["country"])
-        result_pkg = getattr(runner_pkg, cfg["runner"])()
-        if not result_pkg["success"]:
-            return {"success": False, "error": result_pkg["error"]}
-        codes_pkg = result_pkg.get("new_transfer_code", {})
-        cur_tc = codes_pkg.get("transfer") if isinstance(codes_pkg, dict) else codes_pkg
-        cur_cc = codes_pkg.get("confirmation") if isinstance(codes_pkg, dict) else None
-        summary.append({"item": cfg["label"], "amount": 1})
-        print(f"[BCSFE] {key} done -> tc={cur_tc}")
+    if "unlock_all" in all_pkg_set:
+        r = _call("run_unlock_all")
+        if not r["success"]: return {"success": False, "error": r["error"]}
+        _upd(r["new_transfer_code"])
+        summary.append({"item": "Unlock All", "amount": 1})
+        print(f"[BCSFE] unlock_all done -> tc={cur_tc}")
 
-    package_type = order.get("package_type")
-    if package_type and package_type in ALL_PACKAGE_MAP:
-        cfg = ALL_PACKAGE_MAP[package_type]
-        runner3 = BCSFERunner(transfer=cur_tc, confirm=cur_cc, country=order["country"])
-        result3 = getattr(runner3, cfg["runner"])()
-        if not result3["success"]:
-            return {"success": False, "error": result3["error"]}
-        codes3 = result3.get("new_transfer_code", {})
-        cur_tc = codes3.get("transfer") if isinstance(codes3, dict) else codes3
-        cur_cc = codes3.get("confirmation") if isinstance(codes3, dict) else None
-        summary.append({"item": cfg["label"], "amount": 1})
-        print(f"[BCSFE] {package_type} done -> tc={cur_tc}")
+    # ── Step 3: Upgrade Max ──
+    if "upgrade_cat" in per_cat_groups:
+        ids = per_cat_groups["upgrade_cat"]
+        r = _call("run_upgrade_characters", ids)
+        if not r["success"]: return {"success": False, "error": r["error"]}
+        _upd(r["new_transfer_code"])
+        summary.append({"item": f"Upgrade Max ({len(ids)} ตัว)", "amount": len(ids)})
+        print(f"[BCSFE] upgrade_cat x{len(ids)} done -> tc={cur_tc}")
+
+    if "upgrade_all" in all_pkg_set:
+        r = _call("run_upgrade_all_characters")
+        if not r["success"]: return {"success": False, "error": r["error"]}
+        _upd(r["new_transfer_code"])
+        summary.append({"item": "Upgrade Max All", "amount": 1})
+        print(f"[BCSFE] upgrade_all done -> tc={cur_tc}")
+
+    # ── Step 4: True Form ──
+    if "trueform_cat" in per_cat_groups:
+        ids = per_cat_groups["trueform_cat"]
+        r = _call("run_true_form_characters", ids)
+        if not r["success"]: return {"success": False, "error": r["error"]}
+        _upd(r["new_transfer_code"])
+        summary.append({"item": f"True Form ({len(ids)} ตัว)", "amount": len(ids)})
+        print(f"[BCSFE] trueform_cat x{len(ids)} done -> tc={cur_tc}")
+
+    if "trueform_all" in all_pkg_set:
+        r = _call("run_true_form_all")
+        if not r["success"]: return {"success": False, "error": r["error"]}
+        _upd(r["new_transfer_code"])
+        summary.append({"item": "True Form All", "amount": 1})
+        print(f"[BCSFE] trueform_all done -> tc={cur_tc}")
+
+    # ── Step 5: Ultra Form ──
+    if "ultraform_cat" in per_cat_groups:
+        ids = per_cat_groups["ultraform_cat"]
+        r = _call("run_ultra_form_characters", ids)
+        if not r["success"]: return {"success": False, "error": r["error"]}
+        _upd(r["new_transfer_code"])
+        summary.append({"item": f"Ultra Form ({len(ids)} ตัว)", "amount": len(ids)})
+        print(f"[BCSFE] ultraform_cat x{len(ids)} done -> tc={cur_tc}")
+
+    if "ultraform_all" in all_pkg_set:
+        r = _call("run_ultra_form_all")
+        if not r["success"]: return {"success": False, "error": r["error"]}
+        _upd(r["new_transfer_code"])
+        summary.append({"item": "Ultra Form All", "amount": 1})
+        print(f"[BCSFE] ultraform_all done -> tc={cur_tc}")
+
+    # ── Step 6: Talent Max ──
+    if "talents_cat" in per_cat_groups:
+        ids = per_cat_groups["talents_cat"]
+        r = _call("run_talents_max_characters", ids)
+        if not r["success"]: return {"success": False, "error": r["error"]}
+        _upd(r["new_transfer_code"])
+        summary.append({"item": f"Talent Max ({len(ids)} ตัว)", "amount": len(ids)})
+        print(f"[BCSFE] talents_cat x{len(ids)} done -> tc={cur_tc}")
+
+    if "talents_all" in all_pkg_set:
+        r = _call("run_talents_max_all")
+        if not r["success"]: return {"success": False, "error": r["error"]}
+        _upd(r["new_transfer_code"])
+        summary.append({"item": "Max Talents All", "amount": 1})
+        print(f"[BCSFE] talents_all done -> tc={cur_tc}")
 
     return {"success": True, "new_tc": cur_tc, "new_cc": cur_cc, "summary": summary}
 

@@ -432,11 +432,12 @@ class BCSFERunner:
 
     @staticmethod
     def _set_base_max(cat, save_file) -> None:
-        """Set to max level WITH catseyes (e.g. level 50), plus = 0"""
+        """Set to max base level WITH catseyes, preserve existing plus"""
+        old_plus = cat.upgrade.plus
         power_up = core.PowerUpHelper(cat, save_file)
         power_up.reset_upgrade()
         power_up.max_upgrade()
-        cat.upgrade.plus = 0
+        cat.upgrade.plus = old_plus
 
     def run_upgrade_characters(self, cat_ids: list) -> dict:
         """Upgrade max level (with catseyes) ตาม IDs ที่ระบุ, plus = 0"""
@@ -526,6 +527,8 @@ class BCSFERunner:
             return {"success": False, "error": str(e)}
 
     def run_ultra_form_characters(self, cat_ids: list) -> dict:
+        """Ultra Form ตาม IDs — เฉพาะตัวที่มี True Form แล้ว (unlocked_forms >= 3)
+        ตัวที่ยังไม่มี True Form จะถูกข้ามและแจ้งให้ทำ True Form ก่อน"""
         try:
             self._log(f"[OP] Ultra Form Characters จำนวน {len(cat_ids)} ตัว")
             core.core_data.init_data()
@@ -534,15 +537,26 @@ class BCSFERunner:
             cats = self._find_owned_cats(save_file, cat_ids)
             logs = []
             not_found = [i for i in cat_ids if not any(c.id == i for c in cats)]
-            # fourth_form_cats checks NyankoPictureBook — only applies to cats with 4 forms
-            save_file.cats.fourth_form_cats(save_file, cats)
-            for cat in cats:
+
+            # แยกตัวที่มี True Form (unlocked_forms >= 3) vs ยังไม่มี
+            true_formed  = [cat for cat in cats if cat.unlocked_forms >= 3]
+            no_true_form = [cat for cat in cats if cat.unlocked_forms < 3]
+
+            if true_formed:
+                save_file.cats.fourth_form_cats(save_file, true_formed)
+
+            for cat in true_formed:
                 logs.append(f"✔ #{cat.id} — Ultra Form applied")
                 self._log(f"[CAT] ✔ #{cat.id} — Ultra Form applied")
+            for cat in no_true_form:
+                logs.append(f"— #{cat.id} — ต้องทำ True Form ก่อนจึงจะ Ultra Form ได้")
+                self._log(f"[CAT] — #{cat.id} — ข้าม (ยังไม่มี True Form)")
             for i in not_found:
                 logs.append(f"✘ #{i} — ไม่พบใน save")
                 self._log(f"[CAT] ✘ #{i} — ไม่พบใน save")
-            self._log(f"[BCSFE] Ultra Form {len(cats)}/{len(cat_ids)} cats")
+
+            self._log(f"[BCSFE] Ultra Form {len(true_formed)}/{len(cat_ids)} cats"
+                      f" (ข้าม {len(no_true_form)} ตัวที่ยังไม่มี True Form)")
 
             codes = self._upload_save(save_file)
             self._close_log()
@@ -665,20 +679,30 @@ class BCSFERunner:
             return {"success": False, "error": str(e)}
 
     def run_ultra_form_all(self) -> dict:
-        """Ultra Form ทุกตัวที่ลูกค้ามีอยู่แล้ว (เฉพาะที่มี 4 forms จริง)"""
+        """Ultra Form ทุกตัวที่มีอยู่ — เฉพาะตัวที่มี True Form แล้ว (unlocked_forms >= 3)
+        ตัวที่ยังไม่มี True Form จะถูกข้ามโดยอัตโนมัติ"""
         try:
-            self._log("[OP] Ultra Form ALL unlocked cats")
+            self._log("[OP] Ultra Form ALL unlocked cats (True Form required)")
             core.core_data.init_data()
             save_file = self._download_save()
 
             owned = save_file.cats.get_unlocked_cats()
-            # fourth_form_cats ใช้ NyankoPictureBook check total_forms — ไม่ bug แมวที่ไม่มี 4th form
-            save_file.cats.fourth_form_cats(save_file, owned)
-            logs = [f"✔ #{cat.id} — Ultra Form applied" for cat in owned]
-            self._log(f"[BCSFE] Ultra Form all {len(owned)} unlocked cats")
+
+            # เฉพาะตัวที่มี True Form แล้ว (unlocked_forms >= 3)
+            true_formed  = [cat for cat in owned if cat.unlocked_forms >= 3]
+            no_true_form = [cat for cat in owned if cat.unlocked_forms < 3]
+
+            if true_formed:
+                save_file.cats.fourth_form_cats(save_file, true_formed)
+
+            logs  = [f"✔ #{cat.id} — Ultra Form applied" for cat in true_formed]
+            logs += [f"— #{cat.id} — ข้าม (ยังไม่มี True Form)" for cat in no_true_form]
+
+            self._log(f"[BCSFE] Ultra Form {len(true_formed)}/{len(owned)} cats"
+                      f" (ข้าม {len(no_true_form)} ตัวที่ยังไม่มี True Form)")
             codes = self._upload_save(save_file)
             self._close_log()
-            return {"success": True, "new_transfer_code": codes, "count": len(owned), "log": logs}
+            return {"success": True, "new_transfer_code": codes, "count": len(true_formed), "log": logs}
 
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")

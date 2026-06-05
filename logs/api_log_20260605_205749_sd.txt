@@ -1,0 +1,9 @@
+============================================================
+เวลา      : 2026-06-05 20:57:49
+Transfer  : sd
+Confirm   : asd
+Country   : en
+============================================================
+[OP] Max Talents ALL unlocked cats
+[BCSFE] ⬇  Downloading save (transfer=sd... cc=en)
+[BCSFE] ❌ ❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง

@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-05 22:21:04
+Transfer  : 78465a680
+Confirm   : 6688
+Country   : en
+============================================================
+[OP] Ultra Form ALL unlocked cats (True Form required)
+[BCSFE] ⬇  Downloading save (transfer=78465a... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] Ultra Form 98/102 cats (ข้าม 4 ตัวที่ยังไม่มี True Form)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_ed1e0eec
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_222106_78465a68
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 074d4e8ae | Confirm ใหม่: 8558
+============================================================

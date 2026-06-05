@@ -8,6 +8,7 @@ class ItemRequest(BaseModel):
     key: str                    # "cat_food", "xp", ...
     amount: int                 # จำนวนที่ต้องการเพิ่ม
     sub_type: Optional[int] = None  # sub-type สำหรับ catseye (1-6) และ catfruit (1-29)
+    cat_id: Optional[int] = None    # สำหรับ per-cat services (upgrade_cat, trueform_cat, ...)
 
 class OrderRequest(BaseModel):
     """โมเดลสำหรับ order request จากลูกค้า"""

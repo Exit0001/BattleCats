@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-05 22:19:27
+Transfer  : 10e7690ca
+Confirm   : 3286
+Country   : en
+============================================================
+[OP] True Form ALL unlocked cats
+[BCSFE] ⬇  Downloading save (transfer=10e769... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] True Form all 102 unlocked cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_180ddbb5
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_221930_10e7690c
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: fa31b40c1 | Confirm ใหม่: 1691
+============================================================

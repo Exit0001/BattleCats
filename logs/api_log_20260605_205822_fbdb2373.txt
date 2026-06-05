@@ -1,0 +1,87 @@
+============================================================
+เวลา      : 2026-06-05 20:58:22
+Transfer  : fbdb23738
+Confirm   : 8787
+Country   : en
+============================================================
+[OP] Max Talents ALL unlocked cats
+[BCSFE] ⬇  Downloading save (transfer=fbdb23... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #24 — 8 talents maxed
+[CAT] ✔ #25 — 8 talents maxed
+[CAT] ✔ #30 — 8 talents maxed
+[CAT] ✔ #31 — 8 talents maxed
+[CAT] ✔ #32 — 8 talents maxed
+[CAT] ✔ #33 — 8 talents maxed
+[CAT] ✔ #35 — 8 talents maxed
+[CAT] ✔ #36 — 8 talents maxed
+[CAT] ✔ #37 — 8 talents maxed
+[CAT] ✔ #38 — 8 talents maxed
+[CAT] ✔ #39 — 8 talents maxed
+[CAT] ✔ #40 — 8 talents maxed
+[CAT] ✔ #41 — 8 talents maxed
+[CAT] ✔ #42 — 8 talents maxed
+[CAT] ✔ #44 — 8 talents maxed
+[CAT] ✔ #46 — 8 talents maxed
+[CAT] ✔ #47 — 8 talents maxed
+[CAT] ✔ #48 — 8 talents maxed
+[CAT] ✔ #49 — 8 talents maxed
+[CAT] ✔ #50 — 8 talents maxed
+[CAT] ✔ #51 — 8 talents maxed
+[CAT] ✔ #52 — 8 talents maxed
+[CAT] ✔ #55 — 8 talents maxed
+[CAT] ✔ #56 — 8 talents maxed
+[CAT] ✔ #57 — 8 talents maxed
+[CAT] ✔ #58 — 8 talents maxed
+[CAT] ✔ #59 — 8 talents maxed
+[CAT] ✔ #61 — 8 talents maxed
+[CAT] ✔ #71 — 8 talents maxed
+[CAT] ✔ #72 — 8 talents maxed
+[CAT] ✔ #124 — 8 talents maxed
+[CAT] ✔ #137 — 8 talents maxed
+[CAT] ✔ #143 — 8 talents maxed
+[CAT] ✔ #145 — 8 talents maxed
+[CAT] ✔ #146 — 8 talents maxed
+[CAT] ✔ #147 — 8 talents maxed
+[CAT] ✔ #148 — 8 talents maxed
+[CAT] ✔ #149 — 8 talents maxed
+[CAT] ✔ #150 — 8 talents maxed
+[CAT] ✔ #151 — 8 talents maxed
+[CAT] ✔ #152 — 8 talents maxed
+[CAT] ✔ #153 — 8 talents maxed
+[CAT] ✔ #158 — 8 talents maxed
+[CAT] ✔ #169 — 8 talents maxed
+[CAT] ✔ #170 — 8 talents maxed
+[CAT] ✔ #171 — 8 talents maxed
+[CAT] ✔ #197 — 8 talents maxed
+[CAT] ✔ #198 — 8 talents maxed
+[CAT] ✔ #199 — 8 talents maxed
+[CAT] ✔ #240 — 8 talents maxed
+[CAT] ✔ #247 — 8 talents maxed
+[CAT] ✔ #257 — 8 talents maxed
+[CAT] ✔ #259 — 8 talents maxed
+[CAT] ✔ #271 — 8 talents maxed
+[CAT] ✔ #272 — 8 talents maxed
+[CAT] ✔ #307 — 8 talents maxed
+[CAT] ✔ #308 — 8 talents maxed
+[CAT] ✔ #312 — 8 talents maxed
+[CAT] ✔ #325 — 8 talents maxed
+[CAT] ✔ #338 — 8 talents maxed
+[CAT] ✔ #360 — 8 talents maxed
+[CAT] ✔ #361 — 8 talents maxed
+[CAT] ✔ #376 — 8 talents maxed
+[CAT] ✔ #377 — 8 talents maxed
+[CAT] ✔ #427 — 8 talents maxed
+[CAT] ✔ #439 — 8 talents maxed
+[CAT] ✔ #495 — 8 talents maxed
+[CAT] ✔ #519 — 8 talents maxed
+[CAT] ✔ #522 — 8 talents maxed
+[CAT] ✔ #523 — 8 talents maxed
+[CAT] ✔ #534 — 8 talents maxed
+[CAT] ✔ #617 — 8 talents maxed
+[BCSFE] Max Talents all 72 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_1a25d66b
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_205825_fbdb2373
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: d9457efef | Confirm ใหม่: 2553
+============================================================

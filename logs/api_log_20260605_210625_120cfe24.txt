@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-05 21:06:25
+Transfer  : 120cfe24c
+Confirm   : 8991
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=120cfe... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 1 → 10001  (+10000)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_3b6a6e36
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_210626_120cfe24
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: e177a95e8 | Confirm ใหม่: 8166
+============================================================
+============================================================

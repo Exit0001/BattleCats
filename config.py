@@ -35,6 +35,12 @@ ITEM_MAP = {
     "lucky_ticket":    {"menu_no": 21, "max": 2999,     "has_warning": False, "label": "Lucky Ticket",          "sub_select": None,
                         "sub_enter": 1},
 
+    # ── Per-cat services (amount=1, needs cat_id in request) ──
+    "upgrade_cat":   {"max": 1, "label": "Upgrade Max",   "is_per_cat": True},
+    "trueform_cat":  {"max": 1, "label": "True Form",     "is_per_cat": True},
+    "ultraform_cat": {"max": 1, "label": "Ultra Form",    "is_per_cat": True},
+    "talents_cat":   {"max": 1, "label": "Talent Max",    "is_per_cat": True},
+
     # ── All-character packages (amount always = 1) ──
     "upgrade_all":   {"max": 1, "label": "Upgrade Max All",  "is_all_package": True},
     "unlock_all":    {"max": 1, "label": "Unlock All",        "is_all_package": True},

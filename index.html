@@ -10,6 +10,9 @@
 
 <nav class="navbar">
   <div class="nav-container">
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="เมนู">
+      <span></span><span></span><span></span>
+    </button>
     <a href="index.html" class="nav-logo"><img src="pictures/icon cat.png" style="height:20px;vertical-align:middle;margin-right:5px;"> BATTLE CATS SHOP</a>
     <ul class="nav-links">
       <li><a href="index.html" class="active">หน้าแรก</a></li>
@@ -22,6 +25,16 @@
       🛒
       <span class="cart-badge" id="cartCount">0</span>
     </div>
+  </div>
+  <div class="mobile-nav" id="mobileNav" style="display:none" onclick="if(event.target===this)closeMobileMenu()">
+    <ul>
+      <li><a href="index.html" class="active" onclick="closeMobileMenu()">🏠 หน้าแรก</a></li>
+      <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ ร้านขาย</a></li>
+      <li><a href="characters.html" onclick="closeMobileMenu()">🐱 ปลดล็อคแมว</a></li>
+      <li><a href="stages.html" onclick="closeMobileMenu()">📍 ปลดล็อคด่าน</a></li>
+      <li><a href="orders.html" onclick="closeMobileMenu()">📋 ออเดอร์</a></li>
+    </ul>
+    <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
   </div>
 </nav>
 
@@ -55,58 +68,43 @@
     </div>
   </div>
 
-  <!-- FLASH SALE BANNER -->
-  <div class="banner-flash">
-    <div>
-      <div class="banner-text">FLASH SALE 50% OFF!</div>
-      <div class="banner-sub">โปรพิเศษวันนี้เท่านั้น ไม่รอแล้วนะ</div>
-    </div>
-    <div class="timer-box">
-      <div class="timer-unit"><span class="timer-num" id="t-h">05</span><span class="timer-label">ชม.</span></div>
-      <span class="timer-sep">:</span>
-      <div class="timer-unit"><span class="timer-num" id="t-m">59</span><span class="timer-label">นาที</span></div>
-      <span class="timer-sep">:</span>
-      <div class="timer-unit"><span class="timer-num" id="t-s">43</span><span class="timer-label">วิ</span></div>
-    </div>
-  </div>
-
   <!-- FEATURED PRODUCTS -->
   <h2 class="section-title">🎯 สินค้าขายดี <span>HOT</span></h2>
   <div class="grid grid-4">
     <div class="card">
-      <span class="card-tag tag-super">SUPER</span>
-      <div class="card-emoji">🐈‍⬛</div>
-      <div class="card-name">Dark Valkyrie Cat</div>
-      <div class="card-desc">แคทหายากระดับ Super Rare</div>
-      <div class="card-price"><span class="price-now">฿199</span><span class="price-old">฿399</span></div>
-      <button class="btn btn-primary" style="width:100%;">เพิ่มลงการ์ท</button>
+      <span class="card-tag tag-hot">HOT</span>
+      <div class="card-picture"><img src="pictures/catfood4.png" width="200"></div>
+      <div class="card-name">Cat Food x45,000</div>
+      <div class="card-desc">กระป๋องแมวเยอะสุด — ลุ้น Gacha รัวๆ ทั้งวัน</div>
+      <div class="card-price"><span class="price-now">฿35</span></div>
+      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="width:100%;margin-top:auto;">ซื้อเลย</button>
     </div>
 
     <div class="card">
-      <span class="card-tag tag-hot">HOT</span>
-      <div class="card-picture"><img src="pictures/icon cat.png" width="200"></div>
-      <div class="card-name">Cat Food x120</div>
-      <div class="card-desc">เติมพลัง Gacha รัวๆ</div>
-      <div class="card-price"><span class="price-now">฿149</span><span class="price-old">฿250</span></div>
-      <button class="btn btn-primary" style="width:100%;">เพิ่มลงการ์ท</button>
+      <span class="card-tag tag-super">TOP</span>
+      <div class="card-picture"><img src="pictures/rare ticke4.png" width="200"></div>
+      <div class="card-name">Rare Ticket x299</div>
+      <div class="card-desc">บัตรทองสูงสุด — แลกได้เลย ไม่เสี่ยง Ban</div>
+      <div class="card-price"><span class="price-now">฿70</span></div>
+      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="width:100%;margin-top:auto;">ซื้อเลย</button>
     </div>
 
     <div class="card">
       <span class="card-tag tag-rare">RARE</span>
-      <div class="card-emoji">⚡</div>
-      <div class="card-name">Energy Pack x50</div>
-      <div class="card-desc">เล่นต่อได้ทั้งวัน</div>
-      <div class="card-price"><span class="price-now">฿89</span><span class="price-old">฿150</span></div>
-      <button class="btn btn-primary" style="width:100%;">เพิ่มลงการ์ท</button>
+      <div class="card-picture"><img src="pictures/catfruit1.png" width="200"></div>
+      <div class="card-name">Catfruit x100</div>
+      <div class="card-desc">ผลไม้แมว True Form วัตถุดิบสำคัญ</div>
+      <div class="card-price"><span class="price-now">฿30</span></div>
+      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="width:100%;margin-top:auto;">ซื้อเลย</button>
     </div>
 
     <div class="card">
-      <span class="card-tag tag-super">MEGA</span>
-      <div class="card-emoji">💎</div>
-      <div class="card-name">Rare Cat Capsule x11</div>
-      <div class="card-desc">ลุ้น Super Rare 1 ตัว!</div>
-      <div class="card-price"><span class="price-now">฿349</span><span class="price-old">฿599</span></div>
-      <button class="btn btn-primary" style="width:100%;">เพิ่มลงการ์ท</button>
+      <span class="card-tag tag-rare">RARE</span>
+      <div class="card-picture"><img src="pictures/cateye1.png" width="200"></div>
+      <div class="card-name">Catseye x100</div>
+      <div class="card-desc">อัพเลเวลเกินขีดจำกัด เพิ่มพลังแมวทุกตัว</div>
+      <div class="card-price"><span class="price-now">฿20</span></div>
+      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="width:100%;margin-top:auto;">ซื้อเลย</button>
     </div>
   </div>
 
@@ -114,7 +112,7 @@
   <h2 class="section-title">🚀 บริการของเรา</h2>
   <div class="grid grid-3">
     <div class="card" style="text-align: center;">
-      <div class="card-emoji">🛒</div>
+      <div class="card-picture"><img src="pictures/ร้านขาย.png" width="200"></div>
       <div class="card-name">ร้านขาย</div>
       <div class="card-desc">ซื้อไอเทมและ Cat Food</div>
       <button class="btn btn-outline" onclick="window.location.href='shop.html'" style="width:100%;">ไปที่ร้าน</button>
@@ -128,7 +126,7 @@
     </div>
 
     <div class="card" style="text-align: center;">
-      <div class="card-emoji">📍</div>
+      <div class="card-picture"><img src="pictures/ปลดล๊อคด่าน.png" width="200"></div>
       <div class="card-name">ปลดล็อคด่าน</div>
       <div class="card-desc">เล่นด่านที่ติดได้เลย</div>
       <button class="btn btn-outline" onclick="window.location.href='stages.html'" style="width:100%;">ดูด่าน</button>
@@ -202,10 +200,8 @@
       <div class="footer-col">
         <h4>ติดต่อเรา</h4>
         <ul>
-          <li><a href="#">📱 Line: @battlecats</a></li>
-          <li><a href="#">💬 Discord: BattleCats</a></li>
-          <li><a href="#">📘 Facebook: BattleCatsShop</a></li>
-          <li><a href="#">🎵 TikTok: @battlecatsth</a></li>
+          <li><a href="https://www.facebook.com/pronajaa.gamedee.1/" target="_blank" rel="noopener">📘 Facebook (ผู้ใช้)</a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61572054218886" target="_blank" rel="noopener">📘 Facebook (เพจร้าน)</a></li>
         </ul>
       </div>
     </div>
@@ -223,18 +219,6 @@
 </footer>
 
 <script>
-let h = 5, m = 59, s = 43;
-function tick() {
-  s--;
-  if (s < 0) { s = 59; m--; }
-  if (m < 0) { m = 59; h--; }
-  if (h < 0) { h = 5; m = 59; s = 59; }
-  document.getElementById('t-h').textContent = String(h).padStart(2,'0');
-  document.getElementById('t-m').textContent = String(m).padStart(2,'0');
-  document.getElementById('t-s').textContent = String(s).padStart(2,'0');
-}
-setInterval(tick, 1000);
-
 // Set active nav link
 document.querySelectorAll('.nav-links a').forEach(link => {
   if (link.href === window.location.href) {
@@ -251,5 +235,6 @@ window.addEventListener('load', () => {
 
 <script src="assets/auth.js"></script>
 <script src="assets/animations.js"></script>
+<script src="assets/nav.js"></script>
 </body>
 </html>

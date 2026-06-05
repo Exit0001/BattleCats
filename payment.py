@@ -47,10 +47,10 @@ ITEM_PRICE = {
         299: 70,
     },
     "np": {
-        100: 25,
-        1000: 230,
-        5000: 1087,
-        9999: 2049,
+        100: 5,
+        1000: 49,
+        5000: 239,
+        9999: 449,
     },
     "platinum_shard": {
         10: 30,
@@ -100,6 +100,11 @@ ITEM_PRICE = {
         1000: 85,
         2999: 239,
     },
+    # Per-cat services (price per 1 cat)
+    "upgrade_cat":   {1: 15},
+    "trueform_cat":  {1: 15},
+    "ultraform_cat": {1: 20},
+    "talents_cat":   {1: 20},
     # All-character packages (fixed price, amount=1)
     "upgrade_all":   {1: 200},
     "unlock_all":    {1: 200},

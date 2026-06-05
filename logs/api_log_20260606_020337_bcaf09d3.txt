@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-06 02:03:37
+Transfer  : bcaf09d33
+Confirm   : 8779
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=bcaf09... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 1 → 10001  (+10000)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_d6dda9bb
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260606_020338_bcaf09d3
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 80c7f23c1 | Confirm ใหม่: 8080
+============================================================
+============================================================

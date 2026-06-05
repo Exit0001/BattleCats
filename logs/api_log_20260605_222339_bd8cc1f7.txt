@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-05 22:23:39
+Transfer  : bd8cc1f73
+Confirm   : 2952
+Country   : en
+============================================================
+[OP] Upgrade Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=bd8cc1... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #37 — Lv30+8 → Lv50+8
+[BCSFE] Upgraded 1/1 cats → max, plus=0
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_e49b813d
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_222342_bd8cc1f7
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 267425a9e | Confirm ใหม่: 1463
+============================================================
