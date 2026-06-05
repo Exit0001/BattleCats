@@ -159,6 +159,28 @@ cat.unlock_fourth_form(save_file)  # Ultra Form (4th)
 7. กด **1** → Save Management
 8. กด **3** → รับ Transfer Code ใหม่
 
+### 6. Lucky Ticket (เพิ่มตั๋วโชคดี)
+
+> ⚠️ Max value รวมสูงสุด **2,999** | วิธีคำนวณ: `current + จำนวนที่ต้องการ` (แสดงสมการให้ admin ดูก่อนพิมพ์)
+
+1. กด **2** → เมนู Item
+2. กด **21** → Event Ticket / Lucky Ticket
+3. กด **1** → Lucky Ticket
+4. พิมพ์ตัวเลข `current + จำนวนที่ต้องการ` เช่น `0 + 500 = 500`
+5. กด **1** → Save Management
+6. กด **3** → รับ Transfer Code ใหม่
+
+### 7. Rare Ticket (ตั๋วแรร์ — Golden Ticket Trade)
+
+> ⚠️ Max value รวมสูงสุด **299** | วิธีคำนวณ: `current + จำนวนที่ต้องการ` (แสดงสมการให้ admin ดูก่อนพิมพ์)
+
+1. กด **2** → เมนู Item
+2. กด **6** → Golden Ticket (Trade)
+3. พิมพ์ตัวเลข `current + จำนวนที่ต้องการ` เช่น `0 + 100 = 100`
+4. กด **1** → Save Management
+5. กด **3** → รับ Transfer Code ใหม่
+6. ส่งข้อความให้ลูกค้า: **"วิธีการใช้งาน: ให้ลูกค้ากดรับไอเทม นำเข้าตู้เย็น (Storage) กดใช้ทั้งหมด และทำการแลกบัตรทองได้เลยครับ"**
+
 ---
 
 ## Workflow & Preferences

@@ -112,11 +112,6 @@ class BCSFERunner:
             self._edit_array_item(save_file, key, amount, max_val, label)
             return
 
-        # ── lucky_ticket: ต้องดึง server event data เพื่อหา active slot ──
-        if key == "lucky_ticket":
-            self._edit_lucky_ticket(save_file, amount, max_val)
-            return
-
         # ── simple scalar items — ทุกตัว ADD เสมอ ──
         cur = self._get_scalar(save_file, key)
         new_val = min(cur + amount, max_val)
@@ -190,52 +185,6 @@ class BCSFERunner:
         for i in range(n):
             self._log(f"       type {i+1}: {before[i]} → {arr[i]}")
 
-    def _edit_lucky_ticket(self, save_file, amount: int, max_val: int):
-        from bcsfe.core.game.catbase.gatya_item import GatyaItemBuy, GatyaItemCategory
-        from bcsfe.core.server.event_data import ServerGatyaData
-
-        # ดาวน์โหลด event data ปัจจุบันจาก server
-        gatya_raw = core.ServerHandler(save_file).download_gatya_data()
-        if gatya_raw is None:
-            self._log("[ITEM] Lucky Ticket — ดาวน์โหลด event data ไม่ได้")
-            return
-
-        server_data = ServerGatyaData.from_data(gatya_raw)
-        if server_data is None:
-            self._log("[ITEM] Lucky Ticket — parse event data ไม่ได้")
-            return
-
-        gatya_item_buy = GatyaItemBuy(save_file)
-        if gatya_item_buy.buy is None:
-            self._log("[ITEM] Lucky Ticket — โหลด gatya item buy ไม่ได้")
-            return
-
-        edited = 0
-        seen_idx = set()  # กัน duplicate index
-        for event_item in server_data.items:
-            for gset in event_item.sets:
-                if gset.number == -1:
-                    continue
-                item = gatya_item_buy.get_by_server_id(gset.number)
-                if item is None:
-                    continue
-                if item.category != GatyaItemCategory.LUCKY_TICKETS_1.value:
-                    continue
-                idx = item.index
-                if idx in seen_idx:
-                    continue
-                seen_idx.add(idx)
-                if idx >= len(save_file.lucky_tickets):
-                    continue
-                old = save_file.lucky_tickets[idx]
-                new_val = min(old + amount, max_val)
-                save_file.lucky_tickets[idx] = new_val
-                self._log(f"[ITEM] Lucky Ticket [idx {idx}]: {old} → {new_val}  (+{new_val - old})")
-                edited += 1
-
-        if edited == 0:
-            self._log("[ITEM] Lucky Ticket — ไม่พบ event Lucky Ticket ที่ active อยู่ตอนนี้")
-
     # ──────────────────────────────────────────────────
     # public run methods
     # ──────────────────────────────────────────────────
@@ -251,7 +200,10 @@ class BCSFERunner:
 
             codes = self._upload_save(save_file)
             self._close_log()
-            return {"success": True, "new_transfer_code": codes}
+            result = {"success": True, "new_transfer_code": codes}
+            if any(i.get("key") == "rare_ticket" for i in items):
+                result["customer_note"] = "วิธีการใช้งาน: ให้ลูกค้ากดรับไอเทม นำเข้าตู้เย็น (Storage) กดใช้ทั้งหมด และทำการแลกบัตรทองได้เลยครับ"
+            return result
 
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")

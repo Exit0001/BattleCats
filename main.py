@@ -493,10 +493,10 @@ async def test_bcsfe(request: TestBCSFERequest):
             codes = result.get("new_transfer_code", {})
             new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
             new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
-            
+
             # บันทึก SAVE_DATA
             backup_save(new_tc or transfer_code)
-            
+
             # สร้าง summary
             summary = [
                 {
@@ -504,15 +504,18 @@ async def test_bcsfe(request: TestBCSFERequest):
                     "amount": amount
                 }
             ]
-            
+
             print(f"[TEST-BCSFE] ✅ สำเร็จ!")
-            
-            return {
+
+            resp = {
                 "success": True,
                 "new_transfer_code": new_tc,
                 "new_confirmation_code": new_cc,
                 "summary": summary,
             }
+            if result.get("customer_note"):
+                resp["customer_note"] = result["customer_note"]
+            return resp
         else:
             print(f"[TEST-BCSFE] ❌ ล้มเหลว: {result['error']}")
             return {
@@ -566,7 +569,10 @@ async def test_bcsfe_batch(request: OrderRequest):
             new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
             backup_save(new_tc or transfer_code)
             summary = [{"item": ITEM_MAP[i["key"]]["label"], "amount": i["amount"]} for i in items_list]
-            return {"success": True, "new_transfer_code": new_tc, "new_confirmation_code": new_cc, "summary": summary}
+            resp = {"success": True, "new_transfer_code": new_tc, "new_confirmation_code": new_cc, "summary": summary}
+            if result.get("customer_note"):
+                resp["customer_note"] = result["customer_note"]
+            return resp
         else:
             return {"success": False, "error": result.get("error", "Unknown error")}
 

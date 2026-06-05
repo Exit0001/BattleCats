@@ -815,6 +815,13 @@ async function runBCSFECart() {
         return '<div style="color:#4ADE80;font-size:12px;padding:2px 0;">✔ ' + s.item + ' x' + s.amount.toLocaleString() + '</div>';
       }).join('');
 
+      var customerNoteHtml = data.customer_note
+        ? '<div style="margin-top:14px;background:rgba(251,191,36,0.10);border:1px solid rgba(251,191,36,0.35);border-radius:10px;padding:12px;">' +
+          '<div style="font-size:10px;color:#FCD34D;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">📋 ข้อความแจ้งลูกค้า (copy ส่งให้ลูกค้า)</div>' +
+          '<div style="font-family:\'Chakra Petch\',monospace;font-size:13px;color:#FDE68A;cursor:pointer;" onclick="navigator.clipboard.writeText(this.textContent).then(function(){toast(\'✅ Copy แล้ว\',\'ok\');})">' + data.customer_note + '</div>' +
+          '</div>'
+        : '';
+
       resEl.innerHTML = '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
         '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:10px;">✅ ทุกรายการสำเร็จ! (download/upload ครั้งเดียว)</div>' +
         summaryHtml +
@@ -822,6 +829,7 @@ async function runBCSFECart() {
         '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + newTc + '</div></div>' +
         '<div style="margin-top:8px;"><div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
         '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + newCc + '</div></div>' +
+        customerNoteHtml +
         '</div>';
       toast('✅ BCSFE สำเร็จ!', 'ok');
     } else {
