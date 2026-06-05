@@ -160,6 +160,7 @@
       box-shadow: 0 0 0 3px rgba(124,58,237,0.14);
     }
     .form-input::placeholder { color: rgba(210,190,255,0.30); }
+    .form-input option { background: #1a0a3a; color: #EDE6FF; }
 
     .status-dot {
       display: inline-block;
@@ -675,6 +676,21 @@
     <div id="tl-result" style="display:none;"></div>
   </div>
 
+  <!-- CONCURRENT TEST - Multi User -->
+  <div class="test-section">
+    <div class="test-section-title">⚡ ทดสอบ Multi Users (สูงสุด 10 คนพร้อมกัน)</div>
+    <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.25);border-radius:10px;padding:12px;margin-bottom:16px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#C4B5FD;">
+      ส่ง request พร้อมกันทุก user — แต่ละ user ใส่ได้หลายไอเทม (batch)
+    </div>
+    <div id="cu-users-container"></div>
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="btn btn-outline" id="cu-add-btn" onclick="cuAddUser()" style="flex:1;">+ เพิ่ม User</button>
+      <button class="btn btn-outline" onclick="cuClearAll()" style="color:#FDA4AF;border-color:rgba(244,63,94,0.4);">🗑 ล้างทั้งหมด</button>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:12px;" onclick="cuRunAll()">⚡ ยิงทุก User พร้อมกัน</button>
+    <div id="cu-result" style="display:none;"></div>
+  </div>
+
   <!-- SYSTEM DATA -->
   <div class="test-section">
     <div class="test-section-title">🐛 Debug / ข้อมูลระบบ</div>
@@ -736,6 +752,10 @@ async function checkDB() {
 
 // ── Cart helpers ─────────────────────────────────────────────
 function testAddItem(name, price, key, amount, subType) {
+  if (key === 'rare_ticket' && testCart.some(function(i){ return i.key === 'rare_ticket'; })) {
+    toast('⚠️ Rare Ticket ได้แค่ 1 รายการต่อออเดอร์ (ต้องรับในตู้เย็นก่อน)', 'warn');
+    return;
+  }
   testCart.push({ name:name, price:price, key:key, amount:amount, sub_type: subType || null });
   renderTestCart();
   toast('✅ เพิ่ม ' + name + (subType ? ' [type ' + subType + ']' : ''), 'ok');
@@ -1046,11 +1066,222 @@ async function debugSupabase() {
   }
 }
 
+// ── Multi-User Concurrent Test ─────────────────────────────────
+var cuUsers  = [];
+var cuNextId = 1;
+
+var CU_ITEMS = [
+  {key:'cat_food',       name:'Cat Food',        def:10000},
+  {key:'xp',            name:'XP',              def:99999999},
+  {key:'normal_ticket', name:'Normal Ticket',   def:100},
+  {key:'rare_ticket',   name:'Rare Ticket',     def:50},
+  {key:'lucky_ticket',  name:'Lucky Ticket',    def:100},
+  {key:'np',            name:'NP',              def:100},
+  {key:'platinum_shard',name:'Platinum Shard',  def:10},
+  {key:'leadership',    name:'Leadership',      def:100},
+  {key:'catseye',       name:'Catseye',         def:100},
+  {key:'catfruit',      name:'Catfruit',        def:100},
+  {key:'catamins',      name:'Catamins',        def:100},
+  {key:'battle_item',   name:'Battle Item',     def:100},
+  {key:'legend_ticket', name:'Legend Ticket',   def:1},
+];
+
+function cuSaveInputs() {
+  cuUsers.forEach(function(u) {
+    var tcEl  = document.getElementById('cu-tc-'  + u.id);
+    var ccEl  = document.getElementById('cu-cc-'  + u.id);
+    var srvEl = document.getElementById('cu-srv-' + u.id);
+    if (tcEl)  u._tc  = tcEl.value;
+    if (ccEl)  u._cc  = ccEl.value;
+    if (srvEl) u._srv = srvEl.value;
+  });
+}
+
+function cuRender() {
+  cuSaveInputs();
+  var addBtn = document.getElementById('cu-add-btn');
+  if (addBtn) addBtn.disabled = cuUsers.length >= 10;
+
+  var itemOptsHtml = CU_ITEMS.map(function(i) {
+    return '<option value="' + i.key + '">' + i.name + ' (x' + i.def.toLocaleString() + ')</option>';
+  }).join('');
+
+  var html = cuUsers.map(function(u, idx) {
+    var tags = u.items.length
+      ? u.items.map(function(item, ii) {
+          return '<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(124,58,237,0.18);border:1px solid rgba(124,58,237,0.32);border-radius:999px;padding:3px 9px;font-family:\'Chakra Petch\',sans-serif;font-size:11px;">' +
+            '<span style="color:#C4B5FD;">' + item.name + ' x' + item.amount.toLocaleString() + '</span>' +
+            '<span onclick="cuRemoveItem(' + u.id + ',' + ii + ')" style="cursor:pointer;color:#F87171;margin-left:2px;">✕</span>' +
+          '</span>';
+        }).join('')
+      : '<span style="color:rgba(210,190,255,0.3);font-family:\'Chakra Petch\',sans-serif;font-size:12px;">ยังไม่มีของ — เพิ่มด้านบน</span>';
+
+    return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(124,58,237,0.2);border-radius:14px;padding:16px;margin-bottom:12px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
+        '<span style="font-family:\'Russo One\',sans-serif;font-size:13px;color:#C4B5FD;">User ' + (idx + 1) + '</span>' +
+        '<button onclick="cuRemoveUser(' + u.id + ')" style="padding:3px 10px;border-radius:8px;border:1px solid rgba(244,63,94,0.3);background:rgba(244,63,94,0.08);color:#FDA4AF;font-family:\'Chakra Petch\',sans-serif;font-size:11px;cursor:pointer;">✕ ลบ</button>' +
+      '</div>' +
+      '<div class="form-row">' +
+        '<div><label class="form-label">Transfer Code</label><input type="text" id="cu-tc-' + u.id + '" class="form-input" placeholder="Transfer Code"></div>' +
+        '<div><label class="form-label">Confirmation Code</label><input type="text" id="cu-cc-' + u.id + '" class="form-input" placeholder="1234"></div>' +
+      '</div>' +
+      '<div style="margin-bottom:12px;"><label class="form-label">Server</label>' +
+        '<select id="cu-srv-' + u.id + '" class="form-input">' +
+          '<option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option>' +
+        '</select>' +
+      '</div>' +
+      '<label class="form-label">ไอเทม</label>' +
+      '<div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">' +
+        '<select id="cu-sel-' + u.id + '" class="form-input" style="flex:2;min-width:120px;" onchange="cuFillAmt(' + u.id + ')">' + itemOptsHtml + '</select>' +
+        '<input type="number" id="cu-amt-' + u.id + '" class="form-input" style="flex:1;min-width:80px;" placeholder="จำนวน" min="1" value="' + CU_ITEMS[0].def + '">' +
+        '<button onclick="cuAddItem(' + u.id + ')" style="padding:8px 14px;border-radius:10px;border:1px solid rgba(124,58,237,0.4);background:rgba(124,58,237,0.15);color:#C4B5FD;font-family:\'Chakra Petch\',sans-serif;font-size:12px;cursor:pointer;white-space:nowrap;">+ เพิ่ม</button>' +
+      '</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;min-height:34px;padding:8px 10px;background:rgba(0,0,0,0.2);border-radius:8px;">' + tags + '</div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('cu-users-container').innerHTML = html;
+
+  cuUsers.forEach(function(u) {
+    var tcEl  = document.getElementById('cu-tc-'  + u.id);
+    var ccEl  = document.getElementById('cu-cc-'  + u.id);
+    var srvEl = document.getElementById('cu-srv-' + u.id);
+    if (tcEl  && u._tc)  tcEl.value  = u._tc;
+    if (ccEl  && u._cc)  ccEl.value  = u._cc;
+    if (srvEl && u._srv) srvEl.value = u._srv;
+  });
+}
+
+function cuAddUser() {
+  if (cuUsers.length >= 10) { toast('⚠ สูงสุด 10 users', 'warn'); return; }
+  cuUsers.push({id: cuNextId++, items: [], _tc: '', _cc: '', _srv: '1'});
+  cuRender();
+}
+
+function cuRemoveUser(id) {
+  cuUsers = cuUsers.filter(function(u) { return u.id !== id; });
+  cuRender();
+}
+
+function cuClearAll() {
+  cuUsers = [];
+  cuRender();
+}
+
+function cuFillAmt(userId) {
+  var key = document.getElementById('cu-sel-' + userId).value;
+  var cfg = CU_ITEMS.find(function(i) { return i.key === key; });
+  if (cfg) document.getElementById('cu-amt-' + userId).value = cfg.def;
+}
+
+function cuAddItem(userId) {
+  cuSaveInputs();
+  var u = cuUsers.find(function(u) { return u.id === userId; });
+  if (!u) return;
+  var key    = document.getElementById('cu-sel-' + userId).value;
+  var amount = parseInt(document.getElementById('cu-amt-' + userId).value) || 0;
+  if (!key)       { toast('⚠ เลือกประเภทของก่อน', 'warn'); return; }
+  if (amount <= 0) { toast('⚠ จำนวนต้องมากกว่า 0', 'warn'); return; }
+  var cfg = CU_ITEMS.find(function(i) { return i.key === key; });
+  u.items.push({key: key, name: cfg ? cfg.name : key, amount: amount});
+  cuRender();
+}
+
+function cuRemoveItem(userId, itemIdx) {
+  cuSaveInputs();
+  var u = cuUsers.find(function(u) { return u.id === userId; });
+  if (!u) return;
+  u.items.splice(itemIdx, 1);
+  cuRender();
+}
+
+async function cuRunAll() {
+  cuSaveInputs();
+  var url = (document.getElementById('backendURL') ? document.getElementById('backendURL').value.trim() : '') || 'http://localhost:8000';
+
+  var requests = [];
+  for (var i = 0; i < cuUsers.length; i++) {
+    var u   = cuUsers[i];
+    var tc  = (u._tc  || '').trim();
+    var cc  = (u._cc  || '').trim();
+    var srv = u._srv || '1';
+    if (!tc || !cc)     { toast('❌ User ' + (i+1) + ': กรอก TC/CC ก่อน', 'err'); return; }
+    if (!u.items.length) { toast('❌ User ' + (i+1) + ': เพิ่มของอย่างน้อย 1 รายการ', 'err'); return; }
+    requests.push({userNum: i + 1, tc: tc, cc: cc, srv: srv, items: u.items});
+  }
+
+  if (!requests.length) { toast('❌ เพิ่ม User ก่อนอย่างน้อย 1 คน', 'err'); return; }
+
+  var resEl = document.getElementById('cu-result');
+  resEl.style.display = 'block';
+  resEl.innerHTML = '<div style="padding:12px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ ส่ง ' + requests.length + ' requests พร้อมกัน...</div>';
+
+  var startTime = Date.now();
+
+  var promises = requests.map(function(req) {
+    return fetch(url + '/api/test/bcsfe/batch', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        transfer_code:     req.tc,
+        confirmation_code: req.cc,
+        country:           req.srv,
+        items: req.items.map(function(item) {
+          return {key: item.key, amount: item.amount, sub_type: null};
+        }),
+      }),
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      return {
+        userNum:               req.userNum,
+        success:               d.success,
+        new_transfer_code:     d.new_transfer_code,
+        new_confirmation_code: d.new_confirmation_code,
+        customer_note:         d.customer_note,
+        error:                 d.error,
+        elapsed:               ((Date.now() - startTime) / 1000).toFixed(1),
+      };
+    })
+    .catch(function(e) {
+      return {userNum: req.userNum, success: false, error: e.message, elapsed: ((Date.now() - startTime) / 1000).toFixed(1)};
+    });
+  });
+
+  var results = await Promise.all(promises);
+  var totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+
+  var html = '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;">';
+  html += '<div style="color:rgba(210,190,255,0.6);margin-bottom:10px;">รวมเวลาทั้งหมด: ' + totalTime + ' วินาที</div>';
+  results.forEach(function(r) {
+    var ok = r.success;
+    html += '<div style="background:' + (ok ? 'rgba(74,222,128,0.08)' : 'rgba(248,113,113,0.08)') + ';border:1px solid ' + (ok ? 'rgba(74,222,128,0.25)' : 'rgba(248,113,113,0.25)') + ';border-radius:10px;padding:12px;margin-bottom:8px;">';
+    html += '<div style="font-size:13px;color:' + (ok ? '#4ADE80' : '#F87171') + ';margin-bottom:' + (ok ? '8' : '0') + 'px;">' + (ok ? '✅' : '❌') + ' User ' + r.userNum + ' (เสร็จใน ' + r.elapsed + 's)</div>';
+    if (ok) {
+      html += '<div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;">Transfer Code ใหม่</div>';
+      html += '<div style="font-family:monospace;font-size:14px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px;word-break:break-all;">' + (r.new_transfer_code || '-') + ' / ' + (r.new_confirmation_code || '-') + '</div>';
+      if (r.customer_note) {
+        html += '<div style="margin-top:8px;font-size:12px;color:#FCD34D;cursor:pointer;" onclick="navigator.clipboard.writeText(\'' + r.customer_note.replace(/\'/g, "\\'") + '\').then(function(){toast(\'✅ Copy แล้ว\',\'ok\');})">📋 ' + r.customer_note + '</div>';
+      }
+    } else {
+      html += '<div style="color:#F87171;font-size:12px;">' + (r.error || 'unknown error') + '</div>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+
+  resEl.innerHTML = html;
+  var allOk = results.every(function(r) { return r.success; });
+  toast(allOk ? '✅ ทั้ง ' + results.length + ' requests สำเร็จ!' : '⚠ บางตัวล้มเหลว', allOk ? 'ok' : 'warn');
+}
+
 // ── Init ──────────────────────────────────────────────────────
 window.addEventListener('load', function() {
   var cart = JSON.parse(localStorage.getItem('cart') || '[]');
   document.getElementById('cartCount').textContent = cart.length;
   checkDB();
+  cuAddUser();
+  cuAddUser();
 });
 
 // ── Unlock Character Flow ─────────────────────────────────────

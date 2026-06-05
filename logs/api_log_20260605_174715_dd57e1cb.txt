@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-05 17:47:15
+Transfer  : dd57e1cb2
+Confirm   : 6614
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=dd57e1... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 21009 → 31009  (+10000)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_81c122d6
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_174717_dd57e1cb
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 30e32e270 | Confirm ใหม่: 5675
+============================================================
+============================================================

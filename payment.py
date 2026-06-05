@@ -100,6 +100,12 @@ ITEM_PRICE = {
         1000: 85,
         2999: 239,
     },
+    # All-character packages (fixed price, amount=1)
+    "upgrade_all":   {1: 200},
+    "unlock_all":    {1: 200},
+    "trueform_all":  {1: 100},
+    "ultraform_all": {1: 100},
+    "talents_all":   {1: 150},
 }
 
 # ══════════════════════════════════════════
@@ -234,6 +240,32 @@ def create_order(transfer_code: str, confirmation_code: str,
     _save_orders(orders)
 
     print(f"[ORDER] สร้าง order {order_id} ยอด {amount} บาท หมดอายุ {expires}")
+    return order
+
+
+def create_all_package_order(transfer_code: str, confirmation_code: str,
+                             country: str, package_type: str, amount: int) -> dict:
+    """สร้าง order สำหรับแพ็กเกจ All (unlock_all, trueform_all, ฯลฯ)"""
+    order_id = str(uuid.uuid4())[:8].upper()
+    expires  = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
+    order = {
+        "order_id":          order_id,
+        "transfer_code":     transfer_code,
+        "confirmation_code": confirmation_code,
+        "country":           country,
+        "items":             [],
+        "cat_ids":           [],
+        "package_type":      package_type,
+        "amount":            amount,
+        "status":            "pending",
+        "created_at":        datetime.now().isoformat(),
+        "expires_at":        expires,
+        "qr_base64":         generate_qr_base64(amount),
+    }
+    orders = _load_orders()
+    orders[order_id] = order
+    _save_orders(orders)
+    print(f"[ORDER] สร้าง all-package order {order_id} type={package_type} ยอด {amount} บาท")
     return order
 
 

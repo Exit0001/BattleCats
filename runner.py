@@ -1,18 +1,27 @@
-# runner.py - BCSFERunner using bcsfe 3.x Python API (no subprocess)
+# runner.py - BCSFERunner using bcsfe 3.x Python API + CLI subprocess for lucky/rare ticket
 
 from datetime import datetime
 from pathlib import Path
 import shutil
+import subprocess
+import re
+import time
+import uuid
+import threading
 
 from bcsfe import core
 from bcsfe.core.game.catbase.cat import Talent as BCSFETalent
 
 from config import ITEM_MAP
 
-COUNTRY_MAP = {"1": "en", "2": "jp", "3": "kr", "4": "tw"}
+BCSFE_CLI = Path(__file__).parent / ".venv" / "Scripts" / "bcsfe.exe"
+BCSFE_SAVES_DIR = Path.home() / "Documents" / "bcsfe" / "saves"
 
-BCSFE_SAVE_PATH = Path.home() / "Documents" / "bcsfe" / "saves" / "SAVE_DATA"
+COUNTRY_MAP = {"1": "en", "2": "jp", "3": "kr", "4": "tw"}
 LOG_DIR = Path("logs")
+
+# CLI subprocess ยังต้องรัน sequential (SAVE_DATA hardcoded ใน bcsfe CLI)
+_CLI_LOCK = threading.Lock()
 
 
 class BCSFERunner:
@@ -20,10 +29,15 @@ class BCSFERunner:
         self.transfer = transfer.strip()
         self.confirm  = confirm.strip()
         self.country  = country.strip()
+        self._session_id  = uuid.uuid4().hex[:8]
+        self._save_path   = BCSFE_SAVES_DIR / f"SAVE_DATA_{self._session_id}"
+        self._cli_save_path = BCSFE_SAVES_DIR / f"SAVE_DATA_cli_{self._session_id}"
         LOG_DIR.mkdir(exist_ok=True)
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         self._log_path = LOG_DIR / f"api_log_{ts}_{self.transfer[:8]}.txt"
         self._log_file = open(self._log_path, "w", encoding="utf-8")
+        self._deferred_cli = []
+        self._last_cli_output = ""
         self._log(f"{'='*60}")
         self._log(f"เวลา      : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         self._log(f"Transfer  : {self.transfer}")
@@ -38,6 +52,110 @@ class BCSFERunner:
 
     def _close_log(self):
         self._log_file.close()
+
+    # ──────────────────────────────────────────────────
+    # CLI subprocess helper (lucky_ticket / rare_ticket)
+    # ──────────────────────────────────────────────────
+
+    def _run_cli_item(self, transfer: str, confirm: str, key: str,
+                      amount: int, current: int = 0, use_local: bool = False) -> dict:
+        """
+        รัน bcsfe CLI ด้วย communicate() — ส่ง inputs ทั้งหมดพร้อมกัน
+        use_local=True → Load from SAVE_DATA (option 3) แทนการ download
+        """
+        import os
+        cc_num = self.country
+
+        if key == "lucky_ticket":
+            value_to_send = min(current + amount, 2999)
+            self._log(f"[CLI] Lucky Ticket: {current} + {amount} = {value_to_send}")
+            nav = ["3", "21", "1", str(value_to_send)]
+        else:
+            to_add = min(amount, 299 - current)
+            self._log(f"[CLI] Rare Ticket: current={current}, add={to_add}")
+            nav = ["3", "6", str(to_add)]
+
+        env = os.environ.copy()
+        env["PYTHONIOENCODING"] = "utf-8"
+        env["PYTHONUTF8"] = "1"
+
+        cli_path_str = str(self._cli_save_path)
+
+        if use_local:
+            # ใช้ --input-path โหลดจาก unique path โดยตรง → ข้าม initial menu → parallel ได้
+            self._log(f"[CLI] โหลดจาก {cli_path_str} (--input-path)")
+            inputs = "\n".join(nav + ["2", "3"]) + "\n"
+            result = self._cli_communicate(inputs, env, cli_args=["--input-path", cli_path_str])
+        else:
+            # Download: ส่ง unique path แทน "" → save ลง cli_save_path ของ session นี้
+            inputs = "\n".join(["1", transfer, confirm, cc_num, cli_path_str] + nav + ["2", "3"]) + "\n"
+            result = self._cli_communicate(inputs, env)
+
+        # ── Lucky Ticket: ตรวจ current value จาก CLI output แล้ว re-run ถ้าจำเป็น ──
+        if key == "lucky_ticket" and result.get("success"):
+            last_output = getattr(self, "_last_cli_output", "")
+            m = re.search(r'current value[:\s]+(\d+)', last_output, re.IGNORECASE)
+            if m:
+                actual_current = int(m.group(1))
+                correct_total = min(actual_current + amount, 2999)
+                if correct_total != value_to_send:
+                    self._log(f"[CLI] Lucky Ticket current จริง={actual_current} ≠ assumed={current} → re-run ด้วย {actual_current}+{amount}={correct_total}")
+                    nav2 = ["3", "21", "1", str(correct_total)]
+                    # ใช้ --input-path เพื่อโหลด session save ที่ถูกต้อง ไม่ใช่ default SAVE_DATA
+                    inputs2 = "\n".join(nav2 + ["2", "3"]) + "\n"
+                    result = self._cli_communicate(inputs2, env,
+                                                   cli_args=["--input-path", str(self._cli_save_path)])
+
+        return result
+
+    def _cli_communicate(self, inputs: str, env: dict, label: str = "", cli_args: list = None) -> dict:
+        """รัน CLI ด้วย communicate() แล้ว parse transfer code"""
+        try:
+            cmd = [str(BCSFE_CLI)] + (cli_args or [])
+            proc = subprocess.Popen(
+                cmd,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True, encoding="utf-8", errors="replace", env=env,
+            )
+            stdout, _ = proc.communicate(input=inputs, timeout=120)
+
+            clean = re.sub(r'\x1b\[[0-9;]*[mGKH]', '', stdout)
+            self._last_cli_output = clean  # เก็บไว้ให้ caller ตรวจสอบ
+            for line in clean.splitlines():
+                if line.strip():
+                    prefix = f"[{label}]" if label else "[CLI]"
+                    self._log_file.write(f"  {prefix} {line}\n")
+            self._log_file.flush()
+
+            tc_list = re.findall(r'Transfer Code[:\s]+([a-f0-9]{8,9})', clean)
+            cc_list = re.findall(r'Confirmation Code[:\s]+(\d{4})', clean)
+
+            if tc_list:
+                new_tc = tc_list[-1]
+                new_cc = cc_list[-1] if cc_list else None
+                self._log(f"[CLI] ✅ Transfer ใหม่: {new_tc} | Confirm ใหม่: {new_cc}")
+                return {"success": True, "transfer": new_tc, "confirmation": new_cc}
+
+            if "Failed to upload save file" in clean:
+                self._log("[CLI] ⚠ Upload ล้มเหลว (rate limit) — รอ 8 วินาทีแล้ว retry...")
+                time.sleep(8)
+                retry_inputs = "\n".join(["3", "2", "3"]) + "\n"
+                return self._cli_communicate(retry_inputs, env, label="RETRY")
+
+            self._log("[CLI] ❌ parse transfer code ไม่ได้")
+            for line in clean.splitlines()[-15:]:
+                self._log(f"  {line}")
+            return {"success": False, "error": "parse transfer code ไม่ได้"}
+
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            self._log("[CLI] ❌ timeout (120s)")
+            return {"success": False, "error": "CLI timeout"}
+        except Exception as e:
+            self._log(f"[CLI] ❌ {e}")
+            return {"success": False, "error": str(e)}
 
     # ──────────────────────────────────────────────────
     # helpers
@@ -63,14 +181,22 @@ class BCSFERunner:
         return handler.save_file
 
     def _upload_save(self, save_file) -> dict:
-        save_path = core.SaveFile.get_saves_path().add("SAVE_DATA")
-        save_file.to_file(save_path)
-        self._log(f"[BCSFE] 💾 บันทึก save → {save_path}")
+        # ใช้ unique path ของ session นี้ → parallel sessions ไม่ conflict
+        bcsfe_path = core.SaveFile.get_saves_path().add(f"SAVE_DATA_{self._session_id}")
+        save_file.to_file(bcsfe_path)
+        self._log(f"[BCSFE] 💾 บันทึก save → {bcsfe_path}")
 
-        self._backup(save_file)
+        self._backup()
 
         self._log("[BCSFE] ⬆  Uploading save...")
         result = core.ServerHandler(save_file).get_codes()
+
+        # ลบ temp file หลัง upload
+        try:
+            Path(bcsfe_path.to_str()).unlink(missing_ok=True)
+        except Exception:
+            pass
+
         if result is None:
             raise RuntimeError("❌ Upload ล้มเหลว กรุณาลองใหม่")
 
@@ -79,16 +205,17 @@ class BCSFERunner:
         self._log(f"{'='*60}")
         return {"transfer": new_tc, "confirmation": new_cc}
 
-    def _backup(self, save_file):
+    def _backup(self):
+        """Backup จาก temp save file ของ session นี้"""
         try:
-            src = core.SaveFile.get_saves_path().add("SAVE_DATA")
-            if not Path(src.to_str()).exists():
+            src = BCSFE_SAVES_DIR / f"SAVE_DATA_{self._session_id}"
+            if not src.exists():
                 return
             backup_dir = Path("saves_backup")
             backup_dir.mkdir(exist_ok=True)
             ts = datetime.now().strftime("%Y%m%d_%H%M%S")
             dest = backup_dir / f"SAVE_{ts}_{self.transfer[:8]}"
-            shutil.copy2(src.to_str(), dest)
+            shutil.copy2(src, dest)
             self._log(f"[BCSFE] 📁 Backup → {dest}")
         except Exception as e:
             self._log(f"[BCSFE] ⚠  Backup ล้มเหลว: {e}")
@@ -96,6 +223,15 @@ class BCSFERunner:
     # ──────────────────────────────────────────────────
     # item editors
     # ──────────────────────────────────────────────────
+
+    def _read_lucky_ticket_current(self, save_file) -> int:
+        try:
+            tickets = save_file.lucky_tickets
+            if tickets and len(tickets) > 0:
+                return int(tickets[0])
+        except Exception:
+            pass
+        return 0
 
     def _edit_item(self, save_file, item: dict):
         key    = item["key"]
@@ -110,6 +246,17 @@ class BCSFERunner:
         # ── array items (sub-type loop) ──
         if cfg.get("sub_select"):
             self._edit_array_item(save_file, key, amount, max_val, label)
+            return
+
+        # ── lucky_ticket / rare_ticket: deferred ไปรัน CLI หลัง upload ──
+        if key in ("lucky_ticket", "rare_ticket"):
+            cur = 0
+            if key == "rare_ticket":
+                cur = int(save_file.rare_tickets)
+            elif key == "lucky_ticket":
+                cur = self._read_lucky_ticket_current(save_file)
+            self._deferred_cli.append({"key": key, "amount": amount, "label": label, "current": cur})
+            self._log(f"[ITEM] {label}: defer → CLI (current={cur})")
             return
 
         # ── simple scalar items — ทุกตัว ADD เสมอ ──
@@ -198,10 +345,40 @@ class BCSFERunner:
             for item in items:
                 self._edit_item(save_file, item)
 
+            # ── Python API items: upload ──
             codes = self._upload_save(save_file)
+            current_tc = codes["transfer"]
+            current_cc = codes["confirmation"]
+
+            # ── CLI deferred items (lucky_ticket / rare_ticket) ──
+            # แต่ละ session ใช้ unique cli_save_path → parallel ได้แล้ว ไม่ต้อง lock
+            has_rare = False
+            if self._deferred_cli:
+                self._log("[CLI] รอ 4 วินาที (rate limit)...")
+                time.sleep(4)
+                for idx, deferred in enumerate(self._deferred_cli):
+                    key = deferred["key"]
+                    use_local = (idx > 0)
+                    r = self._run_cli_item(current_tc, current_cc, key, deferred["amount"], deferred.get("current", 0), use_local)
+                    if r["success"]:
+                        current_tc = r["transfer"]
+                        current_cc = r["confirmation"]
+                        if key == "rare_ticket":
+                            has_rare = True
+                    else:
+                        raise RuntimeError(f"{deferred['label']} CLI ล้มเหลว: {r.get('error')}")
+                # cleanup unique cli save file
+                try:
+                    self._cli_save_path.unlink(missing_ok=True)
+                except Exception:
+                    pass
+
+            final_codes = {"transfer": current_tc, "confirmation": current_cc}
+            self._log(f"{'='*60}")
             self._close_log()
-            result = {"success": True, "new_transfer_code": codes}
-            if any(i.get("key") == "rare_ticket" for i in items):
+
+            result = {"success": True, "new_transfer_code": final_codes}
+            if has_rare:
                 result["customer_note"] = "วิธีการใช้งาน: ให้ลูกค้ากดรับไอเทม นำเข้าตู้เย็น (Storage) กดใช้ทั้งหมด และทำการแลกบัตรทองได้เลยครับ"
             return result
 

@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-05 17:33:55
+Transfer  : 650d3bd6b
+Confirm   : 8290
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=650d3b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 21009 → 31009  (+10000)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_173356_650d3bd6
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 13b159fed | Confirm ใหม่: 1570
+============================================================
+============================================================

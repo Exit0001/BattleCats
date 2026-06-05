@@ -573,6 +573,12 @@ const PRODUCT_MAP = {
 function addToCart(itemName, price) {
   let cart = JSON.parse(localStorage.getItem('cart') || '[]');
   const product = PRODUCT_MAP[itemName] || { key: itemName.toLowerCase().replace(/[^a-z0-9]+/g, '_'), amount: 1 };
+
+  if (product.key === 'rare_ticket' && cart.some(function(i){ return i.key === 'rare_ticket'; })) {
+    alert('⚠️ ใส่ Rare Ticket ได้แค่ 1 รายการต่อออเดอร์\nเพราะลูกค้าต้องไปรับในตู้เย็นก่อนถึงจะทำได้อีกครั้ง');
+    return;
+  }
+
   cart.push({ key: product.key, name: itemName, amount: product.amount, price: price, supported: product.supported !== false });
   localStorage.setItem('cart', JSON.stringify(cart));
   document.getElementById('cartCount').textContent = cart.length;

@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-05 17:33:55
+Transfer  : 8032c793d
+Confirm   : 8541
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=8032c7... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] XP: 24350646 → 99999999  (+75649353)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_173400_8032c793
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 5526efe2d | Confirm ใหม่: 1663
+============================================================
+============================================================

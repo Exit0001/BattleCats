@@ -34,6 +34,13 @@ ITEM_MAP = {
     # Lucky Ticket: 2→21→1, ต้องกด sub_enter=1 ก่อนใส่ค่า
     "lucky_ticket":    {"menu_no": 21, "max": 2999,     "has_warning": False, "label": "Lucky Ticket",          "sub_select": None,
                         "sub_enter": 1},
+
+    # ── All-character packages (amount always = 1) ──
+    "upgrade_all":   {"max": 1, "label": "Upgrade Max All",  "is_all_package": True},
+    "unlock_all":    {"max": 1, "label": "Unlock All",        "is_all_package": True},
+    "trueform_all":  {"max": 1, "label": "True Form All",     "is_all_package": True},
+    "ultraform_all": {"max": 1, "label": "Ultra Form All",    "is_all_package": True},
+    "talents_all":   {"max": 1, "label": "Max Talents All",   "is_all_package": True},
 }
 
 # ตัวเลือกจำนวนที่แสดงบนเว็บ

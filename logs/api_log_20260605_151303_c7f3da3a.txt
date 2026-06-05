@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-05 15:13:03
+Transfer  : c7f3da3ac
+Confirm   : 5853
+Country   : en
+============================================================
+[OP] เพิ่มของ 2 รายการ
+[BCSFE] ⬇  Downloading save (transfer=c7f3da... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Lucky Ticket: 0 → 100  (+100)
+[ITEM] Rare Ticket (Trade): 0 → 50  (+50)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260605_151304_c7f3da3a
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 1c2efcb34 | Confirm ใหม่: 0661
+============================================================

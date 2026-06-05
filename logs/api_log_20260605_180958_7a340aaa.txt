@@ -1,0 +1,9 @@
+============================================================
+เวลา      : 2026-06-05 18:09:58
+Transfer  : 7a340aaaf
+Confirm   : cadff6121
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=7a340a... cc=en)
+[BCSFE] ❌ ❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง
