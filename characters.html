@@ -228,7 +228,7 @@
     .svc-cb:disabled { opacity: 0.35; cursor: not-allowed; }
 
     .svc-lbl { font-family: 'Chakra Petch',sans-serif; font-size: 13px; color: #EDE6FF; font-weight: 600; }
-    .svc-note { font-size: 11px; color: rgba(210,190,255,0.48); margin-top: 3px; line-height: 1.4; }
+    .svc-note { display:block; font-size: 11.5px; font-weight: 700; color: #FDE047; background: rgba(234,179,8,0.12); border: 1px solid rgba(234,179,8,0.30); border-radius: 6px; padding: 5px 9px; margin-top: 6px; line-height: 1.4; }
     .svc-price {
       font-family: 'Russo One',sans-serif; font-size: 14px;
       color: #FF4D92; white-space: nowrap; flex-shrink: 0; margin-left: auto;
@@ -286,7 +286,7 @@
     <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="เมนู">
       <span></span><span></span><span></span>
     </button>
-    <a href="index.html" class="nav-logo"><img src="pictures/icon cat.png" style="height:20px;vertical-align:middle;margin-right:5px;"> BATTLE CATS SHOP</a>
+    <a href="index.html" class="nav-logo">BATTLE CAT PRO MAX</a>
     <ul class="nav-links">
       <li><a href="index.html">หน้าแรก</a></li>
       <li><a href="shop.html">ร้านขาย</a></li>
@@ -699,9 +699,9 @@ var _svcSel = {};  // { key: price }
 var SVC_OPTIONS = [
   { key: 'unlock_cat',    label: 'ปลดล็อค',              byTier: true,  note: null },
   { key: 'upgrade_cat',   label: 'อัพเกรด Max',           price: 15,     note: null },
-  { key: 'trueform_cat',  label: 'True Form',              price: 15,     note: null },
-  { key: 'ultraform_cat', label: 'Ultra Form',             price: 20,     note: 'ต้องมี True Form และเป็นตัวละครที่มี Ultra Form' },
-  { key: 'talents_cat',   label: 'Talent Max',             price: 20,     note: null },
+  { key: 'trueform_cat',  label: 'True Form',              price: 15,     note: 'ใช้ได้เฉพาะตัวละครที่มีระบบ True Form และ Lv.30 ขึ้นไป' },
+  { key: 'ultraform_cat', label: 'Ultra Form',             price: 20,     note: 'ใช้ได้เฉพาะตัวละครที่มีระบบ Ultra Form และต้องมี True Form แล้ว' },
+  { key: 'talents_cat',   label: 'Talent Max',             price: 20,     note: 'ใช้ได้เฉพาะตัวละครที่มีระบบ Talent' },
 ];
 
 function openSvcModal(id, tier, name) {

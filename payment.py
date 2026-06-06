@@ -14,7 +14,7 @@ from pathlib import Path
 # CONFIG — แก้ค่าตรงนี้
 # ══════════════════════════════════════════
 
-PROMPTPAY_ID   = "004999236376637"       # เบอร์ / เลขบัตรปชช ที่รับเงิน
+PROMPTPAY_ID   = "0634515901"            # เบอร์ / เลขบัตรปชช ที่รับเงิน
 TRUEMONEY_ID   = "0634515901"       # TrueMoney Wallet phone number (แก้ถ้าต่างกัน)
 SLIPOK_API_KEY = "SLIPOKR9NYYUU"  # API Key จาก slipok.com
 ORDER_DB       = Path("orders.json")
@@ -184,7 +184,7 @@ def generate_qr_base64(amount: float) -> str:
         box_size=8,
         border=2,
     )
-    qr.add_data(payload)
+    qr.add_data(payload.encode("utf-8"))  # force byte mode (PromptPay requires it)
     qr.make(fit=True)
     img = qr.make_image(fill_color="black", back_color="white")
     buf = io.BytesIO()
@@ -336,6 +336,9 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
     # ── ตรวจผลลัพธ์ ──
     if not data.get("success"):
         msg = data.get("message") or data.get("code") or "สลิปไม่ถูกต้อง"
+        # SlipOK ขัดข้องชั่วคราว (ไม่หักโควต้า) → ให้ลูกค้าส่งใหม่ภายหลัง
+        if "ขัดข้องชั่วคราว" in msg or "ขณะนี้" in msg:
+            return {"success": False, "reason": "ระบบตรวจสลิปขัดข้องชั่วคราว กรุณาลองส่งสลิปอีกครั้งใน 15 นาที (ไม่เสียโควต้า)"}
         return {"success": False, "reason": f"SlipOK: {msg}"}
 
     slip_data = data.get("data", {})
