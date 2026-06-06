@@ -21,6 +21,7 @@ from runner import BCSFERunner
 from config import ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES
 from payment import (
     ITEM_PRICE,
+    TRUEMONEY_ID,
     create_order as create_payment_order,
     create_unlock_order,
     create_all_package_order,
@@ -179,14 +180,19 @@ async def payment_create(order: OrderRequest):
         items=items_payload,
         cat_ids=order.cat_ids,
         cat_unlock_total=order.cat_unlock_total,
+        payment_method=order.payment_method,
     )
 
-    return {
-        "order_id": payment_order["order_id"],
-        "amount":   payment_order["amount"],
-        "qr_base64": payment_order["qr_base64"],
-        "expires_at": payment_order["expires_at"],
+    resp = {
+        "order_id":       payment_order["order_id"],
+        "amount":         payment_order["amount"],
+        "qr_base64":      payment_order.get("qr_base64"),
+        "expires_at":     payment_order["expires_at"],
+        "payment_method": order.payment_method,
     }
+    if order.payment_method == "truemoney":
+        resp["truemoney_id"] = TRUEMONEY_ID
+    return resp
 
 @app.post("/api/payment/create-all-package/{package_type}")
 async def payment_create_all_package(package_type: str, body: AllCatsRequest):
@@ -206,9 +212,14 @@ async def payment_create_all_package(package_type: str, body: AllCatsRequest):
         country=body.country,
         package_type=package_type,
         amount=price,
+        payment_method=body.payment_method,
     )
-    return {"order_id": order["order_id"], "amount": order["amount"],
-            "qr_base64": order["qr_base64"], "expires_at": order["expires_at"]}
+    resp = {"order_id": order["order_id"], "amount": order["amount"],
+            "qr_base64": order.get("qr_base64"), "expires_at": order["expires_at"],
+            "payment_method": body.payment_method}
+    if body.payment_method == "truemoney":
+        resp["truemoney_id"] = TRUEMONEY_ID
+    return resp
 
 
 @app.post("/api/payment/create-unlock")
@@ -225,13 +236,18 @@ async def payment_create_unlock(body: UnlockPaymentRequest):
         country=body.country,
         cat_ids=body.cat_ids,
         amount=body.total,
+        payment_method=body.payment_method,
     )
-    return {
-        "order_id":   order["order_id"],
-        "amount":     order["amount"],
-        "qr_base64":  order["qr_base64"],
-        "expires_at": order["expires_at"],
+    resp = {
+        "order_id":       order["order_id"],
+        "amount":         order["amount"],
+        "qr_base64":      order.get("qr_base64"),
+        "expires_at":     order["expires_at"],
+        "payment_method": body.payment_method,
     }
+    if body.payment_method == "truemoney":
+        resp["truemoney_id"] = TRUEMONEY_ID
+    return resp
 
 
 PER_CAT_RUNNER = {

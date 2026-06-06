@@ -136,27 +136,54 @@
           <strong style="color: #ffb347;">⚠️ สำคัญ:</strong> อย่า Login เข้าเกมขณะรอการทำ edit จะทำให้ Transfer Code หมดอายุ!
         </div>
 
+        <!-- ── Payment Method Selector ── -->
+        <div style="margin-bottom:16px;">
+          <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;color:rgba(210,190,255,0.55);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">วิธีชำระเงิน</div>
+          <div style="display:flex;gap:10px;">
+            <button id="btnPayPromptPay" onclick="setPayMethod('promptpay')"
+              style="flex:1;padding:10px;border-radius:10px;border:2px solid rgba(124,58,237,0.6);background:rgba(124,58,237,0.25);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.18s;">
+              📱 PromptPay
+            </button>
+            <button id="btnPayTrueMoney" onclick="setPayMethod('truemoney')"
+              style="flex:1;padding:10px;border-radius:10px;border:2px solid rgba(255,255,255,0.12);background:transparent;color:rgba(210,190,255,0.55);font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.18s;">
+              💳 TrueMoney
+            </button>
+          </div>
+        </div>
+
         <button class="btn btn-primary" id="checkoutBtn" onclick="checkout()" style="width: 100%; margin-bottom: 12px;">💳 ดำเนินการชำระเงิน</button>
         <button class="btn btn-outline" onclick="window.location.href='shop.html'" style="width: 100%;">ต่อไปเลือกสินค้าเพิ่ม</button>
 
-        <!-- ── PromptPay Payment Section ── -->
+        <!-- ── Payment Section ── -->
         <div id="paymentSection" style="display:none; margin-top:24px;">
           <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.3);border-radius:18px;padding:24px;">
-            <h3 style="font-family:'Russo One',sans-serif;font-size:17px;color:#FFD84E;margin-bottom:18px;letter-spacing:0.5px;">💳 ชำระเงินผ่าน PromptPay</h3>
+            <h3 id="paymentTitle" style="font-family:'Russo One',sans-serif;font-size:17px;color:#FFD84E;margin-bottom:18px;letter-spacing:0.5px;">💳 ชำระเงิน</h3>
 
-            <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;">
-              <!-- QR Code -->
+            <!-- PromptPay QR -->
+            <div id="qrSection" style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;">
               <div style="flex-shrink:0;text-align:center;">
                 <div id="qrCanvas" style="background:#fff;padding:12px;border-radius:14px;display:inline-block;box-shadow:0 0 24px rgba(124,58,237,0.3);"></div>
                 <div style="margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);">สแกนด้วยแอปธนาคาร</div>
               </div>
-
-              <!-- Order info -->
               <div style="flex:1;min-width:180px;font-family:'Chakra Petch',sans-serif;font-size:13px;">
                 <div style="margin-bottom:8px;color:rgba(210,190,255,0.6);">Order ID</div>
                 <div id="pay-orderId" style="font-family:'Russo One',sans-serif;font-size:13px;color:#FFD84E;margin-bottom:14px;word-break:break-all;"></div>
                 <div style="margin-bottom:4px;color:rgba(210,190,255,0.6);">ยอดที่ต้องชำระ</div>
                 <div id="pay-amount" style="font-family:'Russo One',sans-serif;font-size:28px;color:#FF4D92;margin-bottom:16px;"></div>
+                <div style="background:rgba(251,191,36,0.10);border:1px solid rgba(251,191,36,0.28);border-radius:10px;padding:10px;color:#FCD34D;font-size:12px;line-height:1.6;">
+                  ⚠️ อย่าปิดหน้านี้จนกว่าจะอัปโหลดสลิปเสร็จ
+                </div>
+              </div>
+            </div>
+
+            <!-- TrueMoney info -->
+            <div id="tmSection" style="display:none;">
+              <div style="background:rgba(255,120,0,0.08);border:1px solid rgba(255,120,0,0.35);border-radius:14px;padding:20px;text-align:center;">
+                <div style="font-size:32px;margin-bottom:8px;">💳</div>
+                <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);margin-bottom:4px;">โอนผ่าน TrueMoney Wallet ไปที่เบอร์</div>
+                <div id="pay-tmId" style="font-family:'Russo One',sans-serif;font-size:26px;color:#FF6B00;letter-spacing:2px;margin-bottom:12px;"></div>
+                <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:4px;">Order ID: <span id="pay-orderIdTm" style="color:#FFD84E;"></span></div>
+                <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:12px;">ยอดที่ต้องชำระ: <span id="pay-amountTm" style="font-family:'Russo One',sans-serif;font-size:18px;color:#FF4D92;"></span></div>
                 <div style="background:rgba(251,191,36,0.10);border:1px solid rgba(251,191,36,0.28);border-radius:10px;padding:10px;color:#FCD34D;font-size:12px;line-height:1.6;">
                   ⚠️ อย่าปิดหน้านี้จนกว่าจะอัปโหลดสลิปเสร็จ
                 </div>
@@ -244,9 +271,8 @@
       <div class="footer-col">
         <h4>ติดต่อเรา</h4>
         <ul>
-          <li><a href="#">📱 Line: @battlecats</a></li>
-          <li><a href="#">💬 Discord: BattleCats</a></li>
-          <li><a href="#">📘 Facebook: BattleCatsShop</a></li>
+          <li><a href="https://www.facebook.com/pronajaa.gamedee.1/" target="_blank" rel="noopener">📘 Facebook (ผู้ใช้)</a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61572054218886" target="_blank" rel="noopener">📘 Facebook (เพจร้าน)</a></li>
         </ul>
       </div>
     </div>
@@ -414,6 +440,29 @@ function removeFromCart(index) {
   displayCart();
 }
 
+var _selectedPayMethod = 'promptpay';
+
+function setPayMethod(method) {
+  _selectedPayMethod = method;
+  var btnPP = document.getElementById('btnPayPromptPay');
+  var btnTM = document.getElementById('btnPayTrueMoney');
+  if (method === 'promptpay') {
+    btnPP.style.background = 'rgba(124,58,237,0.25)';
+    btnPP.style.borderColor = 'rgba(124,58,237,0.6)';
+    btnPP.style.color = '#EDE6FF';
+    btnTM.style.background = 'transparent';
+    btnTM.style.borderColor = 'rgba(255,255,255,0.12)';
+    btnTM.style.color = 'rgba(210,190,255,0.55)';
+  } else {
+    btnTM.style.background = 'rgba(255,120,0,0.18)';
+    btnTM.style.borderColor = 'rgba(255,120,0,0.6)';
+    btnTM.style.color = '#FF6B00';
+    btnPP.style.background = 'transparent';
+    btnPP.style.borderColor = 'rgba(255,255,255,0.12)';
+    btnPP.style.color = 'rgba(210,190,255,0.55)';
+  }
+}
+
 function setSubmitState(isSubmitting) {
   const button = document.getElementById('checkoutBtn');
   if (!button) return;
@@ -421,7 +470,7 @@ function setSubmitState(isSubmitting) {
   button.textContent = isSubmitting ? 'กำลังส่งคำสั่ง...' : '🚀 ชำระเงินเลย';
 }
 
-// ── Checkout: call API → show QR ─────────────────────────────
+// ── Checkout: call API → show payment section ─────────────────
 async function checkout() {
   var transferCode = document.getElementById('transferCode').value.trim();
   var confirmCode  = document.getElementById('confirmCode').value.trim();
@@ -457,6 +506,7 @@ async function checkout() {
         items:              items,
         cat_ids:            catIds,
         cat_unlock_total:   catUnlockTotal,
+        payment_method:     _selectedPayMethod,
       }),
     });
     var data = await res.json();
@@ -468,7 +518,7 @@ async function checkout() {
     hist.unshift({ id: data.order_id, total: data.amount, items: cart, created_at: new Date().toISOString() });
     localStorage.setItem('bc_order_history', JSON.stringify(hist.slice(0, 20)));
 
-    showPaymentSection(data.order_id, data.amount, data.qr_base64);
+    showPaymentSection(data.order_id, data.amount, data.qr_base64, data.payment_method, data.truemoney_id);
   } catch (err) {
     alert('❌ สร้าง order ไม่สำเร็จ: ' + (err.message || err));
     console.error(err);
@@ -477,11 +527,13 @@ async function checkout() {
   }
 }
 
-// ── Show QR payment section ───────────────────────────────────
-function showPaymentSection(orderId, total, qr_base64) {
+// ── Show payment section (PromptPay QR หรือ TrueMoney wallet) ──
+function showPaymentSection(orderId, total, qr_base64, paymentMethod, truemoneyId) {
   _paymentLocked = true;
   localStorage.setItem('bc_pending_payment', JSON.stringify({
     orderId: orderId, amount: total, qr_base64: qr_base64,
+    payment_method: paymentMethod || 'promptpay',
+    truemoney_id: truemoneyId || '',
     saved_at: Date.now()
   }));
   // เปลี่ยนปุ่มลบทุกอันเป็น lock icon
@@ -491,22 +543,31 @@ function showPaymentSection(orderId, total, qr_base64) {
     btn.style.color = 'rgba(255,255,255,0.35)';
     btn.style.cursor = 'not-allowed';
   });
-  // ซ่อนปุ่ม checkout และ "ต่อไปเลือกสินค้า"
+  // ซ่อนปุ่ม checkout และ selector
   var checkoutBtn = document.getElementById('checkoutBtn');
   if (checkoutBtn) { checkoutBtn.style.display = 'none'; }
   document.getElementById('paymentSection').style.display = 'block';
-  document.getElementById('pay-orderId').textContent = orderId;
-  document.getElementById('pay-amount').textContent   = '฿' + total.toLocaleString();
 
-  var qrEl = document.getElementById('qrCanvas');
-  qrEl.innerHTML = '';
-  if (qr_base64) {
-    var img = document.createElement('img');
-    img.src = 'data:image/png;base64,' + qr_base64;
-    img.style.cssText = 'width:220px;height:220px;border-radius:10px;display:block;';
-    qrEl.appendChild(img);
+  var isTM = (paymentMethod === 'truemoney');
+  document.getElementById('paymentTitle').textContent = isTM ? '💳 ชำระเงินผ่าน TrueMoney Wallet' : '💳 ชำระเงินผ่าน PromptPay';
+  document.getElementById('qrSection').style.display = isTM ? 'none' : 'flex';
+  document.getElementById('tmSection').style.display = isTM ? '' : 'none';
+
+  if (isTM) {
+    document.getElementById('pay-tmId').textContent = truemoneyId || '-';
+    document.getElementById('pay-orderIdTm').textContent = orderId;
+    document.getElementById('pay-amountTm').textContent = '฿' + total.toLocaleString();
   } else {
-    qrEl.innerHTML = '<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:10px;font-size:13px;color:#666;text-align:center;padding:16px;">⚠️ ไม่สามารถสร้าง QR Code ได้</div>';
+    document.getElementById('pay-orderId').textContent = orderId;
+    document.getElementById('pay-amount').textContent   = '฿' + total.toLocaleString();
+    var qrEl = document.getElementById('qrCanvas');
+    qrEl.innerHTML = '';
+    if (qr_base64) {
+      var img = document.createElement('img');
+      img.src = 'data:image/png;base64,' + qr_base64;
+      img.style.cssText = 'width:220px;height:220px;border-radius:10px;display:block;';
+      qrEl.appendChild(img);
+    }
   }
 
   document.getElementById('paymentSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -831,7 +892,7 @@ window.addEventListener('load', () => {
   try { pending = JSON.parse(localStorage.getItem('bc_pending_payment')); } catch(e) {}
   if (pending && pending.orderId) {
     _currentOrderId = pending.orderId;
-    showPaymentSection(pending.orderId, pending.amount, pending.qr_base64);
+    showPaymentSection(pending.orderId, pending.amount, pending.qr_base64, pending.payment_method, pending.truemoney_id);
     // แสดง banner แจ้งว่านี่คือ order ที่ค้างอยู่
     var notice = document.createElement('div');
     notice.style.cssText = 'background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.35);border-radius:12px;padding:12px 16px;margin-bottom:14px;font-family:\'Chakra Petch\',sans-serif;font-size:13px;color:#FCD34D;line-height:1.6;';

@@ -14,7 +14,8 @@ from pathlib import Path
 # CONFIG — แก้ค่าตรงนี้
 # ══════════════════════════════════════════
 
-PROMPTPAY_ID   = "0634515901"       # เบอร์ / เลขบัตรปชช ที่รับเงิน
+PROMPTPAY_ID   = "004999236376637"       # เบอร์ / เลขบัตรปชช ที่รับเงิน
+TRUEMONEY_ID   = "0634515901"       # TrueMoney Wallet phone number (แก้ถ้าต่างกัน)
 SLIPOK_API_KEY = "SLIPOKR9NYYUU"  # API Key จาก slipok.com
 ORDER_DB       = Path("orders.json")
 SLIP_DB        = Path("used_slips.json")
@@ -217,7 +218,8 @@ def calculate_total(items: list[dict]) -> int:
 def create_order(transfer_code: str, confirmation_code: str,
                  country: str, items: list[dict],
                  cat_ids: list | None = None,
-                 cat_unlock_total: int = 0) -> dict:
+                 cat_unlock_total: int = 0,
+                 payment_method: str = "promptpay") -> dict:
     """
     สร้าง order ใหม่ บันทึกลง DB และสร้าง QR
     คืน order object ที่มี order_id, amount, qr_base64
@@ -234,10 +236,11 @@ def create_order(transfer_code: str, confirmation_code: str,
         "items":             items,
         "cat_ids":           cat_ids or [],
         "amount":            amount,
+        "payment_method":    payment_method,
         "status":            "pending",
         "created_at":        datetime.now().isoformat(),
         "expires_at":        expires,
-        "qr_base64":         generate_qr_base64(amount),
+        "qr_base64":         generate_qr_base64(amount) if payment_method == "promptpay" else None,
     }
 
     orders = _load_orders()
@@ -249,7 +252,8 @@ def create_order(transfer_code: str, confirmation_code: str,
 
 
 def create_all_package_order(transfer_code: str, confirmation_code: str,
-                             country: str, package_type: str, amount: int) -> dict:
+                             country: str, package_type: str, amount: int,
+                             payment_method: str = "promptpay") -> dict:
     """สร้าง order สำหรับแพ็กเกจ All (unlock_all, trueform_all, ฯลฯ)"""
     order_id = str(uuid.uuid4())[:8].upper()
     expires  = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
@@ -262,10 +266,11 @@ def create_all_package_order(transfer_code: str, confirmation_code: str,
         "cat_ids":           [],
         "package_type":      package_type,
         "amount":            amount,
+        "payment_method":    payment_method,
         "status":            "pending",
         "created_at":        datetime.now().isoformat(),
         "expires_at":        expires,
-        "qr_base64":         generate_qr_base64(amount),
+        "qr_base64":         generate_qr_base64(amount) if payment_method == "promptpay" else None,
     }
     orders = _load_orders()
     orders[order_id] = order
@@ -361,7 +366,8 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
 
 
 def create_unlock_order(transfer_code: str, confirmation_code: str,
-                        country: str, cat_ids: list, amount: int) -> dict:
+                        country: str, cat_ids: list, amount: int,
+                        payment_method: str = "promptpay") -> dict:
     """สร้าง order สำหรับปลดล็อคแมว พร้อม QR PromptPay"""
     order_id = str(uuid.uuid4())[:8].upper()
     expires  = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
@@ -374,10 +380,11 @@ def create_unlock_order(transfer_code: str, confirmation_code: str,
         "cat_ids":           cat_ids,
         "items":             [],
         "amount":            amount,
+        "payment_method":    payment_method,
         "status":            "pending",
         "created_at":        datetime.now().isoformat(),
         "expires_at":        expires,
-        "qr_base64":         generate_qr_base64(amount),
+        "qr_base64":         generate_qr_base64(amount) if payment_method == "promptpay" else None,
     }
     orders = _load_orders()
     orders[order_id] = order

@@ -18,6 +18,7 @@ class OrderRequest(BaseModel):
     items: List[ItemRequest] = []    # รายการ item (ถ้ามี)
     cat_ids: Optional[List[int]] = None   # IDs แมวที่ต้องการปลดล็อค (ถ้ามี)
     cat_unlock_total: int = 0        # ราคาปลดล็อคแมวรวม (คำนวณจาก frontend)
+    payment_method: str = "promptpay"  # "promptpay" หรือ "truemoney"
 
 class ItemSummary(BaseModel):
     """สรุป item ที่แก้ไขไปแล้ว"""
@@ -51,6 +52,7 @@ class AllCatsRequest(BaseModel):
     transfer_code: str
     confirmation_code: str
     country: str = "1"
+    payment_method: str = "promptpay"
 
 class UnlockPaymentRequest(BaseModel):
     """สร้าง order สำหรับปลดล็อคแมว"""
@@ -59,6 +61,7 @@ class UnlockPaymentRequest(BaseModel):
     country: str = "1"
     cat_ids: List[int]
     total: int
+    payment_method: str = "promptpay"
 
 class UnlockCharactersRequest(BaseModel):
     """โมเดลสำหรับปลดล็อคตัวละคร"""

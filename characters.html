@@ -486,9 +486,8 @@
       <div class="footer-col">
         <h4>ติดต่อเรา</h4>
         <ul>
-          <li><a href="#">📱 Line: @battlecats</a></li>
-          <li><a href="#">💬 Discord: BattleCats</a></li>
-          <li><a href="#">📘 Facebook: BattleCatsShop</a></li>
+          <li><a href="https://www.facebook.com/pronajaa.gamedee.1/" target="_blank" rel="noopener">📘 Facebook (ผู้ใช้)</a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61572054218886" target="_blank" rel="noopener">📘 Facebook (เพจร้าน)</a></li>
         </ul>
       </div>
     </div>
@@ -552,11 +551,28 @@
         <option value="3" style="background:#0e0620;color:#EDE6FF;">KR (เกาหลี)</option>
         <option value="4" style="background:#0e0620;color:#EDE6FF;">TW (ไต้หวัน)</option>
       </select>
-      <button class="btn btn-primary" style="width:100%;" onclick="apCreateOrder()">สร้าง QR ชำระเงิน →</button>
+      <div style="margin-bottom:14px;">
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">วิธีชำระเงิน</div>
+        <div style="display:flex;gap:10px;">
+          <button id="apBtnPP" onclick="apSetPayMethod('promptpay')" style="flex:1;padding:9px;border-radius:10px;border:1px solid rgba(124,58,237,0.6);background:rgba(124,58,237,0.25);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;cursor:pointer;">📱 PromptPay</button>
+          <button id="apBtnTM" onclick="apSetPayMethod('truemoney')" style="flex:1;padding:9px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:transparent;color:rgba(210,190,255,0.55);font-family:'Chakra Petch',sans-serif;font-size:13px;cursor:pointer;">💳 TrueMoney</button>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;" onclick="apCreateOrder()">ชำระเงิน →</button>
     </div>
     <div id="apStep-qr" style="display:none;text-align:center;">
-      <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.65);margin-bottom:12px;">สแกน QR PromptPay ชำระ <span id="apQrAmt" style="color:#FF4D92;font-family:'Russo One',sans-serif;"></span></div>
-      <img id="apQrImg" src="" style="width:200px;height:200px;border-radius:12px;background:#fff;padding:8px;margin-bottom:16px;">
+      <!-- PromptPay QR -->
+      <div id="apQrBlock">
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.65);margin-bottom:12px;">สแกน QR PromptPay ชำระ <span id="apQrAmt" style="color:#FF4D92;font-family:'Russo One',sans-serif;"></span></div>
+        <img id="apQrImg" src="" style="width:200px;height:200px;border-radius:12px;background:#fff;padding:8px;margin-bottom:16px;">
+      </div>
+      <!-- TrueMoney info -->
+      <div id="apTmBlock" style="display:none;background:rgba(255,120,0,0.08);border:1px solid rgba(255,120,0,0.35);border-radius:14px;padding:20px;margin-bottom:16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:8px;">💳</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.7);margin-bottom:6px;">โอนผ่าน TrueMoney Wallet ไปที่เบอร์</div>
+        <div id="apTmId" style="font-family:'Russo One',sans-serif;font-size:24px;color:#FF6B00;letter-spacing:2px;margin-bottom:8px;"></div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);">ยอดที่ต้องชำระ: <span id="apTmAmt" style="color:#FF4D92;font-family:'Russo One',sans-serif;"></span></div>
+      </div>
       <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;margin-bottom:16px;">หลังโอนแล้ว อัปโหลดสลิปด้านล่าง</div>
       <label style="display:block;width:100%;box-sizing:border-box;padding:12px;background:rgba(124,58,237,0.12);border:2px dashed rgba(124,58,237,0.4);border-radius:12px;cursor:pointer;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#C4B5FD;margin-bottom:12px;" for="apSlip">📎 เลือกไฟล์สลิป</label>
       <input type="file" id="apSlip" accept="image/*" style="display:none;" onchange="apSlipSelected(this)">
@@ -812,15 +828,39 @@ function addAllPackage(key, name, price) {
 }
 
 // ── All-Package Checkout Flow ──────────────────────────────────
-var _apPkgType = '';
-var _apOrderId  = '';
-var _apSlipFile = null;
-var _apBackend  = '';
+var _apPkgType   = '';
+var _apOrderId   = '';
+var _apSlipFile  = null;
+var _apBackend   = '';
+var _apPayMethod = 'promptpay';
+
+function apSetPayMethod(method) {
+  _apPayMethod = method;
+  var btnPP = document.getElementById('apBtnPP');
+  var btnTM = document.getElementById('apBtnTM');
+  if (method === 'promptpay') {
+    btnPP.style.background = 'rgba(124,58,237,0.25)';
+    btnPP.style.borderColor = 'rgba(124,58,237,0.6)';
+    btnPP.style.color = '#EDE6FF';
+    btnTM.style.background = 'transparent';
+    btnTM.style.borderColor = 'rgba(255,255,255,0.12)';
+    btnTM.style.color = 'rgba(210,190,255,0.55)';
+  } else {
+    btnTM.style.background = 'rgba(255,120,0,0.18)';
+    btnTM.style.borderColor = 'rgba(255,120,0,0.6)';
+    btnTM.style.color = '#FF6B00';
+    btnPP.style.background = 'transparent';
+    btnPP.style.borderColor = 'rgba(255,255,255,0.12)';
+    btnPP.style.color = 'rgba(210,190,255,0.55)';
+  }
+}
 
 function apOpen(pkgType, name, price) {
-  _apPkgType = pkgType;
-  _apOrderId  = '';
-  _apSlipFile = null;
+  _apPkgType   = pkgType;
+  _apOrderId   = '';
+  _apSlipFile  = null;
+  _apPayMethod = 'promptpay';
+  apSetPayMethod('promptpay');
   document.getElementById('apPkgName').textContent  = name;
   document.getElementById('apPkgPrice').textContent = price ? '฿' + price : 'สอบถามราคา';
   document.getElementById('apTC').value = '';
@@ -849,13 +889,21 @@ async function apCreateOrder() {
     var resp = await fetch(_apBackend + '/api/payment/create-all-package/' + _apPkgType, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({transfer_code: tc, confirmation_code: cc, country: srv}),
+      body: JSON.stringify({transfer_code: tc, confirmation_code: cc, country: srv, payment_method: _apPayMethod}),
     });
     var data = await resp.json();
     if (!resp.ok) { apShowErr(data.detail || 'เกิดข้อผิดพลาด'); return; }
     _apOrderId = data.order_id;
-    document.getElementById('apQrAmt').textContent = '฿' + data.amount;
-    document.getElementById('apQrImg').src = 'data:image/png;base64,' + data.qr_base64;
+    var isTM = (data.payment_method === 'truemoney');
+    document.getElementById('apQrBlock').style.display = isTM ? 'none' : '';
+    document.getElementById('apTmBlock').style.display = isTM ? '' : 'none';
+    if (isTM) {
+      document.getElementById('apTmId').textContent  = data.truemoney_id || '-';
+      document.getElementById('apTmAmt').textContent = '฿' + data.amount;
+    } else {
+      document.getElementById('apQrAmt').textContent = '฿' + data.amount;
+      document.getElementById('apQrImg').src = 'data:image/png;base64,' + data.qr_base64;
+    }
     document.getElementById('apStep-order').style.display = 'none';
     document.getElementById('apStep-qr').style.display    = '';
     apShowErr('');
