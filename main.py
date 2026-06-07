@@ -16,7 +16,7 @@ import asyncio
 import shutil
 from pathlib import Path
 from datetime import datetime
-from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest
+from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest
 from runner import BCSFERunner
 from config import ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES
 from payment import (
@@ -29,6 +29,7 @@ from payment import (
     is_order_expired,
     update_order_status,
     verify_slip,
+    redeem_truemoney_voucher,
     mark_slip_used,
 )
 
@@ -448,6 +449,58 @@ async def payment_verify(order_id: str, slip: UploadFile = File(...)):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}")
+
+@app.post("/api/payment/verify-voucher/{order_id}")
+async def payment_verify_voucher(order_id: str, body: VoucherRedeemRequest):
+    """verify TrueMoney ด้วยโค้ดซองอั่งเป่า แล้วรัน BCSFE ต่อ"""
+    order = get_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="ไม่พบ order นี้")
+
+    if is_order_expired(order):
+        raise HTTPException(status_code=400, detail="order หมดอายุแล้ว กรุณาสั่งใหม่")
+
+    if order["status"] == "bcsfe_failed":
+        return {"success": False, "bcsfe_failed": True,
+                "error": "สลิปแล้วแต่ Code ไม่ถูกต้อง กรุณากรอก Code ใหม่"}
+
+    if order["status"] in ("paid", "done", "retrying"):
+        raise HTTPException(status_code=400, detail="order นี้ดำเนินการแล้ว")
+
+    voucher_result = await redeem_truemoney_voucher(body.voucher_code, order_id)
+    if not voucher_result["success"]:
+        raise HTTPException(status_code=400, detail=voucher_result["reason"])
+
+    transaction_id = voucher_result.get("transaction_id", "")
+
+    try:
+        step_result = await run_bcsfe(_run_bcsfe_steps, order, order["transfer_code"], order["confirmation_code"])
+
+        if not step_result["success"]:
+            update_order_status(order_id, "bcsfe_failed", {"error": step_result["error"]})
+            return {"success": False, "bcsfe_failed": True, "error": step_result["error"]}
+
+        new_tc, new_cc = step_result["new_tc"], step_result["new_cc"]
+        mark_slip_used(transaction_id)
+        backup_save(new_tc or order["transfer_code"])
+        update_order_status(order_id, "done", {
+            "new_transfer_code":     new_tc,
+            "new_confirmation_code": new_cc,
+            "done_at":               datetime.now().isoformat(),
+        })
+
+        return {
+            "success":               True,
+            "new_transfer_code":     new_tc,
+            "new_confirmation_code": new_cc,
+            "summary":               step_result["summary"],
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"เกิดข้อผิดพลาด: {e}")
+
 
 @app.get("/api/payment/status/{order_id}")
 def payment_status(order_id: str):

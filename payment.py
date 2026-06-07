@@ -5,6 +5,7 @@ import qrcode.image.svg
 import io
 import base64
 import json
+import re
 import uuid
 import httpx
 from datetime import datetime, timedelta
@@ -366,6 +367,96 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
 
     print(f"[SLIPOK] ✅ order {order_id} ชำระแล้ว {received} บาท")
     return {"success": True, "reason": "ชำระเงินสำเร็จ", "transaction_id": transaction_id}
+
+# ══════════════════════════════════════════
+# TRUEMONEY ANGPAO (ซองอั่งเป่า) — verify ผ่าน redeem API ตรง
+# ══════════════════════════════════════════
+
+_ANGPAO_ERROR_MESSAGES = {
+    "VOUCHER_EXPIRED":        "ซองอั่งเป่านี้หมดอายุแล้ว",
+    "VOUCHER_NOT_FOUND":      "ไม่พบซองอั่งเป่านี้ ตรวจสอบโค้ด/ลิงก์อีกครั้ง",
+    "VOUCHER_OUT_OF_STOCK":   "ซองอั่งเป่านี้ถูกใช้ไปแล้ว",
+    "TARGET_USER_REDEEMED":   "ซองอั่งเป่านี้ถูกใช้ไปแล้ว",
+    "CANNOT_GET_OWN_VOUCHER": "ไม่สามารถใช้ซองอั่งเป่าของตัวเองได้",
+}
+
+
+def _extract_voucher_hash(code_or_link: str) -> str:
+    """ดึง voucher hash จาก angpao link (gift.truemoney.com/campaign/?v=xxxx) หรือโค้ดตรงๆ"""
+    code_or_link = code_or_link.strip()
+    m = re.search(r"[?&]v=([a-zA-Z0-9]+)", code_or_link)
+    if m:
+        return m.group(1)
+    return code_or_link
+
+
+async def redeem_truemoney_voucher(voucher_code: str, order_id: str) -> dict:
+    """
+    Redeem ซองอั่งเป่า TrueMoney เข้า wallet เรา แล้วเช็คยอดกับ order
+    คืน {"success": True/False, "reason": "...", "transaction_id": "..."}
+    """
+    order = get_order(order_id)
+    if not order:
+        return {"success": False, "reason": "ไม่พบ order นี้"}
+
+    if is_order_expired(order):
+        update_order_status(order_id, "expired")
+        return {"success": False, "reason": "order หมดอายุแล้ว กรุณาสั่งใหม่"}
+
+    if order["status"] == "paid":
+        return {"success": False, "reason": "order นี้ชำระแล้ว"}
+
+    voucher_hash = _extract_voucher_hash(voucher_code)
+    if not voucher_hash:
+        return {"success": False, "reason": "กรุณากรอกโค้ด/ลิงก์ซองอั่งเป่า"}
+
+    used_slips = _load_slips()
+    if voucher_hash in used_slips:
+        return {"success": False, "reason": "ซองอั่งเป่านี้ถูกใช้ไปแล้ว"}
+
+    mobile = TRUEMONEY_ID.replace("-", "").replace(" ", "")
+    if mobile.startswith("0"):
+        mobile = "66" + mobile[1:]
+
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.post(
+                f"https://gift.truemoney.com/campaign/vouchers/{voucher_hash}/redeem",
+                json={"mobile": mobile, "voucher_hash": voucher_hash},
+                headers={"Content-Type": "application/json"},
+            )
+        data = resp.json()
+        print(f"[ANGPAO] response: {json.dumps(data, ensure_ascii=False)}")
+    except Exception as e:
+        return {"success": False, "reason": f"เช็คซองอั่งเป่าไม่ได้: {e}"}
+
+    status_obj = data.get("status") or {}
+    code = data.get("code") or status_obj.get("code") or ("SUCCESS" if data.get("success") else "")
+
+    if code != "SUCCESS":
+        msg = _ANGPAO_ERROR_MESSAGES.get(code) or data.get("message") or status_obj.get("message") or "ซองอั่งเป่าไม่ถูกต้อง"
+        return {"success": False, "reason": msg}
+
+    voucher_data = data.get("data") or {}
+    voucher = voucher_data.get("my_ticket") or voucher_data.get("voucher") or {}
+    amount_baht = voucher.get("amount_baht")
+    if amount_baht is not None:
+        received = float(amount_baht)
+    else:
+        received = float(data.get("amount", 0)) / 100  # satang → บาท
+
+    expected = float(order["amount"])
+    if abs(received - expected) > 0.01:
+        return {"success": False, "reason": f"ยอดไม่ตรง คาดหวัง {expected:.2f} แต่ได้ {received:.2f} บาท"}
+
+    update_order_status(order_id, "paid", {
+        "paid_at":        datetime.now().isoformat(),
+        "transaction_id": voucher_hash,
+        "received":       received,
+    })
+
+    print(f"[ANGPAO] ✅ order {order_id} ชำระแล้ว {received} บาท")
+    return {"success": True, "reason": "ชำระเงินสำเร็จ", "transaction_id": voucher_hash}
 
 
 def create_unlock_order(transfer_code: str, confirmation_code: str,

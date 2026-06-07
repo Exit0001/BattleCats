@@ -568,15 +568,24 @@
       </div>
       <!-- TrueMoney info -->
       <div id="apTmBlock" style="display:none;background:rgba(255,120,0,0.08);border:1px solid rgba(255,120,0,0.35);border-radius:14px;padding:20px;margin-bottom:16px;text-align:center;">
-        <div style="font-size:28px;margin-bottom:8px;">💳</div>
-        <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.7);margin-bottom:6px;">โอนผ่าน TrueMoney Wallet ไปที่เบอร์</div>
-        <div id="apTmId" style="font-family:'Russo One',sans-serif;font-size:24px;color:#FF6B00;letter-spacing:2px;margin-bottom:8px;"></div>
+        <div style="font-size:28px;margin-bottom:8px;">🧧</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.7);margin-bottom:8px;">ส่งซองอั่งเป่า (Angpao) มูลค่าตามยอดด้านล่าง แล้ววางโค้ด/ลิงก์ในช่องด้านล่าง</div>
         <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);">ยอดที่ต้องชำระ: <span id="apTmAmt" style="color:#FF4D92;font-family:'Russo One',sans-serif;"></span></div>
       </div>
-      <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;margin-bottom:16px;">หลังโอนแล้ว อัปโหลดสลิปด้านล่าง</div>
-      <label style="display:block;width:100%;box-sizing:border-box;padding:12px;background:rgba(124,58,237,0.12);border:2px dashed rgba(124,58,237,0.4);border-radius:12px;cursor:pointer;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#C4B5FD;margin-bottom:12px;" for="apSlip">📎 เลือกไฟล์สลิป</label>
-      <input type="file" id="apSlip" accept="image/*" style="display:none;" onchange="apSlipSelected(this)">
-      <div id="apSlipName" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-bottom:12px;"></div>
+      <!-- PromptPay: slip upload -->
+      <div id="apSlipBlock">
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;margin-bottom:16px;">หลังโอนแล้ว อัปโหลดสลิปด้านล่าง</div>
+        <label style="display:block;width:100%;box-sizing:border-box;padding:12px;background:rgba(124,58,237,0.12);border:2px dashed rgba(124,58,237,0.4);border-radius:12px;cursor:pointer;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#C4B5FD;margin-bottom:12px;" for="apSlip">📎 เลือกไฟล์สลิป</label>
+        <input type="file" id="apSlip" accept="image/*" style="display:none;" onchange="apSlipSelected(this)">
+        <div id="apSlipName" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-bottom:12px;"></div>
+      </div>
+      <!-- TrueMoney: angpao voucher input -->
+      <div id="apVoucherBlock" style="display:none;">
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;margin-bottom:10px;">หลังโอนแล้ว วางโค้ด/ลิงก์ซองอั่งเป่าด้านล่าง</div>
+        <input type="text" id="apVoucherInput" placeholder="https://gift.truemoney.com/campaign/?v=..."
+          style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,120,0,0.3);border-radius:10px;color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;margin-bottom:12px;"
+          oninput="apVoucherChanged(this)">
+      </div>
       <button class="btn btn-primary" style="width:100%;" id="apVerifyBtn" onclick="apVerify()" disabled>ยืนยันการชำระเงิน</button>
     </div>
     <div id="apStep-done" style="display:none;text-align:center;">
@@ -866,6 +875,7 @@ function apOpen(pkgType, name, price) {
   document.getElementById('apTC').value = '';
   document.getElementById('apCC').value = '';
   document.getElementById('apSlipName').textContent = '';
+  document.getElementById('apVoucherInput').value = '';
   document.getElementById('apVerifyBtn').disabled = true;
   document.getElementById('apError').style.display   = 'none';
   document.getElementById('apLoading').style.display = 'none';
@@ -897,8 +907,9 @@ async function apCreateOrder() {
     var isTM = (data.payment_method === 'truemoney');
     document.getElementById('apQrBlock').style.display = isTM ? 'none' : '';
     document.getElementById('apTmBlock').style.display = isTM ? '' : 'none';
+    document.getElementById('apSlipBlock').style.display    = isTM ? 'none' : '';
+    document.getElementById('apVoucherBlock').style.display = isTM ? '' : 'none';
     if (isTM) {
-      document.getElementById('apTmId').textContent  = data.truemoney_id || '-';
       document.getElementById('apTmAmt').textContent = '฿' + data.amount;
     } else {
       document.getElementById('apQrAmt').textContent = '฿' + data.amount;
@@ -918,15 +929,35 @@ function apSlipSelected(inp) {
   document.getElementById('apVerifyBtn').disabled = !_apSlipFile;
 }
 
+function apVoucherChanged(inp) {
+  document.getElementById('apVerifyBtn').disabled = !inp.value.trim();
+}
+
 async function apVerify() {
-  if (!_apSlipFile || !_apOrderId) return;
+  if (!_apOrderId) return;
+  var isTM = (_apPayMethod === 'truemoney');
+  if (isTM) {
+    var code = document.getElementById('apVoucherInput').value.trim();
+    if (!code) return;
+  } else {
+    if (!_apSlipFile) return;
+  }
   apLoading(true);
   try {
-    var fd = new FormData();
-    fd.append('slip', _apSlipFile);
-    var resp = await fetch(_apBackend + '/api/payment/verify/' + _apOrderId, {method:'POST', body: fd});
-    var data = await resp.json();
-    if (!resp.ok || !data.success) { apShowErr(data.detail || data.error || 'ยืนยันสลิปไม่ผ่าน'); return; }
+    var resp, data;
+    if (isTM) {
+      resp = await fetch(_apBackend + '/api/payment/verify-voucher/' + _apOrderId, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ voucher_code: document.getElementById('apVoucherInput').value.trim() }),
+      });
+    } else {
+      var fd = new FormData();
+      fd.append('slip', _apSlipFile);
+      resp = await fetch(_apBackend + '/api/payment/verify/' + _apOrderId, {method:'POST', body: fd});
+    }
+    data = await resp.json();
+    if (!resp.ok || !data.success) { apShowErr(data.detail || data.error || 'ยืนยันการชำระเงินไม่ผ่าน'); return; }
     document.getElementById('apNewTC').textContent = data.new_transfer_code || '-';
     document.getElementById('apNewCC').textContent = data.new_confirmation_code || '-';
     document.getElementById('apStep-qr').style.display   = 'none';

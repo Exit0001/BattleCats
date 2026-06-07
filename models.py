@@ -47,6 +47,10 @@ class RetryRequest(BaseModel):
     transfer_code: str
     confirmation_code: str
 
+class VoucherRedeemRequest(BaseModel):
+    """ส่งโค้ด/ลิงก์ซองอั่งเป่า TrueMoney เพื่อ verify การชำระเงิน"""
+    voucher_code: str
+
 class AllCatsRequest(BaseModel):
     """สำหรับ action ที่ทำกับทุกตัว (ไม่ต้องระบุ IDs)"""
     transfer_code: str

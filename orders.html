@@ -179,19 +179,18 @@
             <!-- TrueMoney info -->
             <div id="tmSection" style="display:none;">
               <div style="background:rgba(255,120,0,0.08);border:1px solid rgba(255,120,0,0.35);border-radius:14px;padding:20px;text-align:center;">
-                <div style="font-size:32px;margin-bottom:8px;">💳</div>
-                <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);margin-bottom:4px;">โอนผ่าน TrueMoney Wallet ไปที่เบอร์</div>
-                <div id="pay-tmId" style="font-family:'Russo One',sans-serif;font-size:26px;color:#FF6B00;letter-spacing:2px;margin-bottom:12px;"></div>
+                <div style="font-size:32px;margin-bottom:8px;">🧧</div>
+                <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.7);margin-bottom:12px;">ส่งซองอั่งเป่า (Angpao) มูลค่าตามยอดด้านล่าง แล้ววางโค้ด/ลิงก์ในช่องด้านล่างนี้</div>
                 <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:4px;">Order ID: <span id="pay-orderIdTm" style="color:#FFD84E;"></span></div>
                 <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:12px;">ยอดที่ต้องชำระ: <span id="pay-amountTm" style="font-family:'Russo One',sans-serif;font-size:18px;color:#FF4D92;"></span></div>
                 <div style="background:rgba(251,191,36,0.10);border:1px solid rgba(251,191,36,0.28);border-radius:10px;padding:10px;color:#FCD34D;font-size:12px;line-height:1.6;">
-                  ⚠️ อย่าปิดหน้านี้จนกว่าจะอัปโหลดสลิปเสร็จ
+                  ⚠️ อย่าปิดหน้านี้จนกว่าจะส่งโค้ดซองอั่งเป่าเสร็จ
                 </div>
               </div>
             </div>
 
-            <!-- Slip upload -->
-            <div style="margin-top:20px;">
+            <!-- Slip upload (PromptPay) -->
+            <div id="slipUploadSection" style="margin-top:20px;">
               <label style="display:block;font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;color:rgba(210,190,255,0.55);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">อัปโหลดสลิปการโอน</label>
               <input type="file" id="slipInput" accept="image/*"
                 style="width:100%;padding:10px 12px;border:1px solid rgba(124,58,237,0.28);border-radius:10px;background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;"
@@ -202,6 +201,17 @@
               <button class="btn btn-primary" id="submitSlipBtn" onclick="submitSlip()" disabled
                 style="width:100%;margin-top:14px;">📤 ส่งสลิปยืนยันการชำระ</button>
               <div id="slipMsg" style="display:none;margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:13px;"></div>
+            </div>
+
+            <!-- Voucher input (TrueMoney Angpao) -->
+            <div id="voucherInputSection" style="display:none;margin-top:20px;">
+              <label style="display:block;font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;color:rgba(210,190,255,0.55);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">วางโค้ด/ลิงก์ซองอั่งเป่า</label>
+              <input type="text" id="voucherInput" placeholder="https://gift.truemoney.com/campaign/?v=..."
+                style="width:100%;padding:10px 12px;border:1px solid rgba(255,120,0,0.3);border-radius:10px;background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;box-sizing:border-box;"
+                oninput="onVoucherChange()">
+              <button class="btn btn-primary" id="submitVoucherBtn" onclick="submitVoucher()" disabled
+                style="width:100%;margin-top:14px;">📤 ส่งโค้ดยืนยันการชำระ</button>
+              <div id="voucherMsg" style="display:none;margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:13px;"></div>
             </div>
 
             <!-- Cancel order -->
@@ -553,9 +563,10 @@ function showPaymentSection(orderId, total, qr_base64, paymentMethod, truemoneyI
   document.getElementById('paymentTitle').textContent = isTM ? '💳 ชำระเงินผ่าน TrueMoney Wallet' : '💳 ชำระเงินผ่าน PromptPay';
   document.getElementById('qrSection').style.display = isTM ? 'none' : 'flex';
   document.getElementById('tmSection').style.display = isTM ? '' : 'none';
+  document.getElementById('slipUploadSection').style.display   = isTM ? 'none' : '';
+  document.getElementById('voucherInputSection').style.display = isTM ? '' : 'none';
 
   if (isTM) {
-    document.getElementById('pay-tmId').textContent = truemoneyId || '-';
     document.getElementById('pay-orderIdTm').textContent = orderId;
     document.getElementById('pay-amountTm').textContent = '฿' + total.toLocaleString();
   } else {
@@ -661,6 +672,80 @@ async function submitSlip() {
   }
 }
 
+// ── TrueMoney: เปิด/ปิดปุ่มส่งโค้ดซองอั่งเป่า ───────────────────
+function onVoucherChange() {
+  var val = document.getElementById('voucherInput').value.trim();
+  document.getElementById('submitVoucherBtn').disabled = !val;
+}
+
+// ── Submit angpao voucher → redeem ผ่าน TrueMoney → run BCSFE ──
+async function submitVoucher() {
+  var code = document.getElementById('voucherInput').value.trim();
+  if (!code || !_currentOrderId) { alert('❌ กรุณากรอกโค้ด/ลิงก์ซองอั่งเป่าก่อน'); return; }
+
+  var btn = document.getElementById('submitVoucherBtn');
+  var msg = document.getElementById('voucherMsg');
+  btn.disabled = true; btn.textContent = '⏳ กำลังตรวจสอบซองอั่งเป่า...';
+  msg.style.display = 'block';
+  msg.style.color = 'rgba(255,255,255,0.6)';
+  msg.textContent = '🔍 กำลังแลกซองอั่งเป่ากับ TrueMoney...';
+
+  try {
+    var res = await fetch('/api/payment/verify-voucher/' + _currentOrderId, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ voucher_code: code }),
+    });
+    var data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.detail || 'ยืนยันซองอั่งเป่าไม่สำเร็จ');
+    }
+
+    var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+    var currentOrder = hist.find(function(o) { return o.id === _currentOrderId; });
+
+    if (data.success && data.new_transfer_code) {
+      hist = hist.map(function(o) {
+        if (o.id !== _currentOrderId) return o;
+        return Object.assign({}, o, {
+          new_transfer_code:     data.new_transfer_code,
+          new_confirmation_code: data.new_confirmation_code,
+        });
+      });
+      localStorage.setItem('bc_order_history', JSON.stringify(hist));
+    }
+
+    _paymentLocked = false;
+    localStorage.removeItem('cart');
+    localStorage.removeItem('bc_pending_payment');
+    displayCart();
+    document.getElementById('paymentSection').style.display = 'none';
+    var checkoutBtn = document.getElementById('checkoutBtn');
+    if (checkoutBtn) checkoutBtn.style.display = '';
+
+    if (data.bcsfe_failed) {
+      showSuccessModal(_currentOrderId, currentOrder ? currentOrder.items : [], { success: false });
+      msg.style.color = '#f59e0b';
+      msg.textContent = '⚠️ ซองอั่งเป่าผ่านแล้ว กรุณากรอก Transfer/Confirmation Code ใหม่ใน popup';
+    } else {
+      showSuccessModal(_currentOrderId, currentOrder ? currentOrder.items : [], data);
+      msg.style.color = '#4ade80';
+      msg.textContent = '✅ ชำระเงินสำเร็จ! ระบบดำเนินการอัตโนมัติแล้ว';
+    }
+
+  } catch (err) {
+    var errMsg = err.message || String(err);
+    if (errMsg.includes('หมดอายุ') || errMsg.includes('expired')) {
+      localStorage.removeItem('bc_pending_payment');
+    }
+    msg.style.display = 'block';
+    msg.style.color = '#f87171';
+    msg.textContent = '❌ ' + errMsg;
+    btn.disabled = false; btn.textContent = '📤 ส่งโค้ดยืนยันการชำระ';
+  }
+}
+
 function showCancelConfirm() {
   document.getElementById('cancelTriggerBtn').style.display = 'none';
   document.getElementById('cancelConfirmBox').style.display = 'block';
@@ -678,6 +763,9 @@ function cancelOrder() {
   document.getElementById('slipPreview').style.display = 'none';
   document.getElementById('slipMsg').style.display = 'none';
   document.getElementById('submitSlipBtn').disabled = true;
+  document.getElementById('voucherInput').value = '';
+  document.getElementById('voucherMsg').style.display = 'none';
+  document.getElementById('submitVoucherBtn').disabled = true;
   var checkoutBtn = document.getElementById('checkoutBtn');
   if (checkoutBtn) checkoutBtn.style.display = '';
   displayCart();
