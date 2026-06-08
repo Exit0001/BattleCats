@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-08 03:40:44
+Transfer  : 2aabb27a4
+Confirm   : 2606
+Country   : en
+============================================================
+[OP] True Form Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=2aabb2... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #75 — True Form applied
+[BCSFE] True Form 1/1 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_eef909e8
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_034046_2aabb27a
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: cdacfd98f | Confirm ใหม่: 3298
+============================================================

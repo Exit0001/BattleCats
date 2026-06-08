@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-08 03:20:47
+Transfer  : 6e5754838
+Confirm   : 0581
+Country   : en
+============================================================
+[OP] True Form Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=6e5754... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #86 — True Form applied
+[BCSFE] True Form 1/1 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_5140a705
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_032049_6e575483
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: e66021cd9 | Confirm ใหม่: 5859
+============================================================

@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-08 03:40:49
+Transfer  : cdacfd98f
+Confirm   : 3298
+Country   : en
+============================================================
+[OP] Ultra Form Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=cdacfd... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #75 — Ultra Form applied
+[BCSFE] Ultra Form 1/1 cats (ข้าม 0 ตัวที่ยังไม่มี True Form)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_bc85e713
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_034050_cdacfd98
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: daee1e00a | Confirm ใหม่: 0655
+============================================================

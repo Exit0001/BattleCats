@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-08 03:40:31
+Transfer  : f45fa9aaf
+Confirm   : 1761
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=f45fa9... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Normal Ticket: 2 → 102  (+100)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_daed05bf
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_034032_f45fa9aa
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 776164363 | Confirm ใหม่: 2054
+============================================================
+============================================================

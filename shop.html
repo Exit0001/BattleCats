@@ -528,7 +528,7 @@
   <div class="footer-content">
     <div class="footer-grid">
       <div class="footer-col">
-        <h4><img src="pictures/icon cat.png" style="height:1.1em;vertical-align:middle;margin-right:5px;"> Battle Cats Shop</h4>
+        <h4>Battle Cat Pro Max</h4>
         <p style="font-size: 13px; line-height: 1.6;">บริการร้านขายไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
       </div>
       <div class="footer-col">
@@ -548,8 +548,15 @@
         </ul>
       </div>
     </div>
+
+    <div class="social-row">
+      <div class="social-pill">🌍 ภาษาไทย</div>
+      <div class="social-pill">✅ ได้รับการตรวจสอบ</div>
+      <div class="social-pill">⭐ 2,000+ ผู้ใช้</div>
+    </div>
+
     <div class="footer-bottom">
-      <p>© 2025 Battle Cats Shop · บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</p>
+      <p>© 2025 Battle Cat Pro Max · บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</p>
     </div>
   </div>
 </footer>
@@ -614,6 +621,20 @@ function addToCart(itemName, price) {
   if (product.key === 'rare_ticket' && cart.some(function(i){ return i.key === 'rare_ticket'; })) {
     alert('⚠️ ใส่ Rare Ticket ได้แค่ 1 รายการต่อออเดอร์\nเพราะลูกค้าต้องไปรับในตู้เย็นก่อนถึงจะทำได้อีกครั้ง');
     return;
+  }
+
+  var maxVal = MAX_VALUES[product.key];
+  if (maxVal !== undefined) {
+    var totalInCart = cart.filter(function(i){ return i.key === product.key; }).reduce(function(s,i){ return s + i.amount; }, 0);
+    if (totalInCart + product.amount > maxVal) {
+      var left = maxVal - totalInCart;
+      if (left <= 0) {
+        alert('⚠️ ' + itemName.split(' x')[0] + ' ในตะกร้าถึง max (' + maxVal.toLocaleString() + ') แล้ว ไม่สามารถเพิ่มได้อีก');
+      } else {
+        alert('⚠️ ไม่สามารถเพิ่มได้ จะเกิน max (' + maxVal.toLocaleString() + ')\nยังเพิ่มได้อีก ' + left.toLocaleString() + ' หน่วย');
+      }
+      return;
+    }
   }
 
   cart.push({ key: product.key, name: itemName, amount: product.amount, price: price, supported: product.supported !== false });

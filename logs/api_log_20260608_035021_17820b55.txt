@@ -1,0 +1,17 @@
+============================================================
+เวลา      : 2026-06-08 03:50:21
+Transfer  : 17820b556
+Confirm   : 0957
+Country   : en
+============================================================
+[OP] Unlock Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=17820b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] พบ 1/1 ตัวใน save
+[CAT] ✔ #36 — unlocked
+[BCSFE] Unlocked 1 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_8fea4ae1
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_035023_17820b55
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 46160313f | Confirm ใหม่: 1907
+============================================================

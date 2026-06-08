@@ -5,9 +5,11 @@ import qrcode.image.svg
 import io
 import base64
 import json
+import math
 import re
 import uuid
 import httpx
+from curl_cffi.requests import AsyncSession as CurlSession
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -196,6 +198,11 @@ def generate_qr_base64(amount: float) -> str:
 # ORDER MANAGEMENT
 # ══════════════════════════════════════════
 
+def truemoney_fee(base_amount: int) -> int:
+    """ค่าธรรมเนียม TrueWallet 2.9% สูงสุด 20 บาท (ปัดขึ้น)"""
+    return min(math.ceil(base_amount * 0.029), 20)
+
+
 def calculate_total(items: list[dict]) -> int:
     """
     คำนวณราคารวมจาก items
@@ -225,9 +232,11 @@ def create_order(transfer_code: str, confirmation_code: str,
     สร้าง order ใหม่ บันทึกลง DB และสร้าง QR
     คืน order object ที่มี order_id, amount, qr_base64
     """
-    order_id = str(uuid.uuid4())[:8].upper()
-    amount   = calculate_total(items) + cat_unlock_total  # รวมราคาปลดล็อคแมวด้วย
-    expires  = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
+    order_id    = str(uuid.uuid4())[:8].upper()
+    base_amount = calculate_total(items) + cat_unlock_total
+    fee         = truemoney_fee(base_amount) if payment_method == "truemoney" else 0
+    amount      = base_amount + fee
+    expires     = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
 
     order = {
         "order_id":          order_id,
@@ -236,6 +245,8 @@ def create_order(transfer_code: str, confirmation_code: str,
         "country":           country,
         "items":             items,
         "cat_ids":           cat_ids or [],
+        "base_amount":       base_amount,
+        "truemoney_fee":     fee,
         "amount":            amount,
         "payment_method":    payment_method,
         "status":            "pending",
@@ -256,8 +267,10 @@ def create_all_package_order(transfer_code: str, confirmation_code: str,
                              country: str, package_type: str, amount: int,
                              payment_method: str = "promptpay") -> dict:
     """สร้าง order สำหรับแพ็กเกจ All (unlock_all, trueform_all, ฯลฯ)"""
-    order_id = str(uuid.uuid4())[:8].upper()
-    expires  = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
+    order_id    = str(uuid.uuid4())[:8].upper()
+    fee         = truemoney_fee(amount) if payment_method == "truemoney" else 0
+    total       = amount + fee
+    expires     = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
     order = {
         "order_id":          order_id,
         "transfer_code":     transfer_code,
@@ -266,7 +279,9 @@ def create_all_package_order(transfer_code: str, confirmation_code: str,
         "items":             [],
         "cat_ids":           [],
         "package_type":      package_type,
-        "amount":            amount,
+        "base_amount":       amount,
+        "truemoney_fee":     fee,
+        "amount":            total,
         "payment_method":    payment_method,
         "status":            "pending",
         "created_at":        datetime.now().isoformat(),
@@ -407,6 +422,7 @@ async def redeem_truemoney_voucher(voucher_code: str, order_id: str) -> dict:
         return {"success": False, "reason": "order นี้ชำระแล้ว"}
 
     voucher_hash = _extract_voucher_hash(voucher_code)
+    print(f"[ANGPAO] voucher_code={repr(voucher_code)} → hash={repr(voucher_hash)}")
     if not voucher_hash:
         return {"success": False, "reason": "กรุณากรอกโค้ด/ลิงก์ซองอั่งเป่า"}
 
@@ -415,16 +431,20 @@ async def redeem_truemoney_voucher(voucher_code: str, order_id: str) -> dict:
         return {"success": False, "reason": "ซองอั่งเป่านี้ถูกใช้ไปแล้ว"}
 
     mobile = TRUEMONEY_ID.replace("-", "").replace(" ", "")
-    if mobile.startswith("0"):
-        mobile = "66" + mobile[1:]
+    print(f"[ANGPAO] calling redeem: hash={voucher_hash} mobile={mobile}")
 
     try:
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with CurlSession(impersonate="chrome124") as client:
             resp = await client.post(
                 f"https://gift.truemoney.com/campaign/vouchers/{voucher_hash}/redeem",
                 json={"mobile": mobile, "voucher_hash": voucher_hash},
-                headers={"Content-Type": "application/json"},
+                headers={
+                    "Content-Type": "application/json",
+                    "Origin": "https://gift.truemoney.com",
+                    "Referer": f"https://gift.truemoney.com/campaign/?v={voucher_hash}",
+                },
             )
+        print(f"[ANGPAO] status={resp.status_code} body={resp.text[:500]}")
         data = resp.json()
         print(f"[ANGPAO] response: {json.dumps(data, ensure_ascii=False)}")
     except Exception as e:
@@ -463,8 +483,10 @@ def create_unlock_order(transfer_code: str, confirmation_code: str,
                         country: str, cat_ids: list, amount: int,
                         payment_method: str = "promptpay") -> dict:
     """สร้าง order สำหรับปลดล็อคแมว พร้อม QR PromptPay"""
-    order_id = str(uuid.uuid4())[:8].upper()
-    expires  = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
+    order_id    = str(uuid.uuid4())[:8].upper()
+    fee         = truemoney_fee(amount) if payment_method == "truemoney" else 0
+    total       = amount + fee
+    expires     = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
     order = {
         "order_id":          order_id,
         "order_type":        "unlock",
@@ -473,7 +495,9 @@ def create_unlock_order(transfer_code: str, confirmation_code: str,
         "country":           country,
         "cat_ids":           cat_ids,
         "items":             [],
-        "amount":            amount,
+        "base_amount":       amount,
+        "truemoney_fee":     fee,
+        "amount":            total,
         "payment_method":    payment_method,
         "status":            "pending",
         "created_at":        datetime.now().isoformat(),

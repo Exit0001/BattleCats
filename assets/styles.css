@@ -2,7 +2,7 @@
 /*  BATTLE CATS SHOP — Gaming Design System v2                    */
 /*  Russo One (display) + Chakra Petch (body) | Dark Neon Purple  */
 /* ═══════════════════════════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Chakra+Petch:wght@300;400;500;600;700&family=Kanit:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Chakra+Petch:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap');
 
 /* ── Design tokens ─────────────────────────────────────────────── */
 :root {
@@ -40,8 +40,8 @@
   --shadow-btn-hover: 0 16px 48px rgba(124,58,237,0.55);
 
   /* fonts */
-  --font-display: 'Russo One', 'Kanit', sans-serif;
-  --font-body:    'Chakra Petch', 'Kanit', sans-serif;
+  --font-display: 'Russo One', 'Prompt', sans-serif;
+  --font-body:    'Chakra Petch', 'Prompt', sans-serif;
 
   /* transitions */
   --t-fast:   0.18s ease;
@@ -220,7 +220,7 @@ body {
     rgba(76,10,180,0.92) 45%,
     rgba(14,4,30,0.97) 100%);
   border-radius: 24px;
-  padding: 64px 44px;
+  padding: 48px 44px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -230,14 +230,12 @@ body {
   animation: heroIn 0.7s 0.1s ease-out both;
 }
 
-/* grid lines inside hero */
+/* ambient glow inside hero */
 .hero::before {
   content: '';
   position: absolute;
   inset: 0;
   background-image:
-    repeating-linear-gradient(rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 40px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 40px),
     radial-gradient(circle at 15% 50%, rgba(255,77,146,0.22), transparent 40%),
     radial-gradient(circle at 85% 50%, rgba(124,58,237,0.22), transparent 40%);
   border-radius: 24px;
@@ -282,9 +280,19 @@ body {
 }
 
 .hero-emoji {
-  font-size: 52px;
-  margin: 20px 0;
-  filter: drop-shadow(0 0 20px rgba(255,77,146,0.4));
+  font-size: 88px;
+  margin: 8px 0 14px;
+  filter: drop-shadow(0 0 28px rgba(255,77,146,0.55));
+  animation: heroPawPulse 3s ease-in-out infinite;
+  display: block;
+}
+@keyframes heroPawPulse {
+  0%,100% { transform: scale(1);    filter: drop-shadow(0 0 28px rgba(255,77,146,0.45)); }
+  50%     { transform: scale(1.10); filter: drop-shadow(0 0 44px rgba(255,77,146,0.80)); }
+}
+@keyframes heroPawFloat {
+  0%,100% { transform: translateY(0px)   rotate(0deg); }
+  50%     { transform: translateY(-9px)  rotate(8deg); }
 }
 
 /* ═══════════════════════════════════════════════════════════════ */

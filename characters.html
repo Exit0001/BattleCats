@@ -313,7 +313,7 @@
 
 <div class="container">
 
-  <h1 class="section-title"><img src="pictures/icon cat.png" style="height:1.1em;vertical-align:middle;margin-right:5px;"> ปลดล็อคแมว</h1>
+  <h1 class="section-title">🐱 ปลดล็อคแมว</h1>
   <p style="color:rgba(210,190,255,0.65);margin-bottom:24px;font-size:14px;">ค้นหาแมวที่ต้องการ — รูปภาพดึงจาก Battle Cats Wiki โดยตรง</p>
 
   <!-- ALL-CHARACTER PACKAGES ──────────────────────────────────── -->
@@ -471,7 +471,7 @@
   <div class="footer-content">
     <div class="footer-grid">
       <div class="footer-col">
-        <h4><img src="pictures/icon cat.png" style="height:1.1em;vertical-align:middle;margin-right:5px;"> Battle Cats Shop</h4>
+        <h4>Battle Cat Pro Max</h4>
         <p style="font-size:13px;line-height:1.6;">บริการร้านขายไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
       </div>
       <div class="footer-col">
@@ -491,8 +491,15 @@
         </ul>
       </div>
     </div>
+
+    <div class="social-row">
+      <div class="social-pill">🌍 ภาษาไทย</div>
+      <div class="social-pill">✅ ได้รับการตรวจสอบ</div>
+      <div class="social-pill">⭐ 2,000+ ผู้ใช้</div>
+    </div>
+
     <div class="footer-bottom">
-      <p>© 2025 Battle Cats Shop · บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</p>
+      <p>© 2025 Battle Cat Pro Max · บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</p>
     </div>
   </div>
 </footer>
@@ -570,6 +577,10 @@
       <div id="apTmBlock" style="display:none;background:rgba(255,120,0,0.08);border:1px solid rgba(255,120,0,0.35);border-radius:14px;padding:20px;margin-bottom:16px;text-align:center;">
         <div style="font-size:28px;margin-bottom:8px;">🧧</div>
         <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.7);margin-bottom:8px;">ส่งซองอั่งเป่า (Angpao) มูลค่าตามยอดด้านล่าง แล้ววางโค้ด/ลิงก์ในช่องด้านล่าง</div>
+        <div id="apTmFeeBreakdown" style="display:none;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-bottom:4px;line-height:1.8;">
+          ราคาสินค้า: <span id="apBaseAmt" style="color:#EDE6FF;"></span><br>
+          ค่าธรรมเนียม TrueWallet 2.9% (สูงสุด 20 บาท): <span id="apFeeAmt" style="color:#FBBF24;"></span>
+        </div>
         <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);">ยอดที่ต้องชำระ: <span id="apTmAmt" style="color:#FF4D92;font-family:'Russo One',sans-serif;"></span></div>
       </div>
       <!-- PromptPay: slip upload -->
@@ -911,6 +922,13 @@ async function apCreateOrder() {
     document.getElementById('apVoucherBlock').style.display = isTM ? '' : 'none';
     if (isTM) {
       document.getElementById('apTmAmt').textContent = '฿' + data.amount;
+      if (data.truemoney_fee && data.truemoney_fee > 0) {
+        document.getElementById('apTmFeeBreakdown').style.display = '';
+        document.getElementById('apBaseAmt').textContent = '฿' + (data.base_amount || data.amount);
+        document.getElementById('apFeeAmt').textContent = '+฿' + data.truemoney_fee;
+      } else {
+        document.getElementById('apTmFeeBreakdown').style.display = 'none';
+      }
     } else {
       document.getElementById('apQrAmt').textContent = '฿' + data.amount;
       document.getElementById('apQrImg').src = 'data:image/png;base64,' + data.qr_base64;

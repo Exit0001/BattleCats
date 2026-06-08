@@ -187,6 +187,8 @@ async def payment_create(order: OrderRequest):
     resp = {
         "order_id":       payment_order["order_id"],
         "amount":         payment_order["amount"],
+        "base_amount":    payment_order.get("base_amount", payment_order["amount"]),
+        "truemoney_fee":  payment_order.get("truemoney_fee", 0),
         "qr_base64":      payment_order.get("qr_base64"),
         "expires_at":     payment_order["expires_at"],
         "payment_method": order.payment_method,
@@ -216,6 +218,8 @@ async def payment_create_all_package(package_type: str, body: AllCatsRequest):
         payment_method=body.payment_method,
     )
     resp = {"order_id": order["order_id"], "amount": order["amount"],
+            "base_amount": order.get("base_amount", order["amount"]),
+            "truemoney_fee": order.get("truemoney_fee", 0),
             "qr_base64": order.get("qr_base64"), "expires_at": order["expires_at"],
             "payment_method": body.payment_method}
     if body.payment_method == "truemoney":
@@ -242,6 +246,8 @@ async def payment_create_unlock(body: UnlockPaymentRequest):
     resp = {
         "order_id":       order["order_id"],
         "amount":         order["amount"],
+        "base_amount":    order.get("base_amount", order["amount"]),
+        "truemoney_fee":  order.get("truemoney_fee", 0),
         "qr_base64":      order.get("qr_base64"),
         "expires_at":     order["expires_at"],
         "payment_method": body.payment_method,

@@ -1,0 +1,9 @@
+============================================================
+เวลา      : 2026-06-08 03:19:46
+Transfer  : 8274501e5
+Confirm   : 0792
+Country   : en
+============================================================
+[OP] Max Talents Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=827450... cc=en)
+[BCSFE] ❌ ❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง

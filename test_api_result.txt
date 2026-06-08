@@ -1,0 +1,61 @@
+
+==================================================
+TEST: Unlock #86 Kamukura
+==================================================
+Using TC: 47d8271b0 / 2788
+HTTP 200
+new_tc       : a05bcc29c
+new_conf     : 9868
+status       : OK
+>> TC updated -> a05bcc29c / 9868
+
+==================================================
+TEST: Upgrade #86 Max
+==================================================
+Using TC: a05bcc29c / 9868
+HTTP 200
+new_tc       : 6e5754838
+new_conf     : 0581
+status       : OK
+log (1 lines):
+  ✔ #86 — Lv1+0 → Lv60+0
+>> TC updated -> 6e5754838 / 0581
+
+==================================================
+TEST: True Form #86
+==================================================
+Using TC: 6e5754838 / 0581
+HTTP 200
+new_tc       : e66021cd9
+new_conf     : 5859
+status       : OK
+log (1 lines):
+  ✔ #86 — True Form applied
+>> TC updated -> e66021cd9 / 5859
+
+==================================================
+TEST: Ultra Form #86
+==================================================
+Using TC: e66021cd9 / 5859
+HTTP 200
+new_tc       : ab94a7a3c
+new_conf     : 6810
+status       : OK
+log (1 lines):
+  ✔ #86 — Ultra Form applied
+>> TC updated -> ab94a7a3c / 6810
+
+==================================================
+TEST: Talents #86
+==================================================
+Using TC: ab94a7a3c / 6810
+HTTP 200
+new_tc       : a6b37cfe7
+new_conf     : 3146
+status       : OK
+log (1 lines):
+  ✔ #86 — 8 talents maxed
+>> TC updated -> a6b37cfe7 / 3146
+
+
+DONE — Final TC: a6b37cfe7 / 3146

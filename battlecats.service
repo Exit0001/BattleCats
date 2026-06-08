@@ -1,0 +1,14 @@
+[Unit]
+Description=Battle Cats Shop API
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/BattleCats
+ExecStart=/usr/bin/python3 -m uvicorn main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

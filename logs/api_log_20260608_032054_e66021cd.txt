@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-08 03:20:54
+Transfer  : e66021cd9
+Confirm   : 5859
+Country   : en
+============================================================
+[OP] Ultra Form Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=e66021... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #86 — Ultra Form applied
+[BCSFE] Ultra Form 1/1 cats (ข้าม 0 ตัวที่ยังไม่มี True Form)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_1cd9fd21
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_032055_e66021cd
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: ab94a7a3c | Confirm ใหม่: 6810
+============================================================

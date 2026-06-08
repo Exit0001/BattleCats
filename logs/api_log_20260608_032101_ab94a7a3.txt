@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-08 03:21:01
+Transfer  : ab94a7a3c
+Confirm   : 6810
+Country   : en
+============================================================
+[OP] Max Talents Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=ab94a7... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #86 — 8 talents maxed
+[BCSFE] Max Talents 1/1 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_30132e5b
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_032102_ab94a7a3
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: a6b37cfe7 | Confirm ใหม่: 3146
+============================================================
