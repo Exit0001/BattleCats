@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-08 23:07:41
+Transfer  : f6a1b80c4
+Confirm   : 3604
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=f6a1b8... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: ec4168123
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_174c607a
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_230742_f6a1b80c
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: c063509b6 | Confirm ใหม่: 5516
+============================================================

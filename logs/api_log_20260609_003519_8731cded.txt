@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-09 00:35:19
+Transfer  : 8731cded3
+Confirm   : 7229
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=8731cd... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: a9b243831
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_743f0b8e
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260609_003520_8731cded
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: ae058b7c9 | Confirm ใหม่: 1784
+============================================================

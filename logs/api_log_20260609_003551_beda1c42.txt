@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-09 00:35:51
+Transfer  : beda1c42e
+Confirm   : 9634
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=beda1c... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 829e1be69
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_1d204cf8
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260609_003553_beda1c42
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 7d790291b | Confirm ใหม่: 2157
+============================================================

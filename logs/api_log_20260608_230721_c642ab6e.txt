@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-08 23:07:21
+Transfer  : c642ab6ea
+Confirm   : 5012
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=c642ab... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 24ac8fd06
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_2ba38126
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_230722_c642ab6e
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 79a1ee32a | Confirm ใหม่: 1917
+============================================================

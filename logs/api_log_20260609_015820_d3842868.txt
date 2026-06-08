@@ -1,0 +1,30 @@
+============================================================
+เวลา      : 2026-06-09 01:58:20
+Transfer  : d3842868c
+Confirm   : 5339
+Country   : en
+============================================================
+[OP] Dupe Save x5
+[BCSFE] ⬇  Downloading save (transfer=d38428... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[DUPE] ── รอบที่ 1/5 ──────────────────────────
+[DUPE] Inquiry ก่อน : cc761f73f
+[DUPE] Inquiry หลัง: 7682df6a2  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=4c768ba77 | CC=3298
+[DUPE] ── รอบที่ 2/5 ──────────────────────────
+[DUPE] Inquiry ก่อน : 7682df6a2
+[DUPE] Inquiry หลัง: a3b456220  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=468080566 | CC=0300
+[DUPE] ── รอบที่ 3/5 ──────────────────────────
+[DUPE] Inquiry ก่อน : a3b456220
+[DUPE] Inquiry หลัง: b7fb7f0cf  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=25fb79302 | CC=0268
+[DUPE] ── รอบที่ 4/5 ──────────────────────────
+[DUPE] Inquiry ก่อน : b7fb7f0cf
+[DUPE] Inquiry หลัง: aa54304d6  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=329c3feca | CC=2379
+[DUPE] ── รอบที่ 5/5 ──────────────────────────
+[DUPE] Inquiry ก่อน : aa54304d6
+[DUPE] Inquiry หลัง: feee12089  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=2dcaf7ccd | CC=6408
+[CLEANUP] ลบ backup 0 ไฟล์

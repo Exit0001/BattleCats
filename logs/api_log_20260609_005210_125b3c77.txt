@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-09 00:52:10
+Transfer  : 125b3c773
+Confirm   : 7343
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=125b3c... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 48950b485
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_44f93dc3
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260609_005211_125b3c77
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: f18a84941 | Confirm ใหม่: 3944
+============================================================

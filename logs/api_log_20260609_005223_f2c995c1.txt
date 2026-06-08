@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-09 00:52:23
+Transfer  : f2c995c19
+Confirm   : 1584
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=f2c995... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 7049d218d
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_6fd31537
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260609_005224_f2c995c1
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 7cd3bfe83 | Confirm ใหม่: 9070
+============================================================

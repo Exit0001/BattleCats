@@ -1,0 +1,30 @@
+============================================================
+เวลา      : 2026-06-08 22:47:54
+Transfer  : 055edc791
+Confirm   : 0636
+Country   : en
+============================================================
+[OP] Dupe Save x10
+[BCSFE] ⬇  Downloading save (transfer=055edc... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[DUPE] รอบที่ 1/10
+[DUPE] ✅ #1: TC=b6cc4da88 | CC=6997
+[DUPE] รอบที่ 2/10
+[DUPE] ✅ #2: TC=cb9515ceb | CC=4474
+[DUPE] รอบที่ 3/10
+[DUPE] ✅ #3: TC=ab2fc61ce | CC=1366
+[DUPE] รอบที่ 4/10
+[DUPE] ✅ #4: TC=f6a1b80c4 | CC=3604
+[DUPE] รอบที่ 5/10
+[DUPE] ✅ #5: TC=2d6a72486 | CC=9561
+[DUPE] รอบที่ 6/10
+[DUPE] ✅ #6: TC=3776ba209 | CC=6310
+[DUPE] รอบที่ 7/10
+[DUPE] ✅ #7: TC=1abe9f099 | CC=4564
+[DUPE] รอบที่ 8/10
+[DUPE] ✅ #8: TC=f6231dcef | CC=9298
+[DUPE] รอบที่ 9/10
+[DUPE] ✅ #9: TC=94062f048 | CC=2904
+[DUPE] รอบที่ 10/10
+[DUPE] ✅ #10: TC=06ea46c8a | CC=9750
+[CLEANUP] ลบ backup 0 ไฟล์

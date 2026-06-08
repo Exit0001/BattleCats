@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-08 23:07:34
+Transfer  : ab2fc61ce
+Confirm   : 1366
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=ab2fc6... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: b42f4302b
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_66158d2a
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_230736_ab2fc61c
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 3cbcc40b7 | Confirm ใหม่: 9764
+============================================================

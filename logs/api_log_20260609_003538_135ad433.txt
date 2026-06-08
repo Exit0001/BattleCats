@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-09 00:35:38
+Transfer  : 135ad4333
+Confirm   : 3755
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=135ad4... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 1a0c6333a
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_174477c9
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260609_003539_135ad433
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 5e998596f | Confirm ใหม่: 4938
+============================================================

@@ -25,17 +25,22 @@ _CLI_LOCK = threading.Lock()
 
 
 class BCSFERunner:
-    def __init__(self, transfer: str, confirm: str, country: str = "1"):
+    def __init__(self, transfer: str, confirm: str, country: str = "1", shared_log=None):
         self.transfer = transfer.strip()
         self.confirm  = confirm.strip()
         self.country  = country.strip()
         self._session_id  = uuid.uuid4().hex[:8]
         self._save_path   = BCSFE_SAVES_DIR / f"SAVE_DATA_{self._session_id}"
         self._cli_save_path = BCSFE_SAVES_DIR / f"SAVE_DATA_cli_{self._session_id}"
-        LOG_DIR.mkdir(exist_ok=True)
-        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self._log_path = LOG_DIR / f"api_log_{ts}_{self.transfer[:8]}.txt"
-        self._log_file = open(self._log_path, "w", encoding="utf-8")
+        if shared_log is not None:
+            self._log_file  = shared_log
+            self._owned_log = False
+        else:
+            LOG_DIR.mkdir(exist_ok=True)
+            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            self._log_path = LOG_DIR / f"api_log_{ts}_{self.transfer[:8]}.txt"
+            self._log_file = open(self._log_path, "w", encoding="utf-8")
+            self._owned_log = True
         self._deferred_cli = []
         self._last_cli_output = ""
         self._log(f"{'='*60}")
@@ -51,7 +56,8 @@ class BCSFERunner:
         self._log_file.flush()
 
     def _close_log(self):
-        self._log_file.close()
+        if self._owned_log:
+            self._log_file.close()
 
     # ──────────────────────────────────────────────────
     # CLI subprocess helper (lucky_ticket / rare_ticket)
@@ -165,12 +171,12 @@ class BCSFERunner:
         code = COUNTRY_MAP.get(self.country, "en")
         return core.CountryCode.from_code(code)
 
-    def _download_save(self):
+    def _download_save(self, backup: bool = True):
         cc = self._get_cc()
         gv = core.GameVersion(120200)
         self._log(f"[BCSFE] ⬇  Downloading save (transfer={self.transfer[:6]}... cc={cc})")
         handler, result = core.ServerHandler.from_codes(
-            self.transfer, self.confirm, cc, gv, print=False, save_backup=True
+            self.transfer, self.confirm, cc, gv, print=False, save_backup=backup
         )
         if handler is None:
             raise RuntimeError(
@@ -180,13 +186,14 @@ class BCSFERunner:
         self._log("[BCSFE] ✅ Download สำเร็จ")
         return handler.save_file
 
-    def _upload_save(self, save_file) -> dict:
+    def _upload_save(self, save_file, backup: bool = True) -> dict:
         # ใช้ unique path ของ session นี้ → parallel sessions ไม่ conflict
         bcsfe_path = core.SaveFile.get_saves_path().add(f"SAVE_DATA_{self._session_id}")
         save_file.to_file(bcsfe_path)
         self._log(f"[BCSFE] 💾 บันทึก save → {bcsfe_path}")
 
-        self._backup()
+        if backup:
+            self._backup()
 
         self._log("[BCSFE] ⬆  Uploading save...")
         result = core.ServerHandler(save_file).get_codes()
@@ -630,6 +637,74 @@ class BCSFERunner:
             return {"success": False, "error": str(e)}
 
     # ── All-cats variants (ทำกับทุกตัวใน save) ────────────────
+
+    def run_check_id(self) -> dict:
+        """Download save (ตรวจว่ารหัสใช้ได้) → re-upload โดยไม่แก้ไข → ได้ TC ใหม่"""
+        try:
+            self._log("[OP] Check ID — download + re-upload (no edit)")
+            core.core_data.init_data()
+            save_file = self._download_save(backup=False)
+            inquiry = getattr(save_file, "inquiry_code", "?")
+            self._log(f"[CHECK] Inquiry Code: {inquiry}")
+            codes = self._upload_save(save_file, backup=False)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "inquiry_code": str(inquiry)}
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return {"success": False, "error": str(e)}
+
+    def run_dupe_save(self, count: int) -> dict:
+        """Download save ครั้งเดียว แล้ว dupe N ครั้งด้วย create_new_account + get_codes"""
+        try:
+            self._log(f"[OP] Dupe Save x{count}")
+            core.core_data.init_data()
+            save_file = self._download_save()
+
+            results = []
+            for i in range(count):
+                self._log(f"[DUPE] ── รอบที่ {i+1}/{count} ──────────────────────────")
+                inquiry_before = getattr(save_file, "inquiry_code", "?")
+                self._log(f"[DUPE] Inquiry ก่อน : {inquiry_before}")
+                server_handler = core.ServerHandler(save_file)
+                ok = server_handler.create_new_account()
+                inquiry_after = getattr(save_file, "inquiry_code", "?")
+                if not ok:
+                    self._log(f"[DUPE] ❌ create_new_account ล้มเหลวรอบที่ {i+1}")
+                    break
+                changed = "✅ เปลี่ยนแล้ว" if inquiry_before != inquiry_after else "⚠️ ไม่เปลี่ยน!"
+                self._log(f"[DUPE] Inquiry หลัง: {inquiry_after}  {changed}")
+                time.sleep(2)
+                result = core.ServerHandler(save_file).get_codes()
+                if result is None:
+                    self._log(f"[DUPE] ❌ get_codes ล้มเหลวรอบที่ {i+1}")
+                    break
+                new_tc, new_cc = result
+                self._log(f"[DUPE] ✅ TC={new_tc} | CC={new_cc}")
+                results.append({"transfer": new_tc, "confirmation": new_cc, "inquiry": str(inquiry_after)})
+                if i < count - 1:
+                    time.sleep(3)
+
+            # ลบ backup ทั้งหมดของ session นี้
+            try:
+                backup_dir = Path("saves_backup")
+                deleted = 0
+                if backup_dir.exists():
+                    for f in backup_dir.iterdir():
+                        if self.transfer[:8] in f.name or self._session_id in f.name:
+                            f.unlink()
+                            deleted += 1
+                self._log(f"[CLEANUP] ลบ backup {deleted} ไฟล์")
+            except Exception as e:
+                self._log(f"[CLEANUP] ⚠ {e}")
+
+            self._close_log()
+            return {"success": True, "codes": results, "count": len(results)}
+
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return {"success": False, "error": str(e)}
 
     def run_unlock_all(self) -> dict:
         """Unlock ทุกตัวละครในเกม"""

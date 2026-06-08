@@ -1,4 +1,4 @@
-﻿# main.py - FastAPI server เธชเธณเธซเธฃเธฑเธ BCSFE order system
+# main.py - FastAPI server เธชเธณเธซเธฃเธฑเธ BCSFE order system
 import sys
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -16,7 +16,7 @@ import asyncio
 import shutil
 from pathlib import Path
 from datetime import datetime
-from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest
+from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest
 from runner import BCSFERunner
 from config import ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES
 from payment import (
@@ -1029,6 +1029,83 @@ async def talents_all_characters(request: AllCatsRequest):
     except Exception as e:
         return {"success": False, "error": f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}"}
 
+
+
+
+@app.post("/api/dupe/save")
+async def dupe_save(request: DupeSaveRequest):
+    """Dupe save N ครั้ง"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+        count = max(1, min(100, request.count))
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = await run_bcsfe(lambda: runner.run_dupe_save(count))
+        if result["success"]:
+            return {"success": True, "codes": result.get("codes", []), "count": result.get("count", 0)}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+@app.post("/api/check/id")
+async def check_id(request: CheckIDRequest):
+    """ตรวจสอบรหัสหลายชุด — download + re-upload (ไม่แก้ไข) → ได้ TC ใหม่"""
+    if request.country not in COUNTRIES:
+        return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+    if not request.codes:
+        return {"success": False, "error": "ไม่มีรหัสให้ตรวจ"}
+
+    from pathlib import Path
+    log_dir = Path("logs")
+    log_dir.mkdir(exist_ok=True)
+    from datetime import datetime as _dt
+    ts = _dt.now().strftime("%Y%m%d_%H%M%S")
+    batch_log_path = log_dir / f"api_log_{ts}_checkID_x{len(request.codes)}.txt"
+
+    results = []
+    with open(batch_log_path, "w", encoding="utf-8") as batch_log:
+        batch_log.write("=" * 60 + "\n")
+        batch_log.write(f"เวลา      : {_dt.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        batch_log.write(f"CheckID Batch: {len(request.codes)} รหัส\n")
+        batch_log.write("=" * 60 + "\n\n")
+        batch_log.flush()
+
+        for i, entry in enumerate(request.codes):
+            tc = entry.transfer_code.strip()
+            cc = entry.confirmation_code.strip()
+            batch_log.write(f"── รหัสที่ {i+1}/{len(request.codes)} ──────────────────────────\n")
+            batch_log.flush()
+            if not tc or not cc:
+                results.append({"original_tc": tc, "valid": False, "error": "TC/CC ว่าง"})
+                batch_log.write("❌ TC/CC ว่าง\n\n")
+                batch_log.flush()
+                continue
+            runner = BCSFERunner(transfer=tc, confirm=cc, country=request.country, shared_log=batch_log)
+            result = await run_bcsfe(runner.run_check_id)
+            if result["success"]:
+                codes = result.get("new_transfer_code", {})
+                new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+                new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+                results.append({
+                    "original_tc": tc,
+                    "valid": True,
+                    "new_tc": new_tc,
+                    "new_cc": new_cc,
+                    "inquiry_code": result.get("inquiry_code", "?"),
+                })
+            else:
+                results.append({"original_tc": tc, "valid": False, "error": result.get("error", "ไม่ทราบสาเหตุ")})
+            import asyncio; await asyncio.sleep(2)
+
+        ok_count  = sum(1 for r in results if r["valid"])
+        err_count = len(results) - ok_count
+        batch_log.write("\n" + "=" * 60 + "\n")
+        batch_log.write(f"สรุป: ✅ {ok_count} ใช้ได้  |  ❌ {err_count} ไม่ได้\n")
+
+    return {"success": True, "results": results, "ok": ok_count, "error_count": err_count}
 
 @app.post("/api/trueform/characters")
 async def trueform_characters(request: UnlockCharactersRequest):

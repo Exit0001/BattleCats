@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-08 23:07:54
+Transfer  : 3776ba209
+Confirm   : 6310
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=3776ba... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: efa9ed90a
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_fdea3929
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_230756_3776ba20
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: c43d1eafa | Confirm ใหม่: 1344
+============================================================

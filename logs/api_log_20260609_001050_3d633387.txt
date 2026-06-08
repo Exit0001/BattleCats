@@ -1,0 +1,50 @@
+============================================================
+เวลา      : 2026-06-09 00:10:50
+Transfer  : 3d6333878
+Confirm   : 4853
+Country   : en
+============================================================
+[OP] Dupe Save x10
+[BCSFE] ⬇  Downloading save (transfer=3d6333... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[DUPE] ── รอบที่ 1/10 ──────────────────────────
+[DUPE] Inquiry ก่อน : 32af50248
+[DUPE] Inquiry หลัง: 6fe8fa7b5  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=54e82eeeb | CC=9485
+[DUPE] ── รอบที่ 2/10 ──────────────────────────
+[DUPE] Inquiry ก่อน : 6fe8fa7b5
+[DUPE] Inquiry หลัง: 5a240908f  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=0e985d3d6 | CC=1071
+[DUPE] ── รอบที่ 3/10 ──────────────────────────
+[DUPE] Inquiry ก่อน : 5a240908f
+[DUPE] Inquiry หลัง: 3ca21d126  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=07e029c7d | CC=9215
+[DUPE] ── รอบที่ 4/10 ──────────────────────────
+[DUPE] Inquiry ก่อน : 3ca21d126
+[DUPE] Inquiry หลัง: fe3a1b1d9  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=d81b764b3 | CC=2802
+[DUPE] ── รอบที่ 5/10 ──────────────────────────
+[DUPE] Inquiry ก่อน : fe3a1b1d9
+[DUPE] Inquiry หลัง: 117c24b77  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=49fd93740 | CC=6667
+[DUPE] ── รอบที่ 6/10 ──────────────────────────
+[DUPE] Inquiry ก่อน : 117c24b77
+[DUPE] Inquiry หลัง: 1fb701bce  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=6b6857e35 | CC=2932
+[DUPE] ── รอบที่ 7/10 ──────────────────────────
+[DUPE] Inquiry ก่อน : 1fb701bce
+[DUPE] Inquiry หลัง: 5f02f3bec  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=15ee7378b | CC=0329
+[DUPE] ── รอบที่ 8/10 ──────────────────────────
+[DUPE] Inquiry ก่อน : 5f02f3bec
+[DUPE] Inquiry หลัง: d9fb7ea74  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=a66ec6853 | CC=3432
+[DUPE] ── รอบที่ 9/10 ──────────────────────────
+[DUPE] Inquiry ก่อน : d9fb7ea74
+[DUPE] Inquiry หลัง: 217776bd9  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=cbbde2e50 | CC=3729
+[DUPE] ── รอบที่ 10/10 ──────────────────────────
+[DUPE] Inquiry ก่อน : 217776bd9
+[DUPE] Inquiry หลัง: aea1b3746  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=072fb9dcc | CC=2617
+[CLEANUP] ลบ backup 0 ไฟล์

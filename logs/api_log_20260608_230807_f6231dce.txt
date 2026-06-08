@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-08 23:08:07
+Transfer  : f6231dcef
+Confirm   : 9298
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=f6231d... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: fed7cf45b
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_f04505a3
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_230809_f6231dce
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: be4bf1114 | Confirm ใหม่: 6085
+============================================================

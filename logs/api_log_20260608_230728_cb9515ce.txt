@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-08 23:07:28
+Transfer  : cb9515ceb
+Confirm   : 4474
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=cb9515... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 13014ebc7
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_b3fc050b
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_230729_cb9515ce
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 9d74642cd | Confirm ใหม่: 9365
+============================================================

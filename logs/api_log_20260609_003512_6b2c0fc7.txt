@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-09 00:35:12
+Transfer  : 6b2c0fc74
+Confirm   : 4804
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=6b2c0f... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: f708fb22c
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_4c23684e
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260609_003513_6b2c0fc7
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 6d03c4df7 | Confirm ใหม่: 0314
+============================================================

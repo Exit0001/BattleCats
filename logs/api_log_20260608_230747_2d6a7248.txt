@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-08 23:07:47
+Transfer  : 2d6a72486
+Confirm   : 9561
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=2d6a72... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 9b7d05b83
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_2b8d8fba
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260608_230749_2d6a7248
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 14be864ef | Confirm ใหม่: 1680
+============================================================

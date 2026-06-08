@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-09 00:35:05
+Transfer  : 1bc80987e
+Confirm   : 7367
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=1bc809... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 165e9319f
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_64b082c6
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260609_003507_1bc80987
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: ff8f99339 | Confirm ใหม่: 1734
+============================================================

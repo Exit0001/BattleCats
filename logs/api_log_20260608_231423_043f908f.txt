@@ -1,0 +1,410 @@
+============================================================
+เวลา      : 2026-06-08 23:14:23
+Transfer  : 043f908f6
+Confirm   : 9675
+Country   : en
+============================================================
+[OP] Dupe Save x100
+[BCSFE] ⬇  Downloading save (transfer=043f90... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[DUPE] ── รอบที่ 1/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 9e0d830a3
+[DUPE] Inquiry หลัง: 32af50248  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=3d6333878 | CC=4853
+[DUPE] ── รอบที่ 2/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 32af50248
+[DUPE] Inquiry หลัง: f1f41fe1b  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=6af61d3a9 | CC=0950
+[DUPE] ── รอบที่ 3/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : f1f41fe1b
+[DUPE] Inquiry หลัง: be1a8fafc  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=a8a021081 | CC=3416
+[DUPE] ── รอบที่ 4/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : be1a8fafc
+[DUPE] Inquiry หลัง: db2faeaf0  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=7bfb91b2b | CC=1707
+[DUPE] ── รอบที่ 5/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : db2faeaf0
+[DUPE] Inquiry หลัง: 7d61232be  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=71f84628c | CC=9598
+[DUPE] ── รอบที่ 6/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 7d61232be
+[DUPE] Inquiry หลัง: b967ac6b6  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=07d6ee572 | CC=2041
+[DUPE] ── รอบที่ 7/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : b967ac6b6
+[DUPE] Inquiry หลัง: 7ff7ece5c  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=7ed89f3cb | CC=0488
+[DUPE] ── รอบที่ 8/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 7ff7ece5c
+[DUPE] Inquiry หลัง: 4cff03d8d  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=553ea1f49 | CC=1718
+[DUPE] ── รอบที่ 9/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 4cff03d8d
+[DUPE] Inquiry หลัง: 09288fe44  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=ac26021d9 | CC=5352
+[DUPE] ── รอบที่ 10/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 09288fe44
+[DUPE] Inquiry หลัง: 542841376  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=a2fa62975 | CC=6423
+[DUPE] ── รอบที่ 11/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 542841376
+[DUPE] Inquiry หลัง: a92132345  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=83ff2f48f | CC=9761
+[DUPE] ── รอบที่ 12/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : a92132345
+[DUPE] Inquiry หลัง: 5472a0da8  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=f5fe25d94 | CC=8390
+[DUPE] ── รอบที่ 13/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 5472a0da8
+[DUPE] Inquiry หลัง: dea9b1b23  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=0573dec92 | CC=3927
+[DUPE] ── รอบที่ 14/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : dea9b1b23
+[DUPE] Inquiry หลัง: 5b10790be  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=ab70b59b4 | CC=8380
+[DUPE] ── รอบที่ 15/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 5b10790be
+[DUPE] Inquiry หลัง: 5e5f35bc4  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=c35dfcba4 | CC=3224
+[DUPE] ── รอบที่ 16/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 5e5f35bc4
+[DUPE] Inquiry หลัง: f828913a0  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=e1cb8c253 | CC=7909
+[DUPE] ── รอบที่ 17/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : f828913a0
+[DUPE] Inquiry หลัง: 3319b8f02  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=4cac4f79f | CC=4357
+[DUPE] ── รอบที่ 18/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 3319b8f02
+[DUPE] Inquiry หลัง: 73502407f  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=a55fcce43 | CC=5919
+[DUPE] ── รอบที่ 19/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 73502407f
+[DUPE] Inquiry หลัง: 6cbabec91  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=a8ac7bf34 | CC=5300
+[DUPE] ── รอบที่ 20/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 6cbabec91
+[DUPE] Inquiry หลัง: add57cb98  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=28dce7b95 | CC=7412
+[DUPE] ── รอบที่ 21/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : add57cb98
+[DUPE] Inquiry หลัง: a8dfbce83  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=6af0fdf85 | CC=5300
+[DUPE] ── รอบที่ 22/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : a8dfbce83
+[DUPE] Inquiry หลัง: dc0ef9823  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=476c995ba | CC=1226
+[DUPE] ── รอบที่ 23/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : dc0ef9823
+[DUPE] Inquiry หลัง: ea2f29e4b  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=d7d4c9cb2 | CC=4694
+[DUPE] ── รอบที่ 24/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : ea2f29e4b
+[DUPE] Inquiry หลัง: bc52af5c1  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=9f6f8ecf1 | CC=4339
+[DUPE] ── รอบที่ 25/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : bc52af5c1
+[DUPE] Inquiry หลัง: 054723296  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=aac8ec16b | CC=3934
+[DUPE] ── รอบที่ 26/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 054723296
+[DUPE] Inquiry หลัง: 0585d7354  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=fafbd765d | CC=3706
+[DUPE] ── รอบที่ 27/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 0585d7354
+[DUPE] Inquiry หลัง: a9f8a7e76  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=aab883063 | CC=9401
+[DUPE] ── รอบที่ 28/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : a9f8a7e76
+[DUPE] Inquiry หลัง: 6c2d08f27  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=033efb189 | CC=4235
+[DUPE] ── รอบที่ 29/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 6c2d08f27
+[DUPE] Inquiry หลัง: b84437ab2  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=b2b7570d8 | CC=0025
+[DUPE] ── รอบที่ 30/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : b84437ab2
+[DUPE] Inquiry หลัง: e9d15fba7  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=a35533e33 | CC=9799
+[DUPE] ── รอบที่ 31/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : e9d15fba7
+[DUPE] Inquiry หลัง: 0b8bae267  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=50b6f8b89 | CC=4307
+[DUPE] ── รอบที่ 32/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 0b8bae267
+[DUPE] Inquiry หลัง: e80a1229a  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=99a9ea763 | CC=8510
+[DUPE] ── รอบที่ 33/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : e80a1229a
+[DUPE] Inquiry หลัง: 02ab12c9c  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=ec89f445f | CC=3983
+[DUPE] ── รอบที่ 34/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 02ab12c9c
+[DUPE] Inquiry หลัง: f367f1755  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=328ce9c16 | CC=6780
+[DUPE] ── รอบที่ 35/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : f367f1755
+[DUPE] Inquiry หลัง: 804ea54c9  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=772b9cbdd | CC=7258
+[DUPE] ── รอบที่ 36/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 804ea54c9
+[DUPE] Inquiry หลัง: fee68f9f2  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=6731537ca | CC=6820
+[DUPE] ── รอบที่ 37/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : fee68f9f2
+[DUPE] Inquiry หลัง: b14a15207  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=c77c054f3 | CC=8971
+[DUPE] ── รอบที่ 38/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : b14a15207
+[DUPE] Inquiry หลัง: 7190e496d  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=93dcdf919 | CC=7954
+[DUPE] ── รอบที่ 39/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 7190e496d
+[DUPE] Inquiry หลัง: 937dd68f1  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=0c870156d | CC=9946
+[DUPE] ── รอบที่ 40/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 937dd68f1
+[DUPE] Inquiry หลัง: dc8dbde1d  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=a044751c8 | CC=4690
+[DUPE] ── รอบที่ 41/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : dc8dbde1d
+[DUPE] Inquiry หลัง: 5a7a025aa  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=e549a6c1a | CC=8878
+[DUPE] ── รอบที่ 42/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 5a7a025aa
+[DUPE] Inquiry หลัง: cc30a7c7c  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=7c17a3854 | CC=3701
+[DUPE] ── รอบที่ 43/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : cc30a7c7c
+[DUPE] Inquiry หลัง: 5d8351ab8  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=19942bc02 | CC=8120
+[DUPE] ── รอบที่ 44/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 5d8351ab8
+[DUPE] Inquiry หลัง: 95e6af1f0  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=838697f20 | CC=4056
+[DUPE] ── รอบที่ 45/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 95e6af1f0
+[DUPE] Inquiry หลัง: 98c62250f  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=0c4322e41 | CC=7023
+[DUPE] ── รอบที่ 46/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 98c62250f
+[DUPE] Inquiry หลัง: 87ec61bc7  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=35c4fd862 | CC=5082
+[DUPE] ── รอบที่ 47/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 87ec61bc7
+[DUPE] Inquiry หลัง: 4ed1ffefd  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=8927011e7 | CC=6087
+[DUPE] ── รอบที่ 48/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 4ed1ffefd
+[DUPE] Inquiry หลัง: 3402cf549  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=e7633f4f3 | CC=7689
+[DUPE] ── รอบที่ 49/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 3402cf549
+[DUPE] Inquiry หลัง: 24a3579a3  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=b769b6392 | CC=3935
+[DUPE] ── รอบที่ 50/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 24a3579a3
+[DUPE] Inquiry หลัง: 73009b9be  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=3ab0ddc8a | CC=7308
+[DUPE] ── รอบที่ 51/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 73009b9be
+[DUPE] Inquiry หลัง: 012b64ec1  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=4085c83e5 | CC=6852
+[DUPE] ── รอบที่ 52/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 012b64ec1
+[DUPE] Inquiry หลัง: b9816b2d2  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=7b0b4acb2 | CC=1817
+[DUPE] ── รอบที่ 53/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : b9816b2d2
+[DUPE] Inquiry หลัง: 33d4711e2  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=900ec0d0e | CC=0007
+[DUPE] ── รอบที่ 54/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 33d4711e2
+[DUPE] Inquiry หลัง: 61f8c67ac  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=2e2921a1a | CC=6066
+[DUPE] ── รอบที่ 55/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 61f8c67ac
+[DUPE] Inquiry หลัง: 616a9b2aa  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=4e6268f01 | CC=2728
+[DUPE] ── รอบที่ 56/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 616a9b2aa
+[DUPE] Inquiry หลัง: e68853144  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=3eaae9d8b | CC=5786
+[DUPE] ── รอบที่ 57/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : e68853144
+[DUPE] Inquiry หลัง: 7e74d9da9  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=e18c0ae59 | CC=5810
+[DUPE] ── รอบที่ 58/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 7e74d9da9
+[DUPE] Inquiry หลัง: fbd812171  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=72543ef46 | CC=2999
+[DUPE] ── รอบที่ 59/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : fbd812171
+[DUPE] Inquiry หลัง: 84643e55e  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=5f978d409 | CC=2485
+[DUPE] ── รอบที่ 60/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 84643e55e
+[DUPE] Inquiry หลัง: 6be586221  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=a4ac60ce8 | CC=6973
+[DUPE] ── รอบที่ 61/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 6be586221
+[DUPE] Inquiry หลัง: 28f954a60  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=a739e13d5 | CC=8871
+[DUPE] ── รอบที่ 62/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 28f954a60
+[DUPE] Inquiry หลัง: a61f1db14  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=a303d5d17 | CC=6416
+[DUPE] ── รอบที่ 63/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : a61f1db14
+[DUPE] Inquiry หลัง: 78d3804da  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=655dd17fe | CC=7396
+[DUPE] ── รอบที่ 64/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 78d3804da
+[DUPE] Inquiry หลัง: 64fb4a8d4  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=cd58ffb0d | CC=0728
+[DUPE] ── รอบที่ 65/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 64fb4a8d4
+[DUPE] Inquiry หลัง: a593e79f3  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=6cc5343bb | CC=5791
+[DUPE] ── รอบที่ 66/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : a593e79f3
+[DUPE] Inquiry หลัง: ac16b2933  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=06e5263aa | CC=3316
+[DUPE] ── รอบที่ 67/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : ac16b2933
+[DUPE] Inquiry หลัง: ce326630f  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=c9f671543 | CC=6423
+[DUPE] ── รอบที่ 68/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : ce326630f
+[DUPE] Inquiry หลัง: 29888a510  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=5df36ea5e | CC=6557
+[DUPE] ── รอบที่ 69/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 29888a510
+[DUPE] Inquiry หลัง: 40749319e  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=4f4a6c6f0 | CC=0747
+[DUPE] ── รอบที่ 70/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 40749319e
+[DUPE] Inquiry หลัง: 9b06a9d9c  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=6605fc3af | CC=6285
+[DUPE] ── รอบที่ 71/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 9b06a9d9c
+[DUPE] Inquiry หลัง: 5b8aebb3b  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=c332e6f91 | CC=7275
+[DUPE] ── รอบที่ 72/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 5b8aebb3b
+[DUPE] Inquiry หลัง: 10613285d  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=18c374255 | CC=2097
+[DUPE] ── รอบที่ 73/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 10613285d
+[DUPE] Inquiry หลัง: 9dca74b95  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=52aff8a15 | CC=0391
+[DUPE] ── รอบที่ 74/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 9dca74b95
+[DUPE] Inquiry หลัง: 3bacf2d18  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=4bd3c0bb0 | CC=3958
+[DUPE] ── รอบที่ 75/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 3bacf2d18
+[DUPE] Inquiry หลัง: c859467eb  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=f0a20a47b | CC=0418
+[DUPE] ── รอบที่ 76/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : c859467eb
+[DUPE] Inquiry หลัง: ed6abfd0c  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=262b1079c | CC=5962
+[DUPE] ── รอบที่ 77/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : ed6abfd0c
+[DUPE] Inquiry หลัง: e72757449  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=f59d86eca | CC=8219
+[DUPE] ── รอบที่ 78/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : e72757449
+[DUPE] Inquiry หลัง: d3133157f  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=80385969f | CC=0924
+[DUPE] ── รอบที่ 79/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : d3133157f
+[DUPE] Inquiry หลัง: e347abb74  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=652fa9730 | CC=3185
+[DUPE] ── รอบที่ 80/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : e347abb74
+[DUPE] Inquiry หลัง: ca9dfa6e3  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=e3dfa41a7 | CC=6181
+[DUPE] ── รอบที่ 81/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : ca9dfa6e3
+[DUPE] Inquiry หลัง: 452a765b5  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=665436cba | CC=0399
+[DUPE] ── รอบที่ 82/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 452a765b5
+[DUPE] Inquiry หลัง: 8165c7159  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=39a84686f | CC=1793
+[DUPE] ── รอบที่ 83/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 8165c7159
+[DUPE] Inquiry หลัง: d5c77a8c8  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=fe7e2eb06 | CC=2632
+[DUPE] ── รอบที่ 84/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : d5c77a8c8
+[DUPE] Inquiry หลัง: 7b748f2a9  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=f32192e9c | CC=9821
+[DUPE] ── รอบที่ 85/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 7b748f2a9
+[DUPE] Inquiry หลัง: 7bf589d2f  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=63e30c1af | CC=8537
+[DUPE] ── รอบที่ 86/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 7bf589d2f
+[DUPE] Inquiry หลัง: 8fe9bc526  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=bb5c583da | CC=0298
+[DUPE] ── รอบที่ 87/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 8fe9bc526
+[DUPE] Inquiry หลัง: c97b547b6  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=b472917df | CC=9218
+[DUPE] ── รอบที่ 88/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : c97b547b6
+[DUPE] Inquiry หลัง: c3a7a383c  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=88c4e8890 | CC=6587
+[DUPE] ── รอบที่ 89/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : c3a7a383c
+[DUPE] Inquiry หลัง: ce3bdceeb  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=c35abae95 | CC=0752
+[DUPE] ── รอบที่ 90/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : ce3bdceeb
+[DUPE] Inquiry หลัง: e307c0ea3  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=474ac4312 | CC=4354
+[DUPE] ── รอบที่ 91/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : e307c0ea3
+[DUPE] Inquiry หลัง: 2c196daf1  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=408dd4f9e | CC=4349
+[DUPE] ── รอบที่ 92/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 2c196daf1
+[DUPE] Inquiry หลัง: 86c05dd53  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=19f70afc9 | CC=2908
+[DUPE] ── รอบที่ 93/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 86c05dd53
+[DUPE] Inquiry หลัง: 958d648c0  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=8dbda3b8e | CC=0072
+[DUPE] ── รอบที่ 94/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 958d648c0
+[DUPE] Inquiry หลัง: a155a1c35  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=7959eb314 | CC=3520
+[DUPE] ── รอบที่ 95/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : a155a1c35
+[DUPE] Inquiry หลัง: f47eea8b6  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=1c50a8d47 | CC=6778
+[DUPE] ── รอบที่ 96/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : f47eea8b6
+[DUPE] Inquiry หลัง: e7510182a  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=049e11273 | CC=3723
+[DUPE] ── รอบที่ 97/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : e7510182a
+[DUPE] Inquiry หลัง: bcc7475d0  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=0f9f1d830 | CC=8848
+[DUPE] ── รอบที่ 98/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : bcc7475d0
+[DUPE] Inquiry หลัง: 84fa4a598  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=33765de7c | CC=4954
+[DUPE] ── รอบที่ 99/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 84fa4a598
+[DUPE] Inquiry หลัง: 5238dac44  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=df919a211 | CC=6101
+[DUPE] ── รอบที่ 100/100 ──────────────────────────
+[DUPE] Inquiry ก่อน : 5238dac44
+[DUPE] Inquiry หลัง: c920ae1fd  ✅ เปลี่ยนแล้ว
+[DUPE] ✅ TC=193757c81 | CC=4224
+[CLEANUP] ลบ backup 0 ไฟล์

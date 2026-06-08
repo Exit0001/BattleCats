@@ -67,6 +67,20 @@ class UnlockPaymentRequest(BaseModel):
     total: int
     payment_method: str = "promptpay"
 
+class CheckIDEntry(BaseModel):
+    transfer_code: str
+    confirmation_code: str
+
+class CheckIDRequest(BaseModel):
+    codes: List[CheckIDEntry]
+    country: str = "1"
+
+class DupeSaveRequest(BaseModel):
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+    count: int = 1              # จำนวนที่ต้องการ dupe (1-20)
+
 class UnlockCharactersRequest(BaseModel):
     """โมเดลสำหรับปลดล็อคตัวละคร"""
     transfer_code: str          # Transfer Code จากเกม

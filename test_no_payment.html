@@ -1606,6 +1606,369 @@ function ucReset() {
 }
 </script>
 
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- CHECK ID SECTION                                             -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="test-section" style="margin-top:32px;border:1px solid rgba(56,189,248,0.3);border-radius:16px;padding:24px;">
+  <h2 class="section-title" style="margin-bottom:20px;">🔍 checkID</h2>
+
+  <div style="background:rgba(56,189,248,0.07);border:1px solid rgba(56,189,248,0.25);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#7DD3FC;line-height:1.7;">
+    ตรวจว่ารหัสยังใช้ได้อยู่ไหม — download save → re-upload (ไม่แก้ไข) → ได้ TC ใหม่คืน<br>
+    ใส่ได้หลายรหัสพร้อมกัน ระบบตรวจทีละรหัสตามลำดับ
+  </div>
+
+  <div style="margin-bottom:12px;">
+    <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">Server</label>
+    <select id="chk-srv" style="padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;">
+      <option value="1">EN (Global / TH / EU)</option>
+      <option value="2">JP</option>
+      <option value="3">KR</option>
+      <option value="4">TW</option>
+    </select>
+  </div>
+
+  <!-- paste import -->
+  <div style="margin-bottom:14px;">
+    <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">📋 วางจากไฟล์ Dupe Save (ก๊อปทั้งหมดมาวาง)</label>
+    <div style="display:flex;gap:8px;align-items:flex-start;">
+      <textarea id="chk-paste-input" rows="3" placeholder="  1  TC: abc123456   CC: 1234   Inquiry: xyz...&#10;  2  TC: def789abc   CC: 5678   Inquiry: uvw..." style="flex:1;padding:9px 12px;border:1px solid rgba(56,189,248,0.25);border-radius:8px;background:rgba(56,189,248,0.05);color:white;font-family:monospace;font-size:12px;resize:vertical;box-sizing:border-box;"></textarea>
+      <button onclick="chkImportText()" style="padding:9px 14px;background:rgba(56,189,248,0.15);color:#38BDF8;border:1px solid rgba(56,189,248,0.35);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;align-self:stretch;">📋 นำเข้า</button>
+    </div>
+  </div>
+
+  <!-- rows -->
+  <div id="chk-rows" style="margin-bottom:14px;"></div>
+
+  <div style="display:flex;gap:8px;margin-bottom:20px;">
+    <button onclick="chkAddRow()" style="padding:7px 16px;background:rgba(56,189,248,0.12);color:#7DD3FC;border:1px solid rgba(56,189,248,0.3);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">+ เพิ่มรหัส</button>
+    <button onclick="chkClear()" style="padding:7px 16px;background:rgba(255,255,255,0.05);color:rgba(210,190,255,0.5);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;cursor:pointer;">ล้างทั้งหมด</button>
+  </div>
+
+  <button onclick="runCheckID(event)" class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;background:linear-gradient(135deg,#0ea5e9,#6366f1);">
+    🔍 ตรวจสอบรหัส
+  </button>
+
+  <div id="chk-result" style="display:none;margin-top:16px;"></div>
+</div>
+
+<script>
+var _chkRowCount = 0;
+
+function chkAddRow(tc, cc) {
+  _chkRowCount++;
+  var id = _chkRowCount;
+  var div = document.createElement('div');
+  div.id = 'chk-row-' + id;
+  div.style.cssText = 'display:grid;grid-template-columns:1fr 120px 36px;gap:8px;margin-bottom:8px;align-items:center;';
+  div.innerHTML =
+    '<input type="text" id="chk-tc-'+id+'" placeholder="Transfer Code" value="'+(tc||'')+'" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;background:rgba(255,255,255,0.06);color:white;font-size:13px;">' +
+    '<input type="text" id="chk-cc-'+id+'" placeholder="Conf Code" value="'+(cc||'')+'" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;background:rgba(255,255,255,0.06);color:white;font-size:13px;">' +
+    '<button onclick="chkRemoveRow('+id+')" style="width:36px;height:36px;background:rgba(248,113,113,0.12);color:#F87171;border:1px solid rgba(248,113,113,0.25);border-radius:8px;cursor:pointer;font-size:16px;line-height:1;">✕</button>';
+  document.getElementById('chk-rows').appendChild(div);
+}
+
+function chkRemoveRow(id) {
+  var el = document.getElementById('chk-row-' + id);
+  if (el) el.remove();
+}
+
+function chkClear() {
+  document.getElementById('chk-rows').innerHTML = '';
+  _chkRowCount = 0;
+  document.getElementById('chk-result').style.display = 'none';
+  chkAddRow();
+}
+
+function chkImportText() {
+  var text = document.getElementById('chk-paste-input').value;
+  var lines = text.split('\n');
+  var parsed = [];
+  lines.forEach(function(line) {
+    var tcMatch = line.match(/TC:\s*([a-fA-F0-9]+)/);
+    var ccMatch = line.match(/CC:\s*([0-9]+)/);
+    if (tcMatch && ccMatch) {
+      parsed.push({ tc: tcMatch[1].trim(), cc: ccMatch[1].trim() });
+    }
+  });
+  if (parsed.length === 0) { toast('❌ ไม่พบรหัสในข้อความ', 'err'); return; }
+  document.getElementById('chk-rows').innerHTML = '';
+  _chkRowCount = 0;
+  parsed.forEach(function(p) { chkAddRow(p.tc, p.cc); });
+  document.getElementById('chk-paste-input').value = '';
+  toast('✅ นำเข้า ' + parsed.length + ' รหัสแล้ว', 'ok');
+}
+
+// init 1 row
+chkAddRow();
+
+var _chkLastResults = null;
+
+function downloadCheckID() {
+  if (!_chkLastResults || _chkLastResults.length === 0) return;
+  var now = new Date();
+  var ts = now.getFullYear() + '-' +
+    String(now.getMonth()+1).padStart(2,'0') + '-' +
+    String(now.getDate()).padStart(2,'0') + ' ' +
+    String(now.getHours()).padStart(2,'0') + ':' +
+    String(now.getMinutes()).padStart(2,'0') + ':' +
+    String(now.getSeconds()).padStart(2,'0');
+  var ok = _chkLastResults.filter(function(r){ return r.valid; }).length;
+  var lines = [
+    'BattleCats CheckID — ' + ts,
+    '='.repeat(50),
+    'ตรวจ ' + _chkLastResults.length + ' รหัส  |  ✅ ' + ok + ' ใช้ได้  |  ❌ ' + (_chkLastResults.length - ok) + ' ไม่ได้',
+    '='.repeat(50),
+    ''
+  ];
+  var idx = 1;
+  _chkLastResults.forEach(function(r) {
+    var num = String(idx).padStart(3, ' ');
+    if (r.valid) {
+      lines.push(num + '  TC: ' + (r.new_tc || '-') + '   CC: ' + (r.new_cc || '-') + '   Inquiry: ' + (r.inquiry_code || '-'));
+      idx++;
+    } else {
+      lines.push('# ❌  TC เดิม: ' + r.original_tc + ' — ' + (r.error || 'ไม่ได้'));
+    }
+  });
+  lines.push('');
+  var blob = new Blob([lines.join('\r\n')], { type: 'text/plain;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  var fn = 'checkID_' + ts.replace(/[: -]/g,'').substring(0,15) + '.txt';
+  a.download = fn;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+async function runCheckID(event) {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var srv = document.getElementById('chk-srv').value;
+  var btn = event.target;
+  var res = document.getElementById('chk-result');
+
+  // เก็บทุก row ที่มี TC
+  var codes = [];
+  for (var i = 1; i <= _chkRowCount; i++) {
+    var tcEl = document.getElementById('chk-tc-' + i);
+    var ccEl = document.getElementById('chk-cc-' + i);
+    if (!tcEl) continue;
+    var tc = tcEl.value.trim();
+    var cc = ccEl.value.trim();
+    if (tc) codes.push({ transfer_code: tc, confirmation_code: cc });
+  }
+  if (codes.length === 0) { toast('❌ ใส่รหัสอย่างน้อย 1 รายการ', 'err'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ กำลังตรวจ ' + codes.length + ' รหัส...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#7DD3FC;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ ตรวจสอบอยู่ ' + codes.length + ' รหัส...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/check/id', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ codes: codes, country: srv }),
+    });
+    var data = await resp.json();
+
+    if (data.success) {
+      toast('✅ ตรวจครบ — ใช้ได้ ' + data.ok + '/' + (data.ok + data.error_count), 'ok');
+      _chkLastResults = data.results;
+      var rows = data.results.map(function(r) {
+        if (r.valid) {
+          return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' +
+            '<td style="padding:9px 10px;font-family:monospace;font-size:12px;color:#9CA3AF;">' + r.original_tc + '</td>' +
+            '<td style="padding:9px 10px;text-align:center;"><span style="background:rgba(74,222,128,0.12);color:#4ADE80;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:\'Chakra Petch\',sans-serif;">✅ ใช้ได้</span></td>' +
+            '<td style="padding:9px 10px;font-family:monospace;font-size:13px;color:#FFD84E;">' + (r.new_tc || '-') + '</td>' +
+            '<td style="padding:9px 10px;font-family:monospace;font-size:13px;color:#FFD84E;">' + (r.new_cc || '-') + '</td>' +
+            '<td style="padding:9px 10px;font-family:monospace;font-size:11px;color:#7DD3FC;">' + (r.inquiry_code || '-') + '</td>' +
+            '<td style="padding:9px 4px;">' +
+              '<button onclick="copyText(\'' + (r.new_tc||'') + '\',this)" style="padding:3px 7px;background:rgba(99,102,241,0.2);color:#c4b5fd;border:1px solid rgba(99,102,241,0.35);border-radius:5px;font-size:10px;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;margin-right:3px;">TC</button>' +
+              '<button onclick="copyText(\'' + (r.new_cc||'') + '\',this)" style="padding:3px 7px;background:rgba(99,102,241,0.2);color:#c4b5fd;border:1px solid rgba(99,102,241,0.35);border-radius:5px;font-size:10px;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;">CC</button>' +
+            '</td>' +
+          '</tr>';
+        } else {
+          return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' +
+            '<td style="padding:9px 10px;font-family:monospace;font-size:12px;color:#9CA3AF;">' + r.original_tc + '</td>' +
+            '<td style="padding:9px 10px;text-align:center;"><span style="background:rgba(248,113,113,0.12);color:#F87171;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:\'Chakra Petch\',sans-serif;">❌ ไม่ได้</span></td>' +
+            '<td colspan="4" style="padding:9px 10px;font-size:11px;color:rgba(248,113,113,0.7);">' + (r.error || '') + '</td>' +
+          '</tr>';
+        }
+      }).join('');
+
+      res.innerHTML =
+        '<div style="background:rgba(14,165,233,0.05);border:1px solid rgba(14,165,233,0.2);border-radius:12px;padding:16px;overflow-x:auto;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#38BDF8;font-size:12px;margin-bottom:12px;">ผล: ใช้ได้ ' + data.ok + ' / ไม่ได้ ' + data.error_count + ' จาก ' + data.results.length + ' รหัส</div>' +
+        '<table style="width:100%;border-collapse:collapse;">' +
+        '<thead><tr style="border-bottom:1px solid rgba(255,255,255,0.12);">' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;font-family:\'Chakra Petch\',sans-serif;">Transfer Code (เดิม)</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:center;font-family:\'Chakra Petch\',sans-serif;">สถานะ</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;font-family:\'Chakra Petch\',sans-serif;">TC ใหม่</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;font-family:\'Chakra Petch\',sans-serif;">CC ใหม่</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;font-family:\'Chakra Petch\',sans-serif;">Inquiry Code</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;font-family:\'Chakra Petch\',sans-serif;">คัดลอก</th>' +
+        '</tr></thead><tbody>' + rows + '</tbody></table>' +
+        '<div style="margin-top:12px;text-align:right;">' +
+        '<button onclick="downloadCheckID()" style="padding:6px 16px;background:rgba(14,165,233,0.15);color:#38BDF8;border:1px solid rgba(14,165,233,0.35);border-radius:8px;font-size:12px;font-family:\'Chakra Petch\',sans-serif;cursor:pointer;">📥 โหลดเป็น .txt</button>' +
+        '</div></div>';
+    } else {
+      toast('❌ ' + (data.error || 'Error'), 'err');
+      res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:14px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#FCA5A5;">❌ ' + (data.error || 'Unknown error') + '</div>';
+    }
+  } catch(e) {
+    toast('❌ ' + e.message, 'err');
+    res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:14px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#FCA5A5;">❌ ' + e.message + '</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔍 ตรวจสอบรหัส';
+  }
+}
+</script>
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- DUPE SAVE SECTION                                            -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="test-section" style="margin-top:32px;border:1px solid rgba(251,191,36,0.3);border-radius:16px;padding:24px;">
+  <h2 class="section-title" style="margin-bottom:20px;">🔀 Dupe Save</h2>
+
+  <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.3);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;line-height:1.7;">
+    ⚠️ ระบบ dupe ใช้ <strong>create_new_account (unban)</strong> สร้าง Inquiry Code ใหม่ทุกรอบ<br>
+    download ครั้งเดียว → dupe N รอบ → ได้ TC N ชุด → ลบ backup อัตโนมัติ
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">Transfer Code</label>
+      <input type="text" id="dupe-tc" placeholder="8274501e5" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;background:rgba(255,255,255,0.06);color:white;box-sizing:border-box;">
+    </div>
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">Confirmation Code</label>
+      <input type="text" id="dupe-cc" placeholder="0792" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;background:rgba(255,255,255,0.06);color:white;box-sizing:border-box;">
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">Server</label>
+      <select id="dupe-srv" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;">
+        <option value="1">EN (Global / TH / EU)</option>
+        <option value="2">JP</option>
+        <option value="3">KR</option>
+        <option value="4">TW</option>
+      </select>
+    </div>
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">จำนวน dupe (สูงสุด 20)</label>
+      <input type="number" id="dupe-count" value="3" min="1" max="100" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;">
+    </div>
+  </div>
+
+  <button onclick="runDupeSave(event)" class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;">
+    🔀 เริ่ม Dupe
+  </button>
+
+  <div id="dupe-result" style="display:none;margin-top:16px;"></div>
+</div>
+
+<script>
+var _dupeLastData = null;
+
+function downloadDupeSave() {
+  if (!_dupeLastData || !_dupeLastData.codes || _dupeLastData.codes.length === 0) return;
+  var now = new Date();
+  var ts = now.getFullYear() + '-' +
+    String(now.getMonth()+1).padStart(2,'0') + '-' +
+    String(now.getDate()).padStart(2,'0') + ' ' +
+    String(now.getHours()).padStart(2,'0') + ':' +
+    String(now.getMinutes()).padStart(2,'0') + ':' +
+    String(now.getSeconds()).padStart(2,'0');
+  var codes = _dupeLastData.codes;
+  var lines = [
+    'BattleCats Dupe Save — ' + ts,
+    '='.repeat(50),
+    'จำนวน: ' + codes.length + ' รหัส',
+    '='.repeat(50),
+    ''
+  ];
+  codes.forEach(function(c, i) {
+    var num = String(i+1).padStart(3, ' ');
+    lines.push(num + '  TC: ' + (c.transfer || '-') + '   CC: ' + (c.confirmation || '-') + '   Inquiry: ' + (c.inquiry || '-'));
+  });
+  lines.push('');
+  var blob = new Blob([lines.join('\r\n')], { type: 'text/plain;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  var fn = 'dupe_' + ts.replace(/[: -]/g,'').substring(0,15) + '.txt';
+  a.download = fn;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+async function runDupeSave(event) {
+  var url   = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc    = document.getElementById('dupe-tc').value.trim();
+  var cc    = document.getElementById('dupe-cc').value.trim();
+  var srv   = document.getElementById('dupe-srv').value;
+  var count = parseInt(document.getElementById('dupe-count').value) || 1;
+  var btn   = event.target;
+  var res   = document.getElementById('dupe-result');
+
+  if (!tc || !cc) { toast('❌ กรอก TC และ CC ก่อน', 'err'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ กำลัง dupe... (อาจใช้เวลาหลายนาที)';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ Downloading save แล้ว dupe ' + count + ' รอบ...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/dupe/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, count: count }),
+    });
+    var data = await resp.json();
+
+    if (data.success && data.codes && data.codes.length > 0) {
+      toast('✅ Dupe สำเร็จ ' + data.count + ' รหัส!', 'ok');
+      _dupeLastData = data;
+      var rows = data.codes.map(function(c, i) {
+        return '<tr>' +
+          '<td style="padding:8px 10px;color:#9CA3AF;font-size:12px;">#' + (i+1) + '</td>' +
+          '<td style="padding:8px 10px;font-family:monospace;color:#FFD84E;font-size:13px;">' + c.transfer + '</td>' +
+          '<td style="padding:8px 10px;font-family:monospace;color:#FFD84E;font-size:13px;">' + c.confirmation + '</td>' +
+          '<td style="padding:8px 10px;font-family:monospace;font-size:11px;color:#7DD3FC;">' + (c.inquiry || '-') + '</td>' +
+          '<td style="padding:8px 4px;">' +
+            '<button onclick="copyText(\'' + c.transfer + '\',this)" style="padding:3px 8px;background:rgba(99,102,241,0.25);color:#c4b5fd;border:1px solid rgba(99,102,241,0.4);border-radius:5px;font-size:10px;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;margin-right:4px;">TC</button>' +
+            '<button onclick="copyText(\'' + c.confirmation + '\',this)" style="padding:3px 8px;background:rgba(99,102,241,0.25);color:#c4b5fd;border:1px solid rgba(99,102,241,0.4);border-radius:5px;font-size:10px;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;">CC</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+      res.innerHTML =
+        '<div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:16px;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:13px;margin-bottom:12px;">✅ Dupe สำเร็จ ' + data.count + ' รหัส — backup ถูกลบแล้ว</div>' +
+        '<table style="width:100%;border-collapse:collapse;">' +
+        '<thead><tr style="border-bottom:1px solid rgba(255,255,255,0.1);">' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">#</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">Transfer Code</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">Confirmation</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">Inquiry Code</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">คัดลอก</th>' +
+        '</tr></thead><tbody>' + rows + '</tbody></table>' +
+        '<div style="margin-top:12px;text-align:right;">' +
+        '<button onclick="downloadDupeSave()" style="padding:6px 16px;background:rgba(251,191,36,0.12);color:#FBBF24;border:1px solid rgba(251,191,36,0.35);border-radius:8px;font-size:12px;font-family:\'Chakra Petch\',sans-serif;cursor:pointer;">📥 โหลดเป็น .txt</button>' +
+        '</div></div>';
+    } else {
+      toast('❌ Dupe ล้มเหลว', 'err');
+      res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:14px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#FCA5A5;">❌ ' + (data.error || 'Unknown error') + '</div>';
+    }
+  } catch(e) {
+    toast('❌ ' + e.message, 'err');
+    res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:14px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#FCA5A5;">❌ ' + e.message + '</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔀 เริ่ม Dupe';
+  }
+}
+</script>
 <script src="assets/auth.js"></script>
 <script src="assets/animations.js"></script>
 </body>
