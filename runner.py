@@ -359,15 +359,21 @@ class BCSFERunner:
             current_cc = codes["confirmation"]
 
             # ── CLI deferred items (lucky_ticket / rare_ticket) ──
-            # แต่ละ session ใช้ unique cli_save_path → parallel ได้แล้ว ไม่ต้อง lock
             has_rare = False
             if self._deferred_cli:
                 self._log("[CLI] รอ 4 วินาที (rate limit)...")
                 time.sleep(4)
-                for idx, deferred in enumerate(self._deferred_cli):
+                # บันทึก save ที่แก้แล้วสำหรับ --input-path → ข้าม startup menu (Linux safe)
+                try:
+                    cli_bcsfe_path = core.SaveFile.get_saves_path().add(f"SAVE_DATA_cli_{self._session_id}")
+                    save_file.to_file(cli_bcsfe_path)
+                    self._cli_save_path = Path(str(cli_bcsfe_path))
+                    self._log(f"[CLI] บันทึก save → {self._cli_save_path}")
+                except Exception as e:
+                    self._log(f"[CLI] ⚠ บันทึก CLI save ล้มเหลว: {e}")
+                for deferred in self._deferred_cli:
                     key = deferred["key"]
-                    use_local = (idx > 0)
-                    r = self._run_cli_item(current_tc, current_cc, key, deferred["amount"], deferred.get("current", 0), use_local)
+                    r = self._run_cli_item(current_tc, current_cc, key, deferred["amount"], deferred.get("current", 0), use_local=True)
                     if r["success"]:
                         current_tc = r["transfer"]
                         current_cc = r["confirmation"]
@@ -375,7 +381,6 @@ class BCSFERunner:
                             has_rare = True
                     else:
                         raise RuntimeError(f"{deferred['label']} CLI ล้มเหลว: {r.get('error')}")
-                # cleanup unique cli save file
                 try:
                     self._cli_save_path.unlink(missing_ok=True)
                 except Exception:
