@@ -14,7 +14,11 @@ from bcsfe.core.game.catbase.cat import Talent as BCSFETalent
 
 from config import ITEM_MAP
 
-BCSFE_CLI = Path(__file__).parent / ".venv" / "Scripts" / "bcsfe.exe"
+import sys as _sys
+if _sys.platform == "win32":
+    BCSFE_CLI = Path(__file__).parent / ".venv" / "Scripts" / "bcsfe.exe"
+else:
+    BCSFE_CLI = Path(__file__).parent / ".venv" / "bin" / "bcsfe"
 BCSFE_SAVES_DIR = Path.home() / "Documents" / "bcsfe" / "saves"
 
 COUNTRY_MAP = {"1": "en", "2": "jp", "3": "kr", "4": "tw"}

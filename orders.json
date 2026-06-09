@@ -2563,5 +2563,33 @@
     "created_at": "2026-06-08T18:00:18.554219",
     "expires_at": "2026-06-08T18:15:18.554208",
     "qr_base64": null
+  },
+  "B01AE478": {
+    "order_id": "B01AE478",
+    "transfer_code": "dc91fad35",
+    "confirmation_code": "9279",
+    "country": "1",
+    "items": [
+      {
+        "key": "rare_ticket",
+        "amount": 50
+      }
+    ],
+    "cat_ids": [],
+    "base_amount": 15,
+    "truemoney_fee": 0,
+    "amount": 15,
+    "payment_method": "promptpay",
+    "status": "done",
+    "created_at": "2026-06-09T20:20:33.597589",
+    "expires_at": "2026-06-09T20:35:33.597564",
+    "qr_base64": "iVBORw0KGgoAAAANSUhEUgAAASgAAAEoAQAAAADDfFG0AAACBUlEQVR4nO1aSY7DMAyzgv7/yxyYpLwUU0xPjYsRu8BFdAgYUqGVBtobuN4palWVKCYGkAKDv9Bfeo+S4ivxSKaiIQZnYRZ9pPS18dUZsZYCQer6B/NI6SuxMBG0IKkK/p6Hiq9NX0aMDtZMWaL42viC1oj+ImMBBOaR4mvla5OSWGMn69YUiq8EVbT0+i4ps7Qk2eIr8RBlQa76gmxJW0kfiq9NORHRSWF+YIqAslhfS3OlrwFFecEhVbFCdCntF18JmbHRkHRhBlfnfP0uvvZ8D90N2eqd7rOTkcHiayBdh7QlsoW5g9V++zc/NokrnZnaokdLXxMOpfAyYwUd6ePF1wrbD74XLjdJmbL8uIGdHNo1OoNJXzTqVvUn/kNV2HYtB4XsYiPsV554wsUtUPRbYU4pxB6Y+fuq5qvP8wkwdmnbOG6U0pca/6nuuO6qCjV7dKmxdTGuqq+VvhZk9mpOE3KjN0e1H3qhrxhz6L5ysPBAJ853xwerGpNXW3Y/XG9Di5pPTDxSWZhxKwfRuVU692pfH69q6/ALHnzZks77KH29er5t5DPIsT069Wpfdz7fDlmRYSz/COCd96lnf91ZhRFVe+IXZXbrF5z9PVWw2PSfkx5fSdnt53VWFTxHtSc9BuMGsvLXjvkQGxoRzmcezPiaVBx9te+Y53zp2V9VZZzKxA95Ph7rm+8dUwAAAABJRU5ErkJggg==",
+    "paid_at": "2026-06-09T20:21:17.702635",
+    "transaction_id": "016160202043BPP06765",
+    "received": 15.0,
+    "error": "❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง",
+    "new_transfer_code": "fc0430500",
+    "new_confirmation_code": "8099",
+    "done_at": "2026-06-09T20:22:01.798828"
   }
 }
