@@ -1327,6 +1327,10 @@ def serve_html(page: str):
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 app.mount("/pictures", StaticFiles(directory="pictures"), name="pictures")
 
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return FileResponse("favicon.ico", media_type="image/x-icon")
+
 # โ”€โ”€ serve HTML pages เธเนเธฒเธ http:// เน€เธเธทเนเธญเธซเธฅเธตเธเน€เธฅเธตเนเธขเธ file:// security errors โ”€โ”€
 _HTML_PAGES = ["index","shop","characters","stages","orders","admin","login",
                 "orders_manager","test_no_payment"]
