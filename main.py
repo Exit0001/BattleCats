@@ -296,6 +296,15 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
     cur_tc, cur_cc = tc, cc
     summary: list[dict] = []
 
+    def _fail(r: dict) -> dict:
+        """Propagate failure, carrying the latest TC the runner obtained (if any)."""
+        err = {"success": False, "error": r["error"]}
+        latest = r.get("latest_transfer_code")
+        if latest:
+            err["latest_tc"] = latest.get("transfer")
+            err["latest_cc"] = latest.get("confirmation")
+        return err
+
     def _upd(codes):
         nonlocal cur_tc, cur_cc
         if isinstance(codes, dict):
@@ -314,7 +323,7 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
     # ── Step 1: Regular items (cat food, XP, tickets …) ──
     if regular_items:
         r = _call("run", regular_items)
-        if not r["success"]: return {"success": False, "error": r["error"]}
+        if not r["success"]: return _fail(r)
         _upd(r["new_transfer_code"])
         summary += [{"item": ITEM_MAP[i["key"]]["label"], "amount": i["amount"]}
                     for i in regular_items if i["key"] in ITEM_MAP]
@@ -324,14 +333,14 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
     cat_ids = order.get("cat_ids") or []
     if cat_ids or order.get("order_type") == "unlock":
         r = _call("run_unlock_characters", cat_ids)
-        if not r["success"]: return {"success": False, "error": r["error"]}
+        if not r["success"]: return _fail(r)
         _upd(r["new_transfer_code"])
         summary.append({"item": f"ปลดล็อค {len(cat_ids)} ตัว", "amount": len(cat_ids)})
         print(f"[BCSFE] unlock_cat done -> tc={cur_tc}")
 
     if "unlock_all" in all_pkg_set:
         r = _call("run_unlock_all")
-        if not r["success"]: return {"success": False, "error": r["error"]}
+        if not r["success"]: return _fail(r)
         _upd(r["new_transfer_code"])
         summary.append({"item": "Unlock All", "amount": 1})
         print(f"[BCSFE] unlock_all done -> tc={cur_tc}")
@@ -340,14 +349,14 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
     if "upgrade_cat" in per_cat_groups:
         ids = per_cat_groups["upgrade_cat"]
         r = _call("run_upgrade_characters", ids)
-        if not r["success"]: return {"success": False, "error": r["error"]}
+        if not r["success"]: return _fail(r)
         _upd(r["new_transfer_code"])
         summary.append({"item": f"Upgrade Max ({len(ids)} ตัว)", "amount": len(ids)})
         print(f"[BCSFE] upgrade_cat x{len(ids)} done -> tc={cur_tc}")
 
     if "upgrade_all" in all_pkg_set:
         r = _call("run_upgrade_all_characters")
-        if not r["success"]: return {"success": False, "error": r["error"]}
+        if not r["success"]: return _fail(r)
         _upd(r["new_transfer_code"])
         summary.append({"item": "Upgrade Max All", "amount": 1})
         print(f"[BCSFE] upgrade_all done -> tc={cur_tc}")
@@ -356,14 +365,14 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
     if "trueform_cat" in per_cat_groups:
         ids = per_cat_groups["trueform_cat"]
         r = _call("run_true_form_characters", ids)
-        if not r["success"]: return {"success": False, "error": r["error"]}
+        if not r["success"]: return _fail(r)
         _upd(r["new_transfer_code"])
         summary.append({"item": f"True Form ({len(ids)} ตัว)", "amount": len(ids)})
         print(f"[BCSFE] trueform_cat x{len(ids)} done -> tc={cur_tc}")
 
     if "trueform_all" in all_pkg_set:
         r = _call("run_true_form_all")
-        if not r["success"]: return {"success": False, "error": r["error"]}
+        if not r["success"]: return _fail(r)
         _upd(r["new_transfer_code"])
         summary.append({"item": "True Form All", "amount": 1})
         print(f"[BCSFE] trueform_all done -> tc={cur_tc}")
@@ -372,14 +381,14 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
     if "ultraform_cat" in per_cat_groups:
         ids = per_cat_groups["ultraform_cat"]
         r = _call("run_ultra_form_characters", ids)
-        if not r["success"]: return {"success": False, "error": r["error"]}
+        if not r["success"]: return _fail(r)
         _upd(r["new_transfer_code"])
         summary.append({"item": f"Ultra Form ({len(ids)} ตัว)", "amount": len(ids)})
         print(f"[BCSFE] ultraform_cat x{len(ids)} done -> tc={cur_tc}")
 
     if "ultraform_all" in all_pkg_set:
         r = _call("run_ultra_form_all")
-        if not r["success"]: return {"success": False, "error": r["error"]}
+        if not r["success"]: return _fail(r)
         _upd(r["new_transfer_code"])
         summary.append({"item": "Ultra Form All", "amount": 1})
         print(f"[BCSFE] ultraform_all done -> tc={cur_tc}")
@@ -388,14 +397,14 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
     if "talents_cat" in per_cat_groups:
         ids = per_cat_groups["talents_cat"]
         r = _call("run_talents_max_characters", ids)
-        if not r["success"]: return {"success": False, "error": r["error"]}
+        if not r["success"]: return _fail(r)
         _upd(r["new_transfer_code"])
         summary.append({"item": f"Talent Max ({len(ids)} ตัว)", "amount": len(ids)})
         print(f"[BCSFE] talents_cat x{len(ids)} done -> tc={cur_tc}")
 
     if "talents_all" in all_pkg_set:
         r = _call("run_talents_max_all")
-        if not r["success"]: return {"success": False, "error": r["error"]}
+        if not r["success"]: return _fail(r)
         _upd(r["new_transfer_code"])
         summary.append({"item": "Max Talents All", "amount": 1})
         print(f"[BCSFE] talents_all done -> tc={cur_tc}")
@@ -432,8 +441,19 @@ async def payment_verify(order_id: str, slip: UploadFile = File(...)):
         step_result = await run_bcsfe(_run_bcsfe_steps, order, order["transfer_code"], order["confirmation_code"])
 
         if not step_result["success"]:
-            update_order_status(order_id, "bcsfe_failed", {"error": step_result["error"]})
-            return {"success": False, "bcsfe_failed": True, "error": step_result["error"]}
+            latest_tc = step_result.get("latest_tc")
+            latest_cc = step_result.get("latest_cc")
+            update_order_status(order_id, "bcsfe_failed", {
+                "error": step_result["error"],
+                "latest_transfer_code":     latest_tc,
+                "latest_confirmation_code": latest_cc,
+            })
+            return {
+                "success": False, "bcsfe_failed": True,
+                "error": step_result["error"],
+                "latest_transfer_code":     latest_tc,
+                "latest_confirmation_code": latest_cc,
+            }
 
         new_tc, new_cc = step_result["new_tc"], step_result["new_cc"]
         mark_slip_used(transaction_id)
@@ -483,8 +503,19 @@ async def payment_verify_voucher(order_id: str, body: VoucherRedeemRequest):
         step_result = await run_bcsfe(_run_bcsfe_steps, order, order["transfer_code"], order["confirmation_code"])
 
         if not step_result["success"]:
-            update_order_status(order_id, "bcsfe_failed", {"error": step_result["error"]})
-            return {"success": False, "bcsfe_failed": True, "error": step_result["error"]}
+            latest_tc = step_result.get("latest_tc")
+            latest_cc = step_result.get("latest_cc")
+            update_order_status(order_id, "bcsfe_failed", {
+                "error": step_result["error"],
+                "latest_transfer_code":     latest_tc,
+                "latest_confirmation_code": latest_cc,
+            })
+            return {
+                "success": False, "bcsfe_failed": True,
+                "error": step_result["error"],
+                "latest_transfer_code":     latest_tc,
+                "latest_confirmation_code": latest_cc,
+            }
 
         new_tc, new_cc = step_result["new_tc"], step_result["new_cc"]
         mark_slip_used(transaction_id)
@@ -759,11 +790,13 @@ async def test_bcsfe(request: TestBCSFERequest):
             return resp
         else:
             print(f"[TEST-BCSFE] โ เธฅเนเธกเน€เธซเธฅเธง: {result['error']}")
+            latest = result.get("latest_transfer_code")
             return {
                 "success": False,
-                "error": result.get("error", "Unknown error")
+                "error": result.get("error", "Unknown error"),
+                "latest_transfer_code": latest,
             }
-    
+
     except Exception as e:
         error_msg = f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {str(e)}"
         print(f"[TEST-BCSFE] โ {error_msg}")
@@ -815,7 +848,9 @@ async def test_bcsfe_batch(request: OrderRequest):
                 resp["customer_note"] = result["customer_note"]
             return resp
         else:
-            return {"success": False, "error": result.get("error", "Unknown error")}
+            latest = result.get("latest_transfer_code")
+            return {"success": False, "error": result.get("error", "Unknown error"),
+                    "latest_transfer_code": latest}
 
     except Exception as e:
         return {"success": False, "error": f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {str(e)}"}

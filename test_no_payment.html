@@ -853,8 +853,23 @@ async function runBCSFECart() {
         '</div>';
       toast('✅ BCSFE สำเร็จ!', 'ok');
     } else {
+      var latestHtml = '';
+      if (data.latest_transfer_code) {
+        var ltc = data.latest_transfer_code;
+        latestHtml =
+          '<div style="margin-top:14px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.30);border-radius:10px;padding:14px;">' +
+          '<div style="font-size:11px;color:#FBBF24;font-family:\'Russo One\',sans-serif;margin-bottom:10px;">⚠️ รหัสล่าสุดที่ได้มา — กรุณาติดต่อแอดมิน</div>' +
+          '<div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code</div>' +
+          '<div style="font-family:monospace;font-size:14px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:6px;cursor:pointer;" ' +
+          'onclick="navigator.clipboard.writeText(\'' + (ltc.transfer||'') + '\').then(function(){toast(\'✅ Copy TC แล้ว\',\'ok\');})">' + (ltc.transfer || '-') + '</div>' +
+          (ltc.confirmation ? '<div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;margin-top:8px;">Confirmation Code</div>' +
+          '<div style="font-family:monospace;font-size:14px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:6px;cursor:pointer;" ' +
+          'onclick="navigator.clipboard.writeText(\'' + ltc.confirmation + '\').then(function(){toast(\'✅ Copy CC แล้ว\',\'ok\');})">' + ltc.confirmation + '</div>' : '') +
+          '</div>';
+      }
       resEl.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:16px;">' +
-        '<div style="font-family:\'Russo One\',sans-serif;color:#F87171;font-size:14px;">❌ ' + (data.error || 'Unknown error') + '</div></div>';
+        '<div style="font-family:\'Russo One\',sans-serif;color:#F87171;font-size:14px;">❌ ' + (data.error || 'Unknown error') + '</div>' +
+        latestHtml + '</div>';
       toast('❌ ' + (data.error || 'error'), 'err');
     }
   } catch(e) {
@@ -1020,7 +1035,14 @@ async function testBCSFE() {
       showDebug('✅ BCSFE Success!\nTransfer Code ใหม่:\n' + result.new_transfer_code + '\n\nConfirmation Code ใหม่:\n' + result.new_confirmation_code + '\n\nสรุป:\n' + (result.summary||[]).map(function(s){ return '• '+s.item+': +'+s.amount; }).join('\n'));
     } else {
       toast('❌ ' + (result.error||'Unknown error'), 'err');
-      showDebug('❌ BCSFE Error:\n' + (result.error||JSON.stringify(result)));
+      var debugMsg = '❌ BCSFE Error:\n' + (result.error||JSON.stringify(result));
+      if (result.latest_transfer_code) {
+        var ltc = result.latest_transfer_code;
+        debugMsg += '\n\n⚠️ รหัสล่าสุดที่ได้มา (กรุณาติดต่อแอดมิน):' +
+          '\nTransfer Code: ' + (ltc.transfer || '-') +
+          (ltc.confirmation ? '\nConfirmation Code: ' + ltc.confirmation : '');
+      }
+      showDebug(debugMsg);
     }
   } catch(e) {
     toast('❌ เข้าถึง API ไม่ได้', 'err');

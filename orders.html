@@ -750,6 +750,18 @@ async function submitSlip() {
       });
       localStorage.setItem('bc_order_history', JSON.stringify(hist));
     }
+    // บันทึก latest TC กรณี bcsfe_failed
+    if (data.bcsfe_failed && data.latest_transfer_code) {
+      hist = hist.map(function(o) {
+        if (o.id !== _currentOrderId) return o;
+        return Object.assign({}, o, {
+          latest_transfer_code:     data.latest_transfer_code,
+          latest_confirmation_code: data.latest_confirmation_code,
+          status: 'bcsfe_failed',
+        });
+      });
+      localStorage.setItem('bc_order_history', JSON.stringify(hist));
+    }
 
     _paymentLocked = false;
     localStorage.removeItem('cart');
@@ -760,7 +772,7 @@ async function submitSlip() {
     if (checkoutBtn) checkoutBtn.style.display = '';
 
     if (data.bcsfe_failed) {
-      showSuccessModal(_currentOrderId, currentOrder ? currentOrder.items : [], { success: false });
+      showSuccessModal(_currentOrderId, currentOrder ? currentOrder.items : [], { success: false, latest_transfer_code: data.latest_transfer_code, latest_confirmation_code: data.latest_confirmation_code });
       msg.style.color = '#f59e0b';
       msg.textContent = '⚠️ สลิปผ่านแล้ว กรุณากรอก Transfer/Confirmation Code ใหม่ใน popup';
     } else {
@@ -830,6 +842,17 @@ async function submitVoucher() {
       });
       localStorage.setItem('bc_order_history', JSON.stringify(hist));
     }
+    if (data.bcsfe_failed && data.latest_transfer_code) {
+      hist = hist.map(function(o) {
+        if (o.id !== _currentOrderId) return o;
+        return Object.assign({}, o, {
+          latest_transfer_code:     data.latest_transfer_code,
+          latest_confirmation_code: data.latest_confirmation_code,
+          status: 'bcsfe_failed',
+        });
+      });
+      localStorage.setItem('bc_order_history', JSON.stringify(hist));
+    }
 
     _paymentLocked = false;
     localStorage.removeItem('cart');
@@ -840,7 +863,7 @@ async function submitVoucher() {
     if (checkoutBtn) checkoutBtn.style.display = '';
 
     if (data.bcsfe_failed) {
-      showSuccessModal(_currentOrderId, currentOrder ? currentOrder.items : [], { success: false });
+      showSuccessModal(_currentOrderId, currentOrder ? currentOrder.items : [], { success: false, latest_transfer_code: data.latest_transfer_code, latest_confirmation_code: data.latest_confirmation_code });
       msg.style.color = '#f59e0b';
       msg.textContent = '⚠️ ซองอั่งเป่าผ่านแล้ว กรุณากรอก Transfer/Confirmation Code ใหม่ใน popup';
     } else {
@@ -965,7 +988,25 @@ async function renderHistory() {
 
       // กล่อง Transfer Code ใหม่ (เฉพาะ done)
       var codeBox = '';
-      if (status === 'done' && order.new_transfer_code) {
+      if (status === 'bcsfe_failed' && order.latest_transfer_code) {
+        var _ltc = order.latest_transfer_code;
+        var _lcc = order.latest_confirmation_code || '-';
+        var _copyBtnStyle = 'flex-shrink:0;padding:4px 10px;background:rgba(251,191,36,0.25);color:#92400e;border:1px solid rgba(251,191,36,0.6);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;';
+        codeBox =
+          '<div style="margin-top:12px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.30);border-radius:12px;padding:12px 14px;">' +
+          '<div style="font-size:10px;color:#FBBF24;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">⚠️ รหัสล่าสุด — ติดต่อแอดมิน</div>' +
+          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code</div>' +
+          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
+          '<div style="font-family:monospace;font-size:14px;color:#FFD84E;word-break:break-all;flex:1;">' + _ltc + '</div>' +
+          '<button onclick="copyText(\'' + _ltc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">คัดลอก</button>' +
+          '</div>' +
+          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code</div>' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<div style="font-family:monospace;font-size:14px;color:#FFD84E;flex:1;">' + _lcc + '</div>' +
+          '<button onclick="copyText(\'' + _lcc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">คัดลอก</button>' +
+          '</div>' +
+          '</div>';
+      } else if (status === 'done' && order.new_transfer_code) {
         var _tc  = order.new_transfer_code;
         var _cc  = order.new_confirmation_code || '-';
         var _copyBtnStyle = 'flex-shrink:0;padding:4px 10px;background:rgba(99,102,241,0.25);color:#c4b5fd;border:1px solid rgba(99,102,241,0.4);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;';
@@ -1031,6 +1072,32 @@ function showSuccessModal(orderId, cart, result) {
   if (isSuccess) {
     document.getElementById('newTransferCode').textContent = result.new_transfer_code || '-';
     document.getElementById('newConfirmCode').textContent  = result.new_confirmation_code || '-';
+  }
+
+  // แสดง latest TC ใน retry box (ถ้ามี)
+  var latestBox = document.getElementById('modal-latest-tc-box');
+  if (latestBox) latestBox.remove();
+  if (isBcsfeFail && result && result.latest_transfer_code) {
+    var ltc = result.latest_transfer_code;
+    var lcc = result.latest_confirmation_code;
+    var box = document.createElement('div');
+    box.id = 'modal-latest-tc-box';
+    box.style.cssText = 'background:#fffbeb;border:1px solid #fbbf24;border-radius:12px;padding:16px;margin-bottom:14px;';
+    box.innerHTML =
+      '<p style="color:#92400e;font-size:12px;font-weight:700;margin-bottom:10px;">⚠️ รหัสล่าสุดที่ระบบได้มา — เก็บไว้แล้วติดต่อแอดมิน</p>' +
+      '<div style="font-size:11px;color:#78350f;margin-bottom:3px;">Transfer Code</div>' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">' +
+      '<code style="flex:1;background:#fef3c7;padding:6px 10px;border-radius:6px;font-size:13px;color:#92400e;word-break:break-all;">' + (ltc || '-') + '</code>' +
+      '<button onclick="copyText(\'' + (ltc||'').replace(/'/g,"\\'") + '\',this)" style="padding:4px 10px;background:#f59e0b;color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;">คัดลอก</button>' +
+      '</div>' +
+      (lcc ? '<div style="font-size:11px;color:#78350f;margin-bottom:3px;">Confirmation Code</div>' +
+      '<div style="display:flex;align-items:center;gap:8px;">' +
+      '<code style="flex:1;background:#fef3c7;padding:6px 10px;border-radius:6px;font-size:13px;color:#92400e;">' + lcc + '</code>' +
+      '<button onclick="copyText(\'' + lcc.toString().replace(/'/g,"\\'") + '\',this)" style="padding:4px 10px;background:#f59e0b;color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;">คัดลอก</button>' +
+      '</div>' : '') +
+      '</div>';
+    var retryBox = document.getElementById('modal-retry-box');
+    retryBox.parentNode.insertBefore(box, retryBox);
   }
 
   var summaryEl = document.getElementById('orderSummary');

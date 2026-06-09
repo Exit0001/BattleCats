@@ -44,6 +44,9 @@ class BCSFERunner:
             self._owned_log = True
         self._deferred_cli = []
         self._last_cli_output = ""
+        self._latest_tc   = self.transfer
+        self._latest_cc   = self.confirm
+        self._download_done = False
         self._log(f"{'='*60}")
         self._log(f"เวลา      : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         self._log(f"Transfer  : {self.transfer}")
@@ -59,6 +62,16 @@ class BCSFERunner:
     def _close_log(self):
         if self._owned_log:
             self._log_file.close()
+
+    def _error_result(self, e: Exception) -> dict:
+        """Build error result. If download already succeeded, include latest TC so customer isn't stuck."""
+        err = {"success": False, "error": str(e)}
+        if self._download_done:
+            err["latest_transfer_code"] = {
+                "transfer":     self._latest_tc,
+                "confirmation": self._latest_cc,
+            }
+        return err
 
     # ──────────────────────────────────────────────────
     # CLI subprocess helper (lucky_ticket / rare_ticket)
@@ -184,6 +197,7 @@ class BCSFERunner:
                 "❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว "
                 "กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง"
             )
+        self._download_done = True
         self._log("[BCSFE] ✅ Download สำเร็จ")
         return handler.save_file
 
@@ -209,6 +223,8 @@ class BCSFERunner:
             raise RuntimeError("❌ Upload ล้มเหลว กรุณาลองใหม่")
 
         new_tc, new_cc = result
+        self._latest_tc = new_tc
+        self._latest_cc = new_cc
         self._log(f"[BCSFE] ✅ Transfer ใหม่: {new_tc} | Confirm ใหม่: {new_cc}")
         self._log(f"{'='*60}")
         return {"transfer": new_tc, "confirmation": new_cc}
@@ -344,11 +360,21 @@ class BCSFERunner:
     # public run methods
     # ──────────────────────────────────────────────────
 
+    # ── TEST ONLY — ลบออกหลัง test เสร็จ ──────────────────────────
+    # TEST_ERROR_STAGE = None   → ปกติ (ไม่ error)
+    # TEST_ERROR_STAGE = "after_download"  → error หลัง download (ก่อน upload)
+    # TEST_ERROR_STAGE = "after_upload"    → error หลัง upload (ได้ TC ใหม่แล้ว)
+    TEST_ERROR_STAGE = None   # Test 1
+    # ──────────────────────────────────────────────────────────────
+
     def run(self, items: list) -> dict:
         try:
             self._log(f"[OP] เพิ่มของ {len(items)} รายการ")
             core.core_data.init_data()
             save_file = self._download_save()
+
+            if self.TEST_ERROR_STAGE == "after_download":
+                raise Exception("🧪 TEST: error หลัง download (ก่อน upload) — ดู latest_transfer_code ใน response")
 
             for item in items:
                 self._edit_item(save_file, item)
@@ -357,6 +383,9 @@ class BCSFERunner:
             codes = self._upload_save(save_file)
             current_tc = codes["transfer"]
             current_cc = codes["confirmation"]
+
+            if self.TEST_ERROR_STAGE == "after_upload":
+                raise Exception("🧪 TEST: error หลัง upload (มี TC ใหม่แล้ว) — ดู latest_transfer_code ใน response")
 
             # ── CLI deferred items (lucky_ticket / rare_ticket) ──
             has_rare = False
@@ -377,6 +406,8 @@ class BCSFERunner:
                     if r["success"]:
                         current_tc = r["transfer"]
                         current_cc = r["confirmation"]
+                        self._latest_tc = current_tc
+                        self._latest_cc = current_cc
                         if key == "rare_ticket":
                             has_rare = True
                     else:
@@ -398,7 +429,7 @@ class BCSFERunner:
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)
 
     def _find_cats(self, save_file, cat_ids: list):
         """หา Cat objects จาก IDs (ทุกตัว รวม locked) — ใช้สำหรับ unlock"""
@@ -441,7 +472,7 @@ class BCSFERunner:
             import traceback
             self._log(f"[BCSFE] ❌ {e}\n{traceback.format_exc()}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)
 
     @staticmethod
     def _set_base_max(cat, save_file) -> None:
@@ -481,7 +512,7 @@ class BCSFERunner:
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)
 
     def run_upgrade_all_characters(self) -> dict:
         """Upgrade max (with catseyes) ทุกตัวที่ unlock อยู่ในรหัส, plus = 0"""
@@ -510,7 +541,7 @@ class BCSFERunner:
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)
 
     def run_true_form_characters(self, cat_ids: list) -> dict:
         try:
@@ -537,7 +568,7 @@ class BCSFERunner:
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)
 
     def run_ultra_form_characters(self, cat_ids: list) -> dict:
         """Ultra Form ตาม IDs — เฉพาะตัวที่มี True Form แล้ว (unlocked_forms >= 3)
@@ -578,7 +609,7 @@ class BCSFERunner:
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)
 
     @staticmethod
     def _init_and_max_talents(cat, talent_data) -> int:
@@ -640,7 +671,7 @@ class BCSFERunner:
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)
 
     # ── All-cats variants (ทำกับทุกตัวใน save) ────────────────
 
@@ -658,7 +689,7 @@ class BCSFERunner:
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)
 
     def run_dupe_save(self, count: int) -> dict:
         """Download save ครั้งเดียว แล้ว dupe N ครั้งด้วย create_new_account + get_codes"""
@@ -710,7 +741,7 @@ class BCSFERunner:
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)
 
     def run_unlock_all(self) -> dict:
         """Unlock ทุกตัวละครในเกม"""
@@ -737,7 +768,7 @@ class BCSFERunner:
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)
 
     def run_true_form_all(self) -> dict:
         """True Form ทุกตัวที่ลูกค้ามีอยู่แล้ว"""
@@ -757,7 +788,7 @@ class BCSFERunner:
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)
 
     def run_ultra_form_all(self) -> dict:
         """Ultra Form ทุกตัวที่มีอยู่ — เฉพาะตัวที่มี True Form แล้ว (unlocked_forms >= 3)
@@ -788,7 +819,7 @@ class BCSFERunner:
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)
 
     def run_talents_max_all(self) -> dict:
         """Max Talents ทุกตัวที่ลูกค้ามีอยู่แล้ว"""
@@ -820,4 +851,4 @@ class BCSFERunner:
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
-            return {"success": False, "error": str(e)}
+            return self._error_result(e)

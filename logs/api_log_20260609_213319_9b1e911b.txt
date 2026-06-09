@@ -1,0 +1,10 @@
+============================================================
+เวลา      : 2026-06-09 21:33:19
+Transfer  : 9b1e911b7
+Confirm   : 6062
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=9b1e91... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] ❌ 🧪 TEST: error หลัง download (ก่อน upload) — ดู latest_transfer_code ใน response
