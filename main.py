@@ -1347,6 +1347,19 @@ async def startup_prewarm():
 
 # ============= Main =============
 
+@app.get("/sitemap.xml")
+def sitemap():
+    from fastapi.responses import Response
+    content = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://battlecatpromax.cloud/</loc></url>
+  <url><loc>https://battlecatpromax.cloud/static/shop.html</loc></url>
+  <url><loc>https://battlecatpromax.cloud/static/index.html</loc></url>
+  <url><loc>https://battlecatpromax.cloud/static/characters.html</loc></url>
+  <url><loc>https://battlecatpromax.cloud/static/stages.html</loc></url>
+</urlset>"""
+    return Response(content, media_type="application/xml")
+
 if __name__ == "__main__":
     import uvicorn
     print("๐€ BCSFE Order System เน€เธฃเธดเนเธกเธ•เนเธ...")
