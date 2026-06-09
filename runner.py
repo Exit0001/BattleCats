@@ -15,10 +15,7 @@ from bcsfe.core.game.catbase.cat import Talent as BCSFETalent
 from config import ITEM_MAP
 
 import sys as _sys
-if _sys.platform == "win32":
-    BCSFE_CLI = Path(__file__).parent / ".venv" / "Scripts" / "bcsfe.exe"
-else:
-    BCSFE_CLI = Path(__file__).parent / ".venv" / "bin" / "bcsfe"
+BCSFE_CLI = [_sys.executable, "-m", "bcsfe"]
 BCSFE_SAVES_DIR = Path.home() / "Documents" / "bcsfe" / "saves"
 
 COUNTRY_MAP = {"1": "en", "2": "jp", "3": "kr", "4": "tw"}
@@ -121,7 +118,7 @@ class BCSFERunner:
     def _cli_communicate(self, inputs: str, env: dict, label: str = "", cli_args: list = None) -> dict:
         """รัน CLI ด้วย communicate() แล้ว parse transfer code"""
         try:
-            cmd = [str(BCSFE_CLI)] + (cli_args or [])
+            cmd = BCSFE_CLI + (cli_args or [])
             proc = subprocess.Popen(
                 cmd,
                 stdin=subprocess.PIPE,
