@@ -24,6 +24,9 @@ ORDER_DB       = Path("orders.json")
 SLIP_DB        = Path("used_slips.json")
 ORDER_TIMEOUT  = 15  # นาที หมดอายุ
 
+SUPABASE_URL = "https://jpzceuxeelnwthaitkcw.supabase.co"
+SUPABASE_KEY = "sb_publishable_VhQvIEjYgaDy0eW1qaIkyw_cxb5eZly"
+
 # ══════════════════════════════════════════
 # PRICE MAP — ราคาต่อ item ตามแพ็กเกจ
 # ══════════════════════════════════════════
@@ -136,6 +139,27 @@ def _load_slips() -> list:
 
 def _save_slips(data: list):
     SLIP_DB.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def _supabase_upsert(order: dict):
+    """Sync order to Supabase orders table (fail silently — local JSON is source of truth)"""
+    try:
+        payload = {k: v for k, v in order.items() if k != "qr_base64"}
+        with httpx.Client(timeout=8) as client:
+            resp = client.post(
+                f"{SUPABASE_URL}/rest/v1/orders",
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                    "Content-Type": "application/json",
+                    "Prefer": "resolution=merge-duplicates",
+                },
+                json=[payload],
+            )
+        if resp.status_code not in (200, 201):
+            print(f"[SUPABASE] ⚠ upsert failed {resp.status_code}: {resp.text[:200]}")
+    except Exception as e:
+        print(f"[SUPABASE] ⚠ sync error: {e}")
 
 # ══════════════════════════════════════════
 # QR GENERATOR
@@ -258,6 +282,7 @@ def create_order(transfer_code: str, confirmation_code: str,
     orders = _load_orders()
     orders[order_id] = order
     _save_orders(orders)
+    _supabase_upsert(order)
 
     print(f"[ORDER] สร้าง order {order_id} ยอด {amount} บาท หมดอายุ {expires}")
     return order
@@ -291,6 +316,7 @@ def create_all_package_order(transfer_code: str, confirmation_code: str,
     orders = _load_orders()
     orders[order_id] = order
     _save_orders(orders)
+    _supabase_upsert(order)
     print(f"[ORDER] สร้าง all-package order {order_id} type={package_type} ยอด {amount} บาท")
     return order
 
@@ -308,6 +334,7 @@ def update_order_status(order_id: str, status: str, extra: dict = {}):
         orders[order_id]["status"] = status
         orders[order_id].update(extra)
         _save_orders(orders)
+        _supabase_upsert(orders[order_id])
 
 
 def is_order_expired(order: dict) -> bool:
@@ -507,6 +534,7 @@ def create_unlock_order(transfer_code: str, confirmation_code: str,
     orders = _load_orders()
     orders[order_id] = order
     _save_orders(orders)
+    _supabase_upsert(order)
     print(f"[UNLOCK-ORDER] สร้าง order {order_id} แมว {len(cat_ids)} ตัว ยอด {amount} บาท")
     return order
 
