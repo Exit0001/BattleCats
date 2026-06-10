@@ -162,8 +162,11 @@
             </button>
             <button id="btnPayTrueMoney" onclick="setPayMethod('truemoney')"
               style="flex:1;padding:10px;border-radius:10px;border:2px solid rgba(255,255,255,0.12);background:transparent;color:rgba(210,190,255,0.55);font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.18s;">
-              💳 TrueMoney
+              💳 TrueWallet
             </button>
+          </div>
+          <div id="payMethodLockMsg" style="display:none;margin-top:8px;padding:8px 12px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.35);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;">
+            ⚠️ กำลังรอชำระเงินอยู่ — กรุณายกเลิก order ก่อนเปลี่ยนวิธีชำระ
           </div>
         </div>
 
@@ -553,6 +556,12 @@ function toggleVidAccordion(btn) {
 }
 
 function setPayMethod(method) {
+  if (_paymentLocked) {
+    var lockMsg = document.getElementById('payMethodLockMsg');
+    lockMsg.style.display = 'block';
+    setTimeout(function () { lockMsg.style.display = 'none'; }, 3000);
+    return;
+  }
   _selectedPayMethod = method;
   var btnPP = document.getElementById('btnPayPromptPay');
   var btnTM = document.getElementById('btnPayTrueMoney');
@@ -663,7 +672,7 @@ function showPaymentSection(orderId, total, qr_base64, paymentMethod, truemoneyI
   document.getElementById('paymentSection').style.display = 'block';
 
   var isTM = (paymentMethod === 'truemoney');
-  document.getElementById('paymentTitle').textContent = isTM ? '💳 ชำระเงินผ่าน TrueMoney Wallet' : '💳 ชำระเงินผ่าน PromptPay';
+  document.getElementById('paymentTitle').textContent = isTM ? '💳 ชำระเงินผ่าน TrueWallet' : '💳 ชำระเงินผ่าน PromptPay';
   document.getElementById('qrSection').style.display = isTM ? 'none' : 'flex';
   document.getElementById('tmSection').style.display = isTM ? '' : 'none';
   document.getElementById('slipUploadSection').style.display   = isTM ? 'none' : '';
@@ -816,7 +825,7 @@ async function submitVoucher() {
   btn.disabled = true; btn.textContent = '⏳ กำลังตรวจสอบซองอั่งเป่า...';
   msg.style.display = 'block';
   msg.style.color = 'rgba(255,255,255,0.6)';
-  msg.textContent = '🔍 กำลังแลกซองอั่งเป่ากับ TrueMoney...';
+  msg.textContent = '🔍 กำลังแลกซองอั่งเป่ากับ TrueWallet...';
 
   try {
     var res = await fetch('/api/payment/verify-voucher/' + _currentOrderId, {
