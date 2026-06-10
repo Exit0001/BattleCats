@@ -1,0 +1,25 @@
+============================================================
+เวลา      : 2026-06-10 20:49:40
+Transfer  : e25e07042
+Confirm   : 7504
+Country   : en
+============================================================
+[OP] Unlock Characters จำนวน 9 ตัว
+[BCSFE] ⬇  Downloading save (transfer=e25e07... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] พบ 9/9 ตัวใน save
+[CAT] ✔ #91 — unlocked
+[CAT] ✔ #92 — unlocked
+[CAT] ✔ #93 — unlocked
+[CAT] ✔ #94 — unlocked
+[CAT] ✔ #95 — unlocked
+[CAT] ✔ #96 — unlocked
+[CAT] ✔ #97 — unlocked
+[CAT] ✔ #98 — unlocked
+[CAT] ✔ #99 — unlocked
+[BCSFE] Unlocked 9 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_7aadcf0d
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260610_204941_e25e0704
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 771b7787c | Confirm ใหม่: 6582
+============================================================

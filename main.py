@@ -1,4 +1,4 @@
-# main.py - FastAPI server เธชเธณเธซเธฃเธฑเธ BCSFE order system
+﻿# main.py - FastAPI server เธชเธณเธซเธฃเธฑเธ BCSFE order system
 import sys
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -39,7 +39,11 @@ ALL_PACKAGE_MAP = {
     "trueform_all":  {"label": "True Form All",     "price": 100, "runner": "run_true_form_all"},
     "ultraform_all": {"label": "Ultra Form All",    "price": 100, "runner": "run_ultra_form_all"},
     "talents_all":   {"label": "Max Talents All",   "price": 150, "runner": "run_talents_max_all"},
+    "crazed_all":    {"label": "Crazed All Cat",    "price": 70,  "runner": None},
+    "manic_all":     {"label": "Manic All Cat",     "price": 125, "runner": None},
 }
+
+CRAZED_CAT_IDS = list(range(91, 100))  # 91-99
 
 # Import เน€เธเธดเนเธกเน€เธ•เธดเธกเธชเธณเธซเธฃเธฑเธ /api/orders/list
 from payment import ORDER_DB
@@ -160,12 +164,21 @@ async def payment_create(order: OrderRequest):
         raise HTTPException(status_code=400, detail=f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {order.country}")
 
     for item in order.items:
+        if item.key in ALL_PACKAGE_MAP:
+            continue  # all-package items bypass ITEM_MAP validation
         if item.key not in ITEM_MAP:
             raise HTTPException(status_code=400, detail=f"เนเธกเนเธฃเธนเนเธเธฑเธ item: {item.key}")
         if item.amount <= 0:
             raise HTTPException(status_code=400, detail=f"เธเธณเธเธงเธ {item.key} เธ•เนเธญเธเธกเธฒเธเธเธงเนเธฒ 0")
         if item.amount > ITEM_MAP[item.key]["max"]:
             raise HTTPException(status_code=400, detail=f"{ITEM_MAP[item.key]['label']} เน€เธเธดเธเธเธณเธเธงเธเธชเธนเธเธชเธธเธ” ({ITEM_MAP[item.key]['max']})")
+
+    # คำนวณราคา all-package items แยก แล้วรวมเข้า total
+    pkg_extra = sum(
+        ALL_PACKAGE_MAP[item.key]["price"]
+        for item in order.items
+        if item.key in ALL_PACKAGE_MAP
+    )
 
     items_payload = []
     for item in order.items:
@@ -180,7 +193,7 @@ async def payment_create(order: OrderRequest):
         country=order.country,
         items=items_payload,
         cat_ids=order.cat_ids,
-        cat_unlock_total=order.cat_unlock_total,
+        cat_unlock_total=(order.cat_unlock_total or 0) + pkg_extra,
         payment_method=order.payment_method,
     )
 
@@ -345,6 +358,13 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
         summary.append({"item": "Unlock All", "amount": 1})
         print(f"[BCSFE] unlock_all done -> tc={cur_tc}")
 
+    if "crazed_all" in all_pkg_set:
+        r = _call("run_unlock_characters", CRAZED_CAT_IDS)
+        if not r["success"]: return _fail(r)
+        _upd(r["new_transfer_code"])
+        summary.append({"item": "Crazed All Cat (Unlock #91-99)", "amount": 9})
+        print(f"[BCSFE] crazed_all done -> tc={cur_tc}")
+
     # ── Step 3: Upgrade Max ──
     if "upgrade_cat" in per_cat_groups:
         ids = per_cat_groups["upgrade_cat"]
@@ -376,6 +396,13 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
         _upd(r["new_transfer_code"])
         summary.append({"item": "True Form All", "amount": 1})
         print(f"[BCSFE] trueform_all done -> tc={cur_tc}")
+
+    if "manic_all" in all_pkg_set:
+        r = _call("run_true_form_characters", CRAZED_CAT_IDS)
+        if not r["success"]: return _fail(r)
+        _upd(r["new_transfer_code"])
+        summary.append({"item": "Manic All Cat (True Form #91-99)", "amount": 9})
+        print(f"[BCSFE] manic_all done -> tc={cur_tc}")
 
     # ── Step 5: Ultra Form ──
     if "ultraform_cat" in per_cat_groups:
@@ -576,6 +603,8 @@ async def place_order(order: OrderRequest):
     
     # Validate เนเธ•เนเธฅเธฐ item
     for item in order.items:
+        if item.key in ALL_PACKAGE_MAP:
+            continue  # all-package items bypass ITEM_MAP validation
         if item.key not in ITEM_MAP:
             raise HTTPException(
                 status_code=400,

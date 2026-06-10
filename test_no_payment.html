@@ -676,6 +676,56 @@
     <div id="tl-result" style="display:none;"></div>
   </div>
 
+  <!-- ── CRAZED ALL CAT PACKAGE ────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🐾 Package: Crazed All Cat (ปลดล็อค 9 ตัว #91–99)</div>
+    <div style="display:flex;align-items:center;gap:16px;background:rgba(255,120,0,0.07);border:1px solid rgba(255,120,0,0.3);border-radius:14px;padding:14px;margin-bottom:14px;">
+      <img src="pictures/crazed_all_cat.png" style="width:72px;height:72px;object-fit:contain;border-radius:10px;flex-shrink:0;" onerror="this.style.display='none'">
+      <div>
+        <div style="font-family:'Russo One',sans-serif;font-size:15px;color:#FFD84E;margin-bottom:4px;">Crazed All Cat</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:4px;">ปลดล็อค Crazed Cat ทั้ง 9 ตัว (ID 91–99)</div>
+        <div style="font-family:'Russo One',sans-serif;font-size:18px;color:#FF4D92;">฿150</div>
+      </div>
+    </div>
+    <div style="background:rgba(255,120,0,0.06);border:1px solid rgba(255,120,0,0.2);border-radius:8px;padding:8px 12px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(255,160,80,0.8);">
+      Cat IDs: <span style="color:#FFD84E;font-family:monospace;">91 92 93 94 95 96 97 98 99</span>
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="crazed-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="crazed-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="crazed-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;background:linear-gradient(135deg,#b45309,#f97316);" onclick="runCrazedPackage(event)">🐾 ปลดล็อค Crazed All Cat (91–99)</button>
+    <div id="crazed-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── MANIC ALL CAT PACKAGE ──────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🌟 Package: Manic All Cat (True Form 9 ตัว #91–99)</div>
+    <div style="display:flex;align-items:center;gap:16px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.3);border-radius:14px;padding:14px;margin-bottom:14px;">
+      <img src="pictures/manic_all_cat.png" style="width:72px;height:72px;object-fit:contain;border-radius:10px;flex-shrink:0;" onerror="this.style.display='none'">
+      <div>
+        <div style="font-family:'Russo One',sans-serif;font-size:15px;color:#FFD84E;margin-bottom:4px;">Manic All Cat</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:4px;">True Form Crazed Cat ทั้ง 9 ตัว (ID 91–99)</div>
+        <div style="font-family:'Russo One',sans-serif;font-size:18px;color:#FF4D92;">฿150</div>
+      </div>
+    </div>
+    <div style="background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.2);border-radius:8px;padding:8px 12px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(196,181,253,0.7);">
+      ⚠️ ต้องมี Crazed Cat (91–99) อยู่แล้วก่อน · Cat IDs: <span style="color:#FFD84E;font-family:monospace;">91 92 93 94 95 96 97 98 99</span>
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="manic-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="manic-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="manic-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runManicPackage(event)">🌟 True Form Manic All Cat (91–99)</button>
+    <div id="manic-result" style="display:none;"></div>
+  </div>
+
   <!-- CONCURRENT TEST - Multi User -->
   <div class="test-section">
     <div class="test-section-title">⚡ ทดสอบ Multi Users (สูงสุด 10 คนพร้อมกัน)</div>
@@ -1492,6 +1542,99 @@ async function ucExecute() {
   } finally {
     btn.disabled = false; btn.textContent = '🚀 ปลดล็อคผ่าน BCSFE API';
   }
+}
+
+// ── Crazed / Manic Package Runners ───────────────────────────
+var CRAZED_IDS = [91,92,93,94,95,96,97,98,99];
+
+async function runCrazedPackage(e) {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('crazed-tc').value.trim();
+  var cc  = document.getElementById('crazed-cc').value.trim();
+  var srv = document.getElementById('crazed-srv').value;
+  if (!tc || !cc) { toast('❌ กรอก Transfer Code และ Confirmation Code ก่อน', 'err'); return; }
+
+  var btn = e.target;
+  var res = document.getElementById('crazed-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังปลดล็อค...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังปลดล็อค Crazed Cat 9 ตัว...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/unlock/characters', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, cat_ids: CRAZED_IDS }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ Crazed All Cat ปลดล็อคสำเร็จ!', 'ok');
+      res.innerHTML = _pkgSuccessHtml('🐾 Crazed All Cat ปลดล็อคสำเร็จ! (9 ตัว)', data);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(err) {
+    toast('❌ ' + err.message, 'err');
+    res.innerHTML = _pkgErrorHtml(err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '🐾 ปลดล็อค Crazed All Cat (91–99)';
+  }
+}
+
+async function runManicPackage(e) {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('manic-tc').value.trim();
+  var cc  = document.getElementById('manic-cc').value.trim();
+  var srv = document.getElementById('manic-srv').value;
+  if (!tc || !cc) { toast('❌ กรอก Transfer Code และ Confirmation Code ก่อน', 'err'); return; }
+
+  var btn = e.target;
+  var res = document.getElementById('manic-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังทำ True Form...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังทำ True Form Manic Cat 9 ตัว...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/trueform/characters', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, cat_ids: CRAZED_IDS }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ Manic All Cat True Form สำเร็จ!', 'ok');
+      res.innerHTML = _pkgSuccessHtml('🌟 Manic All Cat True Form สำเร็จ! (9 ตัว)', data);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(err) {
+    toast('❌ ' + err.message, 'err');
+    res.innerHTML = _pkgErrorHtml(err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '🌟 True Form Manic All Cat (91–99)';
+  }
+}
+
+function _pkgSuccessHtml(title, data) {
+  var logLines = data.log || [];
+  var logHtml = logLines.length
+    ? '<div style="margin-top:12px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">📋 Log</div>' +
+      '<div style="background:rgba(0,0,0,0.35);border-radius:10px;padding:10px 14px;max-height:160px;overflow-y:auto;font-family:monospace;font-size:11px;line-height:1.8;color:#86EFAC;white-space:pre;">' +
+      logLines.map(function(l){ return l.replace(/✘/g,'<span style="color:#F87171">✘</span>').replace(/✔/g,'<span style="color:#4ADE80">✔</span>'); }).join('\n') +
+      '</div></div>' : '';
+  return '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+    '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ ' + title + '</div>' +
+    '<div style="margin-bottom:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
+    '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code||'-') + '</div></div>' +
+    '<div><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+    '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code||'-') + '</div></div>' +
+    logHtml + '</div>';
+}
+
+function _pkgErrorHtml(msg) {
+  return '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:16px;">' +
+    '<div style="font-family:\'Russo One\',sans-serif;color:#F87171;font-size:14px;margin-bottom:8px;">❌ เกิดข้อผิดพลาด</div>' +
+    '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);">' + msg + '</div></div>';
 }
 
 // ── Shared Cat Action Runner (upgrade / trueform / ultraform / talents) ──

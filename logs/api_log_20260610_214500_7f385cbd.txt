@@ -1,0 +1,24 @@
+============================================================
+เวลา      : 2026-06-10 21:45:00
+Transfer  : 7f385cbde
+Confirm   : 0319
+Country   : en
+============================================================
+[OP] Upgrade Characters จำนวน 9 ตัว
+[BCSFE] ⬇  Downloading save (transfer=7f385c... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #91 — Lv50+0 → Lv50+0
+[CAT] ✔ #92 — Lv50+0 → Lv50+0
+[CAT] ✔ #93 — Lv50+0 → Lv50+0
+[CAT] ✔ #94 — Lv1+0 → Lv50+0
+[CAT] ✔ #95 — Lv1+0 → Lv50+0
+[CAT] ✔ #96 — Lv1+0 → Lv50+0
+[CAT] ✔ #97 — Lv1+0 → Lv50+0
+[CAT] ✔ #98 — Lv1+0 → Lv50+0
+[CAT] ✔ #99 — Lv50+0 → Lv50+0
+[BCSFE] Upgraded 9/9 cats → max, plus=0
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_80925e27
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260610_214501_7f385cbd
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 442d68583 | Confirm ใหม่: 6371
+============================================================

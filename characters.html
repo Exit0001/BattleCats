@@ -388,6 +388,45 @@
       </div>
 
     </div>
+
+    <!-- แถว Set Crazed & Manic -->
+    <div style="margin-top:28px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <span style="font-family:'Russo One',sans-serif;font-size:14px;color:#FCA5A5;letter-spacing:1px;">🐾 SET CRAZED & MANIC</span>
+        <span style="height:1px;flex:1;background:linear-gradient(90deg,rgba(248,113,113,0.35),transparent);"></span>
+        <span style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);">Cat #91–99 (9 ตัว)</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:calc(66.67% - 8px);margin:0 auto;">
+
+        <!-- Crazed All Cat -->
+        <div class="card" style="cursor:default;padding:24px 20px;">
+          <div class="card-picture"><img src="pictures/crazed_all_cat.png" width="200" style="object-fit:contain;"></div>
+          <div class="card-tag tag-super">SET</div>
+          <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:8px;">Crazed All Cat</div>
+          <div class="card-desc" style="line-height:1.7;">ปลดล็อค <strong style="color:#EDE6FF;">Crazed Cat 9 ตัว</strong><br>Cat ID #91–99 ครบทุกตัว</div>
+          <div class="card-price" style="margin-top:14px;"><span class="price-now">฿70</span></div>
+          <div style="margin-top:auto;padding-top:14px;">
+            <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('crazed_all','Crazed All Cat',70)">+ ใส่ตะกร้า</button>
+          </div>
+        </div>
+
+        <!-- Manic All Cat -->
+        <div class="card" style="cursor:default;padding:24px 20px;border-color:rgba(248,113,113,0.25);">
+          <div class="card-picture"><img src="pictures/manic_all_cat.png" width="200" style="object-fit:contain;"></div>
+          <div class="card-tag" style="background:rgba(248,113,113,0.15);color:#FCA5A5;border-color:rgba(248,113,113,0.35);">SET</div>
+          <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:8px;">Manic All Cat</div>
+          <div class="card-desc" style="line-height:1.7;">True Form <strong style="color:#EDE6FF;">Manic Cat 9 ตัว</strong><br>Cat ID #91–99 (ต้องมี Crazed ก่อน)</div>
+          <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.28);border-radius:8px;padding:7px 10px;margin-top:8px;font-family:'Chakra Petch',sans-serif;font-size:11px;color:#FCD34D;line-height:1.5;">
+            ⚠️ ต้องมี Cat #91–99 และเวล Lv.30 ก่อน
+          </div>
+          <div class="card-price" style="margin-top:12px;"><span class="price-now">฿125</span></div>
+          <div style="margin-top:auto;padding-top:14px;">
+            <button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#be123c,#f43f5e);" onclick="openManicConfirm()">+ ใส่ตะกร้า</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </section>
 
   <!-- TIER FILTER + SEARCH ──────────────────────────────────── -->
@@ -538,6 +577,35 @@
     <button class="btn btn-primary" id="svcAddBtn" style="width:100%;background:linear-gradient(135deg,#7C3AED,#EC4899);border:none;" onclick="addSelectedToCart()" disabled>
       เพิ่มลงตะกร้า
     </button>
+  </div>
+</div>
+
+<!-- MANIC CONFIRM DIALOG -->
+<div id="manicConfirmModal" style="display:none;position:fixed;inset:0;z-index:9200;background:rgba(0,0,0,0.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;">
+  <div style="max-width:420px;width:90%;background:linear-gradient(145deg,#180720 0%,#0e0520 100%);border:1px solid rgba(248,113,113,0.45);border-radius:22px;padding:28px 24px;box-shadow:0 24px 60px rgba(0,0,0,0.6);">
+    <div style="text-align:center;margin-bottom:20px;">
+      <img src="pictures/manic_all_cat.png" style="width:80px;height:80px;object-fit:contain;margin-bottom:12px;" onerror="this.style.display='none'"><br>
+      <div style="font-family:'Russo One',sans-serif;font-size:16px;color:#FCA5A5;margin-bottom:6px;">Manic All Cat</div>
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);">True Form Cat #91–99</div>
+    </div>
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.35);border-radius:12px;padding:14px 16px;margin-bottom:20px;">
+      <div style="font-family:'Russo One',sans-serif;font-size:13px;color:#FCD34D;margin-bottom:8px;">⚠️ เงื่อนไขก่อนซื้อ</div>
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(255,220,120,0.85);line-height:1.8;">
+        Cat 9 ตัวนี้ต้องอยู่ใน save file ของคุณ<br>และต้องมีเวล <strong style="color:#FFD84E;">Lv. 30</strong> ก่อนทำ True Form<br><br>
+        <span style="color:rgba(210,190,255,0.65);">Cat ID: <span style="color:#EDE6FF;font-family:monospace;">#91 #92 #93 #94 #95 #96 #97 #98 #99</span></span>
+      </div>
+    </div>
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:#EDE6FF;text-align:center;margin-bottom:18px;">
+      Cat ทั้ง 9 ตัวของคุณ <strong style="color:#4ADE80;">เวล Lv.30 แล้ว</strong> ใช่ไหม?
+    </div>
+    <div style="display:flex;gap:12px;">
+      <button onclick="closeManicConfirm()" style="flex:1;padding:12px;border-radius:12px;border:1px solid rgba(248,113,113,0.4);background:rgba(248,113,113,0.08);color:#FCA5A5;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.18s;" onmouseover="this.style.background='rgba(248,113,113,0.18)'" onmouseout="this.style.background='rgba(248,113,113,0.08)'">
+        ✕ ยังไม่ถึง Lv.30
+      </button>
+      <button onclick="confirmManicAdd()" style="flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#7C3AED,#EC4899);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(236,72,153,0.35);transition:all 0.18s;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">
+        ✅ Lv.30 แล้ว ใส่ตะกร้า
+      </button>
+    </div>
   </div>
 </div>
 
@@ -846,6 +914,26 @@ function addAllPackage(key, name, price) {
   localStorage.setItem('cart', JSON.stringify(cart));
   document.getElementById('cartCount').textContent = cart.length;
   alert('✅ เพิ่ม ' + name + ' ลงตะกร้าแล้ว!');
+}
+
+// ── Manic Confirm Dialog ───────────────────────────────────────
+function openManicConfirm() {
+  var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  if (cart.find(function(i) { return i.key === 'manic_all'; })) {
+    showToast('⚠ Manic All Cat อยู่ในตะกร้าแล้ว!'); return;
+  }
+  document.getElementById('manicConfirmModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeManicConfirm() {
+  document.getElementById('manicConfirmModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function confirmManicAdd() {
+  closeManicConfirm();
+  addAllPackage('manic_all', 'Manic All Cat', 125);
 }
 
 // ── All-Package Checkout Flow ──────────────────────────────────

@@ -1,0 +1,24 @@
+============================================================
+เวลา      : 2026-06-10 21:46:32
+Transfer  : 442d68583
+Confirm   : 6371
+Country   : en
+============================================================
+[OP] True Form Characters จำนวน 9 ตัว
+[BCSFE] ⬇  Downloading save (transfer=442d68... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #91 — True Form applied
+[CAT] ✔ #92 — True Form applied
+[CAT] ✔ #93 — True Form applied
+[CAT] ✔ #94 — True Form applied
+[CAT] ✔ #95 — True Form applied
+[CAT] ✔ #96 — True Form applied
+[CAT] ✔ #97 — True Form applied
+[CAT] ✔ #98 — True Form applied
+[CAT] ✔ #99 — True Form applied
+[BCSFE] True Form 9/9 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_c1d13311
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260610_214633_442d6858
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 9aecaf974 | Confirm ใหม่: 3304
+============================================================

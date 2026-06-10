@@ -239,7 +239,7 @@ def calculate_total(items: list[dict]) -> int:
         amount = item.get("amount")
         price_table = ITEM_PRICE.get(key)
         if price_table is None:
-            raise ValueError(f"ไม่พบราคาสินค้า: {key}")
+            continue  # all-package items ข้าม (ราคาถูกรวมไว้ใน cat_unlock_total แล้ว)
         price = price_table.get(amount)
         if price is None:
             raise ValueError(f"ไม่พบราคาสำหรับ {key} จำนวน {amount}")
