@@ -206,6 +206,7 @@ async def payment_create(order: OrderRequest):
         cat_ids=order.cat_ids,
         cat_unlock_total=(order.cat_unlock_total or 0) + pkg_extra,
         payment_method=order.payment_method,
+        username=order.username or "",
     )
 
     resp = {
@@ -735,6 +736,50 @@ def list_orders():
             "total": 0,
             "orders": {}
         }
+
+@app.post("/api/payment/cancel/{order_id}")
+def cancel_order(order_id: str):
+    """ลูกค้ายกเลิก order เอง (ยังไม่ได้จ่าย)"""
+    try:
+        order = get_order(order_id)
+        if not order:
+            raise HTTPException(status_code=404, detail="ไม่พบ order")
+        if order["status"] not in ("pending",):
+            raise HTTPException(status_code=400, detail="ยกเลิกได้เฉพาะ order ที่ยังรอชำระเงินเท่านั้น")
+        update_order_status(order_id, "cancelled", {})
+        return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/orders/my/{username}")
+def my_orders(username: str):
+    """ดึง orders ของ user คนนั้น อ่านจาก user_orders.json"""
+    try:
+        import json
+        from pathlib import Path
+        user_orders_path = Path("user_orders.json")
+        order_ids = []
+        if user_orders_path.exists():
+            data = json.loads(user_orders_path.read_text(encoding="utf-8"))
+            order_ids = data.get(username, [])
+
+        orders_dict = {}
+        if ORDER_DB.exists():
+            orders_dict = json.loads(ORDER_DB.read_text(encoding="utf-8"))
+
+        result = []
+        for oid in order_ids[:30]:
+            if oid in orders_dict:
+                o = dict(orders_dict[oid])
+                o.pop("qr_base64", None)  # ไม่ส่ง QR base64 (ใหญ่เกิน)
+                result.append(o)
+
+        return {"success": True, "orders": result}
+    except Exception as e:
+        return {"success": False, "orders": []}
+
 @app.post("/api/test/bcsfe")
 async def test_bcsfe(request: TestBCSFERequest):
     """

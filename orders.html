@@ -146,6 +146,9 @@
             <option value="3" style="background:#0e0620;color:#EDE6FF;">KR (เกาหลี)</option>
             <option value="4" style="background:#0e0620;color:#EDE6FF;">TW (ไต้หวัน)</option>
           </select>
+          <div style="margin-top:6px;font-size:11px;color:rgba(251,191,36,0.85);font-family:'Chakra Petch',sans-serif;">
+            💡 คนไทยที่เล่นเซิร์ฟปกติ ให้เลือก <strong style="color:#FCD34D;">EN</strong>
+          </div>
         </div>
 
         <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 16px; margin-bottom: 18px; font-size: 13px; color: var(--text-secondary);">
@@ -183,6 +186,9 @@
               <div style="flex-shrink:0;text-align:center;">
                 <div id="qrCanvas" style="background:#fff;padding:12px;border-radius:14px;display:inline-block;box-shadow:0 0 24px rgba(124,58,237,0.3);"></div>
                 <div style="margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);">สแกนด้วยแอปธนาคาร</div>
+                <div style="margin-top:8px;background:rgba(248,113,113,0.10);border:1px solid rgba(248,113,113,0.35);border-radius:8px;padding:9px 12px;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#FCA5A5;line-height:1.6;">
+                  ไม่รองรับแอป <strong style="color:#f87171;">เป๋าตัง</strong><br>ใช้แอปธนาคารเท่านั้น
+                </div>
               </div>
               <div style="flex:1;min-width:180px;font-family:'Chakra Petch',sans-serif;font-size:13px;">
                 <div style="margin-bottom:8px;color:rgba(210,190,255,0.6);">Order ID</div>
@@ -626,6 +632,7 @@ async function checkout() {
         cat_ids:            catIds,
         cat_unlock_total:   catUnlockTotal,
         payment_method:     _selectedPayMethod,
+        username:           (typeof AUTH !== 'undefined' && AUTH.getCurrentUser()) || '',
       }),
     });
     var data = await res.json();
@@ -902,7 +909,24 @@ function hideCancelConfirm() {
   document.getElementById('cancelConfirmBox').style.display = 'none';
   document.getElementById('cancelTriggerBtn').style.display = '';
 }
-function cancelOrder() {
+async function cancelOrder() {
+  var orderId = _currentOrderId;
+
+  // แจ้ง server ก่อน
+  if (orderId) {
+    try {
+      await fetch('/api/payment/cancel/' + orderId, { method: 'POST' });
+    } catch (e) {}
+
+    // update localStorage history ให้เป็น cancelled
+    var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+    hist = hist.map(function(o) {
+      if (o.id !== orderId) return o;
+      return Object.assign({}, o, { status: 'cancelled' });
+    });
+    localStorage.setItem('bc_order_history', JSON.stringify(hist));
+  }
+
   _currentOrderId = null;
   _paymentLocked  = false;
   localStorage.removeItem('bc_pending_payment');
@@ -934,7 +958,7 @@ function switchOrderTab(tab) {
   if (!isOrder) renderHistory();
 }
 
-// ── History render (localStorage + API) ──────────────────────
+// ── History render (server + localStorage merge) ───────────────
 async function renderHistory() {
   var prompt  = document.getElementById('hist-login-prompt');
   var content = document.getElementById('hist-content');
@@ -943,7 +967,37 @@ async function renderHistory() {
   content.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.45);">⏳ กำลังโหลด...</div>';
 
   try {
-    var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+    var local = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+    var username = (typeof AUTH !== 'undefined' && AUTH.getCurrentUser()) || '';
+
+    // ดึง orders จาก server (sync ข้ามอุปกรณ์)
+    var serverOrders = [];
+    if (username) {
+      try {
+        var sr = await fetch('/api/orders/my/' + encodeURIComponent(username));
+        var sd = await sr.json();
+        if (sd.success) serverOrders = sd.orders;
+      } catch (e) {}
+    }
+
+    // merge: server เป็นหลัก, local เพิ่มข้อมูลเสริม (items name, new_transfer_code)
+    var merged = {};
+    serverOrders.forEach(function(o) { merged[o.order_id] = o; });
+    local.forEach(function(o) {
+      var id = o.id || o.order_id;
+      if (!merged[id]) {
+        merged[id] = Object.assign({}, o, { order_id: id });
+      } else {
+        // เอา items display และ new codes จาก localStorage ถ้า server ไม่มี
+        if (!merged[id].display_items && o.items) merged[id].display_items = o.items;
+        if (o.new_transfer_code)     merged[id].new_transfer_code     = o.new_transfer_code;
+        if (o.new_confirmation_code) merged[id].new_confirmation_code = o.new_confirmation_code;
+      }
+    });
+
+    var hist = Object.values(merged).sort(function(a,b) {
+      return (b.created_at||'').localeCompare(a.created_at||'');
+    });
 
     if (!hist.length) {
       content.innerHTML =
@@ -956,6 +1010,8 @@ async function renderHistory() {
     }
 
     var orders = await Promise.all(hist.map(async function(order) {
+      order = Object.assign({}, order);
+      order.id = order.id || order.order_id;
       try {
         var r = await fetch('/api/payment/status/' + order.id);
         var d = await r.json();
@@ -975,23 +1031,28 @@ async function renderHistory() {
       done:         '✅ เสร็จสิ้น',
       expired:      '⌛ หมดอายุ',
       bcsfe_failed: '❌ ดำเนินการไม่สำเร็จ',
+      cancelled:    '🚫 ยกเลิกแล้ว',
     };
     var STATUS_COLOR = {
       pending:'#facc15', paid:'#60a5fa', done:'#4ade80',
-      expired:'#94a3b8', bcsfe_failed:'#f87171',
+      expired:'#94a3b8', bcsfe_failed:'#f87171', cancelled:'#94a3b8',
     };
 
     content.innerHTML = orders.map(function(order) {
-      var items = (order.items || []).map(function(item) {
+      // display_items มาจาก localStorage (มี .name), items มาจาก server (มี .key)
+      var displayItems = order.display_items || order.items || [];
+      var items = displayItems.map(function(item) {
+        var label = item.name || item.key || '';
+        if (!label) return '';
         return '<span style="display:inline-block;background:rgba(255,255,255,0.06);' +
           'border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.82);' +
           'padding:3px 11px;border-radius:20px;font-size:12px;margin:2px;">' +
-          (item.name || '') + '</span>';
+          label + '</span>';
       }).join('');
 
-      var total   = (order.total || 0).toLocaleString();
+      var total   = (order.total || order.amount || order.base_amount || 0).toLocaleString();
       var dateStr = order.created_at ? new Date(order.created_at).toLocaleString('th-TH') : '-';
-      var shortId = (order.id || 'N/A').toUpperCase();
+      var shortId = (order.id || order.order_id || 'N/A').toUpperCase();
       var status  = order.status || 'pending';
       var statusColor = STATUS_COLOR[status] || '#facc15';
       var statusLabel = STATUS_LABEL[status] || status;

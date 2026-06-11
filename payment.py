@@ -22,6 +22,7 @@ TRUEMONEY_ID   = "0634515901"       # TrueMoney Wallet phone number (แก้�
 SLIPOK_API_KEY = "SLIPOKR9NYYUU"  # API Key จาก slipok.com
 ORDER_DB       = Path("orders.json")
 SLIP_DB        = Path("used_slips.json")
+USER_ORDERS_DB = Path("user_orders.json")
 ORDER_TIMEOUT  = 15  # นาที หมดอายุ
 
 SUPABASE_URL = "https://jpzceuxeelnwthaitkcw.supabase.co"
@@ -131,6 +132,19 @@ def _load_orders() -> dict:
 
 def _save_orders(data: dict):
     ORDER_DB.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+def _add_user_order(username: str, order_id: str):
+    if not username:
+        return
+    try:
+        data = json.loads(USER_ORDERS_DB.read_text(encoding="utf-8")) if USER_ORDERS_DB.exists() else {}
+        ids = data.get(username, [])
+        if order_id not in ids:
+            ids.insert(0, order_id)
+        data[username] = ids[:50]
+        USER_ORDERS_DB.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    except Exception as e:
+        print(f"[USER_ORDERS] ⚠ {e}")
 
 def _load_slips() -> list:
     if SLIP_DB.exists():
@@ -251,7 +265,8 @@ def create_order(transfer_code: str, confirmation_code: str,
                  country: str, items: list[dict],
                  cat_ids: list | None = None,
                  cat_unlock_total: int = 0,
-                 payment_method: str = "promptpay") -> dict:
+                 payment_method: str = "promptpay",
+                 username: str | None = None) -> dict:
     """
     สร้าง order ใหม่ บันทึกลง DB และสร้าง QR
     คืน order object ที่มี order_id, amount, qr_base64
@@ -277,12 +292,14 @@ def create_order(transfer_code: str, confirmation_code: str,
         "created_at":        datetime.now().isoformat(),
         "expires_at":        expires,
         "qr_base64":         generate_qr_base64(amount) if payment_method == "promptpay" else None,
+        "username":          username or "",
     }
 
     orders = _load_orders()
     orders[order_id] = order
     _save_orders(orders)
     _supabase_upsert(order)
+    _add_user_order(username or "", order_id)
 
     print(f"[ORDER] สร้าง order {order_id} ยอด {amount} บาท หมดอายุ {expires}")
     return order

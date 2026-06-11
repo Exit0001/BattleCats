@@ -1020,14 +1020,14 @@ footer {
 /* ═══════════════════════════════════════════════════════════════ */
 
 /* Desktop — force hamburger hidden, restore nav-links */
-@media (min-width: 769px) {
+@media (min-width: 1025px) {
   .hamburger { display: none !important; }
   .mobile-nav { display: none !important; }
   .nav-links { display: flex !important; }
   .nav-logo { position: static !important; transform: none !important; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   /* Hamburger layout — logo absolute-centered, hamburger left, cart right */
   .hamburger { display: flex !important; }
   .nav-links { display: none !important; }

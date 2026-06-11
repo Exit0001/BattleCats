@@ -19,6 +19,7 @@ class OrderRequest(BaseModel):
     cat_ids: Optional[List[int]] = None   # IDs แมวที่ต้องการปลดล็อค (ถ้ามี)
     cat_unlock_total: int = 0        # ราคาปลดล็อคแมวรวม (คำนวณจาก frontend)
     payment_method: str = "promptpay"  # "promptpay" หรือ "truemoney"
+    username: Optional[str] = None     # ชื่อผู้ใช้ (สำหรับ history lookup)
 
 class ItemSummary(BaseModel):
     """สรุป item ที่แก้ไขไปแล้ว"""
