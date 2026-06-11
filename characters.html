@@ -264,10 +264,12 @@
     select option { background-color: #0e0620; color: #EDE6FF; }
 
     /* ── Mobile responsive ──────────────────────────────────────── */
+    /* ── Mobile responsive ──────────────────────────────────────── */
     @media (max-width: 768px) {
       .pkg-row1 { grid-template-columns: repeat(2, 1fr) !important; gap: 14px !important; }
       .pkg-row2 { grid-template-columns: repeat(2, 1fr) !important; max-width: 100% !important; gap: 14px !important; }
       .svc-box { margin: 24px 16px; }
+      .crazed-manic-grid { grid-template-columns: 1fr !important; max-width: 100% !important; }
     }
     @media (max-width: 520px) {
       .pkg-row1 { grid-template-columns: 1fr !important; }
@@ -396,11 +398,11 @@
         <span style="height:1px;flex:1;background:linear-gradient(90deg,rgba(248,113,113,0.35),transparent);"></span>
         <span style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);">Cat #91–99 (9 ตัว)</span>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:calc(66.67% - 8px);margin:0 auto;">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:min(calc(66.67% - 8px),100%);margin:0 auto;" class="crazed-manic-grid">
 
         <!-- Crazed All Cat -->
         <div class="card" style="cursor:default;padding:24px 20px;">
-          <div class="card-picture"><img loading="lazy" src="pictures/crazed_all_cat.png" width="200" style="object-fit:contain;"></div>
+          <div class="card-picture"><img loading="lazy" src="pictures/crazed_all_cat.png" style="width:100%;height:auto;display:block;"></div>
           <div class="card-tag tag-super">SET</div>
           <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:8px;">Crazed All Cat</div>
           <div class="card-desc" style="line-height:1.7;">ปลดล็อค <strong style="color:#EDE6FF;">Crazed Cat 9 ตัว</strong><br>Cat ID #91–99 ครบทุกตัว</div>
@@ -412,7 +414,7 @@
 
         <!-- Manic All Cat -->
         <div class="card" style="cursor:default;padding:24px 20px;border-color:rgba(248,113,113,0.25);">
-          <div class="card-picture"><img loading="lazy" src="pictures/manic_all_cat.png" width="200" style="object-fit:contain;"></div>
+          <div class="card-picture"><img loading="lazy" src="pictures/manic_all_cat.png" style="width:100%;height:auto;display:block;"></div>
           <div class="card-tag" style="background:rgba(248,113,113,0.15);color:#FCA5A5;border-color:rgba(248,113,113,0.35);">SET</div>
           <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:8px;">Manic All Cat</div>
           <div class="card-desc" style="line-height:1.7;">True Form <strong style="color:#EDE6FF;">Manic Cat 9 ตัว</strong><br>Cat ID #91–99 (ต้องมี Crazed ก่อน)</div>
@@ -432,6 +434,10 @@
   <!-- TIER FILTER + SEARCH ──────────────────────────────────── -->
   <section style="margin-bottom:28px;">
     <h2 class="section-title">🔎 ค้นหาตัวละคร</h2>
+    <p style="margin:0 0 16px;font-size:13px;color:rgba(210,190,255,0.7);line-height:1.6;">
+      บริการ <strong style="color:#c4b5fd;">Unlock · Upgrade · True Form · Ultra Form · Talents</strong>
+      กดเลือกตัวละครได้เลย ไม่ต้องระบุ ID เอง
+    </p>
 
     <!-- Tier pills -->
     <div class="filter-bar" id="tierFilterBar">
@@ -726,7 +732,7 @@ function _catCardHtml(r) {
     '<span class="cat-tier-badge" style="color:' + col + ';background:' + bg + ';border-color:' + col + '88;">' + label + '</span>' +
     '<div class="cat-name">' + name + '</div>' +
     '<button class="btn btn-primary cat-unlock-btn" onclick="openSvcModal(' + id + ',\'' + tier + '\',\'' + name.replace(/'/g, "\\'") + '\')">' +
-      'เลือก <span style="color:#ff6b6b;font-size:13px;font-weight:700;">฿' + priceForTier(tier) + '</span>' +
+      'เลือก <span style="color:#ff6b6b;font-size:13px;font-weight:700;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;">฿' + priceForTier(tier) + '</span>' +
     '</button>' +
   '</div>';
 }
