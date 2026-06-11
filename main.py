@@ -137,6 +137,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Cache-control middleware — browser cache static assets 1 day
+from starlette.middleware.base import BaseHTTPMiddleware
+class StaticCacheMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        p = request.url.path
+        if p.startswith("/assets/") or p.startswith("/pictures/"):
+            response.headers["Cache-Control"] = "public, max-age=86400"
+        return response
+app.add_middleware(StaticCacheMiddleware)
+
 # ============= API Routes =============
 
 @app.get("/api/items")

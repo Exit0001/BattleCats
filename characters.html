@@ -706,33 +706,64 @@ function priceForTier(tier) {
   return ({ N:5, EX:15, RR:20, SR:25, UR:39, LR:79 })[(tier||'').toUpperCase()] || 20;
 }
 
-// ── Render card grid ───────────────────────────────────────────
+// ── Render card grid (paginated) ───────────────────────────────
+var _catPage = 0;
+var _catList = [];
+var _CAT_PAGE_SIZE = 60;
+var _catObserver = null;
+
+function _catCardHtml(r) {
+  var id = r[0], tier = r[1], name = r[2];
+  var col   = TIER_COL[tier]   || '#C4B5FD';
+  var bg    = TIER_BG[tier]    || 'rgba(124,58,237,0.12)';
+  var label = TIER_LABEL[tier] || tier;
+  return '<div class="cat-card">' +
+    '<div class="cat-img-wrap">' +
+      '<img src="' + catImgPrimary(id) + '" alt="' + name + '" loading="lazy"' +
+        ' onerror="this.onerror=null;this.parentNode.innerHTML=\'<span style=&quot;font-size:48px;line-height:80px;&quot;>🐱</span>\';">' +
+    '</div>' +
+    '<div class="cat-id">#' + id + '</div>' +
+    '<span class="cat-tier-badge" style="color:' + col + ';background:' + bg + ';border-color:' + col + '88;">' + label + '</span>' +
+    '<div class="cat-name">' + name + '</div>' +
+    '<button class="btn btn-primary cat-unlock-btn" onclick="openSvcModal(' + id + ',\'' + tier + '\',\'' + name.replace(/'/g, "\\'") + '\')">เลือก</button>' +
+  '</div>';
+}
+
+function _appendCatPage() {
+  var container = document.getElementById('searchResults');
+  if (!container) return;
+  var start = _catPage * _CAT_PAGE_SIZE;
+  var chunk = _catList.slice(start, start + _CAT_PAGE_SIZE);
+  if (!chunk.length) return;
+  var frag = document.createElement('div');
+  frag.innerHTML = chunk.map(_catCardHtml).join('');
+  while (frag.firstChild) container.insertBefore(frag.firstChild, container.lastElementChild);
+  _catPage++;
+}
+
 function renderCatCards(list) {
   var container = document.getElementById('searchResults');
   if (!container) return;
+  _catPage = 0;
+  _catList = list;
+  if (_catObserver) _catObserver.disconnect();
+
   if (!list.length) {
     container.innerHTML = '<p style="color:rgba(210,190,255,0.5);padding:20px;text-align:center;grid-column:1/-1;">ไม่พบตัวละครที่ค้นหา</p>';
     return;
   }
-  container.innerHTML = list.map(function(r) {
-    var id = r[0], tier = r[1], name = r[2];
-    var price   = priceForTier(tier);
-    var col     = TIER_COL[tier]  || '#C4B5FD';
-    var bg      = TIER_BG[tier]   || 'rgba(124,58,237,0.12)';
-    var label   = TIER_LABEL[tier] || tier;
-    var img1    = catImgPrimary(id);
-    var img2    = catImgFallback(id);
-    return '<div class="cat-card">' +
-      '<div class="cat-img-wrap">' +
-        '<img src="' + img1 + '" alt="' + name + '" loading="lazy"' +
-          ' onerror="this.onerror=null;this.parentNode.innerHTML=\'<span style=&quot;font-size:48px;line-height:80px;&quot;>🐱</span>\';">' +
-      '</div>' +
-      '<div class="cat-id">#' + id + '</div>' +
-      '<span class="cat-tier-badge" style="color:' + col + ';background:' + bg + ';border-color:' + col + '88;">' + label + '</span>' +
-      '<div class="cat-name">' + name + '</div>' +
-      '<button class="btn btn-primary cat-unlock-btn" onclick="openSvcModal(' + id + ',\'' + tier + '\',\'' + name.replace(/'/g, "\\'") + '\')">เลือก</button>' +
-    '</div>';
-  }).join('');
+
+  // sentinel div สำหรับ infinite scroll
+  container.innerHTML = '<div id="catSentinel" style="grid-column:1/-1;height:1px;"></div>';
+  _appendCatPage();
+
+  var sentinel = document.getElementById('catSentinel');
+  _catObserver = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting && _catPage * _CAT_PAGE_SIZE < _catList.length) {
+      _appendCatPage();
+    }
+  }, { root: container, threshold: 0.1 });
+  _catObserver.observe(sentinel);
 }
 
 // ── Filter state ───────────────────────────────────────────────
