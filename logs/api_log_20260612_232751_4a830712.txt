@@ -1,0 +1,17 @@
+============================================================
+เวลา      : 2026-06-12 23:27:51
+Transfer  : 4a8307129
+Confirm   : 9691
+Country   : en
+============================================================
+[OP] Upgrade Characters จำนวน 2 ตัว
+[BCSFE] ⬇  Downloading save (transfer=4a8307... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #137 — Lv1+0 → Lv60+0
+[CAT] ✔ #709 — Lv1+0 → Lv60+0
+[BCSFE] Upgraded 2/2 cats → max
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_c3536659
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260612_232752_4a830712
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: a314387ae | Confirm ใหม่: 4327
+============================================================

@@ -1,4 +1,4 @@
-# payment.py - ระบบ QR PromptPay + เช็คสลิปด้วย SlipOK API
+﻿# payment.py - ระบบ QR PromptPay + เช็คสลิปด้วย SlipOK API
 
 import qrcode
 import qrcode.image.svg
@@ -10,7 +10,9 @@ import re
 import uuid
 import httpx
 from curl_cffi.requests import AsyncSession as CurlSession
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
+TZ_THAI = timezone(timedelta(hours=7))
 from pathlib import Path
 
 # ══════════════════════════════════════════
@@ -113,12 +115,7 @@ ITEM_PRICE = {
     "trueform_cat":  {1: 15},
     "ultraform_cat": {1: 20},
     "talents_cat":   {1: 20},
-    # All-character packages (fixed price, amount=1)
-    "upgrade_all":   {1: 200},
-    "unlock_all":    {1: 200},
-    "trueform_all":  {1: 100},
-    "ultraform_all": {1: 100},
-    "talents_all":   {1: 150},
+    # All-character packages — ราคาอยู่ใน ALL_PACKAGE_MAP ใน main.py แล้ว ห้ามซ้ำตรงนี้
 }
 
 # ══════════════════════════════════════════
@@ -275,7 +272,7 @@ def create_order(transfer_code: str, confirmation_code: str,
     base_amount = calculate_total(items) + cat_unlock_total
     fee         = truemoney_fee(base_amount) if payment_method == "truemoney" else 0
     amount      = base_amount + fee
-    expires     = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
+    expires     = (datetime.now(TZ_THAI) + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
 
     order = {
         "order_id":          order_id,
@@ -289,7 +286,7 @@ def create_order(transfer_code: str, confirmation_code: str,
         "amount":            amount,
         "payment_method":    payment_method,
         "status":            "pending",
-        "created_at":        datetime.now().isoformat(),
+        "created_at":        datetime.now(TZ_THAI).isoformat(),
         "expires_at":        expires,
         "qr_base64":         generate_qr_base64(amount) if payment_method == "promptpay" else None,
         "username":          username or "",
@@ -312,7 +309,7 @@ def create_all_package_order(transfer_code: str, confirmation_code: str,
     order_id    = str(uuid.uuid4())[:8].upper()
     fee         = truemoney_fee(amount) if payment_method == "truemoney" else 0
     total       = amount + fee
-    expires     = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
+    expires     = (datetime.now(TZ_THAI) + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
     order = {
         "order_id":          order_id,
         "transfer_code":     transfer_code,
@@ -326,7 +323,7 @@ def create_all_package_order(transfer_code: str, confirmation_code: str,
         "amount":            total,
         "payment_method":    payment_method,
         "status":            "pending",
-        "created_at":        datetime.now().isoformat(),
+        "created_at":        datetime.now(TZ_THAI).isoformat(),
         "expires_at":        expires,
         "qr_base64":         generate_qr_base64(amount) if payment_method == "promptpay" else None,
     }
@@ -357,7 +354,7 @@ def update_order_status(order_id: str, status: str, extra: dict = {}):
 def is_order_expired(order: dict) -> bool:
     """เช็คว่า order หมดอายุแล้วหรือยัง"""
     expires = datetime.fromisoformat(order["expires_at"])
-    return datetime.now() > expires
+    return datetime.now(TZ_THAI) > expires
 
 # ══════════════════════════════════════════
 # SLIPOK VERIFICATION
@@ -419,7 +416,7 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
     received = float(slip_data.get("amount", order["amount"]))
 
     update_order_status(order_id, "paid", {
-        "paid_at":        datetime.now().isoformat(),
+        "paid_at":        datetime.now(TZ_THAI).isoformat(),
         "transaction_id": transaction_id,
         "received":       received,
     })
@@ -514,7 +511,7 @@ async def redeem_truemoney_voucher(voucher_code: str, order_id: str) -> dict:
         return {"success": False, "reason": f"ยอดไม่ตรง คาดหวัง {expected:.2f} แต่ได้ {received:.2f} บาท"}
 
     update_order_status(order_id, "paid", {
-        "paid_at":        datetime.now().isoformat(),
+        "paid_at":        datetime.now(TZ_THAI).isoformat(),
         "transaction_id": voucher_hash,
         "received":       received,
     })
@@ -530,7 +527,7 @@ def create_unlock_order(transfer_code: str, confirmation_code: str,
     order_id    = str(uuid.uuid4())[:8].upper()
     fee         = truemoney_fee(amount) if payment_method == "truemoney" else 0
     total       = amount + fee
-    expires     = (datetime.now() + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
+    expires     = (datetime.now(TZ_THAI) + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
     order = {
         "order_id":          order_id,
         "order_type":        "unlock",
@@ -544,7 +541,7 @@ def create_unlock_order(transfer_code: str, confirmation_code: str,
         "amount":            total,
         "payment_method":    payment_method,
         "status":            "pending",
-        "created_at":        datetime.now().isoformat(),
+        "created_at":        datetime.now(TZ_THAI).isoformat(),
         "expires_at":        expires,
         "qr_base64":         generate_qr_base64(amount) if payment_method == "promptpay" else None,
     }
@@ -564,3 +561,164 @@ def mark_slip_used(transaction_id: str):
     if transaction_id not in used_slips:
         used_slips.append(transaction_id)
         _save_slips(used_slips)
+
+
+# ══════════════════════════════════════════
+# LOYALTY SYSTEM
+# ══════════════════════════════════════════
+
+def get_user_loyalty(username: str) -> dict:
+    """ดึง loyalty data จาก profiles table"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/profiles",
+                params={"username": f"eq.{username}", "select": "total_spent,loyalty_redeemed_cycles"},
+                headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"},
+            )
+            data = resp.json()
+            if data:
+                return {
+                    "total_spent": data[0].get("total_spent") or 0,
+                    "loyalty_redeemed_cycles": data[0].get("loyalty_redeemed_cycles") or 0,
+                }
+    except Exception as e:
+        print(f"[LOYALTY] get error: {e}")
+    return {"total_spent": 0, "loyalty_redeemed_cycles": 0}
+
+
+def update_user_loyalty_spent(username: str, amount: int):
+    """เพิ่ม total_spent หลังชำระเงินสำเร็จ — ใช้ RPC increment (atomic)"""
+    if not username or amount <= 0:
+        return
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.post(
+                f"{SUPABASE_URL}/rest/v1/rpc/increment_total_spent",
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={"p_username": username, "p_amount": amount},
+            )
+        if resp.status_code in (200, 204):
+            print(f"[LOYALTY] ✅ {username}: total_spent +{amount}")
+        else:
+            print(f"[LOYALTY] ❌ RPC ล้มเหลว {resp.status_code}: {resp.text[:300]}")
+    except Exception as e:
+        print(f"[LOYALTY] update_spent error: {e}")
+
+
+def add_loyalty_redeemed_cycles(username: str, count: int):
+    """เพิ่ม loyalty_redeemed_cycles ครั้งเดียวหลาย cycle"""
+    try:
+        loyalty = get_user_loyalty(username)
+        new_count = loyalty["loyalty_redeemed_cycles"] + count
+        with httpx.Client(timeout=8) as client:
+            client.patch(
+                f"{SUPABASE_URL}/rest/v1/profiles",
+                params={"username": f"eq.{username}"},
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={"loyalty_redeemed_cycles": new_count},
+            )
+        print(f"[LOYALTY] {username}: redeemed +{count} cycles → total #{new_count}")
+    except Exception as e:
+        print(f"[LOYALTY] add_cycles error: {e}")
+
+
+def verify_loyalty_session(username: str, session_token: str) -> bool:
+    """ตรวจสอบว่า session_token (password_hash) ตรงกับใน Supabase"""
+    if not username or not session_token:
+        return False
+    try:
+        with httpx.Client(timeout=6) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/profiles",
+                params={
+                    "username": f"eq.{username}",
+                    "password_hash": f"eq.{session_token}",
+                    "select": "username",
+                    "limit": "1",
+                },
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                },
+            )
+        data = resp.json() if resp.status_code == 200 else []
+        return len(data) > 0
+    except Exception as e:
+        print(f"[AUTH] verify_session error: {e}")
+        return False
+
+
+def save_loyalty_redemption(username: str, cycles: int, new_tc: str, new_cc: str):
+    """บันทึก redemption history ลง loyalty_redemptions"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            client.post(
+                f"{SUPABASE_URL}/rest/v1/loyalty_redemptions",
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                    "Content-Type": "application/json",
+                    "Prefer": "return=minimal",
+                },
+                json={
+                    "username": username,
+                    "cycles_redeemed": cycles,
+                    "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc,
+                },
+            )
+        print(f"[LOYALTY] {username}: saved redemption history ({cycles} cycles)")
+    except Exception as e:
+        print(f"[LOYALTY] save_redemption error: {e}")
+
+
+def get_loyalty_redemptions(username: str) -> list:
+    """ดึงประวัติการแลกของ user"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/loyalty_redemptions",
+                params={
+                    "username": f"eq.{username}",
+                    "order": "redeemed_at.desc",
+                    "limit": "20",
+                },
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                },
+            )
+        return resp.json() if resp.status_code == 200 else []
+    except Exception as e:
+        print(f"[LOYALTY] get_redemptions error: {e}")
+        return []
+
+
+def increment_loyalty_redeemed(username: str):
+    """เพิ่ม loyalty_redeemed_cycles หลัง redeem สำเร็จ"""
+    try:
+        loyalty = get_user_loyalty(username)
+        new_count = loyalty["loyalty_redeemed_cycles"] + 1
+        with httpx.Client(timeout=8) as client:
+            client.patch(
+                f"{SUPABASE_URL}/rest/v1/profiles",
+                params={"username": f"eq.{username}"},
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={"loyalty_redeemed_cycles": new_count},
+            )
+        print(f"[LOYALTY] {username}: redeemed cycle #{new_count}")
+    except Exception as e:
+        print(f"[LOYALTY] increment error: {e}")

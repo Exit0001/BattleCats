@@ -1,0 +1,352 @@
+============================================================
+เวลา      : 2026-06-12 06:46:47
+Transfer  : 163ae6e32
+Confirm   : 3055
+Country   : en
+============================================================
+[OP] เพิ่มของ 2 รายการ
+[BCSFE] ⬇  Downloading save (transfer=163ae6... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 64 → 10064  (+10000)
+[ITEM] Rare Ticket (Trade): defer → CLI (current=0)
+[BCSFE] 💾 บันทึก save → /root/.local/share/bcsfe/saves/SAVE_DATA_aa57fcbd
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 2bc344626 | Confirm ใหม่: 6839
+============================================================
+[CLI] รอ 4 วินาที (rate limit)...
+[CLI] บันทึก save → /root/.local/share/bcsfe/saves/SAVE_DATA_cli_aa57fcbd
+[CLI] Rare Ticket: current=0, add=50
+[CLI] โหลดจาก /root/.local/share/bcsfe/saves/SAVE_DATA_cli_aa57fcbd (--input-path)
+  [CLI] Local version: 3.4.0 | Latest version: 3.4.0
+  [CLI] Welcome to the Battle Cats Save File Editor!
+  [CLI] Made by fieryhenry
+  [CLI] Codeberg: https://codeberg.org/fieryhenry/BCSFE-Python
+  [CLI] Discord: https://discord.gg/DvmMgvn5ZB - Please report any bugs to #bug-reports and suggestions to #suggestions
+  [CLI] Donate: https://ko-fi.com/fieryhenry
+  [CLI] Config File Location: /root/.config/bcsfe/config.yaml
+  [CLI] Current Theme: Default (Version 1.0.0)
+  [CLI] Made by fieryhenry
+  [CLI] Theme File Location: /battlecats/venv/lib/python3.12/site-packages/bcsfe/files/themes/default.json
+  [CLI] Current Locale: English
+  [CLI] Made by fieryhenry
+  [CLI] Locale File Location: /battlecats/venv/lib/python3.12/site-packages/bcsfe/files/locales/en
+  [CLI] Thanks To:
+  [CLI] - Lethal's editor for giving me inspiration and helping me work out how to orignally patch the save data and edit cf/xp: https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
+  [CLI] - Beeven and csehydrogen's code, which helped me figure out how to patch save data: https://github.com/beeven/battlecats and https://github.com/csehydrogen/BattleCatsHacker
+  [CLI] - Anyone who has supported my work for giving me motivation to keep working on this and similar projects: https://ko-fi.com/fieryhenry
+  [CLI] - Everyone in the discord for giving me saves, reporting bugs, suggesting new features, and for being an amazing community: https://discord.gg/DvmMgvn5ZB
+  [CLI] If you paid for this program, you have been scammed. This program is free and open source.
+  [CLI] Use this tool at your own risk. I am not responsible for any bans or damage caused to your save file.
+  [CLI] Obviously, the save editor does try to prevent this from happening, but I cannot guarantee that your save is safe.
+  [CLI] Though if your save does get corrupted please do still report it to the discord.
+  [CLI] I recommend you to make backups of your save file before editing it.
+  [CLI] Loading save from: /root/.local/share/bcsfe/saves/SAVE_DATA_cli_aa57fcbd
+  [CLI] Current Save: en-15.4.1 Inquiry: bde8***33
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save Management
+  [CLI]  3. Items
+  [CLI]  4. Cats / Special Skills
+  [CLI]  5. Levels / Story / Treasure
+  [CLI]  6. Gamatoto / Ototo
+  [CLI]  7. Account
+  [CLI]  8. Gacha
+  [CLI]  9. Fixes
+  [CLI]  10. Other
+  [CLI]  11. Config
+  [CLI]  12. Update External Content
+  [CLI]  13. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Cat Food
+  [CLI]  3. XP
+  [CLI]  4. Normal Tickets
+  [CLI]  5. Rare Tickets
+  [CLI]  6. Rare Ticket Trade (Allows for unbannable rare tickets)
+  [CLI]  7. Platinum Tickets
+  [CLI]  8. Legend Tickets
+  [CLI]  9. Platinum Shards
+  [CLI]  10. NP
+  [CLI]  11. Leadership
+  [CLI]  12. Battle Items
+  [CLI]  13. Endless Battle Items
+  [CLI]  14. Catseyes
+  [CLI]  15. Catfruit
+  [CLI]  16. Talent Orbs
+  [CLI]  17. Catamins
+  [CLI]  18. Scheme Items
+  [CLI]  19. Labyrinth Medals
+  [CLI]  20. 100 Million Downloads Tickets
+  [CLI]  21. Event Tickets / Lucky Tickets
+  [CLI]  22. Treasure Chests
+  [CLI]  23. Reset Golden Cat CPU Uses
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:Enter the number of rare tickets you want to add (max value: 299) (current amount: 0):Successfully gave 50 rare tickets.
+  [CLI] You now need to enter the cat storage and press the Use all button and then press the Trade for Ticket button to get your tickets.
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save Management
+  [CLI]  3. Items
+  [CLI]  4. Cats / Special Skills
+  [CLI]  5. Levels / Story / Treasure
+  [CLI]  6. Gamatoto / Ototo
+  [CLI]  7. Account
+  [CLI]  8. Gacha
+  [CLI]  9. Fixes
+  [CLI]  10. Other
+  [CLI]  11. Config
+  [CLI]  12. Update External Content
+  [CLI]  13. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save save
+  [CLI]  3. Upload save file to server and get transfer and confirmation code
+  [CLI]  4. Save save to specific file
+  [CLI]  5. Save save to /root/.local/share/bcsfe/saves/SAVE_DATA
+  [CLI]  6. Push the save file to a waydroid device (Do not rerun the game after pushing)
+  [CLI]  7. Push the save file to a waydroid device (Also rerun the game after pushing)
+  [CLI]  8. Use adb to push the save file to a device (Do not rerun the game after pushing)
+  [CLI]  9. Use adb to push the save file to a device (Rerun the game after pushing)
+  [CLI]  10. Use root to push save directly to the game
+  [CLI]  11. Use root to push save directly to the game (and rerun the game)
+  [CLI]  12. Export save file to json
+  [CLI]  13. Load save file
+  [CLI]  14. Convert country code (e.g en -> jp)
+  [CLI]  15. Convert game version (e.g 12.2.1 -> 12.2.0)
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:Getting account save key...
+  [CLI] Uploading save file to server...
+  [CLI] Failed to upload save file. Please try again. If error persists please report this to #bug-reports on the discord: https://discord.gg/DvmMgvn5ZB Please see the log file for more details.
+  [CLI] Save file saved to /root/.local/share/bcsfe/saves/SAVE_DATA_cli_aa57fcbd
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save Management
+  [CLI]  3. Items
+  [CLI]  4. Cats / Special Skills
+  [CLI]  5. Levels / Story / Treasure
+  [CLI]  6. Gamatoto / Ototo
+  [CLI]  7. Account
+  [CLI]  8. Gacha
+  [CLI]  9. Fixes
+  [CLI]  10. Other
+  [CLI]  11. Config
+  [CLI]  12. Update External Content
+  [CLI]  13. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:An error has occurred (EOF when reading a line, editor version: 3.4.0) please report this to #bug-reports on the discord: https://discord.gg/DvmMgvn5ZB
+  [CLI] Traceback (most recent call last):
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/__main__.py", line 64, in main
+  [CLI]     cli.main.Main().main(args.input_path)
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/main.py", line 39, in main
+  [CLI]     stop = self.load_save_options(input_path)
+  [CLI]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/main.py", line 203, in load_save_options
+  [CLI]     self.feature_handler()
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/main.py", line 211, in feature_handler
+  [CLI]     self.fh.select_features_run()
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/feature_handler.py", line 253, in select_features_run
+  [CLI]     features = self.select_features(features, [])
+  [CLI]                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/feature_handler.py", line 211, in select_features
+  [CLI]     usr_input = color.ColoredInput().localize("select_features").strip()
+  [CLI]                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/color.py", line 179, in localize
+  [CLI]     return self.get(text)
+  [CLI]            ^^^^^^^^^^^^^^
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/color.py", line 175, in get
+  [CLI]     return input()
+  [CLI]            ^^^^^^^
+  [CLI] EOFError: EOF when reading a line
+  [CLI] Failed to recover save file from temp file. Latest save changes are lost (<@w>Failed to detect country code from save file. 
+  [CLI] Please enter your country code manually</>)
+  [CLI] Traceback (most recent call last):
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/__main__.py", line 64, in main
+  [CLI]     cli.main.Main().main(args.input_path)
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/main.py", line 39, in main
+  [CLI]     stop = self.load_save_options(input_path)
+  [CLI]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/main.py", line 203, in load_save_options
+  [CLI]     self.feature_handler()
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/main.py", line 211, in feature_handler
+  [CLI]     self.fh.select_features_run()
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/feature_handler.py", line 253, in select_features_run
+  [CLI]     features = self.select_features(features, [])
+  [CLI]                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/feature_handler.py", line 211, in select_features
+  [CLI]     usr_input = color.ColoredInput().localize("select_features").strip()
+  [CLI]                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/color.py", line 179, in localize
+  [CLI]     return self.get(text)
+  [CLI]            ^^^^^^^^^^^^^^
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/color.py", line 175, in get
+  [CLI]     return input()
+  [CLI]            ^^^^^^^
+  [CLI] EOFError: EOF when reading a line
+  [CLI] During handling of the above exception, another exception occurred:
+  [CLI] Traceback (most recent call last):
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/main.py", line 320, in exit_editor
+  [CLI]     save_file_temp = core.SaveFile(temp_path.read())
+  [CLI]                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [CLI]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/core/io/save.py", line 49, in __init__
+  [CLI]     raise CantDetectSaveCCError(
+  [CLI] bcsfe.core.io.save.CantDetectSaveCCError: <@w>Failed to detect country code from save file. 
+  [CLI] Please enter your country code manually</>
+  [CLI] Thank you for using the Battle Cats Save File Editor!
+[CLI] ⚠ Upload ล้มเหลว (rate limit) — รอ 8 วินาทีแล้ว retry...
+  [RETRY] Local version: 3.4.0 | Latest version: 3.4.0
+  [RETRY] Welcome to the Battle Cats Save File Editor!
+  [RETRY] Made by fieryhenry
+  [RETRY] Codeberg: https://codeberg.org/fieryhenry/BCSFE-Python
+  [RETRY] Discord: https://discord.gg/DvmMgvn5ZB - Please report any bugs to #bug-reports and suggestions to #suggestions
+  [RETRY] Donate: https://ko-fi.com/fieryhenry
+  [RETRY] Config File Location: /root/.config/bcsfe/config.yaml
+  [RETRY] Current Theme: Default (Version 1.0.0)
+  [RETRY] Made by fieryhenry
+  [RETRY] Theme File Location: /battlecats/venv/lib/python3.12/site-packages/bcsfe/files/themes/default.json
+  [RETRY] Current Locale: English
+  [RETRY] Made by fieryhenry
+  [RETRY] Locale File Location: /battlecats/venv/lib/python3.12/site-packages/bcsfe/files/locales/en
+  [RETRY] Thanks To:
+  [RETRY] - Lethal's editor for giving me inspiration and helping me work out how to orignally patch the save data and edit cf/xp: https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
+  [RETRY] - Beeven and csehydrogen's code, which helped me figure out how to patch save data: https://github.com/beeven/battlecats and https://github.com/csehydrogen/BattleCatsHacker
+  [RETRY] - Anyone who has supported my work for giving me motivation to keep working on this and similar projects: https://ko-fi.com/fieryhenry
+  [RETRY] - Everyone in the discord for giving me saves, reporting bugs, suggesting new features, and for being an amazing community: https://discord.gg/DvmMgvn5ZB
+  [RETRY] If you paid for this program, you have been scammed. This program is free and open source.
+  [RETRY] Use this tool at your own risk. I am not responsible for any bans or damage caused to your save file.
+  [RETRY] Obviously, the save editor does try to prevent this from happening, but I cannot guarantee that your save is safe.
+  [RETRY] Though if your save does get corrupted please do still report it to the discord.
+  [RETRY] I recommend you to make backups of your save file before editing it.
+  [RETRY]  1. Download save file using transfer and confirmation code
+  [RETRY]  2. Select save file from file
+  [RETRY]  3. Load save file from /root/.local/share/bcsfe/saves/SAVE_DATA
+  [RETRY]  4. Pull save file from device using adb
+  [RETRY]  5. Load save data from json
+  [RETRY]  6. Edit config
+  [RETRY]  7. Update External Content
+  [RETRY]  8. Exit
+  [RETRY] Input a number between 1 and 8:Loading save from: /root/.local/share/bcsfe/saves/SAVE_DATA
+  [RETRY] Current Save: en-15.3.0 Inquiry: e337***db
+  [RETRY] Features:
+  [RETRY]  1. Go back
+  [RETRY]  2. Save Management
+  [RETRY]  3. Items
+  [RETRY]  4. Cats / Special Skills
+  [RETRY]  5. Levels / Story / Treasure
+  [RETRY]  6. Gamatoto / Ototo
+  [RETRY]  7. Account
+  [RETRY]  8. Gacha
+  [RETRY]  9. Fixes
+  [RETRY]  10. Other
+  [RETRY]  11. Config
+  [RETRY]  12. Update External Content
+  [RETRY]  13. Exit
+  [RETRY] To select a feature, enter
+  [RETRY] - a number corresponding to the number on the left
+  [RETRY] - text to search for a feature
+  [RETRY] You can press enter to view all features
+  [RETRY] Some features are categories and so when selected, will display all of its sub-features
+  [RETRY] Input:
+  [RETRY] Features:
+  [RETRY]  1. Go back
+  [RETRY]  2. Save save
+  [RETRY]  3. Upload save file to server and get transfer and confirmation code
+  [RETRY]  4. Save save to specific file
+  [RETRY]  5. Save save to /root/.local/share/bcsfe/saves/SAVE_DATA
+  [RETRY]  6. Push the save file to a waydroid device (Do not rerun the game after pushing)
+  [RETRY]  7. Push the save file to a waydroid device (Also rerun the game after pushing)
+  [RETRY]  8. Use adb to push the save file to a device (Do not rerun the game after pushing)
+  [RETRY]  9. Use adb to push the save file to a device (Rerun the game after pushing)
+  [RETRY]  10. Use root to push save directly to the game
+  [RETRY]  11. Use root to push save directly to the game (and rerun the game)
+  [RETRY]  12. Export save file to json
+  [RETRY]  13. Load save file
+  [RETRY]  14. Convert country code (e.g en -> jp)
+  [RETRY]  15. Convert game version (e.g 12.2.1 -> 12.2.0)
+  [RETRY] To select a feature, enter
+  [RETRY] - a number corresponding to the number on the left
+  [RETRY] - text to search for a feature
+  [RETRY] You can press enter to view all features
+  [RETRY] Some features are categories and so when selected, will display all of its sub-features
+  [RETRY] Input:Getting account auth token...
+  [RETRY] Failed to get auth token, retrying...
+  [RETRY] Refreshing account password...
+  [RETRY] Getting account password...
+  [RETRY] Getting account auth token...
+  [RETRY] Getting account save key...
+  [RETRY] Uploading save file to server...
+  [RETRY] Getting transfer code and confirmation code...
+  [RETRY] Save file saved to /root/.local/share/bcsfe/saves/SAVE_DATA
+  [RETRY] Transfer Code: 10407d152
+  [RETRY] Confirmation Code: 5966
+  [RETRY] Features:
+  [RETRY]  1. Go back
+  [RETRY]  2. Save Management
+  [RETRY]  3. Items
+  [RETRY]  4. Cats / Special Skills
+  [RETRY]  5. Levels / Story / Treasure
+  [RETRY]  6. Gamatoto / Ototo
+  [RETRY]  7. Account
+  [RETRY]  8. Gacha
+  [RETRY]  9. Fixes
+  [RETRY]  10. Other
+  [RETRY]  11. Config
+  [RETRY]  12. Update External Content
+  [RETRY]  13. Exit
+  [RETRY] To select a feature, enter
+  [RETRY] - a number corresponding to the number on the left
+  [RETRY] - text to search for a feature
+  [RETRY] You can press enter to view all features
+  [RETRY] Some features are categories and so when selected, will display all of its sub-features
+  [RETRY] Input:An error has occurred (EOF when reading a line, editor version: 3.4.0) please report this to #bug-reports on the discord: https://discord.gg/DvmMgvn5ZB
+  [RETRY] Traceback (most recent call last):
+  [RETRY]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/__main__.py", line 64, in main
+  [RETRY]     cli.main.Main().main(args.input_path)
+  [RETRY]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/main.py", line 39, in main
+  [RETRY]     stop = self.load_save_options(input_path)
+  [RETRY]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [RETRY]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/main.py", line 203, in load_save_options
+  [RETRY]     self.feature_handler()
+  [RETRY]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/main.py", line 211, in feature_handler
+  [RETRY]     self.fh.select_features_run()
+  [RETRY]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/feature_handler.py", line 253, in select_features_run
+  [RETRY]     features = self.select_features(features, [])
+  [RETRY]                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [RETRY]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/feature_handler.py", line 211, in select_features
+  [RETRY]     usr_input = color.ColoredInput().localize("select_features").strip()
+  [RETRY]                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [RETRY]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/color.py", line 179, in localize
+  [RETRY]     return self.get(text)
+  [RETRY]            ^^^^^^^^^^^^^^
+  [RETRY]   File "/battlecats/venv/lib/python3.12/site-packages/bcsfe/cli/color.py", line 175, in get
+  [RETRY]     return input()
+  [RETRY]            ^^^^^^^
+  [RETRY] EOFError: EOF when reading a line
+  [RETRY] Checking for changes...
+  [RETRY] Changes found.
+  [RETRY] Save latest changes before exiting? (y/n):
+[CLI] ✅ Transfer ใหม่: 10407d152 | Confirm ใหม่: 5966
+============================================================

@@ -88,3 +88,12 @@ class UnlockCharactersRequest(BaseModel):
     confirmation_code: str      # Confirmation Code จากเกม
     country: str = "1"          # "1"=en, "2"=jp, "3"=kr, "4"=tw
     cat_ids: List[int]          # รายการ ID ตัวละครที่ต้องการปลดล็อค
+
+class LoyaltyRedeemRequest(BaseModel):
+    """แลกของรางวัล loyalty (ซื้อครบ 200 บาท)"""
+    username: str
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+    cycles: int = 1
+    session_token: str = ""  # password_hash จาก localStorage — ใช้ verify เจ้าของบัญชี

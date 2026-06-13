@@ -1,0 +1,871 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>สะสมยอดซื้อ - Battle Cats Shop</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    /* ── Hero ── */
+    .loy-hero {
+      text-align: center;
+      padding: 48px 20px 36px;
+      position: relative;
+    }
+    .loy-hero-icon {
+      font-size: 64px;
+      display: block;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 24px rgba(251,191,36,0.5));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    .loy-hero-title {
+      font-family: 'Russo One', sans-serif;
+      font-size: 32px;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .loy-hero-sub {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px;
+      color: rgba(196,181,253,0.7);
+      line-height: 1.7;
+      max-width: 480px;
+      margin: 0 auto 32px;
+    }
+
+    /* ── How it works ── */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    @media (max-width: 600px) { .how-grid { grid-template-columns: 1fr; } }
+    .how-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 22px 18px;
+      text-align: center;
+      position: relative;
+    }
+    .how-num {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Russo One', sans-serif;
+      font-size: 12px;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(124,58,237,0.5);
+    }
+    .how-icon { font-size: 32px; display: block; margin-bottom: 10px; }
+    .how-title {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .how-desc {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(196,181,253,0.55);
+      line-height: 1.6;
+    }
+
+    /* ── Status card ── */
+    .status-card {
+      background: linear-gradient(135deg, rgba(20,5,50,0.98), rgba(35,10,70,0.98));
+      border: 1px solid rgba(251,191,36,0.25);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 0 1px rgba(251,191,36,0.08) inset, 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .status-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .status-username {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      color: rgba(196,181,253,0.6);
+      margin-bottom: 4px;
+    }
+    .status-name-val {
+      font-family: 'Russo One', sans-serif;
+      font-size: 20px;
+      color: #fff;
+    }
+    .cycle-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(217,119,6,0.2));
+      border: 1px solid rgba(251,191,36,0.45);
+      border-radius: 16px;
+      padding: 10px 18px;
+    }
+    .cycle-num {
+      font-family: 'Russo One', sans-serif;
+      font-size: 36px;
+      color: #fbbf24;
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(251,191,36,0.6);
+    }
+    .cycle-label {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(251,191,36,0.8);
+      font-weight: 700;
+    }
+    .cycle-label-sub {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      color: rgba(251,191,36,0.5);
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 480px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+    .stat-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .stat-label { font-family: 'Chakra Petch', sans-serif; font-size: 11px; color: rgba(196,181,253,0.5); margin-bottom: 4px; }
+    .stat-val   { font-family: 'Russo One', sans-serif; font-size: 20px; color: #EDE6FF; }
+
+    /* Progress */
+    .prog-label {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 8px;
+    }
+    .prog-label-left { color: rgba(196,181,253,0.8); font-weight: 700; font-size: 13px; }
+    .progress-track {
+      background: rgba(255,255,255,0.06);
+      border-radius: 99px;
+      height: 14px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #d97706, #f59e0b, #fde68a);
+      box-shadow: 0 0 16px rgba(251,191,36,0.55);
+      transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .prog-msg {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      text-align: right;
+    }
+
+    /* Reward cards */
+    .reward-section {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .reward-section-title {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(196,181,253,0.55);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .reward-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 480px) { .reward-grid { grid-template-columns: 1fr; } }
+    .reward-card {
+      background: linear-gradient(135deg, rgba(251,191,36,0.07), rgba(217,119,6,0.05));
+      border: 1px solid rgba(251,191,36,0.22);
+      border-radius: 12px;
+      padding: 12px 10px;
+      text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .reward-card:hover { border-color: rgba(251,191,36,0.45); transform: translateY(-2px); }
+    .reward-icon { font-size: 20px; margin-bottom: 5px; display: block; }
+    .reward-amount {
+      font-family: 'Russo One', sans-serif;
+      font-size: 16px;
+      color: #fbbf24;
+      margin-bottom: 2px;
+    }
+    .reward-name {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      color: rgba(196,181,253,0.6);
+    }
+
+    /* Redeem card */
+    .redeem-card {
+      background: linear-gradient(135deg, rgba(16,5,40,0.98), rgba(25,8,55,0.98));
+      border: 2px solid rgba(251,191,36,0.35);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 40px rgba(251,191,36,0.08);
+    }
+    .redeem-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .redeem-badge {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-family: 'Russo One', sans-serif;
+      font-size: 12px;
+      color: #1a0a00;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #EDE6FF;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 14px;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .form-input:focus { border-color: rgba(251,191,36,0.6); background: rgba(255,255,255,0.07); }
+    .form-label {
+      display: block;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(196,181,253,0.6);
+      margin-bottom: 5px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+    .redeem-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #1a0a00;
+      font-family: 'Russo One', sans-serif;
+      font-size: 17px;
+      cursor: pointer;
+      box-shadow: 0 8px 28px rgba(245,158,11,0.4);
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .redeem-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(245,158,11,0.5); }
+    .redeem-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* Result */
+    .result-box {
+      background: rgba(16,185,129,0.07);
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 16px;
+      padding: 22px;
+      margin-top: 20px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .result-box.error {
+      background: rgba(239,68,68,0.07);
+      border-color: rgba(239,68,68,0.3);
+    }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .code-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .code-row:hover { background: rgba(251,191,36,0.07); border-color: rgba(251,191,36,0.25); }
+    .code-val {
+      font-family: 'Courier New', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fbbf24;
+      letter-spacing: 1px;
+      flex: 1;
+    }
+    .copy-hint {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      white-space: nowrap;
+    }
+    .code-label {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Not logged in */
+    .login-wall {
+      text-align: center;
+      padding: 60px 20px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 24px;
+    }
+    select option { background-color: #0e0620; color: #EDE6FF; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-container">
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="เมนู">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="index.html" class="nav-logo">BATTLE CAT PRO MAX</a>
+    <ul class="nav-links">
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="shop.html">ร้านขาย</a></li>
+      <li><a href="characters.html">ปลดล็อคแมว</a></li>
+      <li><a href="stages.html">ปลดล็อคด่าน</a></li>
+      <li><a href="orders.html">ออเดอร์</a></li>
+      <li><a href="loyalty.html" class="active">🎁 แต้มสะสม</a></li>
+    </ul>
+    <div class="nav-cart">🛒<span class="cart-badge" id="cartCount">0</span></div>
+  </div>
+  <div class="mobile-nav" id="mobileNav" style="display:none" onclick="if(event.target===this)closeMobileMenu()">
+    <ul>
+      <li><a href="index.html" onclick="closeMobileMenu()">🏠 หน้าแรก</a></li>
+      <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ ร้านขาย</a></li>
+      <li><a href="characters.html" onclick="closeMobileMenu()">🐱 ปลดล็อคแมว</a></li>
+      <li><a href="stages.html" onclick="closeMobileMenu()">📍 ปลดล็อคด่าน</a></li>
+      <li><a href="orders.html" onclick="closeMobileMenu()">📋 ออเดอร์</a></li>
+      <li><a href="loyalty.html" class="active" onclick="closeMobileMenu()">🎁 แต้มสะสม</a></li>
+    </ul>
+    <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- ── Hero ── -->
+  <div class="loy-hero">
+    <span class="loy-hero-icon">🎁</span>
+    <div class="loy-hero-title">ระบบสะสมยอดซื้อ</div>
+    <div class="loy-hero-sub">
+      ซื้อของกับเราแล้วได้รับของรางวัลฟรี!<br>
+      <strong style="color:#fbbf24;">ทุก ฿200</strong> แลกของรางวัลได้ 1 ครั้ง ทำซ้ำได้ไม่จำกัด
+    </div>
+  </div>
+
+  <!-- ── How it works ── -->
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-num">1</div>
+      <span class="how-icon">🛍️</span>
+      <div class="how-title">สั่งซื้อสินค้า</div>
+      <div class="how-desc">ซื้อของในร้านตามปกติ ยอดจะสะสมโดยอัตโนมัติหลังชำระสำเร็จ</div>
+    </div>
+    <div class="how-card">
+      <div class="how-num">2</div>
+      <span class="how-icon">📊</span>
+      <div class="how-title">สะสมยอดถึง ฿200</div>
+      <div class="how-desc">ดูความคืบหน้าได้ที่หน้านี้ เมื่อครบ ฿200 จะได้รอบแลกทันที</div>
+    </div>
+    <div class="how-card">
+      <div class="how-num">3</div>
+      <span class="how-icon">✨</span>
+      <div class="how-title">แลกของรางวัลฟรี</div>
+      <div class="how-desc">กรอก Transfer Code แล้วรับไอเทมเข้าเกมได้เลย ไม่มีวันหมดอายุ</div>
+    </div>
+  </div>
+
+  <!-- ── Status Card (ซ่อนถ้าไม่ login) ── -->
+  <div class="status-card" id="statusCard">
+    <div class="status-top">
+      <div>
+        <div class="status-username">สมาชิก</div>
+        <div class="status-name-val" id="statusUsername">—</div>
+      </div>
+      <div class="cycle-pill">
+        <div>
+          <div class="cycle-num" id="cycleBadge">—</div>
+        </div>
+        <div>
+          <div class="cycle-label">รอบพร้อมแลก</div>
+          <div class="cycle-label-sub" id="cycleSubtext">กำลังโหลด...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-label">ยอดสะสมทั้งหมด</div>
+        <div class="stat-val" id="statTotal">—</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">แลกของไปแล้ว</div>
+        <div class="stat-val" id="statRedeemed">—</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">ครั้งถัดไปครบ</div>
+        <div class="stat-val" id="statNext">—</div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="prog-label">
+      <span class="prog-label-left">ความคืบหน้า</span>
+      <span id="progRight">฿0 / ฿200</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="prog-msg" id="progMsg"></div>
+
+    <!-- Rewards -->
+    <div class="reward-section">
+      <div class="reward-section-title">ของรางวัลที่ได้รับ (ต่อ 1 รอบ)</div>
+      <div class="reward-grid">
+        <div class="reward-card">
+          <span class="reward-icon">🎫</span>
+          <div class="reward-amount">×100</div>
+          <div class="reward-name">Normal Ticket (ตั๋วเงิน)</div>
+        </div>
+        <div class="reward-card">
+          <span class="reward-icon">🚩</span>
+          <div class="reward-amount">×30</div>
+          <div class="reward-name">Leadership</div>
+        </div>
+        <div class="reward-card">
+          <span class="reward-icon">🎫</span>
+          <div class="reward-amount">×10</div>
+          <div class="reward-name">Rare Ticket (ตั๋วทอง)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Redeem Form ── -->
+  <div class="redeem-card" id="redeemCard" style="display:none;">
+    <div class="redeem-header">
+      <div class="redeem-badge">พร้อมแลก!</div>
+      <div style="font-family:'Russo One',sans-serif;font-size:20px;color:#fff;">✨ แลกของรางวัล</div>
+    </div>
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(196,181,253,0.55);margin-bottom:22px;line-height:1.6;">
+      กรอก Transfer Code ปัจจุบันจากเกม แล้วกดแลก — ของจะเข้าเกมทันที
+    </div>
+
+    <div style="display:grid;gap:16px;">
+      <div>
+        <label class="form-label">Transfer Code</label>
+        <input type="text" id="redeemTC" class="form-input" placeholder="เช่น a1b2c3d4e" autocomplete="off" spellcheck="false">
+      </div>
+      <div>
+        <label class="form-label">Confirmation Code</label>
+        <input type="text" id="redeemCC" class="form-input" placeholder="เช่น 1234" autocomplete="off" inputmode="numeric">
+      </div>
+      <div>
+        <label class="form-label">ประเทศ (Country)</label>
+        <select id="redeemCountry" class="form-input" style="cursor:pointer;">
+          <option value="1">🇺🇸 EN (English)</option>
+          <option value="2">🇯🇵 JP (日本語)</option>
+          <option value="3">🇰🇷 KR (한국어)</option>
+          <option value="4">🇹🇼 TW (繁體中文)</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;">
+      <button id="redeemBtn" class="redeem-btn" onclick="doRedeem()" style="margin-top:0;font-size:14px;">🎁 รับ 1 รอบ</button>
+      <button id="redeemAllBtn" class="redeem-btn" onclick="doRedeemAll()" style="margin-top:0;font-size:14px;background:linear-gradient(135deg,#7c3aed,#a855f7);box-shadow:0 8px 28px rgba(124,58,237,0.4);">⚡ รับทั้งหมด</button>
+    </div>
+
+    <!-- Result -->
+    <div class="result-box" id="resultBox">
+      <div id="resultContent"></div>
+    </div>
+  </div>
+
+  <!-- ── ประวัติการแลก ── -->
+  <div id="historySection" style="display:none;margin-top:32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h3 style="font-family:'Russo One',sans-serif;font-size:18px;color:#EDE6FF;margin:0;">📜 ประวัติการแลกของรางวัล</h3>
+      <button onclick="toggleHistory()" id="historyToggleBtn" style="font-family:'Chakra Petch',sans-serif;font-size:12px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.35);color:#C4B5FD;border-radius:8px;padding:6px 14px;cursor:pointer;">ซ่อน ▲</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
+
+  <!-- ── ปุ่มดูประวัติ (แสดงเมื่อ login แล้ว) ── -->
+  <div id="historyBtnWrap" style="display:none;margin-top:20px;text-align:center;">
+    <button onclick="showHistory()" style="font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(196,181,253,0.7);border-radius:12px;padding:12px 28px;cursor:pointer;transition:all 0.2s;width:100%;" onmouseover="this.style.background='rgba(124,58,237,0.15)';this.style.borderColor='rgba(124,58,237,0.35)';this.style.color='#C4B5FD'" onmouseout="this.style.background='rgba(255,255,255,0.04)';this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(196,181,253,0.7)'">📜 ดูประวัติการแลกของรางวัล</button>
+  </div>
+
+  <!-- ── Not logged in ── -->
+  <div id="notLoggedIn" style="display:none;">
+    <div class="login-wall">
+      <div style="font-size:56px;margin-bottom:16px;">🔐</div>
+      <div style="font-family:'Russo One',sans-serif;font-size:22px;color:#fff;margin-bottom:8px;">เข้าสู่ระบบเพื่อดูแต้มของคุณ</div>
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:14px;color:rgba(196,181,253,0.55);margin-bottom:24px;line-height:1.6;">
+        สมัครสมาชิกฟรี · ยอดซื้อสะสมอัตโนมัติทุกออเดอร์
+      </div>
+      <a href="login.html" class="btn btn-primary" style="display:inline-block;padding:13px 32px;font-size:15px;">🔑 เข้าสู่ระบบ / สมัครสมาชิก</a>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+var _username = null;
+var _availableCycles = 0;
+var _sessionToken = '';
+
+function loadStatus() {
+  var _sess = (function() {
+    try { return JSON.parse(localStorage.getItem('bc_session')) || {}; } catch(e) { return {}; }
+  })();
+  _username     = _sess.username || null;
+  _sessionToken = _sess.hash     || '';
+
+  if (!_username) {
+    document.getElementById('statusCard').style.display = 'none';
+    document.getElementById('redeemCard').style.display = 'none';
+    document.getElementById('notLoggedIn').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('statusUsername').textContent = _username;
+
+  fetch('/api/loyalty/status?username=' + encodeURIComponent(_username))
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      _availableCycles = d.available_cycles || 0;
+
+      document.getElementById('cycleBadge').textContent = _availableCycles;
+      document.getElementById('cycleSubtext').textContent = _availableCycles > 0 ? 'กดแลกได้เลย!' : 'รอสะสมเพิ่ม';
+      document.getElementById('statTotal').textContent = '฿' + (d.total_spent || 0);
+      document.getElementById('statRedeemed').textContent = (d.loyalty_redeemed_cycles || 0) + ' ครั้ง';
+      document.getElementById('statNext').textContent = '฿' + (d.next_reward_at || 200);
+
+      var pct = _availableCycles > 0 ? 100 : Math.min(d.progress_pct || 0, 100);
+      document.getElementById('progressFill').style.width = pct + '%';
+
+      if (_availableCycles > 0) {
+        document.getElementById('progRight').textContent = '✅ ครบแล้ว!';
+        document.getElementById('progMsg').textContent = '🎉 มี ' + _availableCycles + ' รอบพร้อมแลก — กดที่ด้านล่างได้เลย';
+        document.getElementById('progMsg').style.color = '#fbbf24';
+        document.getElementById('redeemCard').style.display = 'block';
+      } else {
+        document.getElementById('progRight').textContent = '฿' + (d.progress_baht || 0) + ' / ฿200';
+        document.getElementById('progMsg').textContent = 'อีก ฿' + (200 - (d.progress_baht || 0)) + ' จะได้รางวัล';
+        document.getElementById('progMsg').style.color = 'rgba(255,255,255,0.35)';
+      }
+    })
+    .catch(function() {
+      document.getElementById('cycleSubtext').textContent = 'โหลดข้อมูลไม่ได้ — ลองรีเฟรช';
+    });
+
+  loadHistory();
+}
+
+function showHistory() {
+  if (!_username) return;
+  document.getElementById('historyBtnWrap').style.display = 'none';
+  loadHistory(true);
+}
+
+function toggleHistory() {
+  var list = document.getElementById('historyList');
+  var btn  = document.getElementById('historyToggleBtn');
+  var visible = list.style.display !== 'none';
+  list.style.display = visible ? 'none' : '';
+  btn.textContent = visible ? 'แสดง ▼' : 'ซ่อน ▲';
+}
+
+function loadHistory(show) {
+  if (!_username) return;
+  fetch('/api/loyalty/history/' + encodeURIComponent(_username))
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var rows = d.history || [];
+      var sec  = document.getElementById('historySection');
+      var list = document.getElementById('historyList');
+      var btnWrap = document.getElementById('historyBtnWrap');
+      if (!rows.length) {
+        sec.style.display = 'none';
+        btnWrap.style.display = show ? 'none' : 'block';
+        if (show) {
+          btnWrap.style.display = 'none';
+          list.innerHTML = '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:13px;color:rgba(196,181,253,0.45);text-align:center;padding:20px;">ยังไม่มีประวัติการแลก</div>';
+          sec.style.display = 'block';
+        }
+        return;
+      }
+      if (!show) {
+        btnWrap.style.display = 'block';
+        return;
+      }
+      btnWrap.style.display = 'none';
+      sec.style.display = 'block';
+      list.innerHTML = rows.map(function(row) {
+        var dt = new Date(row.redeemed_at);
+        var dateStr = dt.toLocaleDateString('th-TH', { day:'2-digit', month:'short', year:'numeric' });
+        var timeStr = dt.toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' });
+        return (
+          '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:18px 20px;margin-bottom:12px;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">' +
+              '<div style="font-family:\'Russo One\',sans-serif;font-size:14px;color:#EDE6FF;">🎁 แลก ' + row.cycles_redeemed + ' รอบ</div>' +
+              '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(196,181,253,0.45);">' + dateStr + ' · ' + timeStr + '</div>' +
+            '</div>' +
+            '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Transfer Code ใหม่</div>' +
+            '<div class="code-row" style="margin-bottom:8px;" onclick="copyFromHistory(this,\'' + row.new_transfer_code + '\')">' +
+              '<div class="code-val">' + row.new_transfer_code + '</div>' +
+              '<div class="copy-hint">แตะเพื่อคัดลอก 📋</div>' +
+            '</div>' +
+            '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Confirmation Code</div>' +
+            '<div class="code-row" onclick="copyFromHistory(this,\'' + row.new_confirmation_code + '\')">' +
+              '<div class="code-val">' + row.new_confirmation_code + '</div>' +
+              '<div class="copy-hint">แตะเพื่อคัดลอก 📋</div>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    })
+    .catch(function() {});
+}
+
+function copyFromHistory(row, text) {
+  navigator.clipboard.writeText(text).then(function() {
+    var hint = row.querySelector('.copy-hint');
+    if (!hint) return;
+    var orig = hint.textContent;
+    hint.textContent = '✅ คัดลอกแล้ว!';
+    hint.style.color = '#10b981';
+    setTimeout(function() { hint.textContent = orig; hint.style.color = ''; }, 1500);
+  });
+}
+
+function rareTicketGuide() {
+  var steps = [
+    { n: '1', label: 'รับไอเทม' },
+    { n: '2', label: 'เข้าตู้เย็น\n(Storage)' },
+    { n: '3', label: 'กดใช้\nทั้งหมด' },
+    { n: '4', label: 'แลกตั๋วทอง' },
+  ];
+  var stepsHtml = steps.map(function(s, i) {
+    var label = s.label.replace(/\n/g, '<br>');
+    var arrow = i < steps.length - 1
+      ? '<div style="color:rgba(196,181,253,0.5);font-size:16px;align-self:center;margin:0 6px;padding-bottom:18px;">→</div>'
+      : '';
+    return (
+      '<div style="display:flex;align-items:center;">' +
+        '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:56px;">' +
+          '<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#fbbf24);display:flex;align-items:center;justify-content:center;font-family:\'Russo One\',sans-serif;font-size:14px;color:#1a0a00;box-shadow:0 4px 14px rgba(251,191,36,0.55);">' + s.n + '</div>' +
+          '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(196,181,253,0.8);text-align:center;line-height:1.4;">' + label + '</div>' +
+        '</div>' +
+        arrow +
+      '</div>'
+    );
+  }).join('');
+  return (
+    '<div style="margin-top:16px;padding:14px 16px;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.3);border-radius:14px;">' +
+      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:#C4B5FD;font-weight:700;letter-spacing:0.5px;margin-bottom:14px;">⚠️ วิธีใช้งาน Rare Ticket (อ่านก่อนนะครับ!)</div>' +
+      '<div style="display:flex;align-items:flex-start;justify-content:center;gap:0;flex-wrap:nowrap;">' +
+        stepsHtml +
+      '</div>' +
+    '</div>'
+  );
+}
+
+function doRedeem() {
+  var tc  = (document.getElementById('redeemTC').value || '').trim();
+  var cc  = (document.getElementById('redeemCC').value || '').trim();
+  var cty = document.getElementById('redeemCountry').value;
+  var btn = document.getElementById('redeemBtn');
+  var box = document.getElementById('resultBox');
+
+  if (!tc || !cc) { alert('กรุณากรอก Transfer Code และ Confirmation Code'); return; }
+  if (_availableCycles <= 0) { alert('ไม่มีรอบพร้อมแลก'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ กำลังดำเนินการ...';
+  box.style.display = 'none';
+  box.className = 'result-box';
+
+  fetch('/api/loyalty/redeem', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: _username, transfer_code: tc, confirmation_code: cc, country: cty, session_token: _sessionToken })
+  })
+  .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+  .then(function(res) {
+    btn.disabled = false;
+    btn.textContent = '🎁 รับของรางวัลเลย';
+    box.style.display = 'block';
+
+    if (res.ok && res.data.success) {
+      var newTC = res.data.new_transfer_code || '';
+      var newCC = res.data.new_confirmation_code || '';
+      var remaining = res.data.cycles_remaining || 0;
+      var note = res.data.customer_note || '';
+
+      var html = '<div style="font-family:\'Russo One\',sans-serif;font-size:18px;color:#10b981;margin-bottom:16px;">🎉 รับของสำเร็จ!</div>';
+      html += '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Transfer Code ใหม่</div>';
+      html += '<div class="code-row" onclick="copyText(this,\'tc\')">';
+      html += '<div class="code-val" id="tcVal">' + newTC + '</div>';
+      html += '<div class="copy-hint">แตะเพื่อคัดลอก 📋</div></div>';
+      html += '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Confirmation Code</div>';
+      html += '<div class="code-row" onclick="copyText(this,\'cc\')">';
+      html += '<div class="code-val" id="ccVal">' + newCC + '</div>';
+      html += '<div class="copy-hint">แตะเพื่อคัดลอก 📋</div></div>';
+      if (note) {
+        html += rareTicketGuide();
+      }
+      if (remaining > 0) {
+        html += '<div style="margin-top:12px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#fbbf24;">🎁 ยังเหลืออีก ' + remaining + ' รอบ — แลกต่อได้เลย</div>';
+      }
+      document.getElementById('resultContent').innerHTML = html;
+      setTimeout(loadStatus, 1200);
+    } else {
+      box.classList.add('error');
+      var errMsg = (res.data && res.data.detail) ? res.data.detail : 'เกิดข้อผิดพลาด';
+      document.getElementById('resultContent').innerHTML =
+        '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:14px;color:#f87171;line-height:1.6;">❌ ' + errMsg + '</div>';
+    }
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = '🎁 รับของรางวัลเลย';
+    box.style.display = 'block';
+    box.classList.add('error');
+    document.getElementById('resultContent').innerHTML =
+      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:14px;color:#f87171;">❌ เชื่อมต่อ server ไม่ได้</div>';
+  });
+}
+
+function doRedeemAll() {
+  var tc  = (document.getElementById('redeemTC').value || '').trim();
+  var cc  = (document.getElementById('redeemCC').value || '').trim();
+  var cty = document.getElementById('redeemCountry').value;
+  var btn1 = document.getElementById('redeemBtn');
+  var btn2 = document.getElementById('redeemAllBtn');
+  var box  = document.getElementById('resultBox');
+
+  if (!tc || !cc) { alert('กรุณากรอก Transfer Code และ Confirmation Code'); return; }
+  if (_availableCycles <= 0) { alert('ไม่มีรอบพร้อมแลก'); return; }
+
+  btn1.disabled = btn2.disabled = true;
+  btn2.textContent = '⏳ กำลังดำเนินการ ' + _availableCycles + ' รอบ...';
+  box.style.display = 'none';
+  box.className = 'result-box';
+
+  fetch('/api/loyalty/redeem', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: _username, transfer_code: tc, confirmation_code: cc, country: cty, cycles: _availableCycles, session_token: _sessionToken })
+  })
+  .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+  .then(function(res) {
+    btn1.disabled = btn2.disabled = false;
+    btn2.textContent = '⚡ รับทั้งหมด';
+    box.style.display = 'block';
+
+    if (res.ok && res.data.success) {
+      var newTC = res.data.new_transfer_code || '';
+      var newCC = res.data.new_confirmation_code || '';
+      var done  = res.data.cycles_redeemed || _availableCycles;
+      var note  = res.data.customer_note || '';
+      var html = '<div style="font-family:\'Russo One\',sans-serif;font-size:18px;color:#10b981;margin-bottom:16px;">🎉 รับสำเร็จ ' + done + ' รอบ ครั้งเดียว!</div>';
+      html += '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Transfer Code ใหม่</div>';
+      html += '<div class="code-row" onclick="copyText(this,\'tc\')">';
+      html += '<div class="code-val" id="tcVal">' + newTC + '</div>';
+      html += '<div class="copy-hint">แตะเพื่อคัดลอก 📋</div></div>';
+      html += '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Confirmation Code</div>';
+      html += '<div class="code-row" onclick="copyText(this,\'cc\')">';
+      html += '<div class="code-val" id="ccVal">' + newCC + '</div>';
+      html += '<div class="copy-hint">แตะเพื่อคัดลอก 📋</div></div>';
+      if (note) {
+        html += rareTicketGuide();
+      }
+      document.getElementById('resultContent').innerHTML = html;
+      setTimeout(loadStatus, 1200);
+    } else {
+      box.classList.add('error');
+      document.getElementById('resultContent').innerHTML =
+        '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:14px;color:#f87171;line-height:1.6;">❌ ' + ((res.data && res.data.detail) || 'เกิดข้อผิดพลาด') + '</div>';
+    }
+  })
+  .catch(function() {
+    btn1.disabled = btn2.disabled = false;
+    btn2.textContent = '⚡ รับทั้งหมด';
+    box.style.display = 'block';
+    box.classList.add('error');
+    document.getElementById('resultContent').innerHTML =
+      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:14px;color:#f87171;">❌ เชื่อมต่อ server ไม่ได้</div>';
+  });
+}
+
+function copyText(row, type) {
+  var valEl = row.querySelector('.code-val');
+  var hintEl = row.querySelector('.copy-hint');
+  var text = valEl.textContent.trim();
+  navigator.clipboard.writeText(text).then(function() {
+    var origHint = hintEl.textContent;
+    hintEl.textContent = '✅ คัดลอกแล้ว!';
+    hintEl.style.color = '#10b981';
+    setTimeout(function() { hintEl.textContent = origHint; hintEl.style.color = ''; }, 1500);
+  });
+}
+
+loadStatus();
+</script>
+<script src="assets/auth.js?v=20260613"></script>
+<script src="assets/nav.js"></script>
+</body>
+</html>

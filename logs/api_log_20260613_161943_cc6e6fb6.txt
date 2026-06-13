@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-13 16:19:43
+Transfer  : cc6e6fb6f
+Confirm   : 8691
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=cc6e6f... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 295 → 10295  (+10000)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_b2111f12
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260613_161945_cc6e6fb6
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 55316a8d2 | Confirm ใหม่: 0477
+============================================================
+============================================================

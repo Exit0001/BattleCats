@@ -1,0 +1,1098 @@
+============================================================
+เวลา      : 2026-06-13 17:44:19
+CheckID Batch: 73 รหัส
+============================================================
+
+── รหัสที่ 1/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:44:19
+Transfer  : d3842868c
+Confirm   : 5339
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=d38428... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: cc761f73f
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_a40daa1c
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 63e32d8bc | Confirm ใหม่: 2142
+============================================================
+── รหัสที่ 2/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:44:27
+Transfer  : 32ba5f12a
+Confirm   : 9690
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=32ba5f... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 1927340b8
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_ecf279cb
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 707b8895f | Confirm ใหม่: 2394
+============================================================
+── รหัสที่ 3/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:44:34
+Transfer  : 515cae628
+Confirm   : 1880
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=515cae... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 349b5f68b
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_eb962574
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 76408ee8b | Confirm ใหม่: 4535
+============================================================
+── รหัสที่ 4/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:44:41
+Transfer  : aadd0e0ef
+Confirm   : 0344
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=aadd0e... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 9f60039af
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_31a6a286
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 7cd9cb65c | Confirm ใหม่: 9818
+============================================================
+── รหัสที่ 5/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:44:48
+Transfer  : 9886dc789
+Confirm   : 9495
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=9886dc... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 329486ecc
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_e16e48ef
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 2a5d8ee17 | Confirm ใหม่: 1088
+============================================================
+── รหัสที่ 6/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:44:55
+Transfer  : 1f01ecabb
+Confirm   : 5264
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=1f01ec... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 8ab3a0ab6
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_72d18e49
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 94531bdbf | Confirm ใหม่: 7112
+============================================================
+── รหัสที่ 7/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:45:02
+Transfer  : ee8c57d6e
+Confirm   : 9961
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=ee8c57... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 387535989
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_a565981a
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: ffa718061 | Confirm ใหม่: 3548
+============================================================
+── รหัสที่ 8/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:45:10
+Transfer  : 02f09b4d6
+Confirm   : 7066
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=02f09b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: c7ad109c3
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_622a184f
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 6dcc41be5 | Confirm ใหม่: 3230
+============================================================
+── รหัสที่ 9/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:45:17
+Transfer  : 7d657f2e7
+Confirm   : 9008
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=7d657f... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: ea1bf088e
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_f402a354
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: ce3ecd576 | Confirm ใหม่: 3598
+============================================================
+── รหัสที่ 10/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:45:24
+Transfer  : 45b7af406
+Confirm   : 5627
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=45b7af... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 9093b9d13
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_91caee11
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: d144a3861 | Confirm ใหม่: 9507
+============================================================
+── รหัสที่ 11/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:45:31
+Transfer  : 31e33f367
+Confirm   : 1421
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=31e33f... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: a97b15c3d
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_ede34c8b
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 0689d7ab0 | Confirm ใหม่: 2185
+============================================================
+── รหัสที่ 12/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:45:38
+Transfer  : a85377395
+Confirm   : 2695
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=a85377... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 05105fdb0
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_372b988f
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 429701769 | Confirm ใหม่: 2047
+============================================================
+── รหัสที่ 13/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:45:45
+Transfer  : f84babbb8
+Confirm   : 7425
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=f84bab... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: e26f675ac
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_b13f8e93
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 111cbc814 | Confirm ใหม่: 8960
+============================================================
+── รหัสที่ 14/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:45:53
+Transfer  : 472f53008
+Confirm   : 1099
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=472f53... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 3584aa6a9
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_48556c06
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: dc37df8e7 | Confirm ใหม่: 1838
+============================================================
+── รหัสที่ 15/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:46:00
+Transfer  : c651c8cba
+Confirm   : 9075
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=c651c8... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: fe8b8787e
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_a60e90a2
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 536480720 | Confirm ใหม่: 1688
+============================================================
+── รหัสที่ 16/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:46:07
+Transfer  : 395c07822
+Confirm   : 5199
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=395c07... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 293fb65c9
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_378a1ef2
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 22afa4993 | Confirm ใหม่: 0857
+============================================================
+── รหัสที่ 17/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:46:15
+Transfer  : 8c5695512
+Confirm   : 2083
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=8c5695... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 4595a36b7
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_1b578e10
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 7fbab7101 | Confirm ใหม่: 1476
+============================================================
+── รหัสที่ 18/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:46:22
+Transfer  : 7383a94cc
+Confirm   : 0300
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=7383a9... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 857d7102c
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_16803c74
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 7c22a99de | Confirm ใหม่: 9579
+============================================================
+── รหัสที่ 19/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:46:29
+Transfer  : 4b481fdab
+Confirm   : 0019
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=4b481f... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: bc0bc58a2
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_b38bacf6
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 6d6e3bb29 | Confirm ใหม่: 3518
+============================================================
+── รหัสที่ 20/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:46:36
+Transfer  : 22031cfc9
+Confirm   : 8041
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=22031c... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 9b72bb602
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_968da83a
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 11b62b9c7 | Confirm ใหม่: 1001
+============================================================
+── รหัสที่ 21/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:46:43
+Transfer  : 2bdb295fe
+Confirm   : 0895
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=2bdb29... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 19c75f834
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_3d2682dc
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 3e5491eb9 | Confirm ใหม่: 7943
+============================================================
+── รหัสที่ 22/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:46:50
+Transfer  : 556831e7e
+Confirm   : 1981
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=556831... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 497639e46
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_ce43198a
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 3aafc41ab | Confirm ใหม่: 4332
+============================================================
+── รหัสที่ 23/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:46:57
+Transfer  : 8073dfd76
+Confirm   : 4558
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=8073df... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: af6aeb1b3
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_30a3b772
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 9933f2620 | Confirm ใหม่: 6905
+============================================================
+── รหัสที่ 24/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:47:03
+Transfer  : f7c02dd9b
+Confirm   : 6011
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=f7c02d... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 72a60a015
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_02ff4751
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 4a4733c69 | Confirm ใหม่: 5165
+============================================================
+── รหัสที่ 25/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:47:11
+Transfer  : a2707d821
+Confirm   : 9933
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=a2707d... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 5264dbeaa
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_9a100db7
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: e3505f66f | Confirm ใหม่: 5832
+============================================================
+── รหัสที่ 26/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:47:18
+Transfer  : d7c0f8eec
+Confirm   : 0378
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=d7c0f8... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: f96c54857
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_ba3108ed
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 3b6917015 | Confirm ใหม่: 8112
+============================================================
+── รหัสที่ 27/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:47:24
+Transfer  : 56b94b03a
+Confirm   : 8559
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=56b94b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 89696202d
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_3922764c
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 38667e90f | Confirm ใหม่: 9242
+============================================================
+── รหัสที่ 28/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:47:31
+Transfer  : 3bff4a80c
+Confirm   : 4842
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=3bff4a... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 1312e51ec
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_15592c39
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 3f0f070f8 | Confirm ใหม่: 9345
+============================================================
+── รหัสที่ 29/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:47:39
+Transfer  : 579d23dea
+Confirm   : 8363
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=579d23... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 8bb6f54e6
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_f2bf1398
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 3872369d9 | Confirm ใหม่: 9393
+============================================================
+── รหัสที่ 30/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:47:46
+Transfer  : 4f4b11e39
+Confirm   : 5408
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=4f4b11... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 40286cafc
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_c162bd16
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: b9b8668c2 | Confirm ใหม่: 8803
+============================================================
+── รหัสที่ 31/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:47:53
+Transfer  : 034a0fd47
+Confirm   : 1693
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=034a0f... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: cb6dbe911
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_db5a0adc
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 27945b323 | Confirm ใหม่: 5749
+============================================================
+── รหัสที่ 32/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:48:01
+Transfer  : 49a866870
+Confirm   : 4189
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=49a866... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: b5c1ef937
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_dbcefe47
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 925931f6e | Confirm ใหม่: 9414
+============================================================
+── รหัสที่ 33/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:48:08
+Transfer  : 1935085ed
+Confirm   : 0367
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=193508... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 5e38643e2
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_a28855cb
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 6b21d33dd | Confirm ใหม่: 6396
+============================================================
+── รหัสที่ 34/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:48:15
+Transfer  : 4ba088a9b
+Confirm   : 3083
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=4ba088... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: f037d7147
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_4bc44abe
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: f26282390 | Confirm ใหม่: 0730
+============================================================
+── รหัสที่ 35/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:48:22
+Transfer  : 47587291a
+Confirm   : 4955
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=475872... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: b11f67f7a
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_9e4105aa
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 155fa217f | Confirm ใหม่: 0544
+============================================================
+── รหัสที่ 36/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:48:30
+Transfer  : 16828beb3
+Confirm   : 5603
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=16828b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: fa1c2cb10
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_8783e802
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 7fb73ab73 | Confirm ใหม่: 9104
+============================================================
+── รหัสที่ 37/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:48:36
+Transfer  : 1dbca6f96
+Confirm   : 5782
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=1dbca6... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: e3ff82189
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_94cce5d6
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 40d3a9c1c | Confirm ใหม่: 3758
+============================================================
+── รหัสที่ 38/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:48:43
+Transfer  : faaae95af
+Confirm   : 6370
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=faaae9... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 9032670f0
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_5f0d4c70
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: b10fcc828 | Confirm ใหม่: 0128
+============================================================
+── รหัสที่ 39/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:48:51
+Transfer  : b10ef33ac
+Confirm   : 0580
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=b10ef3... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 2be7ebf2d
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_74c94ac3
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 59c2b40bd | Confirm ใหม่: 1507
+============================================================
+── รหัสที่ 40/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:48:58
+Transfer  : 7a3275209
+Confirm   : 8068
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=7a3275... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 9cdbf43a0
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_7d310450
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: f8a54b0f8 | Confirm ใหม่: 2773
+============================================================
+── รหัสที่ 41/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:49:05
+Transfer  : 3df040b5f
+Confirm   : 3246
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=3df040... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 7f4226f17
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_97db464e
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 88bfef7ae | Confirm ใหม่: 8702
+============================================================
+── รหัสที่ 42/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:49:12
+Transfer  : b9e77c488
+Confirm   : 8202
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=b9e77c... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 69f44934b
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_3f7196ea
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 1c39ddbdf | Confirm ใหม่: 4475
+============================================================
+── รหัสที่ 43/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:49:19
+Transfer  : 096bbabec
+Confirm   : 2274
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=096bba... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: b2a07f414
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_3e0216c3
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: e1f0d04cc | Confirm ใหม่: 7182
+============================================================
+── รหัสที่ 44/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:49:26
+Transfer  : 6bbd1db04
+Confirm   : 3180
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=6bbd1d... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: baccdb494
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_09d9044a
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: f75c7a791 | Confirm ใหม่: 3877
+============================================================
+── รหัสที่ 45/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:49:33
+Transfer  : 3e6b4d355
+Confirm   : 2470
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=3e6b4d... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 493b27a02
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_b1dcaaaf
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: ee38d0f10 | Confirm ใหม่: 6758
+============================================================
+── รหัสที่ 46/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:49:41
+Transfer  : 5c990e111
+Confirm   : 2846
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=5c990e... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: dcf09227b
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_1b4d68a9
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 6c8b06f6b | Confirm ใหม่: 5046
+============================================================
+── รหัสที่ 47/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:49:48
+Transfer  : cf8b8d177
+Confirm   : 9556
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=cf8b8d... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 7772511e1
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_12687736
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 57b4c7ad8 | Confirm ใหม่: 4572
+============================================================
+── รหัสที่ 48/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:49:55
+Transfer  : e3fb76f1c
+Confirm   : 2436
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=e3fb76... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 08bac9571
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_6b577c5f
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 3f83c43d2 | Confirm ใหม่: 3423
+============================================================
+── รหัสที่ 49/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:50:03
+Transfer  : 3270c2a0f
+Confirm   : 3377
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=3270c2... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 1157544e0
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_7ef6c935
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 45faf01ad | Confirm ใหม่: 2585
+============================================================
+── รหัสที่ 50/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:50:10
+Transfer  : b18310297
+Confirm   : 6909
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=b18310... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 812ab8424
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_efc97da9
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 0b6d6067b | Confirm ใหม่: 9567
+============================================================
+── รหัสที่ 51/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:50:17
+Transfer  : 6b38606e3
+Confirm   : 2389
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=6b3860... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: c907f05bb
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_6d9eca5a
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: c55c87ea1 | Confirm ใหม่: 8917
+============================================================
+── รหัสที่ 52/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:50:24
+Transfer  : 32fafde3c
+Confirm   : 5981
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=32fafd... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 19f1d763f
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_d54c2e81
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: dd07731ee | Confirm ใหม่: 5687
+============================================================
+── รหัสที่ 53/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:50:31
+Transfer  : c1a98f44c
+Confirm   : 3457
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=c1a98f... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 608df955b
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_664c2fc5
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: de06c4217 | Confirm ใหม่: 5623
+============================================================
+── รหัสที่ 54/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:50:38
+Transfer  : 8e267c21c
+Confirm   : 7884
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=8e267c... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 7ae47946b
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_6a7856d2
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: dea245a70 | Confirm ใหม่: 9084
+============================================================
+── รหัสที่ 55/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:50:45
+Transfer  : a6c322dda
+Confirm   : 1593
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=a6c322... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 01f40ad89
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_445b865f
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 402ea89be | Confirm ใหม่: 3334
+============================================================
+── รหัสที่ 56/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:50:51
+Transfer  : 574d0b29e
+Confirm   : 0202
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=574d0b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 26fb36ed1
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_9af46c8d
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 02f7aae2d | Confirm ใหม่: 8999
+============================================================
+── รหัสที่ 57/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:50:58
+Transfer  : d5a2cc5b6
+Confirm   : 0922
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=d5a2cc... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: c8f719b4b
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_76e71327
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 394491f3e | Confirm ใหม่: 2015
+============================================================
+── รหัสที่ 58/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:51:06
+Transfer  : 649ee2c14
+Confirm   : 6775
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=649ee2... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 61bf3c09a
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_9e3fd0fa
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 36f1fa0ec | Confirm ใหม่: 8714
+============================================================
+── รหัสที่ 59/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:51:13
+Transfer  : 4e64ddd0d
+Confirm   : 2062
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=4e64dd... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 9834d8540
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_506f75e6
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: c410baadf | Confirm ใหม่: 8138
+============================================================
+── รหัสที่ 60/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:51:20
+Transfer  : 4a4362b8b
+Confirm   : 7646
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=4a4362... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 61810e718
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_b3c65b67
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 2713ebf9b | Confirm ใหม่: 2962
+============================================================
+── รหัสที่ 61/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:51:27
+Transfer  : 94cbceee0
+Confirm   : 8859
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=94cbce... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: a7c1fe08c
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_99342984
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: b9c5e028f | Confirm ใหม่: 2220
+============================================================
+── รหัสที่ 62/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:51:34
+Transfer  : 144aaa6c7
+Confirm   : 4031
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=144aaa... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 458efebab
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_7ac92a45
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: f0531fdf0 | Confirm ใหม่: 5420
+============================================================
+── รหัสที่ 63/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:51:42
+Transfer  : 66983c98f
+Confirm   : 1000
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=66983c... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 35232c910
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_8e3d781c
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 26a5fefc2 | Confirm ใหม่: 7557
+============================================================
+── รหัสที่ 64/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:51:49
+Transfer  : 02678ad14
+Confirm   : 6550
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=02678a... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: f0d3e98f3
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_0d68d07e
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: d1b279bef | Confirm ใหม่: 8370
+============================================================
+── รหัสที่ 65/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:51:56
+Transfer  : 9809a5a7d
+Confirm   : 9183
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=9809a5... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 7107327bc
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_096d0bfc
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: a7abd1333 | Confirm ใหม่: 2340
+============================================================
+── รหัสที่ 66/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:52:02
+Transfer  : 3749e574c
+Confirm   : 4111
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=3749e5... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 1b3df222d
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_3980d8e0
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 5aae2c75d | Confirm ใหม่: 2955
+============================================================
+── รหัสที่ 67/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:52:09
+Transfer  : 593e7942f
+Confirm   : 4067
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=593e79... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 735167abb
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_9702a8bd
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 4ed425823 | Confirm ใหม่: 6898
+============================================================
+── รหัสที่ 68/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:52:16
+Transfer  : fd9f12ec8
+Confirm   : 5920
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=fd9f12... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: deef20fb5
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_589e8cd7
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 48b899fb8 | Confirm ใหม่: 8020
+============================================================
+── รหัสที่ 69/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:52:23
+Transfer  : 751aaa468
+Confirm   : 3972
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=751aaa... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: a269a367d
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_dd120c01
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 30fe294a2 | Confirm ใหม่: 0470
+============================================================
+── รหัสที่ 70/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:52:31
+Transfer  : 9c9f5af53
+Confirm   : 7384
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=9c9f5a... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 2210d9434
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_7e6c8c8f
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: cec067f15 | Confirm ใหม่: 2244
+============================================================
+── รหัสที่ 71/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:52:38
+Transfer  : 129ce4f27
+Confirm   : 6967
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=129ce4... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 58cf1a914
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_8a3cc574
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: bf61fbdf7 | Confirm ใหม่: 0327
+============================================================
+── รหัสที่ 72/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:52:45
+Transfer  : d9062960c
+Confirm   : 0415
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=d90629... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: bf5a5abf2
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_e102d652
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 15c92027a | Confirm ใหม่: 9613
+============================================================
+── รหัสที่ 73/73 ──────────────────────────
+============================================================
+เวลา      : 2026-06-13 17:52:52
+Transfer  : d8062607c
+Confirm   : 3812
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=d80626... cc=en)
+[BCSFE] ❌ ❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง
+
+============================================================
+สรุป: ✅ 72 ใช้ได้  |  ❌ 1 ไม่ได้

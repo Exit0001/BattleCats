@@ -1,4 +1,4 @@
-# runner.py - BCSFERunner using bcsfe 3.x Python API + CLI subprocess for lucky/rare ticket
+﻿# runner.py - BCSFERunner using bcsfe 3.x Python API + CLI subprocess for lucky/rare ticket
 
 from datetime import datetime
 from pathlib import Path
@@ -7,8 +7,6 @@ import subprocess
 import re
 import time
 import uuid
-import threading
-
 from bcsfe import core
 from bcsfe.core.game.catbase.cat import Talent as BCSFETalent
 
@@ -16,13 +14,10 @@ from config import ITEM_MAP
 
 import sys as _sys
 BCSFE_CLI = [_sys.executable, "-m", "bcsfe"]
-BCSFE_SAVES_DIR = Path.home() / "Documents" / "bcsfe" / "saves"
+BCSFE_SAVES_DIR = Path(str(core.SaveFile.get_saves_path()))  # cross-platform (Windows/Linux)
 
 COUNTRY_MAP = {"1": "en", "2": "jp", "3": "kr", "4": "tw"}
 LOG_DIR = Path("logs")
-
-# CLI subprocess ยังต้องรัน sequential (SAVE_DATA hardcoded ใน bcsfe CLI)
-_CLI_LOCK = threading.Lock()
 
 
 class BCSFERunner:
@@ -91,8 +86,13 @@ class BCSFERunner:
             self._log(f"[CLI] Lucky Ticket: {current} + {amount} = {value_to_send}")
             nav = ["3", "21", "1", str(value_to_send)]
         else:
-            to_add = min(amount, 299 - current)
-            self._log(f"[CLI] Rare Ticket: current={current}, add={to_add}")
+            # CLI rare_ticket ใช้ delta (บวกเพิ่ม) ไม่ใช่ absolute
+            room = max(0, 299 - current)
+            to_add = min(amount, room)
+            self._log(f"[CLI] Rare Ticket: current={current}, room={room}, to_add={to_add}")
+            if to_add <= 0:
+                self._log(f"[CLI] Rare Ticket: เต็ม 299 แล้ว — ข้ามCLI")
+                return {"success": True, "transfer": self._latest_tc, "confirmation": self._latest_cc}
             nav = ["3", "6", str(to_add)]
 
         env = os.environ.copy()
@@ -117,14 +117,29 @@ class BCSFERunner:
             m = re.search(r'current value[:\s]+(\d+)', last_output, re.IGNORECASE)
             if m:
                 actual_current = int(m.group(1))
-                correct_total = min(actual_current + amount, 2999)
-                if correct_total != value_to_send:
-                    self._log(f"[CLI] Lucky Ticket current จริง={actual_current} ≠ assumed={current} → re-run ด้วย {actual_current}+{amount}={correct_total}")
-                    nav2 = ["3", "21", "1", str(correct_total)]
-                    # ใช้ --input-path เพื่อโหลด session save ที่ถูกต้อง ไม่ใช่ default SAVE_DATA
+                correct_add = min(actual_current + amount, 2999)
+                if correct_add != value_to_send:
+                    self._log(f"[CLI] Lucky Ticket current จริง={actual_current} ≠ assumed={current} → re-run ด้วย {actual_current}+{amount}={correct_add}")
+                    nav2 = ["3", "21", "1", str(correct_add)]
                     inputs2 = "\n".join(nav2 + ["2", "3"]) + "\n"
                     result = self._cli_communicate(inputs2, env,
                                                    cli_args=["--input-path", str(self._cli_save_path)])
+
+        # ── Rare Ticket: ตรวจ current value จาก CLI output แล้ว re-run ถ้าจำเป็น ──
+        if key == "rare_ticket" and result.get("success"):
+            last_output = getattr(self, "_last_cli_output", "")
+            m = re.search(r'current value[:\s]+(\d+)', last_output, re.IGNORECASE)
+            if m:
+                actual_current = int(m.group(1))
+                correct_add = min(amount, max(0, 299 - actual_current))
+                if correct_add != to_add:
+                    self._log(f"[CLI] Rare Ticket current จริง={actual_current} ≠ assumed={current} → re-run ด้วย to_add={correct_add}")
+                    nav2 = ["3", "6", str(correct_add)]
+                    inputs2 = "\n".join(nav2 + ["2", "3"]) + "\n"
+                    result = self._cli_communicate(inputs2, env,
+                                                   cli_args=["--input-path", str(self._cli_save_path)])
+                else:
+                    self._log(f"[CLI] Rare Ticket verified: actual_current={actual_current} ✓ to_add={correct_add}")
 
         return result
 
@@ -161,8 +176,10 @@ class BCSFERunner:
             if "Failed to upload save file" in clean:
                 self._log("[CLI] ⚠ Upload ล้มเหลว (rate limit) — รอ 8 วินาทีแล้ว retry...")
                 time.sleep(8)
-                retry_inputs = "\n".join(["3", "2", "3"]) + "\n"
-                return self._cli_communicate(retry_inputs, env, label="RETRY")
+                retry_inputs = "\n".join(["2", "3"]) + "\n"
+                return self._cli_communicate(retry_inputs, env,
+                                             cli_args=["--input-path", str(self._cli_save_path)],
+                                             label="RETRY")
 
             self._log("[CLI] ❌ parse transfer code ไม่ได้")
             for line in clean.splitlines()[-15:]:
@@ -208,7 +225,7 @@ class BCSFERunner:
         self._log(f"[BCSFE] 💾 บันทึก save → {bcsfe_path}")
 
         if backup:
-            self._backup()
+            self._backup(Path(bcsfe_path.to_str()))
 
         self._log("[BCSFE] ⬆  Uploading save...")
         result = core.ServerHandler(save_file).get_codes()
@@ -229,10 +246,11 @@ class BCSFERunner:
         self._log(f"{'='*60}")
         return {"transfer": new_tc, "confirmation": new_cc}
 
-    def _backup(self):
-        """Backup จาก temp save file ของ session นี้"""
+    def _backup(self, src: Path = None):
+        """Backup save file ของ session นี้"""
         try:
-            src = BCSFE_SAVES_DIR / f"SAVE_DATA_{self._session_id}"
+            if src is None:
+                src = BCSFE_SAVES_DIR / f"SAVE_DATA_{self._session_id}"
             if not src.exists():
                 return
             backup_dir = Path("saves_backup")
@@ -411,7 +429,7 @@ class BCSFERunner:
                         if key == "rare_ticket":
                             has_rare = True
                     else:
-                        raise RuntimeError(f"{deferred['label']} CLI ล้มเหลว: {r.get('error')}")
+                        self._log(f"[BCSFE] ⚠ {deferred['label']} CLI ล้มเหลว — คืน transfer code ที่ได้จาก upload แล้ว")
                 try:
                     self._cli_save_path.unlink(missing_ok=True)
                 except Exception:
@@ -453,10 +471,7 @@ class BCSFERunner:
             logs = []
             not_found = [i for i in cat_ids if not any(c.id == i for c in cats)]
             for cat in cats:
-                cat.unlocked = 1
-                cat.gatya_seen = 1
-                if cat.unlocked_forms == 0:
-                    cat.unlocked_forms = 1
+                cat.unlock(save_file)  # ใช้ BCSFE unlock() เหมือน CLI (ไม่แตะ unlocked_forms)
                 logs.append(f"✔ #{cat.id} — unlocked")
                 self._log(f"[CAT] ✔ #{cat.id} — unlocked")
             for i in not_found:
@@ -476,15 +491,13 @@ class BCSFERunner:
 
     @staticmethod
     def _set_base_max(cat, save_file) -> None:
-        """Set to max base level WITH catseyes, preserve existing plus"""
-        old_plus = cat.upgrade.plus
-        power_up = core.PowerUpHelper(cat, save_file)
-        power_up.reset_upgrade()
-        power_up.max_upgrade()
-        cat.upgrade.plus = old_plus
+        unit_buy = save_file.cats.read_unitbuy(save_file).get_unit_buy(cat.id)
+        target_base = (unit_buy.max_upgrade_level_catseye - 1) if unit_buy else 29
+        if cat.upgrade.base < target_base:
+            cat.upgrade.base = target_base
 
     def run_upgrade_characters(self, cat_ids: list) -> dict:
-        """Upgrade max level (with catseyes) ตาม IDs ที่ระบุ, plus = 0"""
+        """Upgrade max level (with catseyes) ตาม IDs ที่ระบุ"""
         try:
             self._log(f"[OP] Upgrade Characters จำนวน {len(cat_ids)} ตัว")
             core.core_data.init_data()
@@ -497,13 +510,14 @@ class BCSFERunner:
                 old_lv = cat.upgrade.base + 1
                 old_plus = cat.upgrade.plus
                 self._set_base_max(cat, save_file)
-                entry = f"✔ #{cat.id} — Lv{old_lv}+{old_plus} → Lv{cat.upgrade.base+1}+{cat.upgrade.plus}"
+                cat.upgrade.plus = 0
+                entry = f"✔ #{cat.id} — Lv{old_lv}+{old_plus} → Lv{cat.upgrade.base+1}+0"
                 logs.append(entry)
                 self._log(f"[CAT] {entry}")
             for i in not_found:
                 logs.append(f"✘ #{i} — ไม่พบใน save")
                 self._log(f"[CAT] ✘ #{i} — ไม่พบใน save")
-            self._log(f"[BCSFE] Upgraded {len(cats)}/{len(cat_ids)} cats → max, plus=0")
+            self._log(f"[BCSFE] Upgraded {len(cats)}/{len(cat_ids)} cats → max")
 
             codes = self._upload_save(save_file)
             self._close_log()
@@ -515,24 +529,30 @@ class BCSFERunner:
             return self._error_result(e)
 
     def run_upgrade_all_characters(self) -> dict:
-        """Upgrade max (with catseyes) ทุกตัวที่ unlock อยู่ในรหัส, plus = 0"""
+        """Upgrade max (with catseyes) ทุกตัวที่ unlock อยู่ใน save"""
         try:
-            self._log("[OP] Upgrade ALL unlocked cats → max, plus=0")
+            self._log("[OP] Upgrade ALL unlocked cats -> max")
             core.core_data.init_data()
             save_file = self._download_save()
 
+            pic_book = save_file.cats.read_nyanko_picture_book(save_file)
             count = 0
             logs = []
             for cat in save_file.cats.cats:
                 if cat.unlocked:
                     old_lv = cat.upgrade.base + 1
                     old_plus = cat.upgrade.plus
+                    old_forms = cat.unlocked_forms
                     self._set_base_max(cat, save_file)
-                    entry = f"✔ #{cat.id} — Lv{old_lv}+{old_plus} → Lv{cat.upgrade.base+1}+{cat.upgrade.plus}"
+                    if cat.upgrade.base > 29 and cat.unlocked_forms < 3:
+                        pic_book_cat = pic_book.get_cat(cat.id)
+                        if pic_book_cat is not None and pic_book_cat.total_forms >= 3:
+                            cat.true_form(save_file, set_current_form=True)
+                    entry = f"✔ #{cat.id} — Lv{old_lv}+{old_plus} → Lv{cat.upgrade.base+1}+{cat.upgrade.plus} (forms: {old_forms}->{cat.unlocked_forms})"
                     logs.append(entry)
                     self._log(f"[CAT] {entry}")
                     count += 1
-            self._log(f"[BCSFE] Upgraded all {count} unlocked cats → max, plus=0")
+            self._log(f"[BCSFE] Upgraded all {count} unlocked cats -> max")
 
             codes = self._upload_save(save_file)
             self._close_log()
@@ -753,10 +773,7 @@ class BCSFERunner:
             count = 0
             logs = []
             for cat in save_file.cats.cats:
-                cat.unlocked = 1
-                cat.gatya_seen = 1
-                if cat.unlocked_forms == 0:
-                    cat.unlocked_forms = 1
+                cat.unlock(save_file)  # ใช้ BCSFE unlock() เหมือน CLI (ไม่แตะ unlocked_forms)
                 logs.append(f"✔ #{cat.id} — unlocked")
                 count += 1
 

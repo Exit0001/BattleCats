@@ -1,0 +1,9 @@
+============================================================
+เวลา      : 2026-06-12 22:48:42
+Transfer  : 9e3f646f2
+Confirm   : 3990
+Country   : en
+============================================================
+[OP] Upgrade Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=9e3f64... cc=en)
+[BCSFE] ❌ ❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง

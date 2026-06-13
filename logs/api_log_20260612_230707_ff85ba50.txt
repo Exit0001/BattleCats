@@ -1,0 +1,195 @@
+============================================================
+เวลา      : 2026-06-12 23:07:07
+Transfer  : ff85ba50a
+Confirm   : 5552
+Country   : en
+============================================================
+[OP] Upgrade Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=ff85ba... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CLI] บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_cli_80abc10c
+  [CLI] Local version: 3.4.0 | Latest version: 3.4.0
+  [CLI] Welcome to the Battle Cats Save File Editor!
+  [CLI] Made by fieryhenry
+  [CLI] Codeberg: https://codeberg.org/fieryhenry/BCSFE-Python
+  [CLI] Discord: https://discord.gg/DvmMgvn5ZB - Please report any bugs to #bug-reports and suggestions to #suggestions
+  [CLI] Donate: https://ko-fi.com/fieryhenry
+  [CLI] Config File Location: C:\Users\modpo\Documents\bcsfe\config.yaml
+  [CLI] Current Theme: Default (Version 1.0.0)
+  [CLI] Made by fieryhenry
+  [CLI] Theme File Location: C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\files\themes\default.json
+  [CLI] Current Locale: English
+  [CLI] Made by fieryhenry
+  [CLI] Locale File Location: C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\files\locales\en
+  [CLI] Thanks To:
+  [CLI] - Lethal's editor for giving me inspiration and helping me work out how to orignally patch the save data and edit cf/xp: https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
+  [CLI] - Beeven and csehydrogen's code, which helped me figure out how to patch save data: https://github.com/beeven/battlecats and https://github.com/csehydrogen/BattleCatsHacker
+  [CLI] - Anyone who has supported my work for giving me motivation to keep working on this and similar projects: https://ko-fi.com/fieryhenry
+  [CLI] - Everyone in the discord for giving me saves, reporting bugs, suggesting new features, and for being an amazing community: https://discord.gg/DvmMgvn5ZB
+  [CLI] If you paid for this program, you have been scammed. This program is free and open source.
+  [CLI] Use this tool at your own risk. I am not responsible for any bans or damage caused to your save file.
+  [CLI] Obviously, the save editor does try to prevent this from happening, but I cannot guarantee that your save is safe.
+  [CLI] Though if your save does get corrupted please do still report it to the discord.
+  [CLI] I recommend you to make backups of your save file before editing it.
+  [CLI] Loading save from: C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_cli_80abc10c
+  [CLI] Current Save: en-15.3.0 Inquiry: 3903***98
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save Management
+  [CLI]  3. Items
+  [CLI]  4. Cats / Special Skills
+  [CLI]  5. Levels / Story / Treasure
+  [CLI]  6. Gamatoto / Ototo
+  [CLI]  7. Account
+  [CLI]  8. Gacha
+  [CLI]  9. Fixes
+  [CLI]  10. Other
+  [CLI]  11. Config
+  [CLI]  12. Update External Content
+  [CLI]  13. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Unlock Cats / Remove Cats
+  [CLI]  3. Upgrade Cats
+  [CLI]  4. True Form Cats / Remove Cat True Forms
+  [CLI]  5. Force True Form Cats
+  [CLI]  6. Ultra Form Cats / Remove Cat Ultra Forms (4th Forms)
+  [CLI]  7. Force Ultra Form Cats (4th Forms)
+  [CLI]  8. Upgrade Talents / Remove Talents Cats
+  [CLI]  9. Claim / Unclaim Cat Guide Entries
+  [CLI]  10. Special Skills / Base Abilities
+  [CLI]  11. Cat Storage
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input: 1. Select all cats
+  [CLI]  2. Select currently unlocked cats
+  [CLI]  3. Select all obtainable cats
+  [CLI]  4. Select cats by id
+  [CLI]  5. Select cats based on name
+  [CLI]  6. Select cats based on rarity
+  [CLI]  7. Select cats based on gacha banner
+  [CLI]  8. Select cats that are not unlocked
+  [CLI]  9. Select all unobtainable cats
+  [CLI]  10. Select Non-Gacha Cats
+  [CLI]  11. Select cats by game version
+  [CLI]  12. Finish
+  [CLI] Select cats:You can find cat IDs here: https://battlecats.miraheze.org/wiki/Cat_Release_Order
+  [CLI] Enter cat ids separated by spaces (e.g 1 2 3 192), or enter a range (e.g. 1-43) or enter all:The 6th Angel (549) is selected
+  [CLI] Have you finished selecting cats? (y/n):The 6th Angel (549) is selected: 1+0
+  [CLI] Max Upgrade Level: 60+70
+  [CLI] Enter an upgrade level. Examples:
+  [CLI] 10+20 = Base level 10, plus level 20
+  [CLI] 10+ = Base level 10, keep current plus level
+  [CLI] +20 = Keep current base level, plus level 20
+  [CLI] 10 = Base level 10, plus level 0
+  [CLI] 5-10+20-30 = Random base level between 5 and 10, random plus level between 20 and 30
+  [CLI] 5-10+ = Random base level between 5 and 10, keep current plus level
+  [CLI] +20-30 = Keep current base level, random plus level between 20 and 30
+  [CLI] max+max = Max base level, max plus level
+  [CLI] q = Quit
+  [CLI] Input:The 6th Angel (549) has been upgraded to 60+0
+  [CLI] Successfully upgraded cats
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save Management
+  [CLI]  3. Items
+  [CLI]  4. Cats / Special Skills
+  [CLI]  5. Levels / Story / Treasure
+  [CLI]  6. Gamatoto / Ototo
+  [CLI]  7. Account
+  [CLI]  8. Gacha
+  [CLI]  9. Fixes
+  [CLI]  10. Other
+  [CLI]  11. Config
+  [CLI]  12. Update External Content
+  [CLI]  13. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save save
+  [CLI]  3. Upload save file to server and get transfer and confirmation code
+  [CLI]  4. Save save to specific file
+  [CLI]  5. Save save to C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+  [CLI]  6. Push the save file to a waydroid device (Do not rerun the game after pushing)
+  [CLI]  7. Push the save file to a waydroid device (Also rerun the game after pushing)
+  [CLI]  8. Use adb to push the save file to a device (Do not rerun the game after pushing)
+  [CLI]  9. Use adb to push the save file to a device (Rerun the game after pushing)
+  [CLI]  10. Use root to push save directly to the game
+  [CLI]  11. Use root to push save directly to the game (and rerun the game)
+  [CLI]  12. Export save file to json
+  [CLI]  13. Load save file
+  [CLI]  14. Convert country code (e.g en -> jp)
+  [CLI]  15. Convert game version (e.g 12.2.1 -> 12.2.0)
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:Getting account save key...
+  [CLI] Uploading save file to server...
+  [CLI] Getting transfer code and confirmation code...
+  [CLI] Save file saved to C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_cli_80abc10c
+  [CLI] Transfer Code: 51954ea2b
+  [CLI] Confirmation Code: 8668
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save Management
+  [CLI]  3. Items
+  [CLI]  4. Cats / Special Skills
+  [CLI]  5. Levels / Story / Treasure
+  [CLI]  6. Gamatoto / Ototo
+  [CLI]  7. Account
+  [CLI]  8. Gacha
+  [CLI]  9. Fixes
+  [CLI]  10. Other
+  [CLI]  11. Config
+  [CLI]  12. Update External Content
+  [CLI]  13. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:An error has occurred (EOF when reading a line, editor version: 3.4.0) please report this to #bug-reports on the discord: https://discord.gg/DvmMgvn5ZB
+  [CLI] Traceback (most recent call last):
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\__main__.py", line 64, in main
+  [CLI]     cli.main.Main().main(args.input_path)
+  [CLI]     ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\main.py", line 39, in main
+  [CLI]     stop = self.load_save_options(input_path)
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\main.py", line 203, in load_save_options
+  [CLI]     self.feature_handler()
+  [CLI]     ~~~~~~~~~~~~~~~~~~~~^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\main.py", line 211, in feature_handler
+  [CLI]     self.fh.select_features_run()
+  [CLI]     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\feature_handler.py", line 253, in select_features_run
+  [CLI]     features = self.select_features(features, [])
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\feature_handler.py", line 211, in select_features
+  [CLI]     usr_input = color.ColoredInput().localize("select_features").strip()
+  [CLI]                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\color.py", line 179, in localize
+  [CLI]     return self.get(text)
+  [CLI]            ~~~~~~~~^^^^^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\color.py", line 175, in get
+  [CLI]     return input()
+  [CLI] EOFError: EOF when reading a line
+  [CLI] Checking for changes...
+  [CLI] Changes found.
+  [CLI] Save latest changes before exiting? (y/n):
+[CLI] ✅ Transfer ใหม่: 51954ea2b | Confirm ใหม่: 8668
+[BCSFE] Upgraded 1/1 cats → max via CLI

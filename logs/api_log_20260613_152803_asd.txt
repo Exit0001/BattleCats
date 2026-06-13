@@ -1,0 +1,9 @@
+============================================================
+เวลา      : 2026-06-13 15:28:03
+Transfer  : asd
+Confirm   : asd
+Country   : en
+============================================================
+[OP] Unlock ALL cats in game
+[BCSFE] ⬇  Downloading save (transfer=asd... cc=en)
+[BCSFE] ❌ ❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง

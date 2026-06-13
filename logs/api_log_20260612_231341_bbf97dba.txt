@@ -1,0 +1,17 @@
+============================================================
+เวลา      : 2026-06-12 23:13:41
+Transfer  : bbf97dba0
+Confirm   : 7898
+Country   : en
+============================================================
+[OP] Unlock Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=bbf97d... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] พบ 1/1 ตัวใน save
+[CAT] ✔ #709 — unlocked
+[BCSFE] Unlocked 1 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_8ad25bd0
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260612_231342_bbf97dba
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 42f65bd44 | Confirm ใหม่: 2807
+============================================================

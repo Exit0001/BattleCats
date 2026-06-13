@@ -1,0 +1,17 @@
+============================================================
+เวลา      : 2026-06-12 16:41:56
+Transfer  : bb6472102
+Confirm   : 1809
+Country   : en
+============================================================
+[OP] Upgrade Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=bb6472... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #709 — Lv1+0 → Lv60+0
+[CAT] #709 — unlocked_forms: 1 → 1
+[BCSFE] Upgraded 1/1 cats → max, plus=0
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_bfd1c801
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260612_164158_bb647210
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: b5e56abc2 | Confirm ใหม่: 8634
+============================================================

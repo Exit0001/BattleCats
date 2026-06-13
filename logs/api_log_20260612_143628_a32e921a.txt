@@ -1,0 +1,229 @@
+============================================================
+เวลา      : 2026-06-12 14:36:28
+Transfer  : a32e921ae
+Confirm   : 1222
+Country   : en
+============================================================
+[OP] เพิ่มของ 2 รายการ
+[BCSFE] ⬇  Downloading save (transfer=a32e92... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Rare Ticket (Trade): defer → CLI (current=300)
+[ITEM] Lucky Ticket: defer → CLI (current=0)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_c4a61b36
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260612_143629_a32e921a
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 5740931e1 | Confirm ใหม่: 4872
+============================================================
+[CLI] รอ 4 วินาที (rate limit)...
+[CLI] บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_cli_c4a61b36
+[CLI] Rare Ticket: current=300, add=-1
+[CLI] โหลดจาก C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_cli_c4a61b36 (--input-path)
+  [CLI] Local version: 3.4.0 | Latest version: 3.4.0
+  [CLI] Welcome to the Battle Cats Save File Editor!
+  [CLI] Made by fieryhenry
+  [CLI] Codeberg: https://codeberg.org/fieryhenry/BCSFE-Python
+  [CLI] Discord: https://discord.gg/DvmMgvn5ZB - Please report any bugs to #bug-reports and suggestions to #suggestions
+  [CLI] Donate: https://ko-fi.com/fieryhenry
+  [CLI] Config File Location: C:\Users\modpo\Documents\bcsfe\config.yaml
+  [CLI] Current Theme: Default (Version 1.0.0)
+  [CLI] Made by fieryhenry
+  [CLI] Theme File Location: C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\files\themes\default.json
+  [CLI] Current Locale: English
+  [CLI] Made by fieryhenry
+  [CLI] Locale File Location: C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\files\locales\en
+  [CLI] Thanks To:
+  [CLI] - Lethal's editor for giving me inspiration and helping me work out how to orignally patch the save data and edit cf/xp: https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
+  [CLI] - Beeven and csehydrogen's code, which helped me figure out how to patch save data: https://github.com/beeven/battlecats and https://github.com/csehydrogen/BattleCatsHacker
+  [CLI] - Anyone who has supported my work for giving me motivation to keep working on this and similar projects: https://ko-fi.com/fieryhenry
+  [CLI] - Everyone in the discord for giving me saves, reporting bugs, suggesting new features, and for being an amazing community: https://discord.gg/DvmMgvn5ZB
+  [CLI] If you paid for this program, you have been scammed. This program is free and open source.
+  [CLI] Use this tool at your own risk. I am not responsible for any bans or damage caused to your save file.
+  [CLI] Obviously, the save editor does try to prevent this from happening, but I cannot guarantee that your save is safe.
+  [CLI] Though if your save does get corrupted please do still report it to the discord.
+  [CLI] I recommend you to make backups of your save file before editing it.
+  [CLI] Loading save from: C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_cli_c4a61b36
+  [CLI] Current Save: en-15.4.1 Inquiry: 31b2***77
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save Management
+  [CLI]  3. Items
+  [CLI]  4. Cats / Special Skills
+  [CLI]  5. Levels / Story / Treasure
+  [CLI]  6. Gamatoto / Ototo
+  [CLI]  7. Account
+  [CLI]  8. Gacha
+  [CLI]  9. Fixes
+  [CLI]  10. Other
+  [CLI]  11. Config
+  [CLI]  12. Update External Content
+  [CLI]  13. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Cat Food
+  [CLI]  3. XP
+  [CLI]  4. Normal Tickets
+  [CLI]  5. Rare Tickets
+  [CLI]  6. Rare Ticket Trade (Allows for unbannable rare tickets)
+  [CLI]  7. Platinum Tickets
+  [CLI]  8. Legend Tickets
+  [CLI]  9. Platinum Shards
+  [CLI]  10. NP
+  [CLI]  11. Leadership
+  [CLI]  12. Battle Items
+  [CLI]  13. Endless Battle Items
+  [CLI]  14. Catseyes
+  [CLI]  15. Catfruit
+  [CLI]  16. Talent Orbs
+  [CLI]  17. Catamins
+  [CLI]  18. Scheme Items
+  [CLI]  19. Labyrinth Medals
+  [CLI]  20. 100 Million Downloads Tickets
+  [CLI]  21. Event Tickets / Lucky Tickets
+  [CLI]  22. Treasure Chests
+  [CLI]  23. Reset Golden Cat CPU Uses
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:ERROR: You already have the maximum amount of rare tickets!
+  [CLI] Please use some before running this feature!
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save Management
+  [CLI]  3. Items
+  [CLI]  4. Cats / Special Skills
+  [CLI]  5. Levels / Story / Treasure
+  [CLI]  6. Gamatoto / Ototo
+  [CLI]  7. Account
+  [CLI]  8. Gacha
+  [CLI]  9. Fixes
+  [CLI]  10. Other
+  [CLI]  11. Config
+  [CLI]  12. Update External Content
+  [CLI]  13. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:No feature found with name: -1
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:Invalid input. Please try again.
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:Invalid input. Please try again.
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:An error has occurred (EOF when reading a line, editor version: 3.4.0) please report this to #bug-reports on the discord: https://discord.gg/DvmMgvn5ZB
+  [CLI] Traceback (most recent call last):
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\__main__.py", line 64, in main
+  [CLI]     cli.main.Main().main(args.input_path)
+  [CLI]     ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\main.py", line 39, in main
+  [CLI]     stop = self.load_save_options(input_path)
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\main.py", line 203, in load_save_options
+  [CLI]     self.feature_handler()
+  [CLI]     ~~~~~~~~~~~~~~~~~~~~^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\main.py", line 211, in feature_handler
+  [CLI]     self.fh.select_features_run()
+  [CLI]     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\feature_handler.py", line 253, in select_features_run
+  [CLI]     features = self.select_features(features, [])
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\feature_handler.py", line 211, in select_features
+  [CLI]     usr_input = color.ColoredInput().localize("select_features").strip()
+  [CLI]                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\color.py", line 179, in localize
+  [CLI]     return self.get(text)
+  [CLI]            ~~~~~~~~^^^^^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\color.py", line 175, in get
+  [CLI]     return input()
+  [CLI] EOFError: EOF when reading a line
+  [CLI] Failed to recover save file from temp file. Latest save changes are lost (Failed to load save file)
+  [CLI] Traceback (most recent call last):
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\__main__.py", line 64, in main
+  [CLI]     cli.main.Main().main(args.input_path)
+  [CLI]     ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\main.py", line 39, in main
+  [CLI]     stop = self.load_save_options(input_path)
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\main.py", line 203, in load_save_options
+  [CLI]     self.feature_handler()
+  [CLI]     ~~~~~~~~~~~~~~~~~~~~^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\main.py", line 211, in feature_handler
+  [CLI]     self.fh.select_features_run()
+  [CLI]     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\feature_handler.py", line 253, in select_features_run
+  [CLI]     features = self.select_features(features, [])
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\feature_handler.py", line 211, in select_features
+  [CLI]     usr_input = color.ColoredInput().localize("select_features").strip()
+  [CLI]                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\color.py", line 179, in localize
+  [CLI]     return self.get(text)
+  [CLI]            ~~~~~~~~^^^^^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\color.py", line 175, in get
+  [CLI]     return input()
+  [CLI] EOFError: EOF when reading a line
+  [CLI] During handling of the above exception, another exception occurred:
+  [CLI] Traceback (most recent call last):
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\core\io\save.py", line 139, in load_wrapper
+  [CLI]     self.load()
+  [CLI]     ~~~~~~~~~^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\core\io\save.py", line 313, in load
+  [CLI]     self.date_4 = self.data.read_date()
+  [CLI]                   ~~~~~~~~~~~~~~~~~~~^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\core\io\data.py", line 280, in read_date
+  [CLI]     return datetime.datetime(year, month, day, hour, minute, second)
+  [CLI]            ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [CLI] ValueError: year must be in 1..9999, not 0
+  [CLI] The above exception was the direct cause of the following exception:
+  [CLI] Traceback (most recent call last):
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\main.py", line 320, in exit_editor
+  [CLI]     save_file_temp = core.SaveFile(temp_path.read())
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\core\io\save.py", line 63, in __init__
+  [CLI]     self.load_wrapper()
+  [CLI]     ~~~~~~~~~~~~~~~~~^^
+  [CLI]   File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\core\io\save.py", line 143, in load_wrapper
+  [CLI]     raise FailedToLoadError(
+  [CLI]         core.core_data.local_manager.get_key("failed_to_load_save")
+  [CLI]     ) from e
+  [CLI] bcsfe.core.io.save.FailedToLoadError: Failed to load save file
+  [CLI] Thank you for using the Battle Cats Save File Editor!
+[CLI] ❌ parse transfer code ไม่ได้
+  
+  Traceback (most recent call last):
+    File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\cli\main.py", line 320, in exit_editor
+      save_file_temp = core.SaveFile(temp_path.read())
+    File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\core\io\save.py", line 63, in __init__
+      self.load_wrapper()
+      ~~~~~~~~~~~~~~~~~^^
+    File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\core\io\save.py", line 143, in load_wrapper
+      raise FailedToLoadError(
+          core.core_data.local_manager.get_key("failed_to_load_save")
+      ) from e
+  bcsfe.core.io.save.FailedToLoadError: Failed to load save file
+  
+  
+  Thank you for using the Battle Cats Save File Editor!
+[BCSFE] ❌ Rare Ticket (Trade) CLI ล้มเหลว: parse transfer code ไม่ได้

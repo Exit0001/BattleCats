@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-12 17:45:21
+Transfer  : acb3dccd0
+Confirm   : 6045
+Country   : en
+============================================================
+[OP] Upgrade Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=acb3dc... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #709 — Lv1+0 → Lv60+0 (forms: 1→1)
+[BCSFE] Upgraded 1/1 cats → max
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_5fa2f997
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260612_174523_acb3dccd
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 9e3f646f2 | Confirm ใหม่: 3990
+============================================================

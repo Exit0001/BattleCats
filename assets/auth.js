@@ -52,8 +52,8 @@ var AUTH = (function () {
   function _localUsers() {
     try { return JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); } catch (e) { return {}; }
   }
-  function _setSession(u) {
-    localStorage.setItem(SESSION_KEY, JSON.stringify({ username: u, at: Date.now() }));
+  function _setSession(u, hash) {
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ username: u, hash: hash || '', at: Date.now() }));
   }
 
   // ── Public sync helpers ───────────────────────────────────────
@@ -83,7 +83,7 @@ var AUTH = (function () {
     }]);
     if (ins.error) return { ok: false, err: ins.error.message };
 
-    _setSession(username);
+    _setSession(username, _hash(password));
     return { ok: true };
   }
 
@@ -101,7 +101,7 @@ var AUTH = (function () {
         .eq('password_hash', _hash(password))
         .maybeSingle();
 
-      if (res.data) { _setSession(res.data.username); return { ok: true }; }
+      if (res.data) { _setSession(res.data.username, _hash(password)); return { ok: true }; }
 
       // username มีใน DB แต่ password ผิด
       var has = await window.DB.from('profiles')
@@ -114,7 +114,7 @@ var AUTH = (function () {
     var users = _localUsers();
     if (!users[username]) return { ok: false, err: 'ไม่พบชื่อผู้ใช้นี้' };
     if (users[username].pw !== _hash(password)) return { ok: false, err: 'รหัสผ่านไม่ถูกต้อง' };
-    _setSession(username);
+    _setSession(username, _hash(password));
     return { ok: true };
   }
 
@@ -144,6 +144,11 @@ var AUTH = (function () {
 
     if (user) {
       el.innerHTML =
+        '<a href="loyalty.html" id="bc-loyalty-badge" title="แต้มสะสม" ' +
+        'style="font-size:12px;font-weight:700;color:#fbbf24;' +
+        'background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.35);' +
+        'padding:5px 12px;border-radius:20px;white-space:nowrap;text-decoration:none;' +
+        "font-family:'Chakra Petch',sans-serif;transition:all 0.2s;display:none;" + '">🎁 —</a>' +
         '<span style="font-size:13px;font-weight:700;color:#fff;' +
         'background:rgba(124,58,237,0.3);border:1px solid rgba(124,58,237,0.5);' +
         'padding:5px 14px;border-radius:20px;white-space:nowrap;">👤 ' + user + '</span>' +
@@ -154,6 +159,25 @@ var AUTH = (function () {
       el.querySelector('#bc-logout-btn').addEventListener('click', function () {
         if (confirm('ออกจากระบบหรือไม่?')) logout();
       });
+      // โหลด loyalty status และอัพเดท badge
+      fetch('/api/loyalty/status?username=' + encodeURIComponent(user))
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var badge = document.getElementById('bc-loyalty-badge');
+          if (!badge) return;
+          var cycles = d.available_cycles || 0;
+          var pct    = d.progress_pct || 0;
+          if (cycles > 0) {
+            badge.textContent = '🎁 ' + cycles + ' รอบพร้อมแลก!';
+            badge.style.background = 'rgba(251,191,36,0.22)';
+            badge.style.borderColor = 'rgba(251,191,36,0.6)';
+            badge.style.boxShadow = '0 0 10px rgba(251,191,36,0.25)';
+          } else {
+            badge.textContent = '🎁 ฿' + (d.progress_baht || 0) + '/200';
+          }
+          badge.style.display = '';
+        })
+        .catch(function() {});  // fail silently
     } else {
       el.innerHTML =
         '<a href="login.html" style="font-size:13px;font-weight:700;' +

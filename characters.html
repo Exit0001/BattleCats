@@ -10,7 +10,7 @@
     /* ── Cat card grid ─────────────────────────────────────── */
     .cat-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       gap: 10px;
       max-height: 680px;
       overflow-y: auto;
@@ -42,8 +42,8 @@
     }
 
     .cat-img-wrap {
-      width: 76px;
-      height: 76px;
+      width: 88px;
+      height: 88px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -296,6 +296,7 @@
       <li><a href="characters.html" class="active">ปลดล็อคแมว</a></li>
       <li><a href="stages.html">ปลดล็อคด่าน</a></li>
       <li><a href="orders.html">ออเดอร์</a></li>
+      <li><a href="loyalty.html">🎁 แต้มสะสม</a></li>
     </ul>
     <div class="nav-cart">
       🛒
@@ -309,6 +310,7 @@
       <li><a href="characters.html" class="active" onclick="closeMobileMenu()">🐱 ปลดล็อคแมว</a></li>
       <li><a href="stages.html" onclick="closeMobileMenu()">📍 ปลดล็อคด่าน</a></li>
       <li><a href="orders.html" onclick="closeMobileMenu()">📋 ออเดอร์</a></li>
+      <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 แต้มสะสม</a></li>
     </ul>
     <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
   </div>
@@ -333,9 +335,9 @@
         <div class="card-tag tag-rare">ALL</div>
         <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;">อัพเกรด Max<br>ทุกตัวที่มีในรหัส</div>
         <div class="card-desc" style="line-height:1.6;">Uber Lv60 · SR/R Lv50 · Normal Lv30<br>Plus ของลูกค้าคงเดิม</div>
-        <div class="card-price" style="margin-top:14px;"><span class="price-now">฿200</span></div>
+        <div class="card-price" style="margin-top:14px;"><span class="price-now">฿400</span></div>
         <div style="margin-top:auto;padding-top:14px;">
-          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('upgrade_all','อัพเกรด Max ทุกตัวที่มีในรหัส',200)">+ ใส่ตะกร้า</button>
+          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('upgrade_all','อัพเกรด Max ทุกตัวที่มีในรหัส',400)">+ ใส่ตะกร้า</button>
         </div>
       </div>
 
@@ -345,9 +347,9 @@
         <div class="card-tag tag-super">HOT</div>
         <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;">Unlock ทุกตัวละคร<br>ในเกม</div>
         <div class="card-desc" style="line-height:1.6;">ปลดล็อค <strong style="color:#EDE6FF;">ทุกตัวในเกม</strong><br>รวม Uber · Special ไม่มีข้อยกเว้น</div>
-        <div class="card-price" style="margin-top:14px;"><span class="price-now">฿200</span></div>
+        <div class="card-price" style="margin-top:14px;"><span class="price-now">฿400</span></div>
         <div style="margin-top:auto;padding-top:14px;">
-          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('unlock_all','Unlock ทุกตัวละครในเกม',200)">+ ใส่ตะกร้า</button>
+          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('unlock_all','Unlock ทุกตัวละครในเกม',400)">+ ใส่ตะกร้า</button>
         </div>
       </div>
 
@@ -356,9 +358,9 @@
         <div class="card-picture"><img loading="lazy" src="pictures/True Form ทุกตัวที่มีในรหัส.png" width="200"></div>
         <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;">True Form<br>ทุกตัวที่มีในรหัส</div>
         <div class="card-desc" style="line-height:1.6;">เปลี่ยนแมวที่คุณมีอยู่ทุกตัว<br>เป็น True Form (ร่างที่ 3)</div>
-        <div class="card-price" style="margin-top:14px;"><span class="price-now">฿100</span></div>
+        <div class="card-price" style="margin-top:14px;"><span class="price-now">฿200</span></div>
         <div style="margin-top:auto;padding-top:14px;">
-          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('trueform_all','True Form ทุกตัวที่มีในรหัส',100)">+ ใส่ตะกร้า</button>
+          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('trueform_all','True Form ทุกตัวที่มีในรหัส',200)">+ ใส่ตะกร้า</button>
         </div>
       </div>
 
@@ -372,9 +374,9 @@
         <div class="card-picture"><img loading="lazy" src="pictures/Ultra Form ทุกตัวที่มีในรหัส.png" width="200"></div>
         <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;">Ultra Form<br>ทุกตัวที่มีในรหัส</div>
         <div class="card-desc" style="line-height:1.6;">เปลี่ยนทุกตัวที่มี 4 ร่าง<br>ให้เป็น Ultra Form (ร่างที่ 4)</div>
-        <div class="card-price" style="margin-top:14px;"><span class="price-now">฿100</span></div>
+        <div class="card-price" style="margin-top:14px;"><span class="price-now">฿200</span></div>
         <div style="margin-top:auto;padding-top:14px;">
-          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('ultraform_all','Ultra Form ทุกตัวที่มีในรหัส',100)">+ ใส่ตะกร้า</button>
+          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('ultraform_all','Ultra Form ทุกตัวที่มีในรหัส',200)">+ ใส่ตะกร้า</button>
         </div>
       </div>
 
@@ -383,9 +385,9 @@
         <div class="card-picture"><img loading="lazy" src="pictures/Max Talents ทุกตัวที่มีในรหัส.png" width="200"></div>
         <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;">Max Talents<br>ทุกตัวที่มีในรหัส</div>
         <div class="card-desc" style="line-height:1.6;">อัพ Talent ทุกสกิล Max<br>ทุกตัวที่มี Talent ในรหัสของคุณ</div>
-        <div class="card-price" style="margin-top:14px;"><span class="price-now">฿150</span></div>
+        <div class="card-price" style="margin-top:14px;"><span class="price-now">฿300</span></div>
         <div style="margin-top:auto;padding-top:14px;">
-          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('talents_all','Max Talents ทุกตัวที่มีในรหัส',150)">+ ใส่ตะกร้า</button>
+          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('talents_all','Max Talents ทุกตัวที่มีในรหัส',300)">+ ใส่ตะกร้า</button>
         </div>
       </div>
 
@@ -1140,7 +1142,7 @@ document.querySelectorAll('.nav-links a').forEach(function(link) {
 });
 </script>
 
-<script src="assets/auth.js"></script>
+<script src="assets/auth.js?v=20260613"></script>
 <script src="assets/animations.js"></script>
 <script src="assets/nav.js"></script>
 </body>

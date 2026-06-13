@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -58,6 +58,7 @@
       <li><a href="characters.html">ปลดล็อคแมว</a></li>
       <li><a href="stages.html">ปลดล็อคด่าน</a></li>
       <li><a href="orders.html" class="active">ออเดอร์</a></li>
+      <li><a href="loyalty.html">🎁 แต้มสะสม</a></li>
     </ul>
     <div class="nav-cart">
       🛒
@@ -71,6 +72,7 @@
       <li><a href="characters.html" onclick="closeMobileMenu()">🐱 ปลดล็อคแมว</a></li>
       <li><a href="stages.html" onclick="closeMobileMenu()">📍 ปลดล็อคด่าน</a></li>
       <li><a href="orders.html" class="active" onclick="closeMobileMenu()">📋 ออเดอร์</a></li>
+      <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 แต้มสะสม</a></li>
     </ul>
     <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
   </div>
@@ -211,9 +213,10 @@
                   <span>ราคาสินค้า: <span id="pay-baseAmountTm" style="color:#EDE6FF;"></span></span><br>
                   <span>ค่าธรรมเนียม TrueWallet 2.9% (สูงสุด 20 บาท): <span id="pay-feeTm" style="color:#FBBF24;"></span></span>
                 </div>
-                <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:12px;">ยอดที่ต้องชำระ: <span id="pay-amountTm" style="font-family:'Russo One',sans-serif;font-size:18px;color:#FF4D92;"></span></div>
+                <div style="font-family:'Chakra Petch',sans-serif;font-size:14px;color:rgba(210,190,255,0.8);margin-bottom:12px;">ยอดที่ต้องชำระ: <span id="pay-amountTm" style="font-family:'Russo One',sans-serif;font-size:28px;color:#FF4D92;"></span></div>
                 <div style="background:rgba(251,191,36,0.10);border:1px solid rgba(251,191,36,0.28);border-radius:10px;padding:10px;color:#FCD34D;font-size:12px;line-height:1.6;">
-                  ⚠️ อย่าปิดหน้านี้จนกว่าจะส่งโค้ดซองอั่งเป่าเสร็จ
+                  ⚠️ อย่าปิดหน้านี้จนกว่าจะส่งโค้ดซองอั่งเป่าเสร็จ<br>
+                  ⚠️ ต้องใส่เลขให้ตรงตามยอดชำระเท่านั้น <strong>ห้ามเกินหรือขาด</strong>
                 </div>
               </div>
               <!-- วิดีโอสอนวิธีส่งซองอั่งเป่า (accordion เปิดไว้) -->
@@ -248,7 +251,7 @@
 
             <!-- Voucher input (TrueMoney Angpao) -->
             <div id="voucherInputSection" style="display:none;margin-top:20px;">
-              <label style="display:block;font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;color:rgba(210,190,255,0.55);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">วางโค้ด/ลิงก์ซองอั่งเป่า</label>
+<label style="display:block;font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;color:rgba(210,190,255,0.55);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">วางโค้ด/ลิงก์ซองอั่งเป่า</label>
               <input type="text" id="voucherInput" placeholder="https://gift.truemoney.com/campaign/?v=..."
                 style="width:100%;padding:10px 12px;border:1px solid rgba(255,120,0,0.3);border-radius:10px;background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;box-sizing:border-box;display:block;margin-bottom:16px;"
                 oninput="onVoucherChange()">
@@ -410,20 +413,20 @@
         <div id="orderSummary" style="font-size: 13px; line-height: 1.6;"></div>
       </div>
       <!-- วิธีใช้ Rare Ticket (แสดงเฉพาะถ้าซื้อ Rare Ticket) -->
-      <div id="rare-ticket-howto" style="display:none; text-align:left; background:#f5f0ff; border:1px solid #c4b5fd; border-radius:12px; padding:16px 18px; margin-top:16px; margin-bottom:4px;">
-        <div style="font-weight:700; color:#7c3aed; margin-bottom:10px; font-size:13px; font-family:'Chakra Petch',sans-serif;">📌 วิธีใช้งาน Rare Ticket</div>
+      <div id="rare-ticket-howto" style="display:none; text-align:left; background:#fffbeb; border:2px solid #f59e0b; border-radius:12px; padding:16px 18px; margin-top:16px; margin-bottom:4px; box-shadow:0 0 0 4px rgba(245,158,11,0.12);">
+        <div style="font-weight:700; color:#92400e; margin-bottom:10px; font-size:13px; font-family:'Chakra Petch',sans-serif;">⚠️ วิธีใช้งาน Rare Ticket (อ่านก่อนนะครับ!)</div>
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-family:'Chakra Petch',sans-serif; font-size:12px; color:#1f2937;">
-          <span style="background:#ede9fe; border:1px solid #c4b5fd; border-radius:8px; padding:4px 10px;">① รับไอเทม</span>
-          <span style="color:#a78bfa;">→</span>
-          <span style="background:#ede9fe; border:1px solid #c4b5fd; border-radius:8px; padding:4px 10px;">② เข้าตู้เย็น (Storage)</span>
-          <span style="color:#a78bfa;">→</span>
-          <span style="background:#ede9fe; border:1px solid #c4b5fd; border-radius:8px; padding:4px 10px;">③ กดใช้ทั้งหมด</span>
-          <span style="color:#a78bfa;">→</span>
-          <span style="background:#ede9fe; border:1px solid #c4b5fd; border-radius:8px; padding:4px 10px;">④ แลกตั๋วทอง</span>
+          <span style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:4px 10px; font-weight:600;">① รับไอเทม</span>
+          <span style="color:#d97706; font-weight:700;">→</span>
+          <span style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:4px 10px; font-weight:600;">② เข้าตู้เย็น (Storage)</span>
+          <span style="color:#d97706; font-weight:700;">→</span>
+          <span style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:4px 10px; font-weight:600;">③ กดใช้ทั้งหมด</span>
+          <span style="color:#d97706; font-weight:700;">→</span>
+          <span style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:4px 10px; font-weight:600;">④ แลกตั๋วทอง</span>
         </div>
       </div>
 
-      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="margin-top: 20px;">กลับไปเลือกสินค้าเพิ่มเติม</button>
+      <button id="modal-back-btn" class="btn btn-primary" onclick="modalGoBack()" style="margin-top: 20px;">กลับไปเลือกสินค้าเพิ่มเติม</button>
     </div>
   </div>
 </div>
@@ -1059,24 +1062,30 @@ async function renderHistory() {
 
       // กล่อง Transfer Code ใหม่ (เฉพาะ done)
       var codeBox = '';
-      if (status === 'bcsfe_failed' && order.latest_transfer_code) {
-        var _ltc = order.latest_transfer_code;
-        var _lcc = order.latest_confirmation_code || '-';
-        var _copyBtnStyle = 'flex-shrink:0;padding:4px 10px;background:rgba(251,191,36,0.25);color:#92400e;border:1px solid rgba(251,191,36,0.6);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;';
-        codeBox =
-          '<div style="margin-top:12px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.30);border-radius:12px;padding:12px 14px;">' +
-          '<div style="font-size:10px;color:#FBBF24;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">⚠️ รหัสล่าสุด — ติดต่อแอดมิน</div>' +
-          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code</div>' +
-          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
-          '<div style="font-family:monospace;font-size:14px;color:#FFD84E;word-break:break-all;flex:1;">' + _ltc + '</div>' +
-          '<button onclick="copyText(\'' + _ltc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">คัดลอก</button>' +
-          '</div>' +
-          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code</div>' +
-          '<div style="display:flex;align-items:center;gap:8px;">' +
-          '<div style="font-family:monospace;font-size:14px;color:#FFD84E;flex:1;">' + _lcc + '</div>' +
-          '<button onclick="copyText(\'' + _lcc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">คัดลอก</button>' +
-          '</div>' +
-          '</div>';
+      if (status === 'bcsfe_failed') {
+        var _retryBtn = '<button onclick="openRetryFromHistory(\'' + order.id + '\')" style="margin-top:10px;width:100%;padding:7px;background:rgba(220,38,38,0.18);color:#f87171;border:1px solid rgba(220,38,38,0.4);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;">🔄 ลองใหม่อีกครั้ง</button>';
+        if (order.latest_transfer_code) {
+          var _ltc = order.latest_transfer_code;
+          var _lcc = order.latest_confirmation_code || '-';
+          var _copyBtnStyle = 'flex-shrink:0;padding:4px 10px;background:rgba(251,191,36,0.25);color:#92400e;border:1px solid rgba(251,191,36,0.6);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;';
+          codeBox =
+            '<div style="margin-top:12px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.30);border-radius:12px;padding:12px 14px;">' +
+            '<div style="font-size:10px;color:#FBBF24;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">⚠️ รหัสล่าสุด — ติดต่อแอดมิน</div>' +
+            '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code</div>' +
+            '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
+            '<div style="font-family:monospace;font-size:14px;color:#FFD84E;word-break:break-all;flex:1;">' + _ltc + '</div>' +
+            '<button onclick="copyText(\'' + _ltc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">คัดลอก</button>' +
+            '</div>' +
+            '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code</div>' +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<div style="font-family:monospace;font-size:14px;color:#FFD84E;flex:1;">' + _lcc + '</div>' +
+            '<button onclick="copyText(\'' + _lcc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">คัดลอก</button>' +
+            '</div>' +
+            _retryBtn +
+            '</div>';
+        } else {
+          codeBox = '<div style="margin-top:10px;">' + _retryBtn + '</div>';
+        }
       } else if (status === 'done' && order.new_transfer_code) {
         var _tc  = order.new_transfer_code;
         var _cc  = order.new_confirmation_code || '-';
@@ -1107,6 +1116,7 @@ async function renderHistory() {
         '<div style="font-family:\'Russo One\',sans-serif;font-size:14px;color:var(--yellow);margin-bottom:8px;">#' + shortId + '</div>' +
         (items ? '<div style="margin-bottom:6px;">' + items + '</div>' : '') +
         codeBox +
+        (order.display_items && order.display_items.some(function(i){ return i.key === 'rare_ticket' || (i.name && i.name.toLowerCase().indexOf('rare ticket') !== -1); }) || (order.items && order.items.some(function(i){ return i.key === 'rare_ticket'; })) ? '<div style="margin-top:10px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:10px 12px;font-size:11px;color:rgba(210,190,255,0.75);font-family:\'Chakra Petch\',sans-serif;">📌 วิธีรับ Rare Ticket: รับไอเทม → เข้าตู้เย็น (Storage) → กดใช้ทั้งหมด → แลกตั๋วทอง</div>' : '') +
         '</div>' +
         '<div style="text-align:right;flex-shrink:0;">' +
         '<div style="font-family:\'Russo One\',sans-serif;font-size:24px;color:var(--red);">฿' + total + '</div>' +
@@ -1190,6 +1200,37 @@ function showSuccessModal(orderId, cart, result) {
   document.getElementById('rare-ticket-howto').style.display = hasRareTicket ? 'block' : 'none';
 
   document.getElementById('successModal').classList.add('active');
+
+  // ปุ่มกลับ + beforeunload
+  var backBtn = document.getElementById('modal-back-btn');
+  if (isBcsfeFail) {
+    backBtn.textContent = 'ดูประวัติออเดอร์';
+    window.onbeforeunload = function() { return 'ออเดอร์ยังค้างอยู่ กรุณาแก้ไข Code ก่อนออกจากหน้านี้'; };
+  } else {
+    backBtn.textContent = 'กลับไปเลือกสินค้าเพิ่มเติม';
+    window.onbeforeunload = null;
+  }
+}
+
+function openRetryFromHistory(orderId) {
+  var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+  var order = hist.find(function(o) { return o.id === orderId; });
+  _currentOrderId = orderId;
+  showSuccessModal(orderId, order ? order.items : [], {
+    success: false,
+    latest_transfer_code: order && order.latest_transfer_code,
+    latest_confirmation_code: order && order.latest_confirmation_code,
+  });
+}
+
+function modalGoBack() {
+  var isFailed = window.onbeforeunload !== null;
+  if (isFailed) {
+    window.onbeforeunload = null;
+    window.location.href = 'orders.html?tab=history';
+  } else {
+    window.location.href = 'shop.html';
+  }
 }
 
 async function retryBCSFE() {
@@ -1203,7 +1244,7 @@ async function retryBCSFE() {
   btn.disabled = true; btn.textContent = '⏳ กำลังดำเนินการ...';
   msg.style.display = 'block';
   msg.style.color = 'rgba(0,0,0,0.5)';
-  msg.textContent = '🔄 กำลังรัน BCSFE ด้วย Code ใหม่...';
+  msg.textContent = '🔄 กำลังดำเนินการ ใช้เวลา 1-3 นาที';
 
   try {
     var res = await fetch('/api/payment/retry/' + _currentOrderId, {
@@ -1238,6 +1279,11 @@ function submitOrder() {
 window.addEventListener('load', () => {
   displayCart();
 
+  // ── Auto-switch tab จาก URL param ──────────────────────────
+  if (new URLSearchParams(window.location.search).get('tab') === 'history') {
+    switchOrderTab('history');
+  }
+
   // ── Restore pending payment (ถ้า refresh ก่อนส่งสลิป) ──────
   var pending = null;
   try { pending = JSON.parse(localStorage.getItem('bc_pending_payment')); } catch(e) {}
@@ -1262,7 +1308,7 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 
 <script src="assets/supabase-client.js"></script>
 <script src="assets/notify.js"></script>
-<script src="assets/auth.js"></script>
+<script src="assets/auth.js?v=20260613"></script>
 <script src="assets/animations.js"></script>
 <script src="assets/nav.js"></script>
 </body>

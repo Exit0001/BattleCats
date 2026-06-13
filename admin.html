@@ -203,6 +203,59 @@
   <div id="orderCount" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.45);margin-bottom:14px;"></div>
   <div id="orderList"><div style="text-align:center;padding:60px;color:rgba(210,190,255,0.4);">⏳ กำลังโหลด...</div></div>
 
+  <!-- ── Loyalty Manager ── -->
+  <div style="margin-top:36px;border-top:1px solid rgba(255,255,255,0.06);padding-top:28px;">
+    <h2 class="section-title" style="font-size:18px;margin-bottom:18px;">🎁 จัดการแต้มสะสม (Loyalty)</h2>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px;">
+      <div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(196,181,253,0.6);margin-bottom:4px;">USERNAME</div>
+        <input id="loyaltyUsername" type="text" placeholder="username ของลูกค้า"
+          style="padding:9px 14px;border-radius:10px;border:1px solid rgba(124,58,237,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;width:200px;"
+          oninput="loyaltyClearResult()">
+      </div>
+      <button onclick="loyaltyLookup()"
+        style="padding:9px 18px;border-radius:10px;background:rgba(124,58,237,0.25);border:1px solid rgba(124,58,237,0.4);color:#C4B5FD;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">
+        🔍 ดูข้อมูล
+      </button>
+    </div>
+
+    <div id="loyaltyInfo" style="display:none;background:rgba(14,6,32,0.88);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px 20px;margin-bottom:14px;">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:16px;">
+        <div>
+          <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(196,181,253,0.5);margin-bottom:3px;">ยอดสะสม</div>
+          <div id="loyaltyCurrentSpent" style="font-family:'Russo One',sans-serif;font-size:22px;color:#fbbf24;"></div>
+        </div>
+        <div>
+          <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(196,181,253,0.5);margin-bottom:3px;">แลกแล้ว</div>
+          <div id="loyaltyRedeemed" style="font-family:'Russo One',sans-serif;font-size:22px;color:#a78bfa;"></div>
+        </div>
+        <div>
+          <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(196,181,253,0.5);margin-bottom:3px;">รอบพร้อมแลก</div>
+          <div id="loyaltyAvailable" style="font-family:'Russo One',sans-serif;font-size:22px;color:#4ade80;"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+        <div>
+          <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(196,181,253,0.6);margin-bottom:4px;">เพิ่ม/ลด ยอดสะสม (บาท)</div>
+          <input id="loyaltyAdjust" type="number" placeholder="เช่น 200 หรือ -50"
+            style="padding:9px 14px;border-radius:10px;border:1px solid rgba(124,58,237,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;width:160px;">
+        </div>
+        <button onclick="loyaltyAdjust()"
+          style="padding:9px 18px;border-radius:10px;background:rgba(251,191,36,0.2);border:1px solid rgba(251,191,36,0.45);color:#fbbf24;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">
+          💾 อัพเดท
+        </button>
+        <button onclick="loyaltyResetCycles()"
+          style="padding:9px 18px;border-radius:10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">
+          🔄 Reset รอบ
+        </button>
+      </div>
+    </div>
+
+    <div id="loyaltyMsg" style="font-family:'Chakra Petch',sans-serif;font-size:13px;margin-top:6px;"></div>
+  </div>
+
 </div>
 </div><!-- /adminMain -->
 
@@ -426,6 +479,86 @@ function openLightbox(orderId) {
 }
 function closeLightbox() {
   document.getElementById('slipLightbox').classList.remove('open');
+}
+
+// ── Loyalty Manager ───────────────────────────────────────────
+var _loyaltyData = null;
+
+function loyaltyClearResult() {
+  document.getElementById('loyaltyInfo').style.display = 'none';
+  document.getElementById('loyaltyMsg').textContent = '';
+  _loyaltyData = null;
+}
+
+async function loyaltyLookup() {
+  var username = document.getElementById('loyaltyUsername').value.trim();
+  var msg = document.getElementById('loyaltyMsg');
+  if (!username) { msg.innerHTML = '<span style="color:#f87171;">กรอก username ก่อน</span>'; return; }
+
+  msg.innerHTML = '<span style="color:rgba(196,181,253,0.5);">⏳ กำลังโหลด...</span>';
+  document.getElementById('loyaltyInfo').style.display = 'none';
+
+  try {
+    var res = await DB.from('profiles')
+      .select('username,total_spent,loyalty_redeemed_cycles')
+      .eq('username', username)
+      .maybeSingle();
+
+    if (!res.data) { msg.innerHTML = '<span style="color:#f87171;">❌ ไม่พบ user นี้</span>'; return; }
+
+    _loyaltyData = res.data;
+    var d = res.data;
+    var available = Math.floor((d.total_spent||0) / 200) - (d.loyalty_redeemed_cycles||0);
+
+    document.getElementById('loyaltyCurrentSpent').textContent = '฿' + (d.total_spent||0);
+    document.getElementById('loyaltyRedeemed').textContent = (d.loyalty_redeemed_cycles||0) + ' ครั้ง';
+    document.getElementById('loyaltyAvailable').textContent = available + ' รอบ';
+    document.getElementById('loyaltyInfo').style.display = 'block';
+    msg.textContent = '';
+  } catch(e) {
+    msg.innerHTML = '<span style="color:#f87171;">❌ ' + e.message + '</span>';
+  }
+}
+
+async function loyaltyAdjust() {
+  if (!_loyaltyData) return;
+  var delta = parseInt(document.getElementById('loyaltyAdjust').value || '0', 10);
+  var msg = document.getElementById('loyaltyMsg');
+  if (isNaN(delta) || delta === 0) { msg.innerHTML = '<span style="color:#f87171;">กรอกตัวเลขที่ไม่ใช่ 0</span>'; return; }
+
+  var newVal = Math.max(0, (_loyaltyData.total_spent||0) + delta);
+  var confirm_msg = (delta > 0 ? 'เพิ่ม' : 'ลด') + ' ฿' + Math.abs(delta) +
+    ' → total_spent จะเป็น ฿' + newVal + '\nยืนยันไหม?';
+  if (!confirm(confirm_msg)) return;
+
+  try {
+    var res = await DB.from('profiles')
+      .update({ total_spent: newVal })
+      .eq('username', _loyaltyData.username);
+    if (res.error) throw res.error;
+    msg.innerHTML = '<span style="color:#4ade80;">✅ อัพเดทแล้ว ฿' + (_loyaltyData.total_spent||0) + ' → ฿' + newVal + '</span>';
+    document.getElementById('loyaltyAdjust').value = '';
+    loyaltyLookup();
+  } catch(e) {
+    msg.innerHTML = '<span style="color:#f87171;">❌ ' + e.message + '</span>';
+  }
+}
+
+async function loyaltyResetCycles() {
+  if (!_loyaltyData) return;
+  var msg = document.getElementById('loyaltyMsg');
+  if (!confirm('Reset loyalty_redeemed_cycles → 0 สำหรับ ' + _loyaltyData.username + '?\n(รอบพร้อมแลกจะคำนวณใหม่จาก total_spent)')) return;
+
+  try {
+    var res = await DB.from('profiles')
+      .update({ loyalty_redeemed_cycles: 0 })
+      .eq('username', _loyaltyData.username);
+    if (res.error) throw res.error;
+    msg.innerHTML = '<span style="color:#4ade80;">✅ Reset รอบแล้ว</span>';
+    loyaltyLookup();
+  } catch(e) {
+    msg.innerHTML = '<span style="color:#f87171;">❌ ' + e.message + '</span>';
+  }
 }
 
 // ── Init ──────────────────────────────────────────────────────

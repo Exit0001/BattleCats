@@ -16,7 +16,7 @@ import asyncio
 import shutil
 from pathlib import Path
 from datetime import datetime
-from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest
+from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest, LoyaltyRedeemRequest
 from runner import BCSFERunner
 from config import ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES
 from payment import (
@@ -31,14 +31,21 @@ from payment import (
     verify_slip,
     redeem_truemoney_voucher,
     mark_slip_used,
+    get_user_loyalty,
+    update_user_loyalty_spent,
+    increment_loyalty_redeemed,
+    add_loyalty_redeemed_cycles,
+    save_loyalty_redemption,
+    get_loyalty_redemptions,
+    verify_loyalty_session,
 )
 
 ALL_PACKAGE_MAP = {
-    "upgrade_all":   {"label": "Upgrade Max All",  "price": 200, "runner": "run_upgrade_all_characters"},
-    "unlock_all":    {"label": "Unlock All",        "price": 200, "runner": "run_unlock_all"},
-    "trueform_all":  {"label": "True Form All",     "price": 100, "runner": "run_true_form_all"},
-    "ultraform_all": {"label": "Ultra Form All",    "price": 100, "runner": "run_ultra_form_all"},
-    "talents_all":   {"label": "Max Talents All",   "price": 150, "runner": "run_talents_max_all"},
+    "upgrade_all":   {"label": "Upgrade Max All",  "price": 400, "runner": "run_upgrade_all_characters"},
+    "unlock_all":    {"label": "Unlock All",        "price": 400, "runner": "run_unlock_all"},
+    "trueform_all":  {"label": "True Form All",     "price": 200, "runner": "run_true_form_all"},
+    "ultraform_all": {"label": "Ultra Form All",    "price": 200, "runner": "run_ultra_form_all"},
+    "talents_all":   {"label": "Max Talents All",   "price": 300, "runner": "run_talents_max_all"},
     "crazed_all":    {"label": "Crazed All Cat",    "price": 70,  "runner": None},
     "manic_all":     {"label": "Manic All Cat",     "price": 125, "runner": None},
 }
@@ -502,6 +509,8 @@ async def payment_verify(order_id: str, slip: UploadFile = File(...)):
             "new_confirmation_code": new_cc,
             "done_at":               datetime.now().isoformat(),
         })
+        if order.get("username"):
+            update_user_loyalty_spent(order["username"], order.get("base_amount", order["amount"]))
 
         return {
             "success":               True,
@@ -564,6 +573,8 @@ async def payment_verify_voucher(order_id: str, body: VoucherRedeemRequest):
             "new_confirmation_code": new_cc,
             "done_at":               datetime.now().isoformat(),
         })
+        if order.get("username"):
+            update_user_loyalty_spent(order["username"], order.get("base_amount", order["amount"]))
 
         return {
             "success":               True,
@@ -576,6 +587,71 @@ async def payment_verify_voucher(order_id: str, body: VoucherRedeemRequest):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"เกิดข้อผิดพลาด: {e}")
+
+
+# ══════════════════════════════════════════
+# LOYALTY ENDPOINTS
+# ══════════════════════════════════════════
+
+@app.get("/api/loyalty/status")
+def loyalty_status_endpoint(username: str):
+    loyalty = get_user_loyalty(username)
+    total_spent = loyalty["total_spent"]
+    redeemed = loyalty["loyalty_redeemed_cycles"]
+    total_cycles = total_spent // 200
+    available = total_cycles - redeemed
+    progress_baht = total_spent % 200
+    return {
+        "username":                 username,
+        "total_spent":              total_spent,
+        "loyalty_redeemed_cycles":  redeemed,
+        "available_cycles":         available,
+        "progress_baht":            progress_baht,
+        "progress_pct":             round(progress_baht / 200 * 100, 1),
+        "next_reward_at":           (redeemed + 1) * 200,
+    }
+
+
+@app.post("/api/loyalty/redeem")
+async def loyalty_redeem(body: LoyaltyRedeemRequest):
+    if not verify_loyalty_session(body.username, body.session_token):
+        raise HTTPException(status_code=401, detail="session ไม่ถูกต้อง — กรุณาเข้าสู่ระบบใหม่")
+    loyalty = get_user_loyalty(body.username)
+    available = loyalty["total_spent"] // 200 - loyalty["loyalty_redeemed_cycles"]
+    if available <= 0:
+        raise HTTPException(status_code=400, detail="ยังไม่มีรอบที่พร้อม redeem (ซื้อครบ 200 บาทถึงจะแลกได้)")
+
+    cycles = max(1, min(body.cycles, available))  # clamp: 1 ≤ cycles ≤ available
+    items = [
+        {"key": "normal_ticket", "amount": 100 * cycles},
+        {"key": "leadership",    "amount": 30  * cycles},
+        {"key": "rare_ticket",   "amount": 10  * cycles},
+    ]
+    runner = BCSFERunner(body.transfer_code, body.confirmation_code, body.country)
+    result = runner.run(items)
+
+    if not result.get("success"):
+        raise HTTPException(status_code=500, detail=result.get("error", "BCSFE error"))
+
+    codes = result["new_transfer_code"]
+    new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+    new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+    add_loyalty_redeemed_cycles(body.username, cycles)
+    save_loyalty_redemption(body.username, cycles, new_tc or "", new_cc or "")
+    return {
+        "success":               True,
+        "new_transfer_code":     new_tc,
+        "new_confirmation_code": new_cc,
+        "cycles_redeemed":       cycles,
+        "cycles_remaining":      available - cycles,
+        "customer_note":         result.get("customer_note", ""),
+    }
+
+
+@app.get("/api/loyalty/history/{username}")
+async def loyalty_history(username: str):
+    rows = get_loyalty_redemptions(username)
+    return {"history": rows}
 
 
 @app.get("/api/payment/status/{order_id}")
@@ -1340,14 +1416,14 @@ async def prewarm_cat_images():
 
 
 async def _prewarm_all():
-    missing = [i for i in range(861) if not (CAT_CACHE_DIR / f"{i}.png").exists()]
+    missing = [i for i in range(866) if not (CAT_CACHE_DIR / f"{i}.png").exists()]
     if not missing:
         print("[CAT-IMG] โ… Cache เธเธฃเธเธ—เธธเธเธ•เธฑเธงเนเธฅเนเธง")
         return
     print(f"[CAT-IMG] ๐” Pre-warming {len(missing)} เธฃเธนเธเธ—เธตเนเธขเธฑเธเนเธกเนเธกเธต cache...")
     await asyncio.gather(*[_fetch_cat_image(i) for i in missing], return_exceptions=True)
     cached = sum(1 for f in CAT_CACHE_DIR.glob("*.png"))
-    print(f"[CAT-IMG] โ… Pre-warm เน€เธชเธฃเนเธ โ€” cached {cached}/861")
+    print(f"[CAT-IMG] โ… Pre-warm เน€เธชเธฃเนเธ โ€” cached {cached}/866")
 
 
 @app.post("/api/payment/retry/{order_id}")
