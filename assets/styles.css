@@ -108,13 +108,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 10px;
   background: var(--bg-nav);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
   border: 1px solid var(--border-purple);
   border-radius: 18px;
-  padding: 10px 22px;
+  padding: 8px 16px;
   box-shadow: 0 8px 48px rgba(0,0,0,0.50), 0 0 0 1px rgba(124,58,237,0.08);
 }
 
@@ -135,7 +135,7 @@ body {
 
 .nav-links {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   align-items: center;
   list-style: none;
   min-width: 0;
@@ -150,8 +150,8 @@ body {
   text-decoration: none;
   font-family: var(--font-body);
   font-weight: 600;
-  font-size: 13.5px;
-  padding: 6px 14px;
+  font-size: 12.5px;
+  padding: 5px 10px;
   border-radius: 10px;
   transition: color var(--t-fast), background var(--t-fast);
   white-space: nowrap;

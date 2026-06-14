@@ -55,6 +55,7 @@
     <ul class="nav-links">
       <li><a href="index.html">หน้าแรก</a></li>
       <li><a href="shop.html">ร้านขาย</a></li>
+      <li><a href="shop-codes.html">รหัสสำเร็จรูป</a></li>
       <li><a href="characters.html">ปลดล็อคแมว</a></li>
       <li><a href="stages.html">ปลดล็อคด่าน</a></li>
       <li><a href="orders.html" class="active">ออเดอร์</a></li>
@@ -69,6 +70,7 @@
     <ul>
       <li><a href="index.html" onclick="closeMobileMenu()">🏠 หน้าแรก</a></li>
       <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ ร้านขาย</a></li>
+      <li><a href="shop-codes.html" onclick="closeMobileMenu()">🎮 รหัสสำเร็จรูป</a></li>
       <li><a href="characters.html" onclick="closeMobileMenu()">🐱 ปลดล็อคแมว</a></li>
       <li><a href="stages.html" onclick="closeMobileMenu()">📍 ปลดล็อคด่าน</a></li>
       <li><a href="orders.html" class="active" onclick="closeMobileMenu()">📋 ออเดอร์</a></li>
@@ -187,10 +189,7 @@
             <div id="qrSection" style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;">
               <div style="flex-shrink:0;text-align:center;">
                 <div id="qrCanvas" style="background:#fff;padding:12px;border-radius:14px;display:inline-block;box-shadow:0 0 24px rgba(124,58,237,0.3);"></div>
-                <div style="margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);">สแกนด้วยแอปธนาคาร</div>
-                <div style="margin-top:8px;background:rgba(248,113,113,0.10);border:1px solid rgba(248,113,113,0.35);border-radius:8px;padding:9px 12px;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#FCA5A5;line-height:1.6;">
-                  ไม่รองรับแอป <strong style="color:#f87171;">เป๋าตัง</strong><br>ใช้แอปธนาคารเท่านั้น
-                </div>
+                <div style="margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);">สแกนด้วยแอปธนาคาร หรือ เป๋าตัง</div>
               </div>
               <div style="flex:1;min-width:180px;font-family:'Chakra Petch',sans-serif;font-size:13px;">
                 <div style="margin-bottom:8px;color:rgba(210,190,255,0.6);">Order ID</div>
@@ -1018,7 +1017,7 @@ async function renderHistory() {
       try {
         var r = await fetch('/api/payment/status/' + order.id);
         var d = await r.json();
-        var extra = { status: d.status || 'unknown' };
+        var extra = { status: d.status || 'unknown', order_type: d.order_type || '' };
         // รับ codes จาก API (เชื่อถือได้กว่า localStorage)
         if (d.new_transfer_code)     extra.new_transfer_code     = d.new_transfer_code;
         if (d.new_confirmation_code) extra.new_confirmation_code = d.new_confirmation_code;
@@ -1089,15 +1088,17 @@ async function renderHistory() {
       } else if (status === 'done' && order.new_transfer_code) {
         var _tc  = order.new_transfer_code;
         var _cc  = order.new_confirmation_code || '-';
+        var _isCodeShop = order.order_type === 'code_shop';
         var _copyBtnStyle = 'flex-shrink:0;padding:4px 10px;background:rgba(99,102,241,0.25);color:#c4b5fd;border:1px solid rgba(99,102,241,0.4);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;';
         codeBox =
           '<div style="margin-top:12px;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:12px 14px;">' +
-          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
+          (_isCodeShop ? '<div style="font-size:10px;color:#4ade80;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">🎮 รหัสสำเร็จรูปของคุณ</div>' : '') +
+          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code' + (_isCodeShop ? '' : ' ใหม่') + '</div>' +
           '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
           '<div style="font-family:monospace;font-size:14px;color:#FFD84E;word-break:break-all;flex:1;">' + _tc + '</div>' +
           '<button onclick="copyText(\'' + _tc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">คัดลอก</button>' +
           '</div>' +
-          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code' + (_isCodeShop ? '' : ' ใหม่') + '</div>' +
           '<div style="display:flex;align-items:center;gap:8px;">' +
           '<div style="font-family:monospace;font-size:14px;color:#FFD84E;flex:1;">' + _cc + '</div>' +
           '<button onclick="copyText(\'' + _cc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">คัดลอก</button>' +

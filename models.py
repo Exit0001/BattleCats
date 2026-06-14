@@ -97,3 +97,38 @@ class LoyaltyRedeemRequest(BaseModel):
     country: str = "1"
     cycles: int = 1
     session_token: str = ""  # password_hash จาก localStorage — ใช้ verify เจ้าของบัญชี
+
+
+class CodeShopBuyRequest(BaseModel):
+    """ซื้อ pre-made code"""
+    product_id: str
+    username: str
+    session_token: str
+    payment_method: str = "promptpay"
+
+
+class AdminProductRequest(BaseModel):
+    """admin: เพิ่มสินค้า"""
+    name: str
+    description: str = ""
+    images: List[str] = []
+    price: int = 200
+    username: str
+    session_token: str
+
+
+class AdminToggleRequest(BaseModel):
+    """admin: เปิด/ปิดสินค้า"""
+    is_active: bool
+    username: str
+    session_token: str
+
+
+class AdminStockRequest(BaseModel):
+    """admin: เพิ่ม stock"""
+    product_id: str
+    transfer_code: str
+    confirmation_code: str
+    inquiry_code: Optional[str] = None
+    username: str
+    session_token: str

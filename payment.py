@@ -1,4 +1,4 @@
-﻿# payment.py - ระบบ QR PromptPay + เช็คสลิปด้วย SlipOK API
+﻿# payment.py - ระบบ QR PromptPay + เช็คสลิปด้วย EasySlip API
 
 import qrcode
 import qrcode.image.svg
@@ -21,7 +21,7 @@ from pathlib import Path
 
 PROMPTPAY_ID   = "0634515901"            # เบอร์ / เลขบัตรปชช ที่รับเงิน
 TRUEMONEY_ID   = "0634515901"       # TrueMoney Wallet phone number (แก้ถ้าต่างกัน)
-SLIPOK_API_KEY = "SLIPOKR9NYYUU"  # API Key จาก slipok.com
+EASYSLIP_API_KEY = "1c49e3f0-85f9-4718-b3f6-de74ec35fe30"  # API Key จาก easyslip.com
 ORDER_DB       = Path("orders.json")
 SLIP_DB        = Path("used_slips.json")
 USER_ORDERS_DB = Path("user_orders.json")
@@ -357,12 +357,12 @@ def is_order_expired(order: dict) -> bool:
     return datetime.now(TZ_THAI) > expires
 
 # ══════════════════════════════════════════
-# SLIPOK VERIFICATION
+# EASYSLIP VERIFICATION
 # ══════════════════════════════════════════
 
 async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
     """
-    ส่งสลิปไปเช็คกับ SlipOK API
+    ส่งสลิปไปเช็คกับ EasySlip API
     คืน {"success": True/False, "reason": "..."}
     """
     order = get_order(order_id)
@@ -376,52 +376,58 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
     if order["status"] == "paid":
         return {"success": False, "reason": "order นี้ชำระแล้ว"}
 
-    # ── ส่งสลิปไป SlipOK ──
+    # ── ส่งสลิปไป EasySlip ──
     try:
         async with httpx.AsyncClient(timeout=30) as client:
             resp = await client.post(
-                "https://api.slipok.com/api/line/apikey/67138",
-                headers={"x-authorization": SLIPOK_API_KEY},
-                files={"files": ("slip.jpg", slip_image_bytes, "image/jpeg")},
-                data={"log": "true"},
+                "https://api.easyslip.com/v2/verify/bank",
+                headers={"Authorization": f"Bearer {EASYSLIP_API_KEY}"},
+                files={"image": ("slip.jpg", slip_image_bytes, "image/jpeg")},
             )
         data = resp.json()
-        print(f"[SLIPOK] response: {json.dumps(data, ensure_ascii=False)}")
+        print(f"[EASYSLIP] response: {json.dumps(data, ensure_ascii=False)}")
     except Exception as e:
         return {"success": False, "reason": f"เช็คสลิปไม่ได้: {e}"}
 
     # ── ตรวจผลลัพธ์ ──
     if not data.get("success"):
-        msg = data.get("message") or data.get("code") or "สลิปไม่ถูกต้อง"
-        # SlipOK ขัดข้องชั่วคราว (ไม่หักโควต้า) → ให้ลูกค้าส่งใหม่ภายหลัง
-        if "ขัดข้องชั่วคราว" in msg or "ขณะนี้" in msg:
-            return {"success": False, "reason": "ระบบตรวจสลิปขัดข้องชั่วคราว กรุณาลองส่งสลิปอีกครั้งใน 15 นาที (ไม่เสียโควต้า)"}
-        return {"success": False, "reason": f"SlipOK: {msg}"}
+        msg = data.get("message") or "สลิปไม่ถูกต้อง"
+        error_map = {
+            "IMAGE_SIZE_TOO_LARGE": "ไฟล์สลิปใหญ่เกิน 4MB กรุณาบีบอัดรูปแล้วส่งใหม่",
+            "INVALID_IMAGE_FORMAT": "รูปแบบไฟล์ไม่รองรับ กรุณาส่งเป็น JPG หรือ PNG",
+            "SLIP_NOT_FOUND":       "ไม่พบ QR Code ในสลิป กรุณาส่งรูปให้ชัดขึ้น",
+            "SLIP_PENDING":         "สลิปยังประมวลผลไม่เสร็จ กรุณารอสักครู่แล้วส่งใหม่",
+        }
+        friendly = error_map.get(msg, f"EasySlip: {msg}")
+        return {"success": False, "reason": friendly}
 
     slip_data = data.get("data", {})
 
     # 1) เช็คยอดตรง (อนุญาต ±0 บาท)
-    received = float(slip_data.get("amount", 0))
+    raw_slip = slip_data.get("rawSlip", {})
+    received = float(raw_slip.get("amount", {}).get("amount", 0))
     expected = float(order["amount"])
     if abs(received - expected) > 0.01:
         return {"success": False, "reason": f"ยอดไม่ตรง คาดหวัง {expected:.2f} แต่ได้ {received:.2f} บาท"}
 
     # 2) เช็คสลิปซ้ำ
-    transaction_id = slip_data.get("transRef") or slip_data.get("transId") or ""
+    transaction_id = raw_slip.get("transRef", "")
     used_slips = _load_slips()
     if transaction_id and transaction_id in used_slips:
         return {"success": False, "reason": "สลิปนี้ถูกใช้ไปแล้ว"}
 
-    # ── อัปเดต order เป็น paid (ยังไม่บันทึกสลิป รอให้ BCSFE สำเร็จก่อน) ──
-    received = float(slip_data.get("amount", order["amount"]))
+    # 3) เช็ค isDuplicate จาก EasySlip
+    if slip_data.get("isDuplicate"):
+        return {"success": False, "reason": "สลิปนี้ถูกใช้ไปแล้ว (duplicate detected)"}
 
+    # ── อัปเดต order เป็น paid (ยังไม่บันทึกสลิป รอให้ BCSFE สำเร็จก่อน) ──
     update_order_status(order_id, "paid", {
         "paid_at":        datetime.now(TZ_THAI).isoformat(),
         "transaction_id": transaction_id,
         "received":       received,
     })
 
-    print(f"[SLIPOK] ✅ order {order_id} ชำระแล้ว {received} บาท")
+    print(f"[EASYSLIP] ✅ order {order_id} ชำระแล้ว {received} บาท")
     return {"success": True, "reason": "ชำระเงินสำเร็จ", "transaction_id": transaction_id}
 
 # ══════════════════════════════════════════
@@ -722,3 +728,343 @@ def increment_loyalty_redeemed(username: str):
         print(f"[LOYALTY] {username}: redeemed cycle #{new_count}")
     except Exception as e:
         print(f"[LOYALTY] increment error: {e}")
+
+
+# ══════════════════════════════════════════
+# CODE SHOP — ขายรหัส pre-made
+# ══════════════════════════════════════════
+
+def _sh(extra: dict | None = None) -> dict:
+    """Supabase headers"""
+    h = {"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+    if extra:
+        h.update(extra)
+    return h
+
+
+def verify_admin_session(username: str, session_token: str) -> bool:
+    """ตรวจว่า user เป็น admin (is_admin = TRUE + password ถูกต้อง)"""
+    if not username or not session_token:
+        return False
+    try:
+        with httpx.Client(timeout=6) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/profiles",
+                params={"username": f"eq.{username}", "password_hash": f"eq.{session_token}",
+                        "is_admin": "eq.true", "select": "username", "limit": "1"},
+                headers=_sh(),
+            )
+        return len(resp.json()) > 0 if resp.status_code == 200 else False
+    except Exception as e:
+        print(f"[ADMIN] verify error: {e}")
+        return False
+
+
+def _count_stock(product_id: str, status: str | None = None) -> int:
+    params: dict = {"product_id": f"eq.{product_id}", "select": "id"}
+    if status:
+        params["status"] = f"eq.{status}"
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/code_stock",
+                params=params,
+                headers=_sh({"Prefer": "count=exact"}),
+            )
+        cr = resp.headers.get("content-range", "")
+        if "/" in cr:
+            t = cr.split("/")[1]
+            if t.isdigit():
+                return int(t)
+        data = resp.json() if resp.status_code == 200 else []
+        return len(data) if isinstance(data, list) else 0
+    except:
+        return 0
+
+
+def get_code_products() -> list:
+    """ดึงสินค้าที่ active พร้อม stock count (ลูกค้าเห็น)"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/code_products",
+                params={"is_active": "eq.true", "order": "created_at.asc", "select": "*"},
+                headers=_sh(),
+            )
+        products = resp.json() if resp.status_code == 200 else []
+        for p in products:
+            p["stock_count"] = _count_stock(p["id"], "available")
+        return products
+    except Exception as e:
+        print(f"[CODE-SHOP] get_products error: {e}")
+        return []
+
+
+def get_all_code_products() -> list:
+    """ดึงสินค้าทั้งหมด (admin view รวม inactive)"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/code_products",
+                params={"order": "created_at.asc", "select": "*"},
+                headers=_sh(),
+            )
+        products = resp.json() if resp.status_code == 200 else []
+        for p in products:
+            p["stock_available"] = _count_stock(p["id"], "available")
+            p["stock_sold"] = _count_stock(p["id"], "sold")
+        return products
+    except Exception as e:
+        print(f"[CODE-SHOP] get_all_products error: {e}")
+        return []
+
+
+def get_code_product(product_id: str) -> dict | None:
+    """ดึงสินค้าเดี่ยว"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/code_products",
+                params={"id": f"eq.{product_id}", "select": "*", "limit": "1"},
+                headers=_sh(),
+            )
+        data = resp.json() if resp.status_code == 200 else []
+        return data[0] if data else None
+    except Exception as e:
+        print(f"[CODE-SHOP] get_product error: {e}")
+        return None
+
+
+def get_available_stock(product_id: str) -> dict | None:
+    """ดึง stock item ที่ available ตัวแรก"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/code_stock",
+                params={"product_id": f"eq.{product_id}", "status": "eq.available",
+                        "order": "created_at.asc", "limit": "1",
+                        "select": "id,transfer_code,confirmation_code"},
+                headers=_sh(),
+            )
+        data = resp.json() if resp.status_code == 200 else []
+        return data[0] if data else None
+    except Exception as e:
+        print(f"[CODE-SHOP] get_available_stock error: {e}")
+        return None
+
+
+def reserve_stock(stock_id: str, username: str, order_id: str) -> bool:
+    """จอง stock item ระหว่างรอชำระ (atomic: เฉพาะ available)"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.patch(
+                f"{SUPABASE_URL}/rest/v1/code_stock",
+                params={"id": f"eq.{stock_id}", "status": "eq.available"},
+                headers=_sh({"Content-Type": "application/json", "Prefer": "return=minimal"}),
+                json={"status": "reserved", "buyer_username": username, "order_id": order_id},
+            )
+        return resp.status_code in (200, 204)
+    except Exception as e:
+        print(f"[CODE-SHOP] reserve_stock error: {e}")
+        return False
+
+
+def mark_stock_sold(stock_id: str) -> bool:
+    """mark stock เป็น sold"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.patch(
+                f"{SUPABASE_URL}/rest/v1/code_stock",
+                params={"id": f"eq.{stock_id}"},
+                headers=_sh({"Content-Type": "application/json", "Prefer": "return=minimal"}),
+                json={"status": "sold", "sold_at": datetime.now(TZ_THAI).isoformat()},
+            )
+        return resp.status_code in (200, 204)
+    except Exception as e:
+        print(f"[CODE-SHOP] mark_sold error: {e}")
+        return False
+
+
+def release_stock(stock_id: str) -> bool:
+    """คืน stock เป็น available (order หมดอายุ/ยกเลิก)"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.patch(
+                f"{SUPABASE_URL}/rest/v1/code_stock",
+                params={"id": f"eq.{stock_id}"},
+                headers=_sh({"Content-Type": "application/json", "Prefer": "return=minimal"}),
+                json={"status": "available", "buyer_username": None, "order_id": None},
+            )
+        return resp.status_code in (200, 204)
+    except Exception as e:
+        print(f"[CODE-SHOP] release_stock error: {e}")
+        return False
+
+
+def get_stock_by_order(order_id: str) -> dict | None:
+    """ดึง stock item ที่ reserved/sold สำหรับ order นี้"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/code_stock",
+                params={"order_id": f"eq.{order_id}",
+                        "select": "id,transfer_code,confirmation_code,status"},
+                headers=_sh(),
+            )
+        data = resp.json() if resp.status_code == 200 else []
+        return data[0] if data else None
+    except Exception as e:
+        print(f"[CODE-SHOP] get_stock_by_order error: {e}")
+        return None
+
+
+def add_code_product(name: str, description: str, images: list, price: int) -> dict | None:
+    """admin: เพิ่มสินค้าใหม่"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.post(
+                f"{SUPABASE_URL}/rest/v1/code_products",
+                headers=_sh({"Content-Type": "application/json", "Prefer": "return=representation"}),
+                json={"name": name, "description": description,
+                      "images": images, "price": price, "is_active": True},
+            )
+        print(f"[CODE-SHOP] add_product status={resp.status_code} body={resp.text[:300]}")
+        data = resp.json() if resp.status_code in (200, 201) else None
+        return data[0] if isinstance(data, list) and data else None
+    except Exception as e:
+        print(f"[CODE-SHOP] add_product error: {e}")
+        return None
+
+
+def toggle_code_product(product_id: str, is_active: bool) -> bool:
+    """admin: เปิด/ปิดการแสดงสินค้า"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.patch(
+                f"{SUPABASE_URL}/rest/v1/code_products",
+                params={"id": f"eq.{product_id}"},
+                headers=_sh({"Content-Type": "application/json", "Prefer": "return=minimal"}),
+                json={"is_active": is_active},
+            )
+        return resp.status_code in (200, 204)
+    except Exception as e:
+        print(f"[CODE-SHOP] toggle_product error: {e}")
+        return False
+
+
+def delete_code_product(product_id: str) -> bool:
+    """admin: ลบสินค้า (stock ลบด้วย ON DELETE CASCADE)"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.delete(
+                f"{SUPABASE_URL}/rest/v1/code_products",
+                params={"id": f"eq.{product_id}"},
+                headers=_sh(),
+            )
+        return resp.status_code in (200, 204)
+    except Exception as e:
+        print(f"[CODE-SHOP] delete_product error: {e}")
+        return False
+
+
+def add_code_stock(product_id: str, transfer_code: str, confirmation_code: str, inquiry_code: str | None = None) -> dict | None:
+    """admin: เพิ่มรหัสเข้า stock"""
+    try:
+        payload = {"product_id": product_id, "transfer_code": transfer_code,
+                   "confirmation_code": confirmation_code, "status": "available"}
+        if inquiry_code:
+            payload["inquiry_code"] = inquiry_code
+        with httpx.Client(timeout=8) as client:
+            resp = client.post(
+                f"{SUPABASE_URL}/rest/v1/code_stock",
+                headers=_sh({"Content-Type": "application/json", "Prefer": "return=representation"}),
+                json=payload,
+            )
+        print(f"[CODE-SHOP] add_stock status={resp.status_code} body={resp.text[:200]}")
+        data = resp.json() if resp.status_code in (200, 201) else None
+        return data[0] if isinstance(data, list) and data else None
+    except Exception as e:
+        print(f"[CODE-SHOP] add_stock error: {e}")
+        return None
+
+
+def get_user_code_purchases(username: str) -> list:
+    """ประวัติการซื้อ pre-made code ของ user (join code_products)"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/code_stock",
+                params={
+                    "buyer_username": f"eq.{username}",
+                    "status": "eq.sold",
+                    "select": "id,transfer_code,confirmation_code,sold_at,order_id,product_id,code_products(name,price)",
+                    "order": "sold_at.desc",
+                    "limit": "30",
+                },
+                headers=_sh(),
+            )
+        return resp.json() if resp.status_code == 200 else []
+    except Exception as e:
+        print(f"[CODE-SHOP] get_user_code_purchases error: {e}")
+        return []
+
+
+def delete_code_stock(stock_id: str) -> bool:
+    """admin: ลบ stock item"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.delete(
+                f"{SUPABASE_URL}/rest/v1/code_stock",
+                params={"id": f"eq.{stock_id}"},
+                headers=_sh(),
+            )
+        return resp.status_code in (200, 204)
+    except Exception as e:
+        print(f"[CODE-SHOP] delete_stock error: {e}")
+        return False
+
+
+def get_product_stock(product_id: str) -> list:
+    """admin: ดู stock ทั้งหมดของสินค้า"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/code_stock",
+                params={"product_id": f"eq.{product_id}", "order": "created_at.asc",
+                        "select": "id,status,buyer_username,sold_at,created_at"},
+                headers=_sh(),
+            )
+        return resp.json() if resp.status_code == 200 else []
+    except Exception as e:
+        print(f"[CODE-SHOP] get_product_stock error: {e}")
+        return []
+
+
+def create_code_shop_order(product_id: str, stock_id: str, username: str, price: int,
+                           payment_method: str = "promptpay") -> dict:
+    """สร้าง order สำหรับซื้อ pre-made code"""
+    order_id = str(uuid.uuid4())[:8].upper()
+    fee      = truemoney_fee(price) if payment_method == "truemoney" else 0
+    amount   = price + fee
+    expires  = (datetime.now(TZ_THAI) + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
+    order = {
+        "order_id":       order_id,
+        "order_type":     "code_shop",
+        "product_id":     product_id,
+        "stock_id":       stock_id,
+        "username":       username,
+        "base_amount":    price,
+        "truemoney_fee":  fee,
+        "amount":         amount,
+        "payment_method": payment_method,
+        "status":         "pending",
+        "created_at":     datetime.now(TZ_THAI).isoformat(),
+        "expires_at":     expires,
+        "qr_base64":      generate_qr_base64(amount) if payment_method == "promptpay" else None,
+    }
+    orders = _load_orders()
+    orders[order_id] = order
+    _save_orders(orders)
+    _add_user_order(username, order_id)
+    print(f"[CODE-SHOP] สร้าง order {order_id} product={product_id} method={payment_method}")
+    return order

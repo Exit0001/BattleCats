@@ -6,7 +6,7 @@ if hasattr(sys.stderr, 'reconfigure'):
     sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
 
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, HTTPException, UploadFile, File, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
@@ -16,7 +16,7 @@ import asyncio
 import shutil
 from pathlib import Path
 from datetime import datetime
-from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest, LoyaltyRedeemRequest
+from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest, LoyaltyRedeemRequest, CodeShopBuyRequest, AdminProductRequest, AdminToggleRequest, AdminStockRequest
 from runner import BCSFERunner
 from config import ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES
 from payment import (
@@ -38,6 +38,23 @@ from payment import (
     save_loyalty_redemption,
     get_loyalty_redemptions,
     verify_loyalty_session,
+    verify_admin_session,
+    get_code_products,
+    get_all_code_products,
+    get_code_product,
+    get_available_stock,
+    reserve_stock,
+    mark_stock_sold,
+    release_stock,
+    get_stock_by_order,
+    add_code_product,
+    toggle_code_product,
+    delete_code_product,
+    add_code_stock,
+    delete_code_stock,
+    get_product_stock,
+    create_code_shop_order,
+    get_user_code_purchases,
 )
 
 ALL_PACKAGE_MAP = {
@@ -665,9 +682,16 @@ def payment_status(order_id: str):
         "amount":     order["amount"],
         "expires_at": order["expires_at"],
     }
+    resp["order_type"] = order.get("order_type", "bcsfe")
     if order["status"] == "done":
-        resp["new_transfer_code"]     = order.get("new_transfer_code")
-        resp["new_confirmation_code"] = order.get("new_confirmation_code")
+        if order.get("order_type") == "code_shop":
+            stock = get_stock_by_order(order_id)
+            if stock:
+                resp["new_transfer_code"]     = stock.get("transfer_code")
+                resp["new_confirmation_code"] = stock.get("confirmation_code")
+        else:
+            resp["new_transfer_code"]     = order.get("new_transfer_code")
+            resp["new_confirmation_code"] = order.get("new_confirmation_code")
     return resp
 
 @app.post("/api/order", response_model=OrderResponse)
@@ -1494,7 +1518,7 @@ def favicon():
 
 # โ”€โ”€ serve HTML pages เธเนเธฒเธ http:// เน€เธเธทเนเธญเธซเธฅเธตเธเน€เธฅเธตเนเธขเธ file:// security errors โ”€โ”€
 _HTML_PAGES = ["index","shop","characters","stages","orders","admin","login",
-                "orders_manager","test_no_payment"]
+                "orders_manager","test_no_payment","shop-codes"]
 
 @app.get("/{page}.html")
 async def serve_html(page: str):
@@ -1511,6 +1535,235 @@ async def startup_prewarm():
 
 
 # ============= Main =============
+
+# ══════════════════════════════════════════
+# CODE SHOP ROUTES
+# ══════════════════════════════════════════
+
+@app.get("/api/code-shop/products")
+def api_code_shop_products():
+    return {"products": get_code_products()}
+
+
+@app.post("/api/code-shop/buy")
+async def api_code_shop_buy(body: CodeShopBuyRequest):
+    if not verify_loyalty_session(body.username, body.session_token):
+        raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบก่อนซื้อ")
+
+    product = get_code_product(body.product_id)
+    if not product or not product.get("is_active"):
+        raise HTTPException(status_code=404, detail="ไม่พบสินค้า")
+
+    stock = get_available_stock(body.product_id)
+    if not stock:
+        raise HTTPException(status_code=400, detail="สินค้าหมดสต๊อกแล้ว")
+
+    order = create_code_shop_order(body.product_id, stock["id"], body.username, product["price"],
+                                   body.payment_method)
+
+    if not reserve_stock(stock["id"], body.username, order["order_id"]):
+        raise HTTPException(status_code=500, detail="ไม่สามารถจองสินค้าได้ กรุณาลองใหม่")
+
+    resp = {
+        "order_id":      order["order_id"],
+        "amount":        order["amount"],
+        "base_amount":   order["base_amount"],
+        "truemoney_fee": order.get("truemoney_fee", 0),
+        "qr_base64":     order.get("qr_base64"),
+        "expires_at":    order["expires_at"],
+        "payment_method": order["payment_method"],
+    }
+    if order["payment_method"] == "truemoney":
+        resp["truemoney_id"] = TRUEMONEY_ID
+    return resp
+
+
+@app.post("/api/code-shop/cancel/{order_id}")
+def api_code_shop_cancel(order_id: str, username: str = Query(None)):
+    order = get_order(order_id)
+    if not order:
+        return {"success": True}
+    if order.get("order_type") != "code_shop":
+        return {"success": True}
+    if order.get("status") in ("done", "cancelled", "expired"):
+        return {"success": True}
+    stock_id = order.get("stock_id", "")
+    if stock_id:
+        release_stock(stock_id)
+    update_order_status(order_id, "cancelled")
+    print(f"[CODE-SHOP] ❌ order {order_id} ยกเลิกโดย {username}")
+    return {"success": True}
+
+
+@app.post("/api/code-shop/verify/{order_id}")
+async def api_code_shop_verify(order_id: str, slip: UploadFile = File(...)):
+    order = get_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="ไม่พบ order นี้")
+    if order.get("order_type") != "code_shop":
+        raise HTTPException(status_code=400, detail="order type ไม่ถูกต้อง")
+
+    stock_id = order.get("stock_id", "")
+
+    if is_order_expired(order):
+        if stock_id:
+            release_stock(stock_id)
+        update_order_status(order_id, "expired")
+        raise HTTPException(status_code=400, detail="order หมดอายุแล้ว กรุณาซื้อใหม่")
+
+    if order["status"] == "done":
+        raise HTTPException(status_code=400, detail="order นี้ดำเนินการแล้ว")
+
+    slip_bytes = await slip.read()
+    slip_result = await verify_slip(slip_bytes, order_id)
+    if not slip_result["success"]:
+        raise HTTPException(status_code=400, detail=slip_result["reason"])
+
+    transaction_id = slip_result.get("transaction_id", "")
+
+    stock = get_stock_by_order(order_id)
+    if not stock:
+        raise HTTPException(status_code=500, detail="ไม่พบรหัสที่จอง กรุณาติดต่อ admin")
+
+    mark_stock_sold(stock_id)
+    mark_slip_used(transaction_id)
+    update_order_status(order_id, "done", {
+        "done_at":        datetime.now().isoformat(),
+        "transaction_id": transaction_id,
+    })
+
+    print(f"[CODE-SHOP] ✅ order {order_id} ส่งรหัสให้ {order.get('username')}")
+    return {
+        "success":           True,
+        "transfer_code":     stock["transfer_code"],
+        "confirmation_code": stock["confirmation_code"],
+    }
+
+
+@app.post("/api/code-shop/verify-voucher/{order_id}")
+async def api_code_shop_verify_voucher(order_id: str, body: VoucherRedeemRequest):
+    """verify TrueWallet ซองอั่งเป่า สำหรับ code shop"""
+    order = get_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="ไม่พบ order นี้")
+    if order.get("order_type") != "code_shop":
+        raise HTTPException(status_code=400, detail="order type ไม่ถูกต้อง")
+    if order.get("payment_method") != "truemoney":
+        raise HTTPException(status_code=400, detail="order นี้ไม่ใช่ TrueWallet")
+
+    stock_id = order.get("stock_id", "")
+
+    if is_order_expired(order):
+        if stock_id:
+            release_stock(stock_id)
+        update_order_status(order_id, "expired")
+        raise HTTPException(status_code=400, detail="order หมดอายุแล้ว กรุณาซื้อใหม่")
+
+    if order["status"] == "done":
+        raise HTTPException(status_code=400, detail="order นี้ดำเนินการแล้ว")
+
+    voucher_result = await redeem_truemoney_voucher(body.voucher_code, order_id)
+    if not voucher_result["success"]:
+        raise HTTPException(status_code=400, detail=voucher_result["reason"])
+
+    transaction_id = voucher_result.get("transaction_id", "")
+
+    stock = get_stock_by_order(order_id)
+    if not stock:
+        raise HTTPException(status_code=500, detail="ไม่พบรหัสที่จอง กรุณาติดต่อ admin")
+
+    mark_stock_sold(stock_id)
+    update_order_status(order_id, "done", {
+        "done_at":        datetime.now().isoformat(),
+        "transaction_id": transaction_id,
+    })
+
+    print(f"[CODE-SHOP] ✅ TrueWallet order {order_id} ส่งรหัสให้ {order.get('username')}")
+    return {
+        "success":           True,
+        "transfer_code":     stock["transfer_code"],
+        "confirmation_code": stock["confirmation_code"],
+    }
+
+
+@app.get("/api/code-shop/my-purchases")
+def api_my_purchases(username: str, session_token: str):
+    if not verify_loyalty_session(username, session_token):
+        raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบก่อน")
+    purchases = get_user_code_purchases(username)
+    return {"purchases": purchases}
+
+
+# ── Admin routes ──
+
+@app.get("/api/admin/code-shop/products")
+def api_admin_products(username: str, session_token: str):
+    if not verify_admin_session(username, session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    return {"products": get_all_code_products()}
+
+
+@app.post("/api/admin/code-shop/products")
+def api_admin_add_product(body: AdminProductRequest):
+    if not verify_admin_session(body.username, body.session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    product = add_code_product(body.name, body.description, body.images, body.price)
+    if not product:
+        raise HTTPException(status_code=500, detail="เพิ่มสินค้าไม่ได้")
+    return {"success": True, "product": product}
+
+
+@app.patch("/api/admin/code-shop/products/{product_id}")
+def api_admin_toggle_product(product_id: str, body: AdminToggleRequest):
+    if not verify_admin_session(body.username, body.session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    toggle_code_product(product_id, body.is_active)
+    return {"success": True}
+
+
+@app.delete("/api/admin/code-shop/products/{product_id}")
+def api_admin_delete_product(product_id: str, username: str, session_token: str):
+    if not verify_admin_session(username, session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    delete_code_product(product_id)
+    return {"success": True}
+
+
+@app.get("/api/admin/code-shop/products/{product_id}/stock")
+def api_admin_get_stock(product_id: str, username: str, session_token: str):
+    if not verify_admin_session(username, session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    return {"stock": get_product_stock(product_id)}
+
+
+@app.post("/api/admin/code-shop/stock")
+def api_admin_add_stock(body: AdminStockRequest):
+    if not verify_admin_session(body.username, body.session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    item = add_code_stock(body.product_id, body.transfer_code, body.confirmation_code, body.inquiry_code)
+    if not item:
+        raise HTTPException(status_code=500, detail="เพิ่ม stock ไม่ได้")
+    return {"success": True, "stock": item}
+
+
+@app.delete("/api/admin/code-shop/stock/{stock_id}")
+def api_admin_delete_stock(stock_id: str, username: str, session_token: str):
+    if not verify_admin_session(username, session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    delete_code_stock(stock_id)
+    return {"success": True}
+
+
+@app.get("/api/admin/code-shop/images")
+def api_admin_list_images(username: str, session_token: str):
+    if not verify_admin_session(username, session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    folder = Path("pictures/id ราคา 200")
+    if not folder.exists():
+        return {"images": []}
+    images = [f.name for f in sorted(folder.iterdir()) if f.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp")]
+    return {"images": images}
+
 
 @app.get("/sitemap.xml")
 def sitemap():
