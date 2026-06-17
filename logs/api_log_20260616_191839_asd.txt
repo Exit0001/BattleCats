@@ -1,0 +1,9 @@
+============================================================
+เวลา      : 2026-06-16 19:18:39
+Transfer  : asd
+Confirm   : asd
+Country   : en
+============================================================
+[OP] Clear Story Chapters [1, 2, 3] x1
+[BCSFE] ⬇  Downloading save (transfer=asd... cc=en)
+[BCSFE] ❌ ❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง

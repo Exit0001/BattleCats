@@ -88,6 +88,7 @@
       overflow: hidden;
       display: -webkit-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       -webkit-box-orient: vertical;
       min-height: 29px;
     }
@@ -291,13 +292,13 @@
     </button>
     <a href="index.html" class="nav-logo">BATTLE CAT PRO MAX</a>
     <ul class="nav-links">
-      <li><a href="index.html">หน้าแรก</a></li>
-      <li><a href="shop.html">ร้านขาย</a></li>
-      <li><a href="shop-codes.html">รหัสสำเร็จรูป</a></li>
-      <li><a href="characters.html" class="active">ปลดล็อคแมว</a></li>
-      <li><a href="stages.html">ปลดล็อคด่าน</a></li>
-      <li><a href="orders.html">ออเดอร์</a></li>
-      <li><a href="loyalty.html">🎁 แต้มสะสม</a></li>
+      <li><a href="index.html"><span data-i18n="nav_home">หน้าแรก</span></a></li>
+      <li><a href="shop.html"><span data-i18n="nav_shop">ร้านค้าไอเทม</span></a></li>
+      <li><a href="shop-codes.html"><span data-i18n="nav_shop_codes">รหัสสำเร็จรูป</span></a></li>
+      <li><a href="characters.html" class="active"><span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></a></li>
+      <li><a href="stages.html"><span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
+      <li><a href="orders.html"><span data-i18n="nav_orders">ออเดอร์</span></a></li>
+      <li><a href="loyalty.html">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
     </ul>
     <div class="nav-cart">
       🛒
@@ -306,13 +307,13 @@
   </div>
   <div class="mobile-nav" id="mobileNav" style="display:none" onclick="if(event.target===this)closeMobileMenu()">
     <ul>
-      <li><a href="index.html" onclick="closeMobileMenu()">🏠 หน้าแรก</a></li>
-      <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ ร้านขาย</a></li>
-      <li><a href="shop-codes.html" onclick="closeMobileMenu()">🎮 รหัสสำเร็จรูป</a></li>
-      <li><a href="characters.html" class="active" onclick="closeMobileMenu()">🐱 ปลดล็อคแมว</a></li>
-      <li><a href="stages.html" onclick="closeMobileMenu()">📍 ปลดล็อคด่าน</a></li>
-      <li><a href="orders.html" onclick="closeMobileMenu()">📋 ออเดอร์</a></li>
-      <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 แต้มสะสม</a></li>
+      <li><a href="index.html" onclick="closeMobileMenu()">🏠 <span data-i18n="nav_home">หน้าแรก</span></a></li>
+      <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ <span data-i18n="nav_shop">ร้านค้าไอเทม</span></a></li>
+      <li><a href="shop-codes.html" onclick="closeMobileMenu()">🎮 <span data-i18n="nav_shop_codes">รหัสสำเร็จรูป</span></a></li>
+      <li><a href="characters.html" class="active" onclick="closeMobileMenu()">🐱 <span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></a></li>
+      <li><a href="stages.html" onclick="closeMobileMenu()">📍 <span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
+      <li><a href="orders.html" onclick="closeMobileMenu()">📋 <span data-i18n="nav_orders">ออเดอร์</span></a></li>
+      <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
     </ul>
     <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
   </div>
@@ -320,13 +321,13 @@
 
 <div class="container">
 
-  <h1 class="section-title">🐱 ปลดล็อคแมว</h1>
-  <p style="color:rgba(210,190,255,0.65);margin-bottom:24px;font-size:14px;">ค้นหาแมวที่ต้องการ — รูปภาพดึงจาก Battle Cats Wiki โดยตรง</p>
+  <h1 class="section-title" data-i18n="char_title">🐱 ปลดล็อคแมว</h1>
+  <p style="color:rgba(210,190,255,0.65);margin-bottom:24px;font-size:14px;" data-i18n="char_subtitle">ค้นหาแมวที่ต้องการ — รูปภาพดึงจาก Battle Cats Wiki โดยตรง</p>
 
   <!-- ALL-CHARACTER PACKAGES ──────────────────────────────────── -->
   <section style="margin-bottom:40px;">
-    <h2 class="section-title" style="margin-bottom:6px;">🌟 แพ็กเกจพิเศษ — ทำทั้งรหัส</h2>
-    <p style="color:rgba(210,190,255,0.55);font-size:13px;margin-bottom:20px;">ทำให้ตัวละครทุกตัวพร้อมกันในครั้งเดียว — คุ้มกว่าสั่งทีละตัว</p>
+    <h2 class="section-title" style="margin-bottom:6px;" data-i18n="char_pkg_title">🌟 แพ็กเกจพิเศษ — ทำทั้งรหัส</h2>
+    <p style="color:rgba(210,190,255,0.55);font-size:13px;margin-bottom:20px;" data-i18n="char_pkg_sub">ทำให้ตัวละครทุกตัวพร้อมกันในครั้งเดียว — คุ้มกว่าสั่งทีละตัว</p>
 
     <!-- แถวบน: 3 การ์ด -->
     <div class="pkg-row1" style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:22px;">
@@ -335,11 +336,11 @@
       <div class="card" style="cursor:default;padding:24px 20px;">
         <div class="card-picture"><img loading="lazy" src="pictures/อัพเกรด Max.png" width="200"></div>
         <div class="card-tag tag-rare">ALL</div>
-        <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;">อัพเกรด Max<br>ทุกตัวที่มีในรหัส</div>
-        <div class="card-desc" style="line-height:1.6;">Uber Lv60 · SR/R Lv50 · Normal Lv30<br>Plus ของลูกค้าคงเดิม</div>
+        <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;" data-i18n="char_upgrade_all_name">อัพเกรด Max<br>ทุกตัวที่มีในรหัส</div>
+        <div class="card-desc" style="line-height:1.6;" data-i18n="char_upgrade_all_desc">Uber Lv60 · SR/R Lv50 · Normal Lv30<br>Plus ของลูกค้าคงเดิม</div>
         <div class="card-price" style="margin-top:14px;"><span class="price-now">฿400</span></div>
         <div style="margin-top:auto;padding-top:14px;">
-          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('upgrade_all','อัพเกรด Max ทุกตัวที่มีในรหัส',400)">+ ใส่ตะกร้า</button>
+          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('upgrade_all','อัพเกรด Max ทุกตัวที่มีในรหัส',400)" data-i18n="add_to_cart_plus">+ ใส่ตะกร้า</button>
         </div>
       </div>
 
@@ -347,22 +348,22 @@
       <div class="card" style="cursor:default;padding:24px 20px;">
         <div class="card-picture"><img loading="lazy" src="pictures/Unlock ทุกตัวละคร ในเกม.png" width="200"></div>
         <div class="card-tag tag-super">HOT</div>
-        <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;">Unlock ทุกตัวละคร<br>ในเกม</div>
-        <div class="card-desc" style="line-height:1.6;">ปลดล็อค <strong style="color:#EDE6FF;">ทุกตัวในเกม</strong><br>รวม Uber · Special ไม่มีข้อยกเว้น</div>
+        <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;" data-i18n="char_unlock_all_name">Unlock ทุกตัวละคร<br>ในเกม</div>
+        <div class="card-desc" style="line-height:1.6;" data-i18n="char_unlock_all_desc">ปลดล็อค <strong style="color:#EDE6FF;">ทุกตัวในเกม</strong><br>รวม Uber · Special ไม่มีข้อยกเว้น</div>
         <div class="card-price" style="margin-top:14px;"><span class="price-now">฿400</span></div>
         <div style="margin-top:auto;padding-top:14px;">
-          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('unlock_all','Unlock ทุกตัวละครในเกม',400)">+ ใส่ตะกร้า</button>
+          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('unlock_all','Unlock ทุกตัวละครในเกม',400)" data-i18n="add_to_cart_plus">+ ใส่ตะกร้า</button>
         </div>
       </div>
 
       <!-- 3. True Form All -->
       <div class="card" style="cursor:default;padding:24px 20px;">
         <div class="card-picture"><img loading="lazy" src="pictures/True Form ทุกตัวที่มีในรหัส.png" width="200"></div>
-        <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;">True Form<br>ทุกตัวที่มีในรหัส</div>
-        <div class="card-desc" style="line-height:1.6;">เปลี่ยนแมวที่คุณมีอยู่ทุกตัว<br>เป็น True Form (ร่างที่ 3)</div>
+        <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;" data-i18n="char_trueform_all_name">True Form<br>ทุกตัวที่มีในรหัส</div>
+        <div class="card-desc" style="line-height:1.6;" data-i18n="char_trueform_all_desc">เปลี่ยนแมวที่คุณมีอยู่ทุกตัว<br>เป็น True Form (ร่างที่ 3)</div>
         <div class="card-price" style="margin-top:14px;"><span class="price-now">฿200</span></div>
         <div style="margin-top:auto;padding-top:14px;">
-          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('trueform_all','True Form ทุกตัวที่มีในรหัส',200)">+ ใส่ตะกร้า</button>
+          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('trueform_all','True Form ทุกตัวที่มีในรหัส',200)" data-i18n="add_to_cart_plus">+ ใส่ตะกร้า</button>
         </div>
       </div>
 
@@ -374,22 +375,22 @@
       <!-- 4. Ultra Form All -->
       <div class="card" style="cursor:default;padding:24px 20px;">
         <div class="card-picture"><img loading="lazy" src="pictures/Ultra Form ทุกตัวที่มีในรหัส.png" width="200"></div>
-        <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;">Ultra Form<br>ทุกตัวที่มีในรหัส</div>
-        <div class="card-desc" style="line-height:1.6;">เปลี่ยนทุกตัวที่มี 4 ร่าง<br>ให้เป็น Ultra Form (ร่างที่ 4)</div>
+        <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;" data-i18n="char_ultraform_all_name">Ultra Form<br>ทุกตัวที่มีในรหัส</div>
+        <div class="card-desc" style="line-height:1.6;" data-i18n="char_ultraform_all_desc">เปลี่ยนทุกตัวที่มี 4 ร่าง<br>ให้เป็น Ultra Form (ร่างที่ 4)</div>
         <div class="card-price" style="margin-top:14px;"><span class="price-now">฿200</span></div>
         <div style="margin-top:auto;padding-top:14px;">
-          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('ultraform_all','Ultra Form ทุกตัวที่มีในรหัส',200)">+ ใส่ตะกร้า</button>
+          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('ultraform_all','Ultra Form ทุกตัวที่มีในรหัส',200)" data-i18n="add_to_cart_plus">+ ใส่ตะกร้า</button>
         </div>
       </div>
 
       <!-- 5. Max Talents All -->
       <div class="card" style="cursor:default;padding:24px 20px;">
         <div class="card-picture"><img loading="lazy" src="pictures/Max Talents ทุกตัวที่มีในรหัส.png" width="200"></div>
-        <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;">Max Talents<br>ทุกตัวที่มีในรหัส</div>
-        <div class="card-desc" style="line-height:1.6;">อัพ Talent ทุกสกิล Max<br>ทุกตัวที่มี Talent ในรหัสของคุณ</div>
+        <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;" data-i18n="char_talents_all_name">Max Talents<br>ทุกตัวที่มีในรหัส</div>
+        <div class="card-desc" style="line-height:1.6;" data-i18n="char_talents_all_desc">อัพ Talent ทุกสกิล Max<br>ทุกตัวที่มี Talent ในรหัสของคุณ</div>
         <div class="card-price" style="margin-top:14px;"><span class="price-now">฿300</span></div>
         <div style="margin-top:auto;padding-top:14px;">
-          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('talents_all','Max Talents ทุกตัวที่มีในรหัส',300)">+ ใส่ตะกร้า</button>
+          <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('talents_all','Max Talents ทุกตัวที่มีในรหัส',300)" data-i18n="add_to_cart_plus">+ ใส่ตะกร้า</button>
         </div>
       </div>
 
@@ -400,7 +401,7 @@
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
         <span style="font-family:'Russo One',sans-serif;font-size:14px;color:#FCA5A5;letter-spacing:1px;">🐾 SET CRAZED & MANIC</span>
         <span style="height:1px;flex:1;background:linear-gradient(90deg,rgba(248,113,113,0.35),transparent);"></span>
-        <span style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);">Cat #91–99 (9 ตัว)</span>
+        <span style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);" data-i18n="char_cat_count_9">Cat #91–99 (9 ตัว)</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:min(calc(66.67% - 8px),100%);margin:0 auto;" class="crazed-manic-grid">
 
@@ -409,10 +410,10 @@
           <div class="card-picture"><img loading="lazy" src="pictures/crazed_all_cat.png" style="width:100%;height:auto;display:block;"></div>
           <div class="card-tag tag-super">SET</div>
           <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:8px;">Crazed All Cat</div>
-          <div class="card-desc" style="line-height:1.7;">ปลดล็อค <strong style="color:#EDE6FF;">Crazed Cat 9 ตัว</strong><br>Cat ID #91–99 ครบทุกตัว</div>
+          <div class="card-desc" style="line-height:1.7;" data-i18n="char_crazed_desc">ปลดล็อค <strong style="color:#EDE6FF;">Crazed Cat 9 ตัว</strong><br>Cat ID #91–99 ครบทุกตัว</div>
           <div class="card-price" style="margin-top:14px;"><span class="price-now">฿70</span></div>
           <div style="margin-top:auto;padding-top:14px;">
-            <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('crazed_all','Crazed All Cat',70)">+ ใส่ตะกร้า</button>
+            <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('crazed_all','Crazed All Cat',70)" data-i18n="add_to_cart_plus">+ ใส่ตะกร้า</button>
           </div>
         </div>
 
@@ -421,13 +422,13 @@
           <div class="card-picture"><img loading="lazy" src="pictures/manic_all_cat.png" style="width:100%;height:auto;display:block;"></div>
           <div class="card-tag" style="background:rgba(248,113,113,0.15);color:#FCA5A5;border-color:rgba(248,113,113,0.35);">SET</div>
           <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:8px;">Manic All Cat</div>
-          <div class="card-desc" style="line-height:1.7;">True Form <strong style="color:#EDE6FF;">Manic Cat 9 ตัว</strong><br>Cat ID #91–99 (ต้องมี Crazed ก่อน)</div>
-          <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.28);border-radius:8px;padding:7px 10px;margin-top:8px;font-family:'Chakra Petch',sans-serif;font-size:11px;color:#FCD34D;line-height:1.5;">
+          <div class="card-desc" style="line-height:1.7;" data-i18n="char_manic_desc">True Form <strong style="color:#EDE6FF;">Manic Cat 9 ตัว</strong><br>Cat ID #91–99 (ต้องมี Crazed ก่อน)</div>
+          <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.28);border-radius:8px;padding:7px 10px;margin-top:8px;font-family:'Chakra Petch',sans-serif;font-size:11px;color:#FCD34D;line-height:1.5;" data-i18n="char_manic_warn">
             ⚠️ ต้องมี Cat #91–99 และเวล Lv.30 ก่อน
           </div>
           <div class="card-price" style="margin-top:12px;"><span class="price-now">฿125</span></div>
           <div style="margin-top:auto;padding-top:14px;">
-            <button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#be123c,#f43f5e);" onclick="openManicConfirm()">+ ใส่ตะกร้า</button>
+            <button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#be123c,#f43f5e);" onclick="openManicConfirm()" data-i18n="add_to_cart_plus">+ ใส่ตะกร้า</button>
           </div>
         </div>
 
@@ -437,8 +438,8 @@
 
   <!-- TIER FILTER + SEARCH ──────────────────────────────────── -->
   <section style="margin-bottom:28px;">
-    <h2 class="section-title">🔎 ค้นหาตัวละคร</h2>
-    <p style="margin:0 0 16px;font-size:13px;color:rgba(210,190,255,0.7);line-height:1.6;">
+    <h2 class="section-title" data-i18n="char_search_title">🔎 ค้นหาตัวละคร</h2>
+    <p style="margin:0 0 16px;font-size:13px;color:rgba(210,190,255,0.7);line-height:1.6;" data-i18n="char_search_desc">
       บริการ <strong style="color:#c4b5fd;">Unlock · Upgrade · True Form · Ultra Form · Talents</strong>
       กดเลือกตัวละครได้เลย ไม่ต้องระบุ ID เอง
     </p>
@@ -447,7 +448,7 @@
     <div class="filter-bar" id="tierFilterBar">
       <button class="filter-pill fp-active"
         style="border-color:rgba(255,255,255,0.18);background:rgba(255,255,255,0.10);"
-        onclick="setTierFilter('',this)">ทั้งหมด</button>
+        onclick="setTierFilter('',this)" data-i18n="filter_all">ทั้งหมด</button>
 
       <button class="filter-pill"
         style="color:#9CA3AF;"
@@ -477,9 +478,9 @@
     <!-- Text search -->
     <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center;">
       <input id="searchQ" type="text" class="search-input"
-        placeholder="ค้นหาชื่อ หรือ ID เช่น 86, Valkyrie, Kamukura…">
-      <button class="btn btn-primary" style="padding:10px 22px;" onclick="doFilter()">ค้นหา</button>
-      <button class="btn btn-outline"  style="padding:10px 18px;" onclick="resetSearch()">รีเซ็ต</button>
+        placeholder="ค้นหาชื่อ หรือ ID เช่น 86, Valkyrie, Kamukura…" data-i18n-placeholder="char_search_placeholder">
+      <button class="btn btn-primary" style="padding:10px 22px;" onclick="doFilter()" data-i18n="filter_search_btn">ค้นหา</button>
+      <button class="btn btn-outline"  style="padding:10px 18px;" onclick="resetSearch()" data-i18n="filter_reset_btn">รีเซ็ต</button>
     </div>
 
     <div id="resultCount"
@@ -494,23 +495,23 @@
   <div class="trust-row" style="margin-top:40px;">
     <div class="trust-card">
       <div class="trust-icon">✅</div>
-      <div class="trust-title">ปลดล็อคถาวร</div>
-      <div class="trust-sub">แมวที่ได้จะ stay ตลอด</div>
+      <div class="trust-title" data-i18n="char_trust_permanent">ปลดล็อคถาวร</div>
+      <div class="trust-sub" data-i18n="char_trust_permanent_sub">แมวที่ได้จะ stay ตลอด</div>
     </div>
     <div class="trust-card">
       <div class="trust-icon">🔒</div>
-      <div class="trust-title">ปลอดภัย 100%</div>
-      <div class="trust-sub">ไม่เสี่ยงโดนแบน</div>
+      <div class="trust-title" data-i18n="trust_safe_title">ปลอดภัย 100%</div>
+      <div class="trust-sub" data-i18n="char_trust_safe_sub">ไม่เสี่ยงโดนแบน</div>
     </div>
     <div class="trust-card">
       <div class="trust-icon">⚡</div>
-      <div class="trust-title">ได้เร็ว</div>
-      <div class="trust-sub">รับแมวภายใน 5 นาที</div>
+      <div class="trust-title" data-i18n="char_trust_fast">ได้เร็ว</div>
+      <div class="trust-sub" data-i18n="char_trust_fast_sub">รับแมวภายใน 5 นาที</div>
     </div>
     <div class="trust-card">
       <div class="trust-icon">📋</div>
-      <div class="trust-title">860+ ตัวละคร</div>
-      <div class="trust-sub">ครอบคลุมทุก Tier</div>
+      <div class="trust-title" data-i18n="char_trust_count">860+ ตัวละคร</div>
+      <div class="trust-sub" data-i18n="char_trust_count_sub">ครอบคลุมทุก Tier</div>
     </div>
   </div>
 
@@ -522,34 +523,34 @@
     <div class="footer-grid">
       <div class="footer-col">
         <h4>Battle Cat Pro Max</h4>
-        <p style="font-size:13px;line-height:1.6;">บริการร้านขายไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
+        <p style="font-size:13px;line-height:1.6;" data-i18n="footer_brand_desc">บริการร้านค้าไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
       </div>
       <div class="footer-col">
-        <h4>บริการ</h4>
+        <h4 data-i18n="footer_services">บริการ</h4>
         <ul>
-          <li><a href="shop.html">ร้านขาย</a></li>
-          <li><a href="characters.html">ปลดล็อคแมว</a></li>
-          <li><a href="stages.html">ปลดล็อคด่าน</a></li>
-          <li><a href="orders.html">ออเดอร์ของฉัน</a></li>
+          <li><a href="shop.html" data-i18n="nav_shop">ร้านค้าไอเทม</a></li>
+          <li><a href="characters.html" data-i18n="nav_unlock_cat">ปลดล็อคแมว</a></li>
+          <li><a href="stages.html" data-i18n="nav_unlock_stage">ปลดล็อคด่าน</a></li>
+          <li><a href="orders.html" data-i18n="nav_orders_mine">ออเดอร์ของฉัน</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>ติดต่อเรา</h4>
+        <h4 data-i18n="footer_contact">ติดต่อเรา</h4>
         <ul>
-          <li><a href="https://www.facebook.com/pronajaa.gamedee.1/" target="_blank" rel="noopener">📘 Facebook (ผู้ใช้)</a></li>
-          <li><a href="https://www.facebook.com/profile.php?id=61572054218886" target="_blank" rel="noopener">📘 Facebook (เพจร้าน)</a></li>
+          <li><a href="https://www.facebook.com/pronajaa.gamedee.1/" target="_blank" rel="noopener">📘 <span data-i18n="fb_user">Facebook (ผู้ใช้)</span></a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61572054218886" target="_blank" rel="noopener">📘 <span data-i18n="fb_page">Facebook (เพจร้าน)</span></a></li>
         </ul>
       </div>
     </div>
 
     <div class="social-row">
-      <div class="social-pill">🌍 ภาษาไทย</div>
-      <div class="social-pill">✅ ได้รับการตรวจสอบ</div>
-      <div class="social-pill">⭐ 2,000+ ผู้ใช้</div>
+      <div class="social-pill">🌍 <span data-i18n="lang_pill">ภาษาไทย</span></div>
+      <div class="social-pill">✅ <span data-i18n="verified_pill">ได้รับการตรวจสอบ</span></div>
+      <div class="social-pill">⭐ 2,000+ <span data-i18n="users_pill">ผู้ใช้</span></div>
     </div>
 
     <div class="footer-bottom">
-      <p>© 2025 Battle Cat Pro Max · บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</p>
+      <p>© 2025 Battle Cat Pro Max · <span data-i18n="footer_bottom">บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</span></p>
     </div>
   </div>
 </footer>
@@ -575,16 +576,16 @@
       </div>
     </div>
 
-    <div class="svc-title">เลือกบริการสำหรับ <span id="svcTitleName" style="color:#C4B5FD;"></span></div>
+    <div class="svc-title"><span data-i18n="char_choose_service_for">เลือกบริการสำหรับ</span> <span id="svcTitleName" style="color:#C4B5FD;"></span></div>
 
     <div id="svcList"></div>
 
     <div class="svc-total-row">
-      <span class="svc-total-lbl">รวม</span>
+      <span class="svc-total-lbl" data-i18n="stg_total_label">รวม</span>
       <span class="svc-total-val" id="svcTotal">฿0</span>
     </div>
 
-    <button class="btn btn-primary" id="svcAddBtn" style="width:100%;background:linear-gradient(135deg,#7C3AED,#EC4899);border:none;" onclick="addSelectedToCart()" disabled>
+    <button class="btn btn-primary" id="svcAddBtn" style="width:100%;background:linear-gradient(135deg,#7C3AED,#EC4899);border:none;" onclick="addSelectedToCart()" disabled data-i18n="add_to_cart">
       เพิ่มลงตะกร้า
     </button>
   </div>
@@ -599,20 +600,20 @@
       <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);">True Form Cat #91–99</div>
     </div>
     <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.35);border-radius:12px;padding:14px 16px;margin-bottom:20px;">
-      <div style="font-family:'Russo One',sans-serif;font-size:13px;color:#FCD34D;margin-bottom:8px;">⚠️ เงื่อนไขก่อนซื้อ</div>
-      <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(255,220,120,0.85);line-height:1.8;">
+      <div style="font-family:'Russo One',sans-serif;font-size:13px;color:#FCD34D;margin-bottom:8px;" data-i18n="char_manic_modal_warn_title">⚠️ เงื่อนไขก่อนซื้อ</div>
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(255,220,120,0.85);line-height:1.8;" data-i18n="char_manic_modal_warn_body">
         Cat 9 ตัวนี้ต้องอยู่ใน save file ของคุณ<br>และต้องมีเวล <strong style="color:#FFD84E;">Lv. 30</strong> ก่อนทำ True Form<br><br>
         <span style="color:rgba(210,190,255,0.65);">Cat ID: <span style="color:#EDE6FF;font-family:monospace;">#91 #92 #93 #94 #95 #96 #97 #98 #99</span></span>
       </div>
     </div>
-    <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:#EDE6FF;text-align:center;margin-bottom:18px;">
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:#EDE6FF;text-align:center;margin-bottom:18px;" data-i18n="char_manic_modal_confirm_q">
       Cat ทั้ง 9 ตัวของคุณ <strong style="color:#4ADE80;">เวล Lv.30 แล้ว</strong> ใช่ไหม?
     </div>
     <div style="display:flex;gap:12px;">
-      <button onclick="closeManicConfirm()" style="flex:1;padding:12px;border-radius:12px;border:1px solid rgba(248,113,113,0.4);background:rgba(248,113,113,0.08);color:#FCA5A5;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.18s;" onmouseover="this.style.background='rgba(248,113,113,0.18)'" onmouseout="this.style.background='rgba(248,113,113,0.08)'">
+      <button onclick="closeManicConfirm()" style="flex:1;padding:12px;border-radius:12px;border:1px solid rgba(248,113,113,0.4);background:rgba(248,113,113,0.08);color:#FCA5A5;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.18s;" onmouseover="this.style.background='rgba(248,113,113,0.18)'" onmouseout="this.style.background='rgba(248,113,113,0.08)'" data-i18n="char_manic_modal_no_btn">
         ✕ ยังไม่ถึง Lv.30
       </button>
-      <button onclick="confirmManicAdd()" style="flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#7C3AED,#EC4899);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(236,72,153,0.35);transition:all 0.18s;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'">
+      <button onclick="confirmManicAdd()" style="flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#7C3AED,#EC4899);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(236,72,153,0.35);transition:all 0.18s;" onmouseover="this.style.filter='brightness(1.1)'" onmouseout="this.style.filter='none'" data-i18n="char_manic_modal_yes_btn">
         ✅ Lv.30 แล้ว ใส่ตะกร้า
       </button>
     </div>
@@ -633,62 +634,62 @@
       <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Server</div>
       <select id="apSrv" style="width:100%;box-sizing:border-box;padding:10px 14px;background:#0e0620;border:1px solid rgba(124,58,237,0.28);border-radius:10px;color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;margin-bottom:18px;">
         <option value="1" style="background:#0e0620;color:#EDE6FF;">EN (Global / TH / EU)</option>
-        <option value="2" style="background:#0e0620;color:#EDE6FF;">JP (ญี่ปุ่น)</option>
-        <option value="3" style="background:#0e0620;color:#EDE6FF;">KR (เกาหลี)</option>
-        <option value="4" style="background:#0e0620;color:#EDE6FF;">TW (ไต้หวัน)</option>
+        <option value="2" style="background:#0e0620;color:#EDE6FF;" data-i18n="stg_server_jp">JP (ญี่ปุ่น)</option>
+        <option value="3" style="background:#0e0620;color:#EDE6FF;" data-i18n="stg_server_kr">KR (เกาหลี)</option>
+        <option value="4" style="background:#0e0620;color:#EDE6FF;" data-i18n="stg_server_tw">TW (ไต้หวัน)</option>
       </select>
       <div style="margin-bottom:14px;">
-        <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">วิธีชำระเงิน</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;" data-i18n="sc_pd_payment_method">วิธีชำระเงิน</div>
         <div style="display:flex;gap:10px;">
           <button id="apBtnPP" onclick="apSetPayMethod('promptpay')" style="flex:1;padding:9px;border-radius:10px;border:1px solid rgba(124,58,237,0.6);background:rgba(124,58,237,0.25);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;cursor:pointer;">📱 PromptPay</button>
           <button id="apBtnTM" onclick="apSetPayMethod('truemoney')" style="flex:1;padding:9px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:transparent;color:rgba(210,190,255,0.55);font-family:'Chakra Petch',sans-serif;font-size:13px;cursor:pointer;">💳 TrueWallet</button>
         </div>
       </div>
-      <button class="btn btn-primary" style="width:100%;" onclick="apCreateOrder()">ชำระเงิน →</button>
+      <button class="btn btn-primary" style="width:100%;" onclick="apCreateOrder()"><span data-i18n="stg_pay_now">ชำระเงิน</span> →</button>
     </div>
     <div id="apStep-qr" style="display:none;text-align:center;">
       <!-- PromptPay QR -->
       <div id="apQrBlock">
-        <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.65);margin-bottom:12px;">สแกน QR PromptPay ชำระ <span id="apQrAmt" style="color:#FF4D92;font-family:'Russo One',sans-serif;"></span></div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.65);margin-bottom:12px;"><span data-i18n="stg_scan_qr">สแกน QR PromptPay ชำระ</span> <span id="apQrAmt" style="color:#FF4D92;font-family:'Russo One',sans-serif;"></span></div>
         <img loading="lazy" id="apQrImg" src="" style="width:200px;height:200px;border-radius:12px;background:#fff;padding:8px;margin-bottom:16px;">
       </div>
       <!-- TrueMoney info -->
       <div id="apTmBlock" style="display:none;background:rgba(255,120,0,0.08);border:1px solid rgba(255,120,0,0.35);border-radius:14px;padding:20px;margin-bottom:16px;text-align:center;">
         <div style="font-size:28px;margin-bottom:8px;">🧧</div>
-        <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.7);margin-bottom:8px;">ส่งซองอั่งเป่า (Angpao) มูลค่าตามยอดด้านล่าง แล้ววางโค้ด/ลิงก์ในช่องด้านล่าง</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.7);margin-bottom:8px;" data-i18n="char_ap_tw_info">ส่งซองอั่งเป่า (Angpao) มูลค่าตามยอดด้านล่าง แล้ววางโค้ด/ลิงก์ในช่องด้านล่าง</div>
         <div id="apTmFeeBreakdown" style="display:none;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-bottom:4px;line-height:1.8;">
-          ราคาสินค้า: <span id="apBaseAmt" style="color:#EDE6FF;"></span><br>
-          ค่าธรรมเนียม TrueWallet 2.9% (สูงสุด 20 บาท): <span id="apFeeAmt" style="color:#FBBF24;"></span>
+          <span data-i18n="sc_tw_base_label">ราคาสินค้า:</span> <span id="apBaseAmt" style="color:#EDE6FF;"></span><br>
+          <span data-i18n="sc_tw_fee_label">ค่าธรรมเนียม TrueWallet 2.9% (สูงสุด 20 บาท):</span> <span id="apFeeAmt" style="color:#FBBF24;"></span>
         </div>
-        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);">ยอดที่ต้องชำระ: <span id="apTmAmt" style="color:#FF4D92;font-family:'Russo One',sans-serif;"></span></div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);"><span data-i18n="sc_tw_total_label">ยอดที่ต้องชำระ:</span> <span id="apTmAmt" style="color:#FF4D92;font-family:'Russo One',sans-serif;"></span></div>
       </div>
       <!-- PromptPay: slip upload -->
       <div id="apSlipBlock">
-        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;margin-bottom:16px;">หลังโอนแล้ว อัปโหลดสลิปด้านล่าง</div>
-        <label style="display:block;width:100%;box-sizing:border-box;padding:12px;background:rgba(124,58,237,0.12);border:2px dashed rgba(124,58,237,0.4);border-radius:12px;cursor:pointer;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#C4B5FD;margin-bottom:12px;" for="apSlip">📎 เลือกไฟล์สลิป</label>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;margin-bottom:16px;" data-i18n="char_ap_upload_after">หลังโอนแล้ว อัปโหลดสลิปด้านล่าง</div>
+        <label style="display:block;width:100%;box-sizing:border-box;padding:12px;background:rgba(124,58,237,0.12);border:2px dashed rgba(124,58,237,0.4);border-radius:12px;cursor:pointer;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#C4B5FD;margin-bottom:12px;" for="apSlip">📎 <span data-i18n="stg_choose_slip_file">เลือกไฟล์สลิป</span></label>
         <input type="file" id="apSlip" accept="image/*" style="display:none;" onchange="apSlipSelected(this)">
         <div id="apSlipName" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-bottom:12px;"></div>
       </div>
       <!-- TrueMoney: angpao voucher input -->
       <div id="apVoucherBlock" style="display:none;">
-        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;margin-bottom:10px;">หลังโอนแล้ว วางโค้ด/ลิงก์ซองอั่งเป่าด้านล่าง</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;margin-bottom:10px;" data-i18n="char_ap_paste_after">หลังโอนแล้ว วางโค้ด/ลิงก์ซองอั่งเป่าด้านล่าง</div>
         <input type="text" id="apVoucherInput" placeholder="https://gift.truemoney.com/campaign/?v=..."
           style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,120,0,0.3);border-radius:10px;color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;margin-bottom:12px;"
           oninput="apVoucherChanged(this)">
       </div>
-      <button class="btn btn-primary" style="width:100%;" id="apVerifyBtn" onclick="apVerify()" disabled>ยืนยันการชำระเงิน</button>
+      <button class="btn btn-primary" style="width:100%;" id="apVerifyBtn" onclick="apVerify()" disabled data-i18n="stg_verify_payment">ยืนยันการชำระเงิน</button>
     </div>
     <div id="apStep-done" style="display:none;text-align:center;">
       <div style="font-size:48px;margin-bottom:12px;">✅</div>
-      <div style="font-family:'Russo One',sans-serif;font-size:16px;color:#4ADE80;margin-bottom:16px;">สำเร็จ!</div>
-      <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่ (ส่งให้ลูกค้า)</div>
-      <div id="apNewTC" style="font-family:monospace;font-size:16px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:12px;border-radius:8px;word-break:break-all;margin-bottom:8px;cursor:pointer;" onclick="navigator.clipboard.writeText(this.textContent).then(function(){alert('✅ Copy แล้ว');})"></div>
-      <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>
-      <div id="apNewCC" style="font-family:monospace;font-size:16px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:12px;border-radius:8px;margin-bottom:16px;cursor:pointer;" onclick="navigator.clipboard.writeText(this.textContent).then(function(){alert('✅ Copy แล้ว');})"></div>
-      <button class="btn btn-outline" style="width:100%;" onclick="apClose()">ปิด</button>
+      <div style="font-family:'Russo One',sans-serif;font-size:16px;color:#4ADE80;margin-bottom:16px;" data-i18n="stg_success">สำเร็จ!</div>
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;" data-i18n="char_ap_new_tc_send">Transfer Code ใหม่ (ส่งให้ลูกค้า)</div>
+      <div id="apNewTC" style="font-family:monospace;font-size:16px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:12px;border-radius:8px;word-break:break-all;margin-bottom:8px;cursor:pointer;" onclick="navigator.clipboard.writeText(this.textContent).then(function(){alert(window.bcT('char_ap_copied','✅ Copy แล้ว'));})"></div>
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;" data-i18n="stg_new_cc">Confirmation Code ใหม่</div>
+      <div id="apNewCC" style="font-family:monospace;font-size:16px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:12px;border-radius:8px;margin-bottom:16px;cursor:pointer;" onclick="navigator.clipboard.writeText(this.textContent).then(function(){alert(window.bcT('char_ap_copied','✅ Copy แล้ว'));})"></div>
+      <button class="btn btn-outline" style="width:100%;" onclick="apClose()" data-i18n="close_btn">ปิด</button>
     </div>
     <div id="apError" style="display:none;margin-top:12px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:10px;padding:12px;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#F87171;"></div>
-    <div id="apLoading" style="display:none;text-align:center;padding:20px;color:#FBBF24;font-family:'Chakra Petch',sans-serif;font-size:13px;">⏳ กำลังประมวลผล...</div>
+    <div id="apLoading" style="display:none;text-align:center;padding:20px;color:#FBBF24;font-family:'Chakra Petch',sans-serif;font-size:13px;">⏳ <span data-i18n="stg_processing">กำลังประมวลผล...</span></div>
   </div>
 </div>
 
@@ -736,7 +737,7 @@ function _catCardHtml(r) {
     '<span class="cat-tier-badge" style="color:' + col + ';background:' + bg + ';border-color:' + col + '88;">' + label + '</span>' +
     '<div class="cat-name">' + name + '</div>' +
     '<button class="btn btn-primary cat-unlock-btn" onclick="openSvcModal(' + id + ',\'' + tier + '\',\'' + name.replace(/'/g, "\\'") + '\')">' +
-      'เลือก <span style="color:#ff6b6b;font-size:13px;font-weight:700;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;">฿' + priceForTier(tier) + '</span>' +
+      window.bcT('char_choose_btn','เลือก') + ' <span style="color:#ff6b6b;font-size:13px;font-weight:700;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;">฿' + priceForTier(tier) + '</span>' +
     '</button>' +
   '</div>';
 }
@@ -761,7 +762,7 @@ function renderCatCards(list) {
   if (_catObserver) _catObserver.disconnect();
 
   if (!list.length) {
-    container.innerHTML = '<p style="color:rgba(210,190,255,0.5);padding:20px;text-align:center;grid-column:1/-1;">ไม่พบตัวละครที่ค้นหา</p>';
+    container.innerHTML = '<p style="color:rgba(210,190,255,0.5);padding:20px;text-align:center;grid-column:1/-1;">' + window.bcT('char_no_results','ไม่พบตัวละครที่ค้นหา') + '</p>';
     return;
   }
 
@@ -829,11 +830,11 @@ var _svcCat = null;
 var _svcSel = {};  // { key: price }
 
 var SVC_OPTIONS = [
-  { key: 'unlock_cat',    label: 'ปลดล็อค',              byTier: true,  note: null },
-  { key: 'upgrade_cat',   label: 'อัพเกรด Max',           price: 15,     note: null },
-  { key: 'trueform_cat',  label: 'True Form',              price: 15,     note: 'ใช้ได้เฉพาะตัวละครที่มีระบบ True Form และ Lv.30 ขึ้นไป' },
-  { key: 'ultraform_cat', label: 'Ultra Form',             price: 20,     note: 'ใช้ได้เฉพาะตัวละครที่มีระบบ Ultra Form และต้องมี True Form แล้ว' },
-  { key: 'talents_cat',   label: 'Talent Max',             price: 20,     note: 'ใช้ได้เฉพาะตัวละครที่มีระบบ Talent' },
+  { key: 'unlock_cat',    get label() { return window.bcT('char_svc_unlock','ปลดล็อค'); },    byTier: true,  get note() { return null; } },
+  { key: 'upgrade_cat',   get label() { return window.bcT('char_svc_upgrade','อัพเกรด Max'); }, price: 15,    get note() { return null; } },
+  { key: 'trueform_cat',  label: 'True Form',              price: 15,     get note() { return window.bcT('char_svc_trueform_note','ใช้ได้เฉพาะตัวละครที่มีระบบ True Form และ Lv.30 ขึ้นไป'); } },
+  { key: 'ultraform_cat', label: 'Ultra Form',             price: 20,     get note() { return window.bcT('char_svc_ultraform_note','ใช้ได้เฉพาะตัวละครที่มีระบบ Ultra Form และต้องมี True Form แล้ว'); } },
+  { key: 'talents_cat',   label: 'Talent Max',             price: 20,     get note() { return window.bcT('char_svc_talents_note','ใช้ได้เฉพาะตัวละครที่มีระบบ Talent'); } },
 ];
 
 function openSvcModal(id, tier, name) {
@@ -870,7 +871,7 @@ function openSvcModal(id, tier, name) {
       '<input type="checkbox" class="svc-cb" data-key="' + svc.key + '" data-price="' + price + '"' + chkAttr + disAttr + ' onchange="svcToggle(this)">' +
       '<div style="flex:1;">' +
         '<div class="svc-lbl">' + svc.label +
-          (inCart ? ' <span style="color:#4ADE80;font-size:10px;">✓ ในตะกร้า</span>' : '') +
+          (inCart ? ' <span style="color:#4ADE80;font-size:10px;">' + window.bcT('char_in_cart','✓ ในตะกร้า') + '</span>' : '') +
         '</div>' +
         (svc.note ? '<div class="svc-note">' + svc.note + '</div>' : '') +
       '</div>' +
@@ -933,7 +934,7 @@ function addSelectedToCart() {
   localStorage.setItem('cart', JSON.stringify(cart));
   document.getElementById('cartCount').textContent = cart.length;
   closeSvcModal();
-  if (added.length) showToast('เพิ่ม ' + _svcCat.name + ' (' + added.join(', ') + ') ลงตะกร้าเรียบร้อย ✅');
+  if (added.length) showToast(window.bcT('char_added_services','เพิ่ม {name} ({services}) ลงตะกร้าเรียบร้อย ✅').replace('{name}', _svcCat.name).replace('{services}', added.join(', ')));
 }
 
 // ── Toast ─────────────────────────────────────────────────────
@@ -949,21 +950,22 @@ function showToast(msg) {
 // ── Legacy cart helper ─────────────────────────────────────────
 
 function addAllPackage(key, name, price) {
+  name = window.bcT('char_pkg_name_' + key, name);
   var cart = JSON.parse(localStorage.getItem('cart') || '[]');
   if (cart.find(function(i) { return i.key === key; })) {
-    alert('⚠ ' + name + ' อยู่ในตะกร้าแล้ว!'); return;
+    alert(window.bcT('char_already_in_cart','⚠ {name} อยู่ในตะกร้าแล้ว!').replace('{name}', name)); return;
   }
   cart.push({ key: key, name: name, amount: 1, price: price });
   localStorage.setItem('cart', JSON.stringify(cart));
   document.getElementById('cartCount').textContent = cart.length;
-  alert('✅ เพิ่ม ' + name + ' ลงตะกร้าแล้ว!');
+  alert(window.bcT('char_added_to_cart','✅ เพิ่ม {name} ลงตะกร้าแล้ว!').replace('{name}', name));
 }
 
 // ── Manic Confirm Dialog ───────────────────────────────────────
 function openManicConfirm() {
   var cart = JSON.parse(localStorage.getItem('cart') || '[]');
   if (cart.find(function(i) { return i.key === 'manic_all'; })) {
-    showToast('⚠ Manic All Cat อยู่ในตะกร้าแล้ว!'); return;
+    showToast(window.bcT('char_already_in_cart','⚠ {name} อยู่ในตะกร้าแล้ว!').replace('{name}', 'Manic All Cat')); return;
   }
   document.getElementById('manicConfirmModal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
@@ -1014,7 +1016,7 @@ function apOpen(pkgType, name, price) {
   _apPayMethod = 'promptpay';
   apSetPayMethod('promptpay');
   document.getElementById('apPkgName').textContent  = name;
-  document.getElementById('apPkgPrice').textContent = price ? '฿' + price : 'สอบถามราคา';
+  document.getElementById('apPkgPrice').textContent = price ? '฿' + price : window.bcT('char_ap_contact_price','สอบถามราคา');
   document.getElementById('apTC').value = '';
   document.getElementById('apCC').value = '';
   document.getElementById('apSlipName').textContent = '';
@@ -1036,17 +1038,26 @@ async function apCreateOrder() {
   var tc  = document.getElementById('apTC').value.trim();
   var cc  = document.getElementById('apCC').value.trim();
   var srv = document.getElementById('apSrv').value;
-  if (!tc || !cc) { apShowErr('กรุณากรอก Transfer Code และ Confirmation Code'); return; }
+  if (!tc || !cc) { apShowErr(window.bcT('stg_enter_codes','กรุณากรอก Transfer Code และ Confirmation Code')); return; }
   apLoading(true);
   try {
     var resp = await fetch(_apBackend + '/api/payment/create-all-package/' + _apPkgType, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({transfer_code: tc, confirmation_code: cc, country: srv, payment_method: _apPayMethod}),
+      body: JSON.stringify({transfer_code: tc, confirmation_code: cc, country: srv, payment_method: _apPayMethod,
+        username: (typeof AUTH !== 'undefined' && AUTH.getCurrentUser()) || ''}),
     });
     var data = await resp.json();
-    if (!resp.ok) { apShowErr(data.detail || 'เกิดข้อผิดพลาด'); return; }
+    if (!resp.ok) { apShowErr(data.detail || window.bcT('stg_error_generic','เกิดข้อผิดพลาด')); return; }
     _apOrderId = data.order_id;
+    // บันทึกลง order history
+    (function() {
+      var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+      hist.unshift({ id: _apOrderId, total: data.amount,
+        items: [{ name: document.getElementById('apPkgName').textContent || _apPkgType }],
+        created_at: new Date().toISOString() });
+      localStorage.setItem('bc_order_history', JSON.stringify(hist.slice(0, 30)));
+    })();
     var isTM = (data.payment_method === 'truemoney');
     document.getElementById('apQrBlock').style.display = isTM ? 'none' : '';
     document.getElementById('apTmBlock').style.display = isTM ? '' : 'none';
@@ -1069,7 +1080,7 @@ async function apCreateOrder() {
     document.getElementById('apStep-qr').style.display    = '';
     apShowErr('');
   } catch(e) {
-    apShowErr('เชื่อมต่อ API ไม่ได้: ' + e.message);
+    apShowErr(window.bcT('stg_api_error','เชื่อมต่อ API ไม่ได้: ') + e.message);
   } finally { apLoading(false); }
 }
 
@@ -1107,14 +1118,26 @@ async function apVerify() {
       resp = await fetch(_apBackend + '/api/payment/verify/' + _apOrderId, {method:'POST', body: fd});
     }
     data = await resp.json();
-    if (!resp.ok || !data.success) { apShowErr(data.detail || data.error || 'ยืนยันการชำระเงินไม่ผ่าน'); return; }
+    if (!resp.ok || !data.success) { apShowErr(data.detail || data.error || window.bcT('stg_verify_failed','ยืนยันการชำระเงินไม่ผ่าน')); return; }
     document.getElementById('apNewTC').textContent = data.new_transfer_code || '-';
     document.getElementById('apNewCC').textContent = data.new_confirmation_code || '-';
+    // อัปเดต history ด้วย Transfer Code ใหม่
+    (function() {
+      var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+      hist = hist.map(function(o) {
+        if ((o.id || o.order_id) !== _apOrderId) return o;
+        return Object.assign({}, o, {
+          new_transfer_code:     data.new_transfer_code,
+          new_confirmation_code: data.new_confirmation_code,
+        });
+      });
+      localStorage.setItem('bc_order_history', JSON.stringify(hist));
+    })();
     document.getElementById('apStep-qr').style.display   = 'none';
     document.getElementById('apStep-done').style.display = '';
     apShowErr('');
   } catch(e) {
-    apShowErr('เชื่อมต่อ API ไม่ได้: ' + e.message);
+    apShowErr(window.bcT('stg_api_error','เชื่อมต่อ API ไม่ได้: ') + e.message);
   } finally { apLoading(false); }
 }
 
@@ -1142,10 +1165,18 @@ document.getElementById('searchQ').addEventListener('keydown', function(e) {
 document.querySelectorAll('.nav-links a').forEach(function(link) {
   if (link.href === window.location.href) link.classList.add('active');
 });
+
+document.addEventListener('bc-lang-changed', function() {
+  if (window.catsData) applyFilters();
+  if (document.getElementById('svcModal').style.display === 'block' && _svcCat) {
+    openSvcModal(_svcCat.id, _svcCat.tier, _svcCat.name);
+  }
+});
 </script>
 
 <script src="assets/auth.js?v=20260613"></script>
 <script src="assets/animations.js"></script>
 <script src="assets/nav.js"></script>
+<script src="assets/i18n.js"></script>
 </body>
 </html>

@@ -117,7 +117,8 @@
     if (logoutBtn) {
       var newBtn = logoutBtn.cloneNode(true);
       newBtn.addEventListener('click', function () {
-        if (confirm('ออกจากระบบหรือไม่?')) {
+        var isEn = localStorage.getItem('bc_lang') === 'en';
+        if (confirm(isEn ? 'Log out?' : 'ออกจากระบบหรือไม่?')) {
           localStorage.removeItem('bc_session');
           window.location.href = 'login.html';
         }

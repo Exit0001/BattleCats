@@ -16,7 +16,57 @@ import asyncio
 import shutil
 from pathlib import Path
 from datetime import datetime
-from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest, LoyaltyRedeemRequest, CodeShopBuyRequest, AdminProductRequest, AdminToggleRequest, AdminStockRequest
+_BASE_DIR = Path(__file__).parent
+import re as _re
+
+# ── Cat unlock price table ─────────────────────────────────────────
+_CAT_UNLOCK_PRICE = {"N": 5, "EX": 15, "RR": 20, "SR": 25, "UR": 39, "LR": 79}
+
+def _load_cat_tiers() -> dict:
+    try:
+        text = (_BASE_DIR / "assets" / "characters_data.js").read_text(encoding="utf-8")
+        m = _re.search(r'var catsData\s*=\s*\[(.*?)\];', text, _re.DOTALL)
+        if not m:
+            return {}
+        return {int(i): t for i, t in _re.findall(r'\[(\d+),"(\w+)","[^"]*"\]', m.group(1))}
+    except Exception:
+        return {}
+
+_CAT_TIER = _load_cat_tiers()
+
+def _calc_cat_unlock_total(cat_ids: list) -> int:
+    return sum(_CAT_UNLOCK_PRICE.get(_CAT_TIER.get(cid, ""), 20) for cid in (cat_ids or []))
+
+# ── Stage price table (server-side, matches stages.html) ──────────
+_STAGE_STORY_PRICES    = {"clear": 30, "treasure": 40, "zombie": 40}
+_STAGE_LEGEND_PRICES   = {
+    "sol": {1: 30, 2: 50, 3: 70, 4: 100},
+    "ul":  {1: 30, 2: 50, 3: 70, 4: 100},
+    "zl":  {1: 40, 2: 80},
+}
+_STAGE_AKU_UNLOCK   = 40
+_STAGE_AKU_CHAPTERS = 100
+
+def _story_group_count(chapters: list) -> int:
+    groups = set()
+    for ch in chapters:
+        if 1 <= ch <= 3:   groups.add("eoc")
+        elif 4 <= ch <= 6: groups.add("itf")
+        elif 7 <= ch <= 9: groups.add("cotc")
+    return len(groups)
+
+def _calc_stages_price(cfg) -> int:
+    total  = _story_group_count(cfg.story_chapters)    * _STAGE_STORY_PRICES["clear"]
+    total += _story_group_count(cfg.treasure_chapters) * _STAGE_STORY_PRICES["treasure"]
+    total += _story_group_count(cfg.zombie_chapters)   * _STAGE_STORY_PRICES["zombie"]
+    for lt in cfg.legend_types:
+        crown = cfg.legend_crowns.get(lt, cfg.max_crown)
+        total += _STAGE_LEGEND_PRICES.get(lt, {}).get(crown, 0)
+    if cfg.aku_unlock:   total += _STAGE_AKU_UNLOCK
+    if cfg.aku_chapters: total += _STAGE_AKU_CHAPTERS
+    return total
+
+from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest, LoyaltyRedeemRequest, CodeShopBuyRequest, AdminProductRequest, AdminToggleRequest, AdminEditProductRequest, AdminStockRequest, ClearStoryChaptersRequest, ClearStoryAllRequest, ResetStoryChaptersRequest, ResetStoryAllRequest, SetTreasureChaptersRequest, SetTreasureAllRequest, ClearOutbreakChaptersRequest, ClearOutbreakAllRequest, AkuRequest, ClearLegendsRequest, StagesPaymentRequest
 from runner import BCSFERunner
 from config import ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES
 from payment import (
@@ -48,11 +98,13 @@ from payment import (
     release_stock,
     get_stock_by_order,
     add_code_product,
+    update_code_product,
     toggle_code_product,
     delete_code_product,
     add_code_stock,
     delete_code_stock,
     get_product_stock,
+    create_stages_order,
     create_code_shop_order,
     get_user_code_purchases,
 )
@@ -147,10 +199,14 @@ app = FastAPI(title="BCSFE Order System")
 import asyncio
 
 
+_bcsfe_lock = asyncio.Lock()
+
+
 async def run_bcsfe(fn, *args, **kwargs):
     """เธฃเธฑเธ BCSFE operation เธ เธฒเธขเนเธ•เน lock โ€” เธเนเธญเธเธเธฑเธ concurrent SAVE_DATA conflict"""
-    loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, lambda: fn(*args, **kwargs))
+    async with _bcsfe_lock:
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(None, lambda: fn(*args, **kwargs))
 
 # CORS middleware
 app.add_middleware(
@@ -172,7 +228,34 @@ class StaticCacheMiddleware(BaseHTTPMiddleware):
         return response
 app.add_middleware(StaticCacheMiddleware)
 
+RECAPTCHA_SECRET = "6LegGB8tAAAAAMv-xcbRjLIpImI_K9Kreu8c6icI"
+
 # ============= API Routes =============
+
+@app.get("/api/debug-paths")
+def debug_paths():
+    p = _BASE_DIR / "pictures" / "codeshop"
+    files = sorted([f.name for f in p.iterdir()])[:5] if p.exists() else []
+    return {
+        "base_dir": str(_BASE_DIR),
+        "pictures_exists": (_BASE_DIR / "pictures").exists(),
+        "code_shop_exists": p.exists(),
+        "sample_files": files,
+    }
+
+@app.post("/api/verify-recaptcha")
+async def verify_recaptcha(body: dict):
+    token = (body or {}).get("token", "")
+    if not token:
+        return {"success": False}
+    async with httpx.AsyncClient() as client:
+        r = await client.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            data={"secret": RECAPTCHA_SECRET, "response": token},
+        )
+    result = r.json()
+    ok = bool(result.get("success")) and float(result.get("score", 0)) >= 0.3
+    return {"success": ok}
 
 @app.get("/api/items")
 def get_items():
@@ -228,7 +311,7 @@ async def payment_create(order: OrderRequest):
         country=order.country,
         items=items_payload,
         cat_ids=order.cat_ids,
-        cat_unlock_total=(order.cat_unlock_total or 0) + pkg_extra,
+        cat_unlock_total=_calc_cat_unlock_total(order.cat_ids) + pkg_extra,
         payment_method=order.payment_method,
         username=order.username or "",
     )
@@ -472,7 +555,105 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
         summary.append({"item": "Max Talents All", "amount": 1})
         print(f"[BCSFE] talents_all done -> tc={cur_tc}")
 
+    # -- Step 7: Stage operations --
+    stages_config = order.get("stages_config") or {}
+    if stages_config:
+        story_ch  = stages_config.get("story_chapters", [])
+        treasure_ch = stages_config.get("treasure_chapters", [])
+        zombie_ch = stages_config.get("zombie_chapters", [])
+        legend_types = stages_config.get("legend_types", [])
+        max_crown = stages_config.get("max_crown", 4)
+        aku_unlock = stages_config.get("aku_unlock", False)
+        aku_chapters = stages_config.get("aku_chapters", False)
+
+        if story_ch:
+            r = _call("run_clear_story_chapters", story_ch)
+            if not r["success"]: return _fail(r)
+            _upd(r["new_transfer_code"])
+            ch_names = [f"Ch.{c}" for c in story_ch]
+            summary.append({"item": "Clear Story: " + ", ".join(ch_names), "amount": len(story_ch)})
+            print(f"[BCSFE] story_clear done -> tc={cur_tc}")
+
+        if treasure_ch:
+            r = _call("run_set_treasure_chapters", treasure_ch, 3)
+            if not r["success"]: return _fail(r)
+            _upd(r["new_transfer_code"])
+            ch_names = [f"Ch.{c}" for c in treasure_ch]
+            summary.append({"item": "Gold Treasure: " + ", ".join(ch_names), "amount": len(treasure_ch)})
+            print(f"[BCSFE] treasure done -> tc={cur_tc}")
+
+        if zombie_ch:
+            r = _call("run_clear_outbreak_chapters", zombie_ch)
+            if not r["success"]: return _fail(r)
+            _upd(r["new_transfer_code"])
+            ch_names = [f"Ch.{c}" for c in zombie_ch]
+            summary.append({"item": "Zombie Clear: " + ", ".join(ch_names), "amount": len(zombie_ch)})
+            print(f"[BCSFE] zombie done -> tc={cur_tc}")
+
+        if legend_types:
+            legend_crowns = stages_config.get("legend_crowns", {})
+            if legend_crowns:
+                for lt in legend_types:
+                    crown = max(1, min(4, int(legend_crowns.get(lt, max_crown))))
+                    r = _call("run_clear_legends", [lt], crown)
+                    if not r["success"]: return _fail(r)
+                    _upd(r["new_transfer_code"])
+                    summary.append({"item": f"Legend {lt.upper()} {crown}crown", "amount": 1})
+                    print(f"[BCSFE] legend {lt} {crown}crown done -> tc={cur_tc}")
+            else:
+                r = _call("run_clear_legends", legend_types, max_crown)
+                if not r["success"]: return _fail(r)
+                _upd(r["new_transfer_code"])
+                summary.append({"item": f"Legend ({', '.join(legend_types).upper()}) {max_crown}crown", "amount": len(legend_types)})
+                print(f"[BCSFE] legends done -> tc={cur_tc}")
+
+        if aku_unlock or aku_chapters:
+            r = _call("run_aku", aku_unlock, aku_chapters)
+            if not r["success"]: return _fail(r)
+            _upd(r["new_transfer_code"])
+            if aku_unlock:   summary.append({"item": "Aku Realm Unlock", "amount": 1})
+            if aku_chapters: summary.append({"item": "Aku Chapters Clear", "amount": 1})
+            print(f"[BCSFE] aku done -> tc={cur_tc}")
+
     return {"success": True, "new_tc": cur_tc, "new_cc": cur_cc, "summary": summary}
+
+
+@app.post("/api/payment/create-stages")
+async def payment_create_stages(body: StagesPaymentRequest):
+    """สร้าง order สำหรับปลดล็อคด่าน"""
+    if not body.transfer_code.strip() or not body.confirmation_code.strip():
+        raise HTTPException(status_code=400, detail="กรุณากรอก Transfer Code และ Confirmation Code")
+    if body.country not in COUNTRIES:
+        raise HTTPException(status_code=400, detail=f"Country ไม่ถูกต้อง: {body.country}")
+    cfg = body.stages_config
+    if not any([cfg.story_chapters, cfg.treasure_chapters, cfg.zombie_chapters,
+                cfg.legend_types, cfg.aku_unlock, cfg.aku_chapters]):
+        raise HTTPException(status_code=400, detail="กรุณาเลือกบริการอย่างน้อย 1 อย่าง")
+    correct_amount = _calc_stages_price(cfg)
+    if correct_amount <= 0:
+        raise HTTPException(status_code=400, detail="ไม่พบราคาสำหรับบริการที่เลือก")
+
+    order = create_stages_order(
+        transfer_code=body.transfer_code.strip(),
+        confirmation_code=body.confirmation_code.strip(),
+        country=body.country,
+        stages_config=cfg.dict(),
+        amount=correct_amount,
+        payment_method=body.payment_method,
+        username=body.username or "",
+    )
+    resp = {
+        "order_id":      order["order_id"],
+        "amount":        order["amount"],
+        "base_amount":   order.get("base_amount", order["amount"]),
+        "truemoney_fee": order.get("truemoney_fee", 0),
+        "qr_base64":     order.get("qr_base64"),
+        "expires_at":    order["expires_at"],
+        "payment_method": body.payment_method,
+    }
+    if body.payment_method == "truemoney":
+        resp["truemoney_id"] = TRUEMONEY_ID
+    return resp
 
 
 @app.post("/api/payment/verify/{order_id}")
@@ -1252,6 +1433,277 @@ async def talents_all_characters(request: AllCatsRequest):
 
 
 
+
+
+@app.post("/api/clear/story-chapters")
+async def clear_story_chapters(request: ClearStoryChaptersRequest):
+    """เคลียร์ด่าน Main Story ตาม chapter ที่ระบุ (1-9)"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+        valid = [c for c in request.chapters if 1 <= c <= 9]
+        if not valid:
+            return {"success": False, "error": "chapters ต้องเป็นตัวเลข 1-9 อย่างน้อย 1 ตัว"}
+        ca = max(1, min(request.clear_amount, 9999))
+        print(f"\n[CLEAR-STORY] chapters={valid} x{ca}")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = await run_bcsfe(runner.run_clear_story_chapters, valid, ca)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+
+@app.post("/api/clear/story-all")
+async def clear_story_all(request: ClearStoryAllRequest):
+    """เคลียร์ด่าน Main Story ทั้ง 9 chapters"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+        ca = max(1, min(request.clear_amount, 9999))
+        print(f"\n[CLEAR-STORY-ALL] all chapters x{ca}")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = await run_bcsfe(runner.run_clear_story_all, ca)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+@app.post("/api/reset/story-chapters")
+async def reset_story_chapters(request: ResetStoryChaptersRequest):
+    """รีเซ็ตด่าน Main Story กลับเป็น 0 ตาม chapter ที่ระบุ"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+        valid = [c for c in request.chapters if 1 <= c <= 9]
+        if not valid:
+            return {"success": False, "error": "chapters ต้องเป็นตัวเลข 1-9 อย่างน้อย 1 ตัว"}
+        print(f"\n[RESET-STORY] chapters={valid}")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = await run_bcsfe(runner.run_reset_story_chapters, valid)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+
+@app.post("/api/reset/story-all")
+async def reset_story_all(request: ResetStoryAllRequest):
+    """รีเซ็ตด่าน Main Story ทั้ง 9 chapters"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+        print(f"\n[RESET-STORY-ALL] reset all chapters")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = await run_bcsfe(runner.run_reset_story_all)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+@app.post("/api/treasure/story-chapters")
+async def set_treasure_chapters(request: SetTreasureChaptersRequest):
+    """ตั้งค่า treasure สำหรับ story chapters ที่ระบุ"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+        invalid = [c for c in request.chapters if c not in range(1, 10)]
+        if invalid:
+            return {"success": False, "error": f"Chapter ไม่ถูกต้อง: {invalid} (ต้องเป็น 1-9)"}
+        tv = max(0, min(3, request.treasure_value))
+        print(f"\n[TREASURE-CHAPTERS] chapters={request.chapters} value={tv}")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = await run_bcsfe(runner.run_set_treasure_chapters, request.chapters, tv)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+@app.post("/api/treasure/story-all")
+async def set_treasure_all(request: SetTreasureAllRequest):
+    """ตั้งค่า treasure ทุก chapter (1-9)"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+        tv = max(0, min(3, request.treasure_value))
+        print(f"\n[TREASURE-ALL] value={tv}")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = await run_bcsfe(runner.run_set_treasure_all, tv)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+@app.post("/api/outbreak/story-chapters")
+async def clear_outbreak_chapters(request: ClearOutbreakChaptersRequest):
+    """เคลียร์ zombie/outbreak สำหรับ story chapters ที่ระบุ"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+        invalid = [c for c in request.chapters if c not in range(1, 10)]
+        if invalid:
+            return {"success": False, "error": f"Chapter ไม่ถูกต้อง: {invalid} (ต้องเป็น 1-9)"}
+        print(f"\n[OUTBREAK-CHAPTERS] chapters={request.chapters}")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = await run_bcsfe(runner.run_clear_outbreak_chapters, request.chapters)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+@app.post("/api/outbreak/story-all")
+async def clear_outbreak_all(request: ClearOutbreakAllRequest):
+    """เคลียร์ zombie/outbreak ทุก chapter (1-9)"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+        print(f"\n[OUTBREAK-ALL] clear all outbreaks")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = await run_bcsfe(runner.run_clear_outbreak_all)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+@app.post("/api/aku")
+async def aku_action(request: AkuRequest):
+    """ปลดล็อค Aku Realm (#8) และ/หรือ เคลียร์ Aku Chapters (#11)"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+        if not request.do_unlock and not request.do_chapters:
+            return {"success": False, "error": "ต้องเลือกอย่างน้อย 1 action (do_unlock หรือ do_chapters)"}
+        clear_amount = max(1, min(9999, request.clear_amount))
+        print(f"\n[AKU] unlock={request.do_unlock} chapters={request.do_chapters} x{clear_amount}")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = await run_bcsfe(runner.run_aku, request.do_unlock, request.do_chapters, clear_amount)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+@app.post("/api/legend/clear")
+async def clear_legends(request: ClearLegendsRequest):
+    """เคลียร์ Legend Stages (SoL/UL/ZL) ตาม legend_types ที่ระบุ พร้อม crown level"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+        valid_types = {"sol", "ul", "zl"}
+        invalid = [t for t in request.legend_types if t not in valid_types]
+        if invalid:
+            return {"success": False, "error": f"legend_types ไม่ถูกต้อง: {invalid} (ต้องเป็น sol, ul, zl)"}
+        if not request.legend_types:
+            return {"success": False, "error": "legend_types ห้ามว่าง"}
+        max_crown = max(1, min(4, request.max_crown))
+        clear_amount = max(1, min(9999, request.clear_amount))
+        print(f"\n[LEGEND-CLEAR] types={request.legend_types} max_crown={max_crown} x{clear_amount}")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = await run_bcsfe(runner.run_clear_legends, request.legend_types, max_crown, clear_amount)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
 @app.post("/api/dupe/save")
 async def dupe_save(request: DupeSaveRequest):
     """Dupe save N ครั้ง"""
@@ -1288,7 +1740,7 @@ async def check_id(request: CheckIDRequest):
     results = []
     with open(batch_log_path, "w", encoding="utf-8") as batch_log:
         batch_log.write("=" * 60 + "\n")
-        batch_log.write(f"เวลา      : {_dt.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        batch_log.write(f"เวลา      : {_dt.now(TZ_THAI).strftime('%Y-%m-%d %H:%M:%S')}\n")
         batch_log.write(f"CheckID Batch: {len(request.codes)} รหัส\n")
         batch_log.write("=" * 60 + "\n\n")
         batch_log.flush()
@@ -1509,8 +1961,9 @@ def serve_html(page: str):
     raise HTTPException(status_code=404, detail="Not found")
 
 # Static files (CSS, JS, images) โ€” เธ•เนเธญเธ mount เธซเธฅเธฑเธ API routes
-app.mount("/assets", StaticFiles(directory="assets"), name="assets")
-app.mount("/pictures", StaticFiles(directory="pictures"), name="pictures")
+app.mount("/assets", StaticFiles(directory=str(_BASE_DIR / "assets")), name="assets")
+app.mount("/pictures", StaticFiles(directory=str(_BASE_DIR / "pictures")), name="pictures")
+
 
 @app.get("/favicon.ico", include_in_schema=False)
 def favicon():
@@ -1562,7 +2015,8 @@ async def api_code_shop_buy(body: CodeShopBuyRequest):
                                    body.payment_method)
 
     if not reserve_stock(stock["id"], body.username, order["order_id"]):
-        raise HTTPException(status_code=500, detail="ไม่สามารถจองสินค้าได้ กรุณาลองใหม่")
+        update_order_status(order["order_id"], "cancelled")
+        raise HTTPException(status_code=400, detail="สินค้าถูกจองโดยคนอื่นพอดี กรุณาลองใหม่")
 
     resp = {
         "order_id":      order["order_id"],
@@ -1668,9 +2122,17 @@ async def api_code_shop_verify_voucher(order_id: str, body: VoucherRedeemRequest
 
     transaction_id = voucher_result.get("transaction_id", "")
 
+    # บันทึกก่อนว่าเงินเข้าแล้ว เผื่อ step ถัดไปพัง admin จะได้รู้
+    update_order_status(order_id, "paid", {
+        "transaction_id": transaction_id,
+        "paid_at":        datetime.now().isoformat(),
+    })
+    print(f"[CODE-SHOP] 💰 TrueWallet paid order {order_id} txn={transaction_id}")
+
     stock = get_stock_by_order(order_id)
     if not stock:
-        raise HTTPException(status_code=500, detail="ไม่พบรหัสที่จอง กรุณาติดต่อ admin")
+        print(f"[CODE-SHOP] ❌ ไม่พบ stock สำหรับ order {order_id} — เงินเข้าแล้ว txn={transaction_id}")
+        raise HTTPException(status_code=500, detail="ระบบมีปัญหา กรุณาติดต่อ admin พร้อมแจ้ง Order ID")
 
     mark_stock_sold(stock_id)
     update_order_status(order_id, "done", {
@@ -1707,7 +2169,8 @@ def api_admin_products(username: str, session_token: str):
 def api_admin_add_product(body: AdminProductRequest):
     if not verify_admin_session(body.username, body.session_token):
         raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
-    product = add_code_product(body.name, body.description, body.images, body.price)
+    product = add_code_product(body.name, body.description, body.images, body.price,
+                                body.name_en, body.description_en)
     if not product:
         raise HTTPException(status_code=500, detail="เพิ่มสินค้าไม่ได้")
     return {"success": True, "product": product}
@@ -1718,6 +2181,17 @@ def api_admin_toggle_product(product_id: str, body: AdminToggleRequest):
     if not verify_admin_session(body.username, body.session_token):
         raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
     toggle_code_product(product_id, body.is_active)
+    return {"success": True}
+
+
+@app.put("/api/admin/code-shop/products/{product_id}")
+def api_admin_edit_product(product_id: str, body: AdminEditProductRequest):
+    if not verify_admin_session(body.username, body.session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    ok = update_code_product(product_id, body.name, body.description, body.price,
+                              body.name_en, body.description_en)
+    if not ok:
+        raise HTTPException(status_code=500, detail="แก้ไขสินค้าไม่ได้")
     return {"success": True}
 
 
@@ -1758,11 +2232,22 @@ def api_admin_delete_stock(stock_id: str, username: str, session_token: str):
 def api_admin_list_images(username: str, session_token: str):
     if not verify_admin_session(username, session_token):
         raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
-    folder = Path("pictures/id ราคา 200")
+    folder = _BASE_DIR / "pictures" / "codeshop"
     if not folder.exists():
         return {"images": []}
-    images = [f.name for f in sorted(folder.iterdir()) if f.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp")]
-    return {"images": images}
+    try:
+        exts = {".png", ".jpg", ".jpeg", ".webp"}
+        names = []
+        for f in folder.iterdir():
+            try:
+                name = f.name
+                if Path(name).suffix.lower() in exts:
+                    names.append(name)
+            except Exception:
+                pass
+        return {"images": sorted(names)}
+    except Exception:
+        return {"images": []}
 
 
 @app.get("/sitemap.xml")

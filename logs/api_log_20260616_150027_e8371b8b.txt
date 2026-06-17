@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-16 15:00:27
+Transfer  : e8371b8b8
+Confirm   : 3875
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=e8371b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 10000 → 20000  (+10000)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_263d74ec
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260616_150029_e8371b8b
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 19f6526aa | Confirm ใหม่: 6517
+============================================================
+============================================================

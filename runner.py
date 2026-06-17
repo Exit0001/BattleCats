@@ -1,6 +1,7 @@
 ﻿# runner.py - BCSFERunner using bcsfe 3.x Python API + CLI subprocess for lucky/rare ticket
 
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+TZ_THAI = timezone(timedelta(hours=7))
 from pathlib import Path
 import shutil
 import subprocess
@@ -9,6 +10,7 @@ import time
 import uuid
 from bcsfe import core
 from bcsfe.core.game.catbase.cat import Talent as BCSFETalent
+from bcsfe.core.game.map.outbreaks import Outbreak as BCOutbreak, Chapter as OutbreakChapter
 
 from config import ITEM_MAP
 
@@ -18,6 +20,32 @@ BCSFE_SAVES_DIR = Path(str(core.SaveFile.get_saves_path()))  # cross-platform (W
 
 COUNTRY_MAP = {"1": "en", "2": "jp", "3": "kr", "4": "tw"}
 LOG_DIR = Path("logs")
+
+# Story chapter mapping: user-facing number (1-9) → raw index in save_file.story.chapters
+# Index 3 is unused/skipped by BCSFE (get_real_chapters skips it)
+STORY_CHAPTER_MAP = {
+    1: 0,  # Empire of Cats Ch.1
+    2: 1,  # Empire of Cats Ch.2
+    3: 2,  # Empire of Cats Ch.3
+    4: 4,  # Into the Future Ch.1
+    5: 5,  # Into the Future Ch.2
+    6: 6,  # Into the Future Ch.3
+    7: 7,  # Cats of the Cosmos Ch.1
+    8: 8,  # Cats of the Cosmos Ch.2
+    9: 9,  # Cats of the Cosmos Ch.3
+}
+STORY_CHAPTER_NAMES = {
+    1: "Empire of Cats Ch.1",
+    2: "Empire of Cats Ch.2",
+    3: "Empire of Cats Ch.3",
+    4: "Into the Future Ch.1",
+    5: "Into the Future Ch.2",
+    6: "Into the Future Ch.3",
+    7: "Cats of the Cosmos Ch.1",
+    8: "Cats of the Cosmos Ch.2",
+    9: "Cats of the Cosmos Ch.3",
+}
+STORY_STAGES_PER_CHAPTER = 48  # stages 0–47 per chapter
 
 
 class BCSFERunner:
@@ -33,7 +61,7 @@ class BCSFERunner:
             self._owned_log = False
         else:
             LOG_DIR.mkdir(exist_ok=True)
-            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            ts = datetime.now(TZ_THAI).strftime("%Y%m%d_%H%M%S")
             self._log_path = LOG_DIR / f"api_log_{ts}_{self.transfer[:8]}.txt"
             self._log_file = open(self._log_path, "w", encoding="utf-8")
             self._owned_log = True
@@ -206,7 +234,7 @@ class BCSFERunner:
         cc = self._get_cc()
         gv = core.GameVersion(120200)
         self._log(f"[BCSFE] ⬇  Downloading save (transfer={self.transfer[:6]}... cc={cc})")
-        handler, result = core.ServerHandler.from_codes(
+        handler, _ = core.ServerHandler.from_codes(
             self.transfer, self.confirm, cc, gv, print=False, save_backup=backup
         )
         if handler is None:
@@ -255,7 +283,7 @@ class BCSFERunner:
                 return
             backup_dir = Path("saves_backup")
             backup_dir.mkdir(exist_ok=True)
-            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            ts = datetime.now(TZ_THAI).strftime("%Y%m%d_%H%M%S")
             dest = backup_dir / f"SAVE_{ts}_{self.transfer[:8]}"
             shutil.copy2(src, dest)
             self._log(f"[BCSFE] 📁 Backup → {dest}")
@@ -758,6 +786,342 @@ class BCSFERunner:
             self._close_log()
             return {"success": True, "codes": results, "count": len(results)}
 
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    def _reset_story_chapters_impl(self, save_file, chapter_nums: list) -> list:
+        """รีเซ็ต stage clear — EoC Ch.1 (raw 0) เก็บ stage 0 ไว้ 1 ครั้งเพื่อ Transfer Code"""
+        logs = []
+        for num in chapter_nums:
+            raw_idx = STORY_CHAPTER_MAP.get(num)
+            if raw_idx is None:
+                logs.append(f"✘ Chapter {num} — ไม่ถูกต้อง (ต้องเป็น 1-9)")
+                continue
+            chapter = save_file.story.chapters[raw_idx]
+            name = STORY_CHAPTER_NAMES[num]
+            if raw_idx == 0:
+                # EoC Ch.1: เก็บด่านแรก (Japan stage 0) cleared=1 เพื่อให้ยังใช้ Transfer Code ได้
+                chapter.progress = 1
+                for i, stage in enumerate(chapter.stages):
+                    stage.clear_times = 1 if i == 0 else 0
+                logs.append(f"✔ {name} — reset (เก็บด่านแรก cleared=1 สำหรับ Transfer Code)")
+                self._log(f"[STORY] ✔ {name} — reset minimal (stage[0]=1)")
+            else:
+                chapter.progress = 0
+                for stage in chapter.stages:
+                    stage.unclear_stage()
+                logs.append(f"✔ {name} — reset แล้ว (progress=0, clear_times=0 ทุกด่าน)")
+                self._log(f"[STORY] ✔ {name} — reset full")
+        return logs
+
+    def run_reset_story_chapters(self, chapter_nums: list) -> dict:
+        """รีเซ็ตด่าน Main Story กลับเป็น 0 ตาม chapter ที่ระบุ"""
+        try:
+            self._log(f"[OP] Reset Story Chapters {chapter_nums}")
+            core.core_data.init_data()
+            save_file = self._download_save()
+            logs = self._reset_story_chapters_impl(save_file, chapter_nums)
+            codes = self._upload_save(save_file)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    def run_reset_story_all(self) -> dict:
+        """รีเซ็ตด่าน Main Story ทั้ง 9 chapters"""
+        try:
+            self._log("[OP] Reset ALL Story Chapters (1-9)")
+            core.core_data.init_data()
+            save_file = self._download_save()
+            logs = self._reset_story_chapters_impl(save_file, list(STORY_CHAPTER_MAP.keys()))
+            codes = self._upload_save(save_file)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    def _clear_story_chapters_impl(self, save_file, chapter_nums: list, clear_amount: int) -> list:
+        """เคลียร์ด่านใน story chapters ที่ระบุ — return log array"""
+        logs = []
+        for num in chapter_nums:
+            raw_idx = STORY_CHAPTER_MAP.get(num)
+            if raw_idx is None:
+                logs.append(f"✘ Chapter {num} — ไม่ถูกต้อง (ต้องเป็น 1-9)")
+                self._log(f"[STORY] ✘ Chapter {num} — ไม่ถูกต้อง")
+                continue
+            chapter = save_file.story.chapters[raw_idx]
+            for stage_idx in range(STORY_STAGES_PER_CHAPTER):
+                chapter.clear_stage(stage_idx, clear_amount)
+            name = STORY_CHAPTER_NAMES[num]
+            logs.append(f"✔ {name} — {STORY_STAGES_PER_CHAPTER} stages cleared (x{clear_amount})")
+            self._log(f"[STORY] ✔ {name} — {STORY_STAGES_PER_CHAPTER} stages")
+        return logs
+
+    def run_clear_story_chapters(self, chapter_nums: list, clear_amount: int = 1) -> dict:
+        """เคลียร์ด่าน Main Story ตาม chapter ที่ระบุ (1-9)"""
+        try:
+            self._log(f"[OP] Clear Story Chapters {chapter_nums} x{clear_amount}")
+            core.core_data.init_data()
+            save_file = self._download_save()
+            logs = self._clear_story_chapters_impl(save_file, chapter_nums, clear_amount)
+            codes = self._upload_save(save_file)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    def run_clear_story_all(self, clear_amount: int = 1) -> dict:
+        """เคลียร์ด่าน Main Story ทั้ง 9 chapters"""
+        try:
+            self._log(f"[OP] Clear ALL Story Chapters (1-9) x{clear_amount}")
+            core.core_data.init_data()
+            save_file = self._download_save()
+            logs = self._clear_story_chapters_impl(save_file, list(STORY_CHAPTER_MAP.keys()), clear_amount)
+            codes = self._upload_save(save_file)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    # ── Treasure ──────────────────────────────────────────────────────────────
+
+    def _set_treasure_impl(self, save_file, chapter_nums: list, treasure_value: int = 3) -> list:
+        """ตั้งค่า treasure สำหรับ story chapters — return log array"""
+        logs = []
+        tname = {0: "None", 1: "Bronze", 2: "Silver", 3: "Gold"}.get(treasure_value, str(treasure_value))
+        for num in chapter_nums:
+            raw_idx = STORY_CHAPTER_MAP.get(num)
+            if raw_idx is None:
+                logs.append(f"✘ Chapter {num} — ไม่ถูกต้อง (ต้องเป็น 1-9)")
+                continue
+            chapter = save_file.story.chapters[raw_idx]
+            for i in range(STORY_STAGES_PER_CHAPTER):
+                chapter.stages[i].treasure = treasure_value
+            name = STORY_CHAPTER_NAMES[num]
+            logs.append(f"✔ {name} — {STORY_STAGES_PER_CHAPTER} stages → {tname} Treasure")
+            self._log(f"[TREASURE] ✔ {name} — {STORY_STAGES_PER_CHAPTER} stages → {tname}")
+        return logs
+
+    def run_set_treasure_chapters(self, chapter_nums: list, treasure_value: int = 3) -> dict:
+        """ตั้งค่า treasure สำหรับ story chapters ที่ระบุ (1-9)"""
+        try:
+            self._log(f"[OP] Set Treasure Chapters {chapter_nums} value={treasure_value}")
+            core.core_data.init_data()
+            save_file = self._download_save()
+            logs = self._set_treasure_impl(save_file, chapter_nums, treasure_value)
+            codes = self._upload_save(save_file)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    def run_set_treasure_all(self, treasure_value: int = 3) -> dict:
+        """ตั้งค่า treasure สำหรับ story chapters ทั้ง 9 chapters"""
+        try:
+            self._log(f"[OP] Set Treasure ALL (1-9) value={treasure_value}")
+            core.core_data.init_data()
+            save_file = self._download_save()
+            logs = self._set_treasure_impl(save_file, list(STORY_CHAPTER_MAP.keys()), treasure_value)
+            codes = self._upload_save(save_file)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    # ── Outbreaks (Zombie Stages) ──────────────────────────────────────────────
+
+    def _clear_outbreaks_impl(self, save_file, chapter_nums: list) -> list:
+        """เคลียร์ zombie/outbreak สำหรับ chapters ที่ระบุ — return log array"""
+        logs = []
+        for num in chapter_nums:
+            if num not in STORY_CHAPTER_MAP:
+                logs.append(f"✘ Chapter {num} — ไม่ถูกต้อง (ต้องเป็น 1-9)")
+                continue
+            # true_id = 0-based (user 1-9 → true_id 0-8)
+            true_id = num - 1
+            # outbreak chapter key: skip index 3 (same pattern as story chapters)
+            chapter_key = true_id if true_id < 3 else true_id + 1
+
+            if chapter_key not in save_file.outbreaks.chapters:
+                save_file.outbreaks.chapters[chapter_key] = OutbreakChapter(chapter_key, {})
+            ob_chapter = save_file.outbreaks.chapters[chapter_key]
+
+            for stage_id in range(STORY_STAGES_PER_CHAPTER):
+                if stage_id not in ob_chapter.outbreaks:
+                    ob_chapter.outbreaks[stage_id] = BCOutbreak(True)
+                else:
+                    ob_chapter.outbreaks[stage_id].cleared = True
+
+            # Clear active outbreak markers so none are shown as "ongoing"
+            if chapter_key in save_file.outbreaks.current_outbreaks:
+                cur_ch = save_file.outbreaks.current_outbreaks[chapter_key]
+                for stage_id in range(STORY_STAGES_PER_CHAPTER):
+                    if stage_id in cur_ch.outbreaks:
+                        cur_ch.outbreaks[stage_id].cleared = False
+
+            name = STORY_CHAPTER_NAMES[num]
+            logs.append(f"✔ {name} — {STORY_STAGES_PER_CHAPTER} zombie stages cleared")
+            self._log(f"[OUTBREAK] ✔ {name} — {STORY_STAGES_PER_CHAPTER} stages cleared")
+        return logs
+
+    def run_clear_outbreak_chapters(self, chapter_nums: list) -> dict:
+        """เคลียร์ zombie/outbreak สำหรับ story chapters ที่ระบุ (1-9)"""
+        try:
+            self._log(f"[OP] Clear Outbreaks Chapters {chapter_nums}")
+            core.core_data.init_data()
+            save_file = self._download_save()
+            logs = self._clear_outbreaks_impl(save_file, chapter_nums)
+            codes = self._upload_save(save_file)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    def run_clear_outbreak_all(self) -> dict:
+        """เคลียร์ zombie/outbreak สำหรับ story chapters ทั้ง 9 chapters"""
+        try:
+            self._log("[OP] Clear Outbreaks ALL (1-9)")
+            core.core_data.init_data()
+            save_file = self._download_save()
+            logs = self._clear_outbreaks_impl(save_file, list(STORY_CHAPTER_MAP.keys()))
+            codes = self._upload_save(save_file)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    # ── Legend Stages (SoL / UL / ZL) ────────────────────────────────────────
+
+    def _clear_legend_sol_impl(self, save_file, max_crown: int, clear_amount: int = 1) -> list:
+        """เคลียร์ Stories of Legend (SoL) — save_file.event_stages type=0"""
+        # SoL = EventChapters.chapters[0] (type=0, letter="N", base_index=0)
+        ev = save_file.event_stages
+        if not ev.chapters or not ev.chapters[0].chapters:
+            return ["— Stories of Legend — ไม่มีข้อมูลใน save"]
+        total_maps = len(ev.chapters[0].chapters)
+        for map_id in range(total_maps):
+            total_stars = ev.get_total_stars(0, map_id)
+            for star in range(min(max_crown, total_stars)):
+                total_stages = ev.get_total_stages(0, map_id, star)
+                for stage_idx in range(total_stages):
+                    ev.clear_stage(0, map_id, star, stage_idx, clear_amount)
+        msg = f"✔ Stories of Legend — {total_maps} maps, crowns 1-{max_crown} cleared"
+        self._log(f"[SoL] ✔ {total_maps} maps (crown 1-{max_crown})")
+        return [msg]
+
+    def _clear_legend_ul_impl(self, save_file, max_crown: int, clear_amount: int = 1) -> list:
+        """เคลียร์ Uncanny Legends (UL) ทั้งหมด — return log array"""
+        ul_ch = save_file.uncanny.chapters  # core.Chapters
+        total_maps = len(ul_ch.chapters)
+        if total_maps == 0:
+            return ["— Uncanny Legends — ไม่มีข้อมูลใน save"]
+        for map_id in range(total_maps):
+            num_crowns = ul_ch.get_total_stars(map_id)
+            for star in range(min(max_crown, num_crowns)):
+                num_stages = ul_ch.get_total_stages(map_id, star)
+                for stage_idx in range(num_stages):
+                    ul_ch.clear_stage(map_id, star, stage_idx, clear_amount)
+        msg = f"✔ Uncanny Legends — {total_maps} maps, crowns 1-{max_crown} cleared"
+        self._log(f"[UL] ✔ {total_maps} maps (crown 1-{max_crown})")
+        return [msg]
+
+    def _clear_legend_zl_impl(self, save_file, max_crown: int, clear_amount: int = 1) -> list:
+        """เคลียร์ Zero Legends (ZL) ทั้งหมด — return log array"""
+        zl = save_file.zero_legends
+        total_maps = len(zl.chapters)
+        if total_maps == 0:
+            return ["— Zero Legends — ไม่มีข้อมูลใน save"]
+        for map_id in range(total_maps):
+            chapters_stars = zl.chapters[map_id]
+            num_crowns = len(chapters_stars.chapters)
+            for star in range(min(max_crown, num_crowns)):
+                chapter = chapters_stars.chapters[star]
+                for stage_idx in range(len(chapter.stages)):
+                    zl.clear_stage(map_id, star, stage_idx, clear_amount)
+        msg = f"✔ Zero Legends — {total_maps} maps, crowns 1-{max_crown} cleared"
+        self._log(f"[ZL] ✔ {total_maps} maps (crown 1-{max_crown})")
+        return [msg]
+
+    def run_clear_legends(self, legend_types: list, max_crown: int = 4, clear_amount: int = 1) -> dict:
+        """เคลียร์ SoL/UL/ZL ตาม legend_types ที่ระบุ (sol, ul, zl)"""
+        try:
+            self._log(f"[OP] Clear Legends {legend_types} max_crown={max_crown} x{clear_amount}")
+            core.core_data.init_data()
+            save_file = self._download_save()
+            logs = []
+            if "sol" in legend_types:
+                logs += self._clear_legend_sol_impl(save_file, max_crown, clear_amount)
+            if "ul" in legend_types:
+                logs += self._clear_legend_ul_impl(save_file, max_crown, clear_amount)
+            if "zl" in legend_types:
+                logs += self._clear_legend_zl_impl(save_file, max_crown, clear_amount)
+            codes = self._upload_save(save_file)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    # ── Aku Realm ─────────────────────────────────────────────────────────────
+
+    def _unlock_aku_realm_impl(self, save_file) -> list:
+        """ปลดล็อค Aku Realm — clear 7 event maps ที่เกี่ยวข้อง"""
+        stage_ids = [255, 256, 257, 258, 265, 266, 268]
+        for sid in stage_ids:
+            save_file.event_stages.clear_map(1, sid, 0, False)
+        msg = f"✔ Unlock Aku Realm — {len(stage_ids)} event stages unlocked"
+        self._log("[AKU] ✔ Unlock Aku Realm done")
+        return [msg]
+
+    def _clear_aku_chapters_impl(self, save_file, clear_amount: int = 1) -> list:
+        """เคลียร์ Aku Realm Chapters ทั้งหมด — return log array"""
+        aku = save_file.aku
+        total_maps = len(aku.chapters)
+        if total_maps == 0:
+            return ["— Aku Realm Chapters — ไม่มีข้อมูลใน save"]
+        total_stages = 0
+        for map_id in range(total_maps):
+            for star_chapter in aku.chapters[map_id].chapters:
+                for stage in star_chapter.stages:
+                    stage.clear_stage(clear_amount)
+                    total_stages += 1
+        msg = f"✔ Aku Realm Chapters — {total_maps} maps, {total_stages} stages cleared"
+        self._log(f"[AKU] ✔ {total_maps} maps, {total_stages} stages cleared")
+        return [msg]
+
+    def run_aku(self, do_unlock: bool, do_chapters: bool, clear_amount: int = 1) -> dict:
+        """ปลดล็อค Aku Realm และ/หรือ เคลียร์ Aku Chapters"""
+        try:
+            self._log(f"[OP] Aku unlock={do_unlock} chapters={do_chapters} x{clear_amount}")
+            core.core_data.init_data()
+            save_file = self._download_save()
+            logs = []
+            if do_unlock:
+                logs += self._unlock_aku_realm_impl(save_file)
+            if do_chapters:
+                logs += self._clear_aku_chapters_impl(save_file, clear_amount)
+            codes = self._upload_save(save_file)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "log": logs}
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()

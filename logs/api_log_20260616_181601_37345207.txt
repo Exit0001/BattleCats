@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-16 18:16:01
+Transfer  : 37345207a
+Confirm   : 2180
+Country   : en
+============================================================
+[OP] Aku unlock=True chapters=True x1
+[BCSFE] ⬇  Downloading save (transfer=373452... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[AKU] ✔ Unlock Aku Realm done
+[AKU] ✔ 1 maps, 49 stages cleared
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_e4987146
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260616_181602_37345207
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 0bf61fce8 | Confirm ใหม่: 5474
+============================================================

@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-16 14:56:38
+Transfer  : cfd82a52f
+Confirm   : 2070
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=cfd82a... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 0 → 10000  (+10000)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_c09ccac2
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260616_145639_cfd82a52
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: e8371b8b8 | Confirm ใหม่: 3875
+============================================================
+============================================================

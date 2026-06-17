@@ -1048,16 +1048,20 @@ footer {
 @media (max-width: 480px) {
   .nav-container { padding: 8px 12px; gap: 8px; }
   .nav-logo { font-size: 14px; }
-  .hero { padding: 32px 16px; border-radius: 18px; }
-  .hero-title { font-size: 26px; letter-spacing: 1px; }
-  .hero-emoji { font-size: 38px; }
-  .section-title { font-size: 20px; letter-spacing: 0.5px; }
-  .btn { font-size: 14px; padding: 11px 22px; }
-  .container { padding: 20px 12px; border-radius: 16px; margin: 10px; }
-  .banner-text { font-size: 22px; }
+  .hero { padding: 20px 14px; border-radius: 18px; }
+  .hero-title { font-size: 20px; letter-spacing: 1px; }
+  .hero-sub { font-size: 13px; }
+  .hero-emoji { font-size: 28px; margin: 4px 0 8px; }
+  .badge-hot { font-size: 11px; padding: 5px 12px; }
+  .section-title { font-size: 18px; letter-spacing: 0.5px; }
+  .btn { font-size: 13px; padding: 10px 18px; }
+  .container { padding: 16px 10px; border-radius: 16px; margin: 8px; }
+  .banner-text { font-size: 18px; }
   .timer-unit { padding: 6px 10px; min-width: 44px; }
   .timer-num { font-size: 20px; }
   .trust-card { padding: 16px 12px; }
+  .hero-stat-num { font-size: 16px !important; }
+  .hero-stat-label { font-size: 10px !important; }
 }
 
 /* ═══════════════════════════════════════════════════════════════ */

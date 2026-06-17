@@ -1,0 +1,23 @@
+============================================================
+เวลา      : 2026-06-15 21:03:59
+Transfer  : ae13e702f
+Confirm   : 9398
+Country   : en
+============================================================
+[OP] Set Treasure ALL (1-9) value=3
+[BCSFE] ⬇  Downloading save (transfer=ae13e7... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[TREASURE] ✔ Empire of Cats Ch.1 — 48 stages → Gold
+[TREASURE] ✔ Empire of Cats Ch.2 — 48 stages → Gold
+[TREASURE] ✔ Empire of Cats Ch.3 — 48 stages → Gold
+[TREASURE] ✔ Into the Future Ch.1 — 48 stages → Gold
+[TREASURE] ✔ Into the Future Ch.2 — 48 stages → Gold
+[TREASURE] ✔ Into the Future Ch.3 — 48 stages → Gold
+[TREASURE] ✔ Cats of the Cosmos Ch.1 — 48 stages → Gold
+[TREASURE] ✔ Cats of the Cosmos Ch.2 — 48 stages → Gold
+[TREASURE] ✔ Cats of the Cosmos Ch.3 — 48 stages → Gold
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_e9b2de6f
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260615_210401_ae13e702
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: c27b4c4c5 | Confirm ใหม่: 5124
+============================================================

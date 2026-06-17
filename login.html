@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>เข้าสู่ระบบ - Battle Cats Shop</title>
   <link rel="stylesheet" href="assets/styles.css">
+  <script src="https://www.google.com/recaptcha/api.js?render=6LegGB8tAAAAAGZK9qoZsvT9xGf1HbN1OlXjbKqE"></script>
   <style>
     .login-wrap {
       min-height: 100vh;
@@ -195,54 +196,72 @@
 
     <div class="login-logo">
       <a href="index.html">BATTLE CAT PRO MAX</a>
-      <p>บัญชีสมาชิก</p>
+      <p data-i18n="login_subtitle">บัญชีสมาชิก</p>
     </div>
 
     <!-- Tabs -->
     <div class="auth-tabs">
-      <button class="auth-tab active" id="tab-login"    onclick="switchTab('login')">เข้าสู่ระบบ</button>
-      <button class="auth-tab"        id="tab-register" onclick="switchTab('register')">สมัครสมาชิก</button>
+      <button class="auth-tab active" id="tab-login"    onclick="switchTab('login')" data-i18n="login_tab_login">เข้าสู่ระบบ</button>
+      <button class="auth-tab"        id="tab-register" onclick="switchTab('register')" data-i18n="login_tab_register">สมัครสมาชิก</button>
     </div>
 
     <!-- ── Login form ── -->
     <div id="panel-login">
       <div class="form-group">
-        <label class="form-label">ชื่อผู้ใช้</label>
-        <input type="text" id="l-user" class="form-input" placeholder="ชื่อผู้ใช้ของคุณ" autocomplete="username">
+        <label class="form-label" data-i18n="login_username_label">ชื่อผู้ใช้</label>
+        <input type="text" id="l-user" class="form-input" placeholder="ชื่อผู้ใช้ของคุณ" autocomplete="username" data-i18n-placeholder="login_username_placeholder">
       </div>
       <div class="form-group">
-        <label class="form-label">รหัสผ่าน</label>
-        <input type="password" id="l-pw" class="form-input" placeholder="รหัสผ่าน" autocomplete="current-password">
+        <label class="form-label" data-i18n="login_password_label">รหัสผ่าน</label>
+        <input type="password" id="l-pw" class="form-input" placeholder="รหัสผ่าน" autocomplete="current-password" data-i18n-placeholder="login_password_placeholder">
       </div>
       <div id="l-err" class="msg msg-error"></div>
-      <button class="submit-btn" id="l-btn" onclick="doLogin()">🔑 เข้าสู่ระบบ</button>
+      <button class="submit-btn" id="l-btn" onclick="doLogin()" data-i18n="login_btn">🔑 เข้าสู่ระบบ</button>
     </div>
 
     <!-- ── Register form ── -->
     <div id="panel-register" style="display:none;">
       <div class="form-group">
-        <label class="form-label">ชื่อผู้ใช้</label>
-        <input type="text" id="r-user" class="form-input" placeholder="อย่างน้อย 3 ตัวอักษร" autocomplete="username">
+        <label class="form-label" data-i18n="login_username_label">ชื่อผู้ใช้</label>
+        <input type="text" id="r-user" class="form-input" placeholder="อย่างน้อย 3 ตัวอักษร" autocomplete="username" data-i18n-placeholder="login_register_username_placeholder">
       </div>
       <div class="form-group">
-        <label class="form-label">รหัสผ่าน</label>
-        <input type="password" id="r-pw" class="form-input" placeholder="อย่างน้อย 6 ตัวอักษร" autocomplete="new-password">
+        <label class="form-label" data-i18n="login_password_label">รหัสผ่าน</label>
+        <input type="password" id="r-pw" class="form-input" placeholder="อย่างน้อย 6 ตัวอักษร" autocomplete="new-password" data-i18n-placeholder="login_register_password_placeholder">
       </div>
       <div class="form-group">
-        <label class="form-label">ยืนยันรหัสผ่าน</label>
-        <input type="password" id="r-pw2" class="form-input" placeholder="รหัสผ่านอีกครั้ง" autocomplete="new-password">
+        <label class="form-label" data-i18n="login_confirm_password_label">ยืนยันรหัสผ่าน</label>
+        <input type="password" id="r-pw2" class="form-input" placeholder="รหัสผ่านอีกครั้ง" autocomplete="new-password" data-i18n-placeholder="login_confirm_password_placeholder">
       </div>
       <div id="r-err" class="msg msg-error"></div>
       <div id="r-ok"  class="msg msg-success"></div>
-      <button class="submit-btn" id="r-btn" onclick="doRegister()">✨ สมัครสมาชิก</button>
+      <button class="submit-btn" id="r-btn" onclick="doRegister()" data-i18n="login_register_btn">✨ สมัครสมาชิก</button>
     </div>
 
-    <a href="index.html" class="back-link">← กลับหน้าแรก</a>
+    <a href="index.html" class="back-link" data-i18n="login_back_link">← กลับหน้าแรก</a>
   </div>
 </div>
 
 <script src="assets/auth.js?v=20260613"></script>
+<script src="assets/i18n.js"></script>
 <script>
+var RC_SITE_KEY = '6LegGB8tAAAAAGZK9qoZsvT9xGf1HbN1OlXjbKqE';
+
+async function _verifyRecaptcha(action) {
+  try {
+    var token = await grecaptcha.execute(RC_SITE_KEY, { action: action });
+    var r = await fetch('/api/verify-recaptcha', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token }),
+    });
+    var d = await r.json();
+    return !!d.success;
+  } catch (e) {
+    return false;
+  }
+}
+
 if (AUTH.isLoggedIn()) window.location.href = 'index.html';
 
 function switchTab(tab) {
@@ -276,16 +295,24 @@ async function doLogin() {
   var pw   = document.getElementById('l-pw').value;
   var btn  = document.getElementById('l-btn');
   btn.disabled = true;
-  btn.textContent = 'กำลังตรวจสอบ...';
+  btn.textContent = window.bcT('login_checking_btn','กำลังตรวจสอบ...');
+
+  var rcOk = await _verifyRecaptcha('login');
+  if (!rcOk) {
+    _showMsg('l-err', window.bcT('login_recaptcha_failed','reCAPTCHA ไม่ผ่าน กรุณาลองใหม่'));
+    btn.disabled = false;
+    btn.textContent = window.bcT('login_btn','🔑 เข้าสู่ระบบ');
+    return;
+  }
 
   var res = await AUTH.login(user, pw);
   if (res.ok) {
-    btn.textContent = '✅ สำเร็จ! กำลังพาไป...';
+    btn.textContent = window.bcT('login_success_btn','✅ สำเร็จ! กำลังพาไป...');
     setTimeout(function () { window.location.href = 'index.html'; }, 500);
   } else {
     _showMsg('l-err', res.err);
     btn.disabled = false;
-    btn.textContent = '🔑 เข้าสู่ระบบ';
+    btn.textContent = window.bcT('login_btn','🔑 เข้าสู่ระบบ');
   }
 }
 
@@ -295,26 +322,34 @@ async function doRegister() {
   var pw   = document.getElementById('r-pw').value;
   var pw2  = document.getElementById('r-pw2').value;
 
-  if (pw !== pw2) { _showMsg('r-err', 'รหัสผ่านไม่ตรงกัน'); return; }
+  if (pw !== pw2) { _showMsg('r-err', window.bcT('login_password_mismatch','รหัสผ่านไม่ตรงกัน')); return; }
 
   var btn = document.getElementById('r-btn');
   btn.disabled = true;
-  btn.textContent = 'กำลังสมัคร...';
+  btn.textContent = window.bcT('login_registering_btn','กำลังสมัคร...');
+
+  var rcOk = await _verifyRecaptcha('register');
+  if (!rcOk) {
+    _showMsg('r-err', window.bcT('login_recaptcha_failed','reCAPTCHA ไม่ผ่าน กรุณาลองใหม่'));
+    btn.disabled = false;
+    btn.textContent = window.bcT('login_register_btn','✨ สมัครสมาชิก');
+    return;
+  }
 
   var res = await AUTH.register(user, pw);
   if (res.ok) {
     var loginRes = await AUTH.login(user, pw);
     if (loginRes.ok) {
-      _showMsg('r-ok', '✅ สมัครสมาชิกสำเร็จ! กำลังพาไปหน้าแรก...');
+      _showMsg('r-ok', window.bcT('login_register_success_redirect','✅ สมัครสมาชิกสำเร็จ! กำลังพาไปหน้าแรก...'));
       setTimeout(function () { window.location.href = 'index.html'; }, 800);
     } else {
-      _showMsg('r-ok', '✅ สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
+      _showMsg('r-ok', window.bcT('login_register_success_login','✅ สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ'));
       setTimeout(function () { switchTab('login'); }, 1200);
     }
   } else {
     _showMsg('r-err', res.err);
     btn.disabled = false;
-    btn.textContent = '✨ สมัครสมาชิก';
+    btn.textContent = window.bcT('login_register_btn','✨ สมัครสมาชิก');
   }
 }
 

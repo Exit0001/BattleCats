@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-16 17:49:12
+Transfer  : c2200bef7
+Confirm   : 3709
+Country   : en
+============================================================
+[OP] Clear Legends ['ul'] max_crown=2 x1
+[BCSFE] ⬇  Downloading save (transfer=c2200b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[UL] ✔ 49 maps (crown 1-2)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_6718ca88
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260616_174913_c2200bef
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: f68ea3811 | Confirm ใหม่: 9220
+============================================================

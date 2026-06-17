@@ -1,0 +1,20 @@
+============================================================
+เวลา      : 2026-06-16 18:36:25
+Transfer  : 479357de1
+Confirm   : 0466
+Country   : en
+============================================================
+[OP] Clear Outbreaks Chapters [1, 2, 3, 4, 5, 6]
+[BCSFE] ⬇  Downloading save (transfer=479357... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[OUTBREAK] ✔ Empire of Cats Ch.1 — 48 stages cleared
+[OUTBREAK] ✔ Empire of Cats Ch.2 — 48 stages cleared
+[OUTBREAK] ✔ Empire of Cats Ch.3 — 48 stages cleared
+[OUTBREAK] ✔ Into the Future Ch.1 — 48 stages cleared
+[OUTBREAK] ✔ Into the Future Ch.2 — 48 stages cleared
+[OUTBREAK] ✔ Into the Future Ch.3 — 48 stages cleared
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_490e0825
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260616_183627_479357de
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 145bc620e | Confirm ใหม่: 1598
+============================================================

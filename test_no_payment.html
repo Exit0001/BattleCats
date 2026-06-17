@@ -185,7 +185,7 @@
     <a href="index.html" class="nav-logo">BATTLE CAT PRO MAX</a>
     <ul class="nav-links">
       <li><a href="index.html">หน้าแรก</a></li>
-      <li><a href="shop.html">ร้านขาย</a></li>
+      <li><a href="shop.html">ร้านค้าไอเทม</a></li>
       <li><a href="shop-codes.html">รหัสสำเร็จรูป</a></li>
       <li><a href="characters.html">ปลดล็อคแมว</a></li>
       <li><a href="stages.html">ปลดล็อคด่าน</a></li>
@@ -725,6 +725,262 @@
     </div>
     <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runManicPackage(event)">🌟 True Form Manic All Cat (91–99)</button>
     <div id="manic-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── CLEAR STORY CHAPTERS (เลือก chapter) ─────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🗺️ เคลียร์ด่าน Main Story (เลือก Chapter)</div>
+    <div style="background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#93C5FD;">
+      เคลียร์ทั้ง 48 ด่านในแต่ละ chapter ที่เลือก — <strong>EoC Ch.1–3 / ItF Ch.1–3 / CotC Ch.1–3</strong>
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="csc-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="csc-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="csc-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label class="form-label">เลือก Chapter (กดเพื่อเลือก/ยกเลิก)</label>
+      <div id="csc-chapter-btns" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;">
+        <button onclick="cscToggle(1)" id="csc-c1" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">EoC Ch.1</button>
+        <button onclick="cscToggle(2)" id="csc-c2" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">EoC Ch.2</button>
+        <button onclick="cscToggle(3)" id="csc-c3" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">EoC Ch.3</button>
+        <button onclick="cscToggle(4)" id="csc-c4" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">ItF Ch.1</button>
+        <button onclick="cscToggle(5)" id="csc-c5" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">ItF Ch.2</button>
+        <button onclick="cscToggle(6)" id="csc-c6" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">ItF Ch.3</button>
+        <button onclick="cscToggle(7)" id="csc-c7" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">CotC Ch.1</button>
+        <button onclick="cscToggle(8)" id="csc-c8" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">CotC Ch.2</button>
+        <button onclick="cscToggle(9)" id="csc-c9" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">CotC Ch.3</button>
+      </div>
+      <div id="csc-sel-label" style="margin-top:8px;font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);">ยังไม่ได้เลือก</div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Clear Amount (จำนวนครั้งที่ผ่านต่อด่าน, ค่าเริ่มต้น 1)</label>
+      <input type="number" id="csc-amt" class="form-input" value="1" min="1" max="9999">
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runClearStoryChapters()">🗺️ เคลียร์ Chapter ที่เลือก</button>
+    <div id="csc-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── CLEAR STORY ALL ──────────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🗺️🗺️ เคลียร์ด่าน Main Story ทั้งหมด (9 Chapters)</div>
+    <div style="background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FDA4AF;">
+      ⚠️ เคลียร์ทั้ง 9 chapters — EoC Ch.1–3, ItF Ch.1–3, CotC Ch.1–3 (รวม 432 ด่าน)
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="csa-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="csa-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="csa-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Clear Amount (จำนวนครั้งที่ผ่านต่อด่าน, ค่าเริ่มต้น 1)</label>
+      <input type="number" id="csa-amt" class="form-input" value="1" min="1" max="9999">
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runClearStoryAll()">🗺️ เคลียร์ทุก Chapter (1–9)</button>
+    <div id="csa-result" style="display:none;"></div>
+  </div>
+  <!-- ── RESET STORY CHAPTERS (เลือก chapter) ──────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🔄 รีเซ็ตด่าน Main Story (เลือก Chapter)</div>
+    <div style="background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FDA4AF;">
+      ⚠️ รีเซ็ต progress และ clear_times ของทุกด่านกลับเป็น 0 — ใช้สำหรับทดสอบระบบ Clear
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="rsc-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="rsc-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="rsc-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label class="form-label">เลือก Chapter ที่จะรีเซ็ต</label>
+      <div id="rsc-chapter-btns" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;">
+        <button onclick="rscToggle(1)" id="rsc-c1" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">EoC Ch.1</button>
+        <button onclick="rscToggle(2)" id="rsc-c2" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">EoC Ch.2</button>
+        <button onclick="rscToggle(3)" id="rsc-c3" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">EoC Ch.3</button>
+        <button onclick="rscToggle(4)" id="rsc-c4" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">ItF Ch.1</button>
+        <button onclick="rscToggle(5)" id="rsc-c5" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">ItF Ch.2</button>
+        <button onclick="rscToggle(6)" id="rsc-c6" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">ItF Ch.3</button>
+        <button onclick="rscToggle(7)" id="rsc-c7" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">CotC Ch.1</button>
+        <button onclick="rscToggle(8)" id="rsc-c8" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">CotC Ch.2</button>
+        <button onclick="rscToggle(9)" id="rsc-c9" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">CotC Ch.3</button>
+      </div>
+      <div id="rsc-sel-label" style="margin-top:8px;font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);">ยังไม่ได้เลือก</div>
+    </div>
+    <button class="btn btn-outline" style="width:100%;margin-bottom:10px;border-color:rgba(244,63,94,0.5);color:#FDA4AF;" onclick="runResetStoryChapters()">🔄 รีเซ็ต Chapter ที่เลือก</button>
+    <div id="rsc-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── RESET STORY ALL ──────────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🔄🔄 รีเซ็ตด่าน Main Story ทั้งหมด (9 Chapters)</div>
+    <div style="background:rgba(244,63,94,0.12);border:1px solid rgba(244,63,94,0.45);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FDA4AF;">
+      ⚠️ รีเซ็ตทั้ง 9 chapters กลับเป็น 0 ทั้งหมด — ใช้เพื่อทดสอบระบบ Clear Story ซ้ำได้
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="rsa-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="rsa-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="rsa-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-outline" style="width:100%;margin-bottom:10px;border-color:rgba(244,63,94,0.5);color:#FDA4AF;" onclick="runResetStoryAll()">🔄 รีเซ็ตทุก Chapter (1–9)</button>
+    <div id="rsa-result" style="display:none;"></div>
+  </div>
+  <!-- TREASURE - เลือก Chapter -->
+  <div class="test-section">
+    <div class="test-section-title">💰 ตั้งค่า Treasure (เลือก Chapter)</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="form-group"><label class="form-label">Transfer Code</label><input id="stc-tc" class="form-input" placeholder="Transfer Code"></div>
+      <div class="form-group"><label class="form-label">Confirmation Code</label><input id="stc-cc" class="form-input" placeholder="Confirmation Code"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Server</label>
+      <select id="stc-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Treasure Grade</label>
+      <select id="stc-grade" class="form-input">
+        <option value="3">3 — Gold (ทอง)</option>
+        <option value="2">2 — Silver (เงิน)</option>
+        <option value="1">1 — Bronze (ทองแดง)</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">เลือก Chapter (กดเพื่อเลือก/ยกเลิก)</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+        <button id="stc-ch1"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(1)">EoC 1</button>
+        <button id="stc-ch2"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(2)">EoC 2</button>
+        <button id="stc-ch3"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(3)">EoC 3</button>
+        <button id="stc-ch4"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(4)">ItF 1</button>
+        <button id="stc-ch5"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(5)">ItF 2</button>
+        <button id="stc-ch6"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(6)">ItF 3</button>
+        <button id="stc-ch7"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(7)">CotC 1</button>
+        <button id="stc-ch8"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(8)">CotC 2</button>
+        <button id="stc-ch9"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(9)">CotC 3</button>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runSetTreasureChapters()">💰 ตั้ง Treasure Chapters ที่เลือก</button>
+    <div id="stc-result" style="display:none;"></div>
+  </div>
+
+  <!-- TREASURE - ทั้งหมด -->
+  <div class="test-section">
+    <div class="test-section-title">💰💰 ตั้งค่า Treasure ทั้งหมด (ทุก Chapter)</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="form-group"><label class="form-label">Transfer Code</label><input id="sta-tc" class="form-input" placeholder="Transfer Code"></div>
+      <div class="form-group"><label class="form-label">Confirmation Code</label><input id="sta-cc" class="form-input" placeholder="Confirmation Code"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Server</label>
+      <select id="sta-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Treasure Grade</label>
+      <select id="sta-grade" class="form-input">
+        <option value="3">3 — Gold (ทอง)</option>
+        <option value="2">2 — Silver (เงิน)</option>
+        <option value="1">1 — Bronze (ทองแดง)</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runSetTreasureAll()">💰 ตั้ง Treasure ทุก Chapter (1–9)</button>
+    <div id="sta-result" style="display:none;"></div>
+  </div>
+
+  <!-- OUTBREAK - เลือก Chapter -->
+  <div class="test-section">
+    <div class="test-section-title">🧟 เคลียร์ Zombie Stages (เลือก Chapter)</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="form-group"><label class="form-label">Transfer Code</label><input id="obc-tc" class="form-input" placeholder="Transfer Code"></div>
+      <div class="form-group"><label class="form-label">Confirmation Code</label><input id="obc-cc" class="form-input" placeholder="Confirmation Code"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Server</label>
+      <select id="obc-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">เลือก Chapter (กดเพื่อเลือก/ยกเลิก)</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+        <button id="obc-ch1"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(1)">EoC 1</button>
+        <button id="obc-ch2"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(2)">EoC 2</button>
+        <button id="obc-ch3"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(3)">EoC 3</button>
+        <button id="obc-ch4"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(4)">ItF 1</button>
+        <button id="obc-ch5"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(5)">ItF 2</button>
+        <button id="obc-ch6"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(6)">ItF 3</button>
+        <button id="obc-ch7"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(7)">CotC 1</button>
+        <button id="obc-ch8"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(8)">CotC 2</button>
+        <button id="obc-ch9"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(9)">CotC 3</button>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runClearOutbreakChapters()">🧟 เคลียร์ Zombie Chapters ที่เลือก</button>
+    <div id="obc-result" style="display:none;"></div>
+  </div>
+
+  <!-- OUTBREAK - ทั้งหมด -->
+  <div class="test-section">
+    <div class="test-section-title">🧟🧟 เคลียร์ Zombie Stages ทั้งหมด (ทุก Chapter)</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="form-group"><label class="form-label">Transfer Code</label><input id="oba-tc" class="form-input" placeholder="Transfer Code"></div>
+      <div class="form-group"><label class="form-label">Confirmation Code</label><input id="oba-cc" class="form-input" placeholder="Confirmation Code"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Server</label>
+      <select id="oba-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runClearOutbreakAll()">🧟 เคลียร์ Zombie ทุก Chapter (1–9)</button>
+    <div id="oba-result" style="display:none;"></div>
+  </div>
+
+  <!-- AKU REALM -->
+  <div class="test-section">
+    <div class="test-section-title">👹 Aku Realm — Unlock &amp; Clear Chapters</div>
+    <div style="background:rgba(244,63,94,0.06);border:1px solid rgba(244,63,94,0.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(244,63,94,0.8);">
+      เลือกได้ทั้ง 2 พร้อมกัน: Unlock = ปลดล็อค Aku Realm | Clear Chapters = ผ่านทุก stage ใน Aku Chapters
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="form-group"><label class="form-label">Transfer Code</label><input id="aku-tc" class="form-input" placeholder="Transfer Code"></div>
+      <div class="form-group"><label class="form-label">Confirmation Code</label><input id="aku-cc" class="form-input" placeholder="Confirmation Code"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Server</label>
+      <select id="aku-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">เลือก Action (กดเพื่อเลือก/ยกเลิก)</label>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;">
+        <button id="aku-unlock" class="btn btn-outline" style="min-width:200px;" onclick="akuToggle('unlock')">🔓 Unlock Aku Realm (#8)</button>
+        <button id="aku-chap"   class="btn btn-outline" style="min-width:200px;" onclick="akuToggle('chap')">⚔️ Clear Aku Chapters (#11)</button>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;background:linear-gradient(135deg,#7c3aed,#f43f5e);" onclick="runAku()">👹 ดำเนินการ Aku Realm</button>
+    <div id="aku-result" style="display:none;"></div>
+  </div>
+
+  <!-- LEGEND STAGES - SoL / UL / ZL -->
+  <div class="test-section">
+    <div class="test-section-title">👑 เคลียร์ Legend Stages (SoL / UL / ZL)</div>
+    <div style="background:rgba(255,216,78,0.06);border:1px solid rgba(255,216,78,0.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(255,216,78,0.8);">
+      เคลียร์ทุก map ใน legend type ที่เลือก — ตาม crown ที่กำหนด (crown 1-N หมายถึงเคลียร์ทุก star ตั้งแต่ 1 ถึง N)
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="form-group"><label class="form-label">Transfer Code</label><input id="leg-tc" class="form-input" placeholder="Transfer Code"></div>
+      <div class="form-group"><label class="form-label">Confirmation Code</label><input id="leg-cc" class="form-input" placeholder="Confirmation Code"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Server</label>
+      <select id="leg-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">เลือก Legend Type (กดเพื่อเลือก/ยกเลิก)</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+        <button id="leg-sol" class="btn btn-outline" style="min-width:160px;" onclick="legToggle('sol')">📖 Stories of Legend</button>
+        <button id="leg-ul"  class="btn btn-outline" style="min-width:160px;" onclick="legToggle('ul')">🌀 Uncanny Legends</button>
+        <button id="leg-zl"  class="btn btn-outline" style="min-width:160px;" onclick="legToggle('zl')">⚡ Zero Legends</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Crown Level (เคลียร์ถึง crown ที่ N)</label>
+      <div style="display:flex;gap:8px;margin-top:6px;">
+        <button id="leg-cr1" class="btn btn-outline" style="min-width:56px;" onclick="legCrown(1)">👑×1</button>
+        <button id="leg-cr2" class="btn btn-outline" style="min-width:56px;" onclick="legCrown(2)">👑×2</button>
+        <button id="leg-cr3" class="btn btn-outline" style="min-width:56px;" onclick="legCrown(3)">👑×3</button>
+        <button id="leg-cr4" class="btn btn-primary" style="min-width:56px;" onclick="legCrown(4)">👑×4</button>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runClearLegends()">👑 เคลียร์ Legend Stages</button>
+    <div id="leg-result" style="display:none;"></div>
   </div>
 
   <!-- CONCURRENT TEST - Multi User -->
@@ -1346,6 +1602,428 @@ async function cuRunAll() {
   resEl.innerHTML = html;
   var allOk = results.every(function(r) { return r.success; });
   toast(allOk ? '✅ ทั้ง ' + results.length + ' requests สำเร็จ!' : '⚠ บางตัวล้มเหลว', allOk ? 'ok' : 'warn');
+}
+
+// ── Clear Story Chapters ──────────────────────────────────────
+var _cscSel = new Set();
+
+function cscToggle(n) {
+  var btn = document.getElementById('csc-c' + n);
+  if (_cscSel.has(n)) {
+    _cscSel.delete(n);
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-outline');
+  } else {
+    _cscSel.add(n);
+    btn.classList.remove('btn-outline');
+    btn.classList.add('btn-primary');
+  }
+  var names = {1:'EoC Ch.1',2:'EoC Ch.2',3:'EoC Ch.3',4:'ItF Ch.1',5:'ItF Ch.2',6:'ItF Ch.3',7:'CotC Ch.1',8:'CotC Ch.2',9:'CotC Ch.3'};
+  var sel = Array.from(_cscSel).sort(function(a,b){return a-b;});
+  document.getElementById('csc-sel-label').textContent = sel.length ? 'เลือกแล้ว: ' + sel.map(function(n){ return names[n]; }).join(', ') : 'ยังไม่ได้เลือก';
+}
+
+function _storyResultHtml(data) {
+  var logLines = data.log || [];
+  var logHtml = logLines.length
+    ? '<div style="margin-top:12px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">📋 Log</div>' +
+      '<div style="background:rgba(0,0,0,0.35);border-radius:10px;padding:10px 14px;max-height:160px;overflow-y:auto;font-family:monospace;font-size:11px;line-height:1.8;color:#86EFAC;white-space:pre;">' +
+      logLines.map(function(l){ return l.replace(/✘/g,'<span style="color:#F87171">✘</span>').replace(/✔/g,'<span style="color:#4ADE80">✔</span>'); }).join('\n') +
+      '</div></div>' : '';
+  return '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+    '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ เคลียร์ด่านสำเร็จ!</div>' +
+    '<div style="margin-bottom:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
+    '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code||'-') + '</div></div>' +
+    '<div><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+    '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code||'-') + '</div></div>' +
+    logHtml + '</div>';
+}
+
+async function runClearStoryChapters() {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('csc-tc').value.trim();
+  var cc  = document.getElementById('csc-cc').value.trim();
+  var srv = document.getElementById('csc-srv').value;
+  var ca  = parseInt(document.getElementById('csc-amt').value) || 1;
+  var sel = Array.from(_cscSel).sort(function(a,b){return a-b;});
+
+  if (!tc || !cc) { toast('❌ กรอก Transfer/Confirmation Code ก่อน', 'err'); return; }
+  if (!sel.length) { toast('❌ เลือก Chapter อย่างน้อย 1 ตัวก่อน', 'err'); return; }
+
+  var btn = event.target;
+  var res = document.getElementById('csc-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังเคลียร์ด่าน...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังเคลียร์ ' + sel.length + ' chapters...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/clear/story-chapters', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, chapters: sel, clear_amount: ca }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ เคลียร์ด่านสำเร็จ!', 'ok');
+      res.innerHTML = _storyResultHtml(data);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message||e), 'err');
+    res.innerHTML = _pkgErrorHtml(e.message||e);
+  } finally {
+    btn.disabled = false; btn.textContent = '🗺️ เคลียร์ Chapter ที่เลือก';
+  }
+}
+
+async function runClearStoryAll() {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('csa-tc').value.trim();
+  var cc  = document.getElementById('csa-cc').value.trim();
+  var srv = document.getElementById('csa-srv').value;
+  var ca  = parseInt(document.getElementById('csa-amt').value) || 1;
+
+  if (!tc || !cc) { toast('❌ กรอก Transfer/Confirmation Code ก่อน', 'err'); return; }
+
+  var btn = event.target;
+  var res = document.getElementById('csa-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังเคลียร์ทุก chapter...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังเคลียร์ทั้ง 9 chapters (432 ด่าน)...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/clear/story-all', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, clear_amount: ca }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ เคลียร์ทุก chapter สำเร็จ!', 'ok');
+      res.innerHTML = _storyResultHtml(data);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message||e), 'err');
+    res.innerHTML = _pkgErrorHtml(e.message||e);
+  } finally {
+    btn.disabled = false; btn.textContent = '🗺️ เคลียร์ทุก Chapter (1–9)';
+  }
+}
+// ── Reset Story Chapters ──────────────────────────────────────
+var _rscSel = new Set();
+
+function rscToggle(n) {
+  var btn = document.getElementById('rsc-c' + n);
+  if (_rscSel.has(n)) {
+    _rscSel.delete(n);
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-outline');
+    btn.style.borderColor = ''; btn.style.color = '';
+  } else {
+    _rscSel.add(n);
+    btn.classList.remove('btn-outline');
+    btn.classList.add('btn-primary');
+    btn.style.borderColor = 'rgba(244,63,94,0.7)';
+    btn.style.color = '#FDA4AF';
+  }
+  var names = {1:'EoC Ch.1',2:'EoC Ch.2',3:'EoC Ch.3',4:'ItF Ch.1',5:'ItF Ch.2',6:'ItF Ch.3',7:'CotC Ch.1',8:'CotC Ch.2',9:'CotC Ch.3'};
+  var sel = Array.from(_rscSel).sort(function(a,b){return a-b;});
+  document.getElementById('rsc-sel-label').textContent = sel.length ? 'เลือกแล้ว: ' + sel.map(function(n){ return names[n]; }).join(', ') : 'ยังไม่ได้เลือก';
+}
+
+function _resetResultHtml(data) {
+  var logLines = data.log || [];
+  var logHtml = logLines.length
+    ? '<div style="margin-top:12px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">📋 Log</div>' +
+      '<div style="background:rgba(0,0,0,0.35);border-radius:10px;padding:10px 14px;max-height:140px;overflow-y:auto;font-family:monospace;font-size:11px;line-height:1.8;color:#86EFAC;white-space:pre;">' +
+      logLines.map(function(l){ return l.replace(/✘/g,'<span style="color:#F87171">✘</span>').replace(/✔/g,'<span style="color:#4ADE80">✔</span>'); }).join('\n') +
+      '</div></div>' : '';
+  return '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+    '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ รีเซ็ตสำเร็จ!</div>' +
+    '<div style="margin-bottom:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
+    '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code||'-') + '</div></div>' +
+    '<div><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+    '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code||'-') + '</div></div>' +
+    logHtml + '</div>';
+}
+
+async function runResetStoryChapters() {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('rsc-tc').value.trim();
+  var cc  = document.getElementById('rsc-cc').value.trim();
+  var srv = document.getElementById('rsc-srv').value;
+  var sel = Array.from(_rscSel).sort(function(a,b){return a-b;});
+
+  if (!tc || !cc) { toast('❌ กรอก Transfer/Confirmation Code ก่อน', 'err'); return; }
+  if (!sel.length) { toast('❌ เลือก Chapter ที่จะรีเซ็ตก่อน', 'err'); return; }
+
+  var btn = event.target;
+  var res = document.getElementById('rsc-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังรีเซ็ต...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังรีเซ็ต ' + sel.length + ' chapters...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/reset/story-chapters', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, chapters: sel }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ รีเซ็ตสำเร็จ!', 'ok');
+      res.innerHTML = _resetResultHtml(data);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message||e), 'err');
+    res.innerHTML = _pkgErrorHtml(e.message||e);
+  } finally {
+    btn.disabled = false; btn.textContent = '🔄 รีเซ็ต Chapter ที่เลือก';
+  }
+}
+
+async function runResetStoryAll() {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('rsa-tc').value.trim();
+  var cc  = document.getElementById('rsa-cc').value.trim();
+  var srv = document.getElementById('rsa-srv').value;
+
+  if (!tc || !cc) { toast('❌ กรอก Transfer/Confirmation Code ก่อน', 'err'); return; }
+
+  var btn = event.target;
+  var res = document.getElementById('rsa-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังรีเซ็ตทุก chapter...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังรีเซ็ตทั้ง 9 chapters...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/reset/story-all', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ รีเซ็ตทุก chapter สำเร็จ!', 'ok');
+      res.innerHTML = _resetResultHtml(data);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message||e), 'err');
+    res.innerHTML = _pkgErrorHtml(e.message||e);
+  } finally {
+    btn.disabled = false; btn.textContent = '🔄 รีเซ็ตทุก Chapter (1–9)';
+  }
+}
+// ── Treasure ──────────────────────────────────────────────────
+var _stcSelected = new Set();
+function stcToggle(n) {
+  var btn = document.getElementById('stc-ch' + n);
+  if (_stcSelected.has(n)) { _stcSelected.delete(n); btn.className = 'btn btn-outline'; }
+  else { _stcSelected.add(n); btn.className = 'btn btn-primary'; }
+}
+
+function _treasureResultHtml(data, prefix) {
+  var tc = data.new_transfer_code || '-';
+  var cc = data.new_confirmation_code || '-';
+  var log = (data.log || []).map(function(l) { return '<div>' + l + '</div>'; }).join('');
+  return '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.3);border-radius:10px;padding:14px;font-family:\'Chakra Petch\',monospace;font-size:13px;">'
+    + '<div style="color:#86efac;font-weight:700;margin-bottom:8px;">✅ สำเร็จ!</div>'
+    + '<div style="margin-bottom:4px;"><strong>Transfer Code:</strong> <span style="color:#ffd94e;">' + tc + '</span></div>'
+    + '<div style="margin-bottom:10px;"><strong>Confirmation Code:</strong> <span style="color:#ffd94e;">' + cc + '</span></div>'
+    + '<div style="color:#C4B5FD;font-size:12px;">' + log + '</div></div>';
+}
+
+async function runSetTreasureChapters() {
+  var chapters = Array.from(_stcSelected);
+  if (!chapters.length) { alert('กรุณาเลือกอย่างน้อย 1 Chapter'); return; }
+  var tc = document.getElementById('stc-tc').value.trim();
+  var cc = document.getElementById('stc-cc').value.trim();
+  var srv = document.getElementById('stc-srv').value;
+  var tv = parseInt(document.getElementById('stc-grade').value);
+  var res = document.getElementById('stc-result');
+  res.style.display = 'block';
+  res.innerHTML = '<div style="color:#C4B5FD;font-family:\'Chakra Petch\',monospace;">กำลังตั้ง Treasure...</div>';
+  try {
+    var r = await fetch('/api/treasure/story-chapters', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, chapters: chapters, treasure_value: tv })
+    });
+    var d = await r.json();
+    res.innerHTML = d.success ? _treasureResultHtml(d) : '<div style="color:#FDA4AF;">❌ ' + (d.error || 'Unknown error') + '</div>';
+  } catch(e) { res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + e + '</div>'; }
+}
+
+async function runSetTreasureAll() {
+  var tc = document.getElementById('sta-tc').value.trim();
+  var cc = document.getElementById('sta-cc').value.trim();
+  var srv = document.getElementById('sta-srv').value;
+  var tv = parseInt(document.getElementById('sta-grade').value);
+  var res = document.getElementById('sta-result');
+  res.style.display = 'block';
+  res.innerHTML = '<div style="color:#C4B5FD;font-family:\'Chakra Petch\',monospace;">กำลังตั้ง Treasure ทุก Chapter...</div>';
+  try {
+    var r = await fetch('/api/treasure/story-all', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, treasure_value: tv })
+    });
+    var d = await r.json();
+    res.innerHTML = d.success ? _treasureResultHtml(d) : '<div style="color:#FDA4AF;">❌ ' + (d.error || 'Unknown error') + '</div>';
+  } catch(e) { res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + e + '</div>'; }
+}
+
+// ── Outbreak (Zombie) ──────────────────────────────────────────
+var _obcSelected = new Set();
+function obcToggle(n) {
+  var btn = document.getElementById('obc-ch' + n);
+  if (_obcSelected.has(n)) { _obcSelected.delete(n); btn.className = 'btn btn-outline'; }
+  else { _obcSelected.add(n); btn.className = 'btn btn-primary'; }
+}
+
+function _outbreakResultHtml(data) {
+  var tc = data.new_transfer_code || '-';
+  var cc = data.new_confirmation_code || '-';
+  var log = (data.log || []).map(function(l) { return '<div>' + l + '</div>'; }).join('');
+  return '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.3);border-radius:10px;padding:14px;font-family:\'Chakra Petch\',monospace;font-size:13px;">'
+    + '<div style="color:#86efac;font-weight:700;margin-bottom:8px;">✅ สำเร็จ!</div>'
+    + '<div style="margin-bottom:4px;"><strong>Transfer Code:</strong> <span style="color:#ffd94e;">' + tc + '</span></div>'
+    + '<div style="margin-bottom:10px;"><strong>Confirmation Code:</strong> <span style="color:#ffd94e;">' + cc + '</span></div>'
+    + '<div style="color:#C4B5FD;font-size:12px;">' + log + '</div></div>';
+}
+
+async function runClearOutbreakChapters() {
+  var chapters = Array.from(_obcSelected);
+  if (!chapters.length) { alert('กรุณาเลือกอย่างน้อย 1 Chapter'); return; }
+  var tc = document.getElementById('obc-tc').value.trim();
+  var cc = document.getElementById('obc-cc').value.trim();
+  var srv = document.getElementById('obc-srv').value;
+  var res = document.getElementById('obc-result');
+  res.style.display = 'block';
+  res.innerHTML = '<div style="color:#C4B5FD;font-family:\'Chakra Petch\',monospace;">กำลังเคลียร์ Zombie Stages...</div>';
+  try {
+    var r = await fetch('/api/outbreak/story-chapters', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, chapters: chapters })
+    });
+    var d = await r.json();
+    res.innerHTML = d.success ? _outbreakResultHtml(d) : '<div style="color:#FDA4AF;">❌ ' + (d.error || 'Unknown error') + '</div>';
+  } catch(e) { res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + e + '</div>'; }
+}
+
+async function runClearOutbreakAll() {
+  var tc = document.getElementById('oba-tc').value.trim();
+  var cc = document.getElementById('oba-cc').value.trim();
+  var srv = document.getElementById('oba-srv').value;
+  var res = document.getElementById('oba-result');
+  res.style.display = 'block';
+  res.innerHTML = '<div style="color:#C4B5FD;font-family:\'Chakra Petch\',monospace;">กำลังเคลียร์ Zombie Stages ทุก Chapter...</div>';
+  try {
+    var r = await fetch('/api/outbreak/story-all', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv })
+    });
+    var d = await r.json();
+    res.innerHTML = d.success ? _outbreakResultHtml(d) : '<div style="color:#FDA4AF;">❌ ' + (d.error || 'Unknown error') + '</div>';
+  } catch(e) { res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + e + '</div>'; }
+}
+
+// ── Aku Realm ──────────────────────────────────────────────────
+var _akuSelected = new Set();
+function akuToggle(type) {
+  var btn = document.getElementById('aku-' + type);
+  if (_akuSelected.has(type)) { _akuSelected.delete(type); btn.className = 'btn btn-outline'; }
+  else { _akuSelected.add(type); btn.className = 'btn btn-primary'; }
+}
+
+async function runAku() {
+  if (!_akuSelected.size) { alert('กรุณาเลือกอย่างน้อย 1 Action'); return; }
+  var tc = document.getElementById('aku-tc').value.trim();
+  var cc = document.getElementById('aku-cc').value.trim();
+  var srv = document.getElementById('aku-srv').value;
+  var doUnlock = _akuSelected.has('unlock');
+  var doChap   = _akuSelected.has('chap');
+  var res = document.getElementById('aku-result');
+  res.style.display = 'block';
+  var actions = [];
+  if (doUnlock) actions.push('Unlock Aku Realm');
+  if (doChap)   actions.push('Clear Aku Chapters');
+  res.innerHTML = '<div style="color:#C4B5FD;font-family:\'Chakra Petch\',monospace;">กำลังดำเนินการ: ' + actions.join(' + ') + '...</div>';
+  try {
+    var r = await fetch('/api/aku', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv,
+                              do_unlock: doUnlock, do_chapters: doChap, clear_amount: 1 })
+    });
+    var d = await r.json();
+    if (d.success) {
+      var tc2 = d.new_transfer_code || '-';
+      var cc2 = d.new_confirmation_code || '-';
+      var log = (d.log || []).map(function(l) { return '<div>' + l + '</div>'; }).join('');
+      res.innerHTML = '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.3);border-radius:10px;padding:14px;font-family:\'Chakra Petch\',monospace;font-size:13px;">'
+        + '<div style="color:#86efac;font-weight:700;margin-bottom:8px;">✅ สำเร็จ!</div>'
+        + '<div style="margin-bottom:4px;"><strong>Transfer Code:</strong> <span style="color:#ffd94e;">' + tc2 + '</span></div>'
+        + '<div style="margin-bottom:10px;"><strong>Confirmation Code:</strong> <span style="color:#ffd94e;">' + cc2 + '</span></div>'
+        + '<div style="color:#C4B5FD;font-size:12px;">' + log + '</div></div>';
+    } else {
+      res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + (d.error || 'Unknown error') + '</div>';
+    }
+  } catch(e) { res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + e + '</div>'; }
+}
+
+// ── Legend Stages (SoL / UL / ZL) ──────────────────────────────
+var _legSelected = new Set();
+var _legMaxCrown = 4;
+
+function legToggle(type) {
+  var btn = document.getElementById('leg-' + type);
+  if (_legSelected.has(type)) { _legSelected.delete(type); btn.className = 'btn btn-outline'; }
+  else { _legSelected.add(type); btn.className = 'btn btn-primary'; }
+}
+
+function legCrown(n) {
+  _legMaxCrown = n;
+  for (var i = 1; i <= 4; i++) {
+    document.getElementById('leg-cr' + i).className = (i === n) ? 'btn btn-primary' : 'btn btn-outline';
+  }
+}
+
+async function runClearLegends() {
+  var types = Array.from(_legSelected);
+  if (!types.length) { alert('กรุณาเลือกอย่างน้อย 1 Legend Type'); return; }
+  var tc = document.getElementById('leg-tc').value.trim();
+  var cc = document.getElementById('leg-cc').value.trim();
+  var srv = document.getElementById('leg-srv').value;
+  var res = document.getElementById('leg-result');
+  res.style.display = 'block';
+  var typeLabel = { sol: 'Stories of Legend', ul: 'Uncanny Legends', zl: 'Zero Legends' };
+  var typesStr = types.map(function(t) { return typeLabel[t] || t; }).join(', ');
+  res.innerHTML = '<div style="color:#C4B5FD;font-family:\'Chakra Petch\',monospace;">กำลังเคลียร์ ' + typesStr + ' (crown 1-' + _legMaxCrown + ')...</div>';
+  try {
+    var r = await fetch('/api/legend/clear', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv,
+                              legend_types: types, max_crown: _legMaxCrown, clear_amount: 1 })
+    });
+    var d = await r.json();
+    if (d.success) {
+      var tc2 = d.new_transfer_code || '-';
+      var cc2 = d.new_confirmation_code || '-';
+      var log = (d.log || []).map(function(l) { return '<div>' + l + '</div>'; }).join('');
+      res.innerHTML = '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.3);border-radius:10px;padding:14px;font-family:\'Chakra Petch\',monospace;font-size:13px;">'
+        + '<div style="color:#86efac;font-weight:700;margin-bottom:8px;">✅ สำเร็จ!</div>'
+        + '<div style="margin-bottom:4px;"><strong>Transfer Code:</strong> <span style="color:#ffd94e;">' + tc2 + '</span></div>'
+        + '<div style="margin-bottom:10px;"><strong>Confirmation Code:</strong> <span style="color:#ffd94e;">' + cc2 + '</span></div>'
+        + '<div style="color:#C4B5FD;font-size:12px;">' + log + '</div></div>';
+    } else {
+      res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + (d.error || 'Unknown error') + '</div>';
+    }
+  } catch(e) { res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + e + '</div>'; }
 }
 
 // ── Init ──────────────────────────────────────────────────────

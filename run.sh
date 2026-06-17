@@ -61,5 +61,6 @@ echo ""
 echo "Press Ctrl+C to stop the server"
 echo ""
 
+export TZ=Asia/Bangkok
 python main.py
 

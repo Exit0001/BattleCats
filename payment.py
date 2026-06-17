@@ -151,6 +151,25 @@ def _load_slips() -> list:
 def _save_slips(data: list):
     SLIP_DB.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
+def _is_transaction_used(transaction_id: str) -> bool:
+    """เช็ค Supabase ว่า transaction_id นี้ถูกใช้ไปแล้วหรือยัง (ป้องกัน slip ซ้ำแม้ BCSFE fail)"""
+    if not transaction_id:
+        return False
+    try:
+        with httpx.Client(timeout=5) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/orders",
+                params={"transaction_id": f"eq.{transaction_id}", "select": "transaction_id", "limit": "1"},
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                },
+            )
+        data = resp.json() if resp.status_code == 200 else []
+        return len(data) > 0
+    except Exception:
+        return False
+
 
 def _supabase_upsert(order: dict):
     """Sync order to Supabase orders table (fail silently — local JSON is source of truth)"""
@@ -304,7 +323,8 @@ def create_order(transfer_code: str, confirmation_code: str,
 
 def create_all_package_order(transfer_code: str, confirmation_code: str,
                              country: str, package_type: str, amount: int,
-                             payment_method: str = "promptpay") -> dict:
+                             payment_method: str = "promptpay",
+                             username: str = "") -> dict:
     """สร้าง order สำหรับแพ็กเกจ All (unlock_all, trueform_all, ฯลฯ)"""
     order_id    = str(uuid.uuid4())[:8].upper()
     fee         = truemoney_fee(amount) if payment_method == "truemoney" else 0
@@ -326,19 +346,51 @@ def create_all_package_order(transfer_code: str, confirmation_code: str,
         "created_at":        datetime.now(TZ_THAI).isoformat(),
         "expires_at":        expires,
         "qr_base64":         generate_qr_base64(amount) if payment_method == "promptpay" else None,
+        "username":          username or "",
     }
     orders = _load_orders()
     orders[order_id] = order
     _save_orders(orders)
     _supabase_upsert(order)
+    _add_user_order(username or "", order_id)
     print(f"[ORDER] สร้าง all-package order {order_id} type={package_type} ยอด {amount} บาท")
     return order
 
 
+def _supabase_get_order(order_id: str) -> dict | None:
+    """อ่าน order จาก Supabase (fallback เมื่อ local JSON หาไม่เจอ)"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/orders",
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                },
+                params={"order_id": f"eq.{order_id}", "select": "*", "limit": "1"},
+            )
+        if resp.status_code == 200:
+            rows = resp.json()
+            if rows:
+                order = rows[0]
+                # sync กลับมาเก็บใน local JSON ด้วย
+                orders = _load_orders()
+                orders[order_id] = order
+                _save_orders(orders)
+                print(f"[SUPABASE] ✔ recovered order {order_id} from Supabase")
+                return order
+    except Exception as e:
+        print(f"[SUPABASE] ⚠ get_order fallback error: {e}")
+    return None
+
+
 def get_order(order_id: str) -> dict | None:
-    """ดึง order จาก DB"""
+    """ดึง order จาก DB (fallback ไป Supabase ถ้า local หาไม่เจอ)"""
     orders = _load_orders()
-    return orders.get(order_id)
+    order = orders.get(order_id)
+    if order is None:
+        order = _supabase_get_order(order_id)
+    return order
 
 
 def update_order_status(order_id: str, status: str, extra: dict = {}):
@@ -410,10 +462,10 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
     if abs(received - expected) > 0.01:
         return {"success": False, "reason": f"ยอดไม่ตรง คาดหวัง {expected:.2f} แต่ได้ {received:.2f} บาท"}
 
-    # 2) เช็คสลิปซ้ำ
+    # 2) เช็คสลิปซ้ำ — ตรวจทั้ง local file และ Supabase orders
     transaction_id = raw_slip.get("transRef", "")
     used_slips = _load_slips()
-    if transaction_id and transaction_id in used_slips:
+    if transaction_id and (transaction_id in used_slips or _is_transaction_used(transaction_id)):
         return {"success": False, "reason": "สลิปนี้ถูกใช้ไปแล้ว"}
 
     # 3) เช็ค isDuplicate จาก EasySlip
@@ -556,6 +608,43 @@ def create_unlock_order(transfer_code: str, confirmation_code: str,
     _save_orders(orders)
     _supabase_upsert(order)
     print(f"[UNLOCK-ORDER] สร้าง order {order_id} แมว {len(cat_ids)} ตัว ยอด {amount} บาท")
+    return order
+
+
+def create_stages_order(transfer_code: str, confirmation_code: str,
+                        country: str, stages_config: dict, amount: int,
+                        payment_method: str = "promptpay",
+                        username: str = "") -> dict:
+    """สร้าง order สำหรับปลดล็อคด่าน"""
+    order_id = str(uuid.uuid4())[:8].upper()
+    fee      = truemoney_fee(amount) if payment_method == "truemoney" else 0
+    total    = amount + fee
+    expires  = (datetime.now(TZ_THAI) + timedelta(minutes=ORDER_TIMEOUT)).isoformat()
+    order = {
+        "order_id":          order_id,
+        "order_type":        "stages",
+        "transfer_code":     transfer_code,
+        "confirmation_code": confirmation_code,
+        "country":           country,
+        "items":             [],
+        "cat_ids":           [],
+        "stages_config":     stages_config,
+        "base_amount":       amount,
+        "truemoney_fee":     fee,
+        "amount":            total,
+        "payment_method":    payment_method,
+        "status":            "pending",
+        "created_at":        datetime.now(TZ_THAI).isoformat(),
+        "expires_at":        expires,
+        "qr_base64":         generate_qr_base64(amount) if payment_method == "promptpay" else None,
+        "username":          username or "",
+    }
+    orders = _load_orders()
+    orders[order_id] = order
+    _save_orders(orders)
+    _supabase_upsert(order)
+    _add_user_order(username or "", order_id)
+    print(f"[STAGES-ORDER] สร้าง order {order_id} config={stages_config} ยอด {amount} บาท")
     return order
 
 
@@ -854,16 +943,26 @@ def get_available_stock(product_id: str) -> dict | None:
 
 
 def reserve_stock(stock_id: str, username: str, order_id: str) -> bool:
-    """จอง stock item ระหว่างรอชำระ (atomic: เฉพาะ available)"""
+    """จอง stock item ระหว่างรอชำระ (atomic: เฉพาะ available)
+    ใช้ count=exact เพื่อตรวจว่า row ถูก update จริง ป้องกัน double-sell"""
     try:
         with httpx.Client(timeout=8) as client:
             resp = client.patch(
                 f"{SUPABASE_URL}/rest/v1/code_stock",
                 params={"id": f"eq.{stock_id}", "status": "eq.available"},
-                headers=_sh({"Content-Type": "application/json", "Prefer": "return=minimal"}),
+                headers=_sh({"Content-Type": "application/json", "Prefer": "count=exact"}),
                 json={"status": "reserved", "buyer_username": username, "order_id": order_id},
             )
-        return resp.status_code in (200, 204)
+        # content-range: 0-0/1 = updated 1 row, 0-0/0 or missing = 0 rows updated
+        count_header = resp.headers.get("content-range", "")
+        # format: "0-N/TOTAL" — ตรวจ TOTAL > 0
+        if "/" in count_header:
+            total = count_header.split("/")[-1]
+            updated = int(total) if total.isdigit() else 0
+        else:
+            updated = 1 if resp.status_code in (200, 204) else 0
+        print(f"[CODE-SHOP] reserve_stock {stock_id}: updated={updated}")
+        return updated > 0
     except Exception as e:
         print(f"[CODE-SHOP] reserve_stock error: {e}")
         return False
@@ -918,7 +1017,8 @@ def get_stock_by_order(order_id: str) -> dict | None:
         return None
 
 
-def add_code_product(name: str, description: str, images: list, price: int) -> dict | None:
+def add_code_product(name: str, description: str, images: list, price: int,
+                      name_en: str = "", description_en: str = "") -> dict | None:
     """admin: เพิ่มสินค้าใหม่"""
     try:
         with httpx.Client(timeout=8) as client:
@@ -926,6 +1026,7 @@ def add_code_product(name: str, description: str, images: list, price: int) -> d
                 f"{SUPABASE_URL}/rest/v1/code_products",
                 headers=_sh({"Content-Type": "application/json", "Prefer": "return=representation"}),
                 json={"name": name, "description": description,
+                      "name_en": name_en, "description_en": description_en,
                       "images": images, "price": price, "is_active": True},
             )
         print(f"[CODE-SHOP] add_product status={resp.status_code} body={resp.text[:300]}")
@@ -934,6 +1035,24 @@ def add_code_product(name: str, description: str, images: list, price: int) -> d
     except Exception as e:
         print(f"[CODE-SHOP] add_product error: {e}")
         return None
+
+
+def update_code_product(product_id: str, name: str, description: str, price: int,
+                         name_en: str = "", description_en: str = "") -> bool:
+    """admin: แก้ไขชื่อ/คำอธิบาย/ราคาสินค้า (ไทย+อังกฤษ)"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.patch(
+                f"{SUPABASE_URL}/rest/v1/code_products",
+                params={"id": f"eq.{product_id}"},
+                headers=_sh({"Content-Type": "application/json", "Prefer": "return=minimal"}),
+                json={"name": name, "description": description,
+                      "name_en": name_en, "description_en": description_en, "price": price},
+            )
+        return resp.status_code in (200, 204)
+    except Exception as e:
+        print(f"[CODE-SHOP] update_product error: {e}")
+        return False
 
 
 def toggle_code_product(product_id: str, is_active: bool) -> bool:

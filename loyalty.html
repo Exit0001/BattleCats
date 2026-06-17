@@ -369,25 +369,25 @@
     </button>
     <a href="index.html" class="nav-logo">BATTLE CAT PRO MAX</a>
     <ul class="nav-links">
-      <li><a href="index.html">หน้าแรก</a></li>
-      <li><a href="shop.html">ร้านขาย</a></li>
-      <li><a href="shop-codes.html">รหัสสำเร็จรูป</a></li>
-      <li><a href="characters.html">ปลดล็อคแมว</a></li>
-      <li><a href="stages.html">ปลดล็อคด่าน</a></li>
-      <li><a href="orders.html">ออเดอร์</a></li>
-      <li><a href="loyalty.html" class="active">🎁 แต้มสะสม</a></li>
+      <li><a href="index.html"><span data-i18n="nav_home">หน้าแรก</span></a></li>
+      <li><a href="shop.html"><span data-i18n="nav_shop">ร้านค้าไอเทม</span></a></li>
+      <li><a href="shop-codes.html"><span data-i18n="nav_shop_codes">รหัสสำเร็จรูป</span></a></li>
+      <li><a href="characters.html"><span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></a></li>
+      <li><a href="stages.html"><span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
+      <li><a href="orders.html"><span data-i18n="nav_orders">ออเดอร์</span></a></li>
+      <li><a href="loyalty.html" class="active">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
     </ul>
     <div class="nav-cart">🛒<span class="cart-badge" id="cartCount">0</span></div>
   </div>
   <div class="mobile-nav" id="mobileNav" style="display:none" onclick="if(event.target===this)closeMobileMenu()">
     <ul>
-      <li><a href="index.html" onclick="closeMobileMenu()">🏠 หน้าแรก</a></li>
-      <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ ร้านขาย</a></li>
-      <li><a href="shop-codes.html" onclick="closeMobileMenu()">🎮 รหัสสำเร็จรูป</a></li>
-      <li><a href="characters.html" onclick="closeMobileMenu()">🐱 ปลดล็อคแมว</a></li>
-      <li><a href="stages.html" onclick="closeMobileMenu()">📍 ปลดล็อคด่าน</a></li>
-      <li><a href="orders.html" onclick="closeMobileMenu()">📋 ออเดอร์</a></li>
-      <li><a href="loyalty.html" class="active" onclick="closeMobileMenu()">🎁 แต้มสะสม</a></li>
+      <li><a href="index.html" onclick="closeMobileMenu()">🏠 <span data-i18n="nav_home">หน้าแรก</span></a></li>
+      <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ <span data-i18n="nav_shop">ร้านค้าไอเทม</span></a></li>
+      <li><a href="shop-codes.html" onclick="closeMobileMenu()">🎮 <span data-i18n="nav_shop_codes">รหัสสำเร็จรูป</span></a></li>
+      <li><a href="characters.html" onclick="closeMobileMenu()">🐱 <span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></a></li>
+      <li><a href="stages.html" onclick="closeMobileMenu()">📍 <span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
+      <li><a href="orders.html" onclick="closeMobileMenu()">📋 <span data-i18n="nav_orders">ออเดอร์</span></a></li>
+      <li><a href="loyalty.html" class="active" onclick="closeMobileMenu()">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
     </ul>
     <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
   </div>
@@ -398,8 +398,8 @@
   <!-- ── Hero ── -->
   <div class="loy-hero">
     <span class="loy-hero-icon">🎁</span>
-    <div class="loy-hero-title">ระบบสะสมยอดซื้อ</div>
-    <div class="loy-hero-sub">
+    <div class="loy-hero-title" data-i18n="loy_hero_title">ระบบสะสมยอดซื้อ</div>
+    <div class="loy-hero-sub" data-i18n="loy_hero_sub">
       ซื้อของกับเราแล้วได้รับของรางวัลฟรี!<br>
       <strong style="color:#fbbf24;">ทุก ฿200</strong> แลกของรางวัลได้ 1 ครั้ง ทำซ้ำได้ไม่จำกัด
     </div>
@@ -410,20 +410,20 @@
     <div class="how-card">
       <div class="how-num">1</div>
       <span class="how-icon">🛍️</span>
-      <div class="how-title">สั่งซื้อสินค้า</div>
-      <div class="how-desc">ซื้อของในร้านตามปกติ ยอดจะสะสมโดยอัตโนมัติหลังชำระสำเร็จ</div>
+      <div class="how-title" data-i18n="loy_how1_title">สั่งซื้อสินค้า</div>
+      <div class="how-desc" data-i18n="loy_how1_desc">ซื้อของในร้านตามปกติ ยอดจะสะสมโดยอัตโนมัติหลังชำระสำเร็จ</div>
     </div>
     <div class="how-card">
       <div class="how-num">2</div>
       <span class="how-icon">📊</span>
-      <div class="how-title">สะสมยอดถึง ฿200</div>
-      <div class="how-desc">ดูความคืบหน้าได้ที่หน้านี้ เมื่อครบ ฿200 จะได้รอบแลกทันที</div>
+      <div class="how-title" data-i18n="loy_how2_title">สะสมยอดถึง ฿200</div>
+      <div class="how-desc" data-i18n="loy_how2_desc">ดูความคืบหน้าได้ที่หน้านี้ เมื่อครบ ฿200 จะได้รอบแลกทันที</div>
     </div>
     <div class="how-card">
       <div class="how-num">3</div>
       <span class="how-icon">✨</span>
-      <div class="how-title">แลกของรางวัลฟรี</div>
-      <div class="how-desc">กรอก Transfer Code แล้วรับไอเทมเข้าเกมได้เลย ไม่มีวันหมดอายุ</div>
+      <div class="how-title" data-i18n="loy_how3_title">แลกของรางวัลฟรี</div>
+      <div class="how-desc" data-i18n="loy_how3_desc">กรอก Transfer Code แล้วรับไอเทมเข้าเกมได้เลย ไม่มีวันหมดอายุ</div>
     </div>
   </div>
 
@@ -431,7 +431,7 @@
   <div class="status-card" id="statusCard">
     <div class="status-top">
       <div>
-        <div class="status-username">สมาชิก</div>
+        <div class="status-username" data-i18n="loy_member_label">สมาชิก</div>
         <div class="status-name-val" id="statusUsername">—</div>
       </div>
       <div class="cycle-pill">
@@ -439,8 +439,8 @@
           <div class="cycle-num" id="cycleBadge">—</div>
         </div>
         <div>
-          <div class="cycle-label">รอบพร้อมแลก</div>
-          <div class="cycle-label-sub" id="cycleSubtext">กำลังโหลด...</div>
+          <div class="cycle-label" data-i18n="loy_ready_to_redeem">รอบพร้อมแลก</div>
+          <div class="cycle-label-sub" id="cycleSubtext" data-i18n="loy_loading">กำลังโหลด...</div>
         </div>
       </div>
     </div>
@@ -448,22 +448,22 @@
     <!-- Stats -->
     <div class="stats-row">
       <div class="stat-box">
-        <div class="stat-label">ยอดสะสมทั้งหมด</div>
+        <div class="stat-label" data-i18n="loy_stat_total">ยอดสะสมทั้งหมด</div>
         <div class="stat-val" id="statTotal">—</div>
       </div>
       <div class="stat-box">
-        <div class="stat-label">แลกของไปแล้ว</div>
+        <div class="stat-label" data-i18n="loy_stat_redeemed">แลกของไปแล้ว</div>
         <div class="stat-val" id="statRedeemed">—</div>
       </div>
       <div class="stat-box">
-        <div class="stat-label">ครั้งถัดไปครบ</div>
+        <div class="stat-label" data-i18n="loy_stat_next">ครั้งถัดไปครบ</div>
         <div class="stat-val" id="statNext">—</div>
       </div>
     </div>
 
     <!-- Progress bar -->
     <div class="prog-label">
-      <span class="prog-label-left">ความคืบหน้า</span>
+      <span class="prog-label-left" data-i18n="loy_progress_label">ความคืบหน้า</span>
       <span id="progRight">฿0 / ฿200</span>
     </div>
     <div class="progress-track">
@@ -473,12 +473,12 @@
 
     <!-- Rewards -->
     <div class="reward-section">
-      <div class="reward-section-title">ของรางวัลที่ได้รับ (ต่อ 1 รอบ)</div>
+      <div class="reward-section-title" data-i18n="loy_reward_section_title">ของรางวัลที่ได้รับ (ต่อ 1 รอบ)</div>
       <div class="reward-grid">
         <div class="reward-card">
           <span class="reward-icon">🎫</span>
           <div class="reward-amount">×100</div>
-          <div class="reward-name">Normal Ticket (ตั๋วเงิน)</div>
+          <div class="reward-name" data-i18n="loy_reward_normal_ticket">Normal Ticket (ตั๋วเงิน)</div>
         </div>
         <div class="reward-card">
           <span class="reward-icon">🚩</span>
@@ -488,7 +488,7 @@
         <div class="reward-card">
           <span class="reward-icon">🎫</span>
           <div class="reward-amount">×10</div>
-          <div class="reward-name">Rare Ticket (ตั๋วทอง)</div>
+          <div class="reward-name" data-i18n="loy_reward_rare_ticket">Rare Ticket (ตั๋วทอง)</div>
         </div>
       </div>
     </div>
@@ -497,24 +497,24 @@
   <!-- ── Redeem Form ── -->
   <div class="redeem-card" id="redeemCard" style="display:none;">
     <div class="redeem-header">
-      <div class="redeem-badge">พร้อมแลก!</div>
-      <div style="font-family:'Russo One',sans-serif;font-size:20px;color:#fff;">✨ แลกของรางวัล</div>
+      <div class="redeem-badge" data-i18n="loy_ready_badge">พร้อมแลก!</div>
+      <div style="font-family:'Russo One',sans-serif;font-size:20px;color:#fff;" data-i18n="loy_redeem_title">✨ แลกของรางวัล</div>
     </div>
-    <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(196,181,253,0.55);margin-bottom:22px;line-height:1.6;">
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(196,181,253,0.55);margin-bottom:22px;line-height:1.6;" data-i18n="loy_redeem_sub">
       กรอก Transfer Code ปัจจุบันจากเกม แล้วกดแลก — ของจะเข้าเกมทันที
     </div>
 
     <div style="display:grid;gap:16px;">
       <div>
         <label class="form-label">Transfer Code</label>
-        <input type="text" id="redeemTC" class="form-input" placeholder="เช่น a1b2c3d4e" autocomplete="off" spellcheck="false">
+        <input type="text" id="redeemTC" class="form-input" placeholder="เช่น a1b2c3d4e" autocomplete="off" spellcheck="false" data-i18n-placeholder="loy_tc_placeholder">
       </div>
       <div>
         <label class="form-label">Confirmation Code</label>
-        <input type="text" id="redeemCC" class="form-input" placeholder="เช่น 1234" autocomplete="off" inputmode="numeric">
+        <input type="text" id="redeemCC" class="form-input" placeholder="เช่น 1234" autocomplete="off" inputmode="numeric" data-i18n-placeholder="loy_cc_placeholder">
       </div>
       <div>
-        <label class="form-label">ประเทศ (Country)</label>
+        <label class="form-label" data-i18n="loy_country_label">ประเทศ (Country)</label>
         <select id="redeemCountry" class="form-input" style="cursor:pointer;">
           <option value="1">🇺🇸 EN (English)</option>
           <option value="2">🇯🇵 JP (日本語)</option>
@@ -525,8 +525,8 @@
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;">
-      <button id="redeemBtn" class="redeem-btn" onclick="doRedeem()" style="margin-top:0;font-size:14px;">🎁 รับ 1 รอบ</button>
-      <button id="redeemAllBtn" class="redeem-btn" onclick="doRedeemAll()" style="margin-top:0;font-size:14px;background:linear-gradient(135deg,#7c3aed,#a855f7);box-shadow:0 8px 28px rgba(124,58,237,0.4);">⚡ รับทั้งหมด</button>
+      <button id="redeemBtn" class="redeem-btn" onclick="doRedeem()" style="margin-top:0;font-size:14px;" data-i18n="loy_redeem_one_btn">🎁 รับ 1 รอบ</button>
+      <button id="redeemAllBtn" class="redeem-btn" onclick="doRedeemAll()" style="margin-top:0;font-size:14px;background:linear-gradient(135deg,#7c3aed,#a855f7);box-shadow:0 8px 28px rgba(124,58,237,0.4);" data-i18n="loy_redeem_all_btn">⚡ รับทั้งหมด</button>
     </div>
 
     <!-- Result -->
@@ -538,26 +538,26 @@
   <!-- ── ประวัติการแลก ── -->
   <div id="historySection" style="display:none;margin-top:32px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <h3 style="font-family:'Russo One',sans-serif;font-size:18px;color:#EDE6FF;margin:0;">📜 ประวัติการแลกของรางวัล</h3>
-      <button onclick="toggleHistory()" id="historyToggleBtn" style="font-family:'Chakra Petch',sans-serif;font-size:12px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.35);color:#C4B5FD;border-radius:8px;padding:6px 14px;cursor:pointer;">ซ่อน ▲</button>
+      <h3 style="font-family:'Russo One',sans-serif;font-size:18px;color:#EDE6FF;margin:0;" data-i18n="loy_history_title">📜 ประวัติการแลกของรางวัล</h3>
+      <button onclick="toggleHistory()" id="historyToggleBtn" style="font-family:'Chakra Petch',sans-serif;font-size:12px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.35);color:#C4B5FD;border-radius:8px;padding:6px 14px;cursor:pointer;" data-i18n="loy_hide_btn">ซ่อน ▲</button>
     </div>
     <div id="historyList"></div>
   </div>
 
   <!-- ── ปุ่มดูประวัติ (แสดงเมื่อ login แล้ว) ── -->
   <div id="historyBtnWrap" style="display:none;margin-top:20px;text-align:center;">
-    <button onclick="showHistory()" style="font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(196,181,253,0.7);border-radius:12px;padding:12px 28px;cursor:pointer;transition:all 0.2s;width:100%;" onmouseover="this.style.background='rgba(124,58,237,0.15)';this.style.borderColor='rgba(124,58,237,0.35)';this.style.color='#C4B5FD'" onmouseout="this.style.background='rgba(255,255,255,0.04)';this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(196,181,253,0.7)'">📜 ดูประวัติการแลกของรางวัล</button>
+    <button onclick="showHistory()" style="font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(196,181,253,0.7);border-radius:12px;padding:12px 28px;cursor:pointer;transition:all 0.2s;width:100%;" onmouseover="this.style.background='rgba(124,58,237,0.15)';this.style.borderColor='rgba(124,58,237,0.35)';this.style.color='#C4B5FD'" onmouseout="this.style.background='rgba(255,255,255,0.04)';this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(196,181,253,0.7)'" data-i18n="loy_view_history_btn">📜 ดูประวัติการแลกของรางวัล</button>
   </div>
 
   <!-- ── Not logged in ── -->
   <div id="notLoggedIn" style="display:none;">
     <div class="login-wall">
       <div style="font-size:56px;margin-bottom:16px;">🔐</div>
-      <div style="font-family:'Russo One',sans-serif;font-size:22px;color:#fff;margin-bottom:8px;">เข้าสู่ระบบเพื่อดูแต้มของคุณ</div>
-      <div style="font-family:'Chakra Petch',sans-serif;font-size:14px;color:rgba(196,181,253,0.55);margin-bottom:24px;line-height:1.6;">
+      <div style="font-family:'Russo One',sans-serif;font-size:22px;color:#fff;margin-bottom:8px;" data-i18n="loy_login_wall_title">เข้าสู่ระบบเพื่อดูแต้มของคุณ</div>
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:14px;color:rgba(196,181,253,0.55);margin-bottom:24px;line-height:1.6;" data-i18n="loy_login_wall_sub">
         สมัครสมาชิกฟรี · ยอดซื้อสะสมอัตโนมัติทุกออเดอร์
       </div>
-      <a href="login.html" class="btn btn-primary" style="display:inline-block;padding:13px 32px;font-size:15px;">🔑 เข้าสู่ระบบ / สมัครสมาชิก</a>
+      <a href="login.html" class="btn btn-primary" style="display:inline-block;padding:13px 32px;font-size:15px;" data-i18n="loy_login_signup_btn">🔑 เข้าสู่ระบบ / สมัครสมาชิก</a>
     </div>
   </div>
 
@@ -590,27 +590,27 @@ function loadStatus() {
       _availableCycles = d.available_cycles || 0;
 
       document.getElementById('cycleBadge').textContent = _availableCycles;
-      document.getElementById('cycleSubtext').textContent = _availableCycles > 0 ? 'กดแลกได้เลย!' : 'รอสะสมเพิ่ม';
+      document.getElementById('cycleSubtext').textContent = _availableCycles > 0 ? window.bcT('loy_ready_redeem_now','กดแลกได้เลย!') : window.bcT('loy_wait_more','รอสะสมเพิ่ม');
       document.getElementById('statTotal').textContent = '฿' + (d.total_spent || 0);
-      document.getElementById('statRedeemed').textContent = (d.loyalty_redeemed_cycles || 0) + ' ครั้ง';
+      document.getElementById('statRedeemed').textContent = (d.loyalty_redeemed_cycles || 0) + window.bcT('loy_times_unit',' ครั้ง');
       document.getElementById('statNext').textContent = '฿' + (d.next_reward_at || 200);
 
       var pct = _availableCycles > 0 ? 100 : Math.min(d.progress_pct || 0, 100);
       document.getElementById('progressFill').style.width = pct + '%';
 
       if (_availableCycles > 0) {
-        document.getElementById('progRight').textContent = '✅ ครบแล้ว!';
-        document.getElementById('progMsg').textContent = '🎉 มี ' + _availableCycles + ' รอบพร้อมแลก — กดที่ด้านล่างได้เลย';
+        document.getElementById('progRight').textContent = window.bcT('loy_progress_done','✅ ครบแล้ว!');
+        document.getElementById('progMsg').textContent = window.bcT('loy_progress_msg_ready','🎉 มี {n} รอบพร้อมแลก — กดที่ด้านล่างได้เลย').replace('{n}', _availableCycles);
         document.getElementById('progMsg').style.color = '#fbbf24';
         document.getElementById('redeemCard').style.display = 'block';
       } else {
         document.getElementById('progRight').textContent = '฿' + (d.progress_baht || 0) + ' / ฿200';
-        document.getElementById('progMsg').textContent = 'อีก ฿' + (200 - (d.progress_baht || 0)) + ' จะได้รางวัล';
+        document.getElementById('progMsg').textContent = window.bcT('loy_progress_msg_wait','อีก ฿{n} จะได้รางวัล').replace('{n}', 200 - (d.progress_baht || 0));
         document.getElementById('progMsg').style.color = 'rgba(255,255,255,0.35)';
       }
     })
     .catch(function() {
-      document.getElementById('cycleSubtext').textContent = 'โหลดข้อมูลไม่ได้ — ลองรีเฟรช';
+      document.getElementById('cycleSubtext').textContent = window.bcT('loy_load_failed','โหลดข้อมูลไม่ได้ — ลองรีเฟรช');
     });
 
   loadHistory();
@@ -627,7 +627,7 @@ function toggleHistory() {
   var btn  = document.getElementById('historyToggleBtn');
   var visible = list.style.display !== 'none';
   list.style.display = visible ? 'none' : '';
-  btn.textContent = visible ? 'แสดง ▼' : 'ซ่อน ▲';
+  btn.textContent = visible ? window.bcT('loy_show_btn','แสดง ▼') : window.bcT('loy_hide_btn2','ซ่อน ▲');
 }
 
 function loadHistory(show) {
@@ -644,7 +644,7 @@ function loadHistory(show) {
         btnWrap.style.display = show ? 'none' : 'block';
         if (show) {
           btnWrap.style.display = 'none';
-          list.innerHTML = '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:13px;color:rgba(196,181,253,0.45);text-align:center;padding:20px;">ยังไม่มีประวัติการแลก</div>';
+          list.innerHTML = '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:13px;color:rgba(196,181,253,0.45);text-align:center;padding:20px;">' + window.bcT('loy_no_history','ยังไม่มีประวัติการแลก') + '</div>';
           sec.style.display = 'block';
         }
         return;
@@ -662,18 +662,18 @@ function loadHistory(show) {
         return (
           '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:18px 20px;margin-bottom:12px;">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">' +
-              '<div style="font-family:\'Russo One\',sans-serif;font-size:14px;color:#EDE6FF;">🎁 แลก ' + row.cycles_redeemed + ' รอบ</div>' +
+              '<div style="font-family:\'Russo One\',sans-serif;font-size:14px;color:#EDE6FF;">' + window.bcT('loy_redeemed_n','🎁 แลก {n} รอบ').replace('{n}', row.cycles_redeemed) + '</div>' +
               '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(196,181,253,0.45);">' + dateStr + ' · ' + timeStr + '</div>' +
             '</div>' +
-            '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Transfer Code ใหม่</div>' +
+            '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">' + window.bcT('loy_new_tc_label','Transfer Code ใหม่') + '</div>' +
             '<div class="code-row" style="margin-bottom:8px;" onclick="copyFromHistory(this,\'' + row.new_transfer_code + '\')">' +
               '<div class="code-val">' + row.new_transfer_code + '</div>' +
-              '<div class="copy-hint">แตะเพื่อคัดลอก 📋</div>' +
+              '<div class="copy-hint">' + window.bcT('loy_tap_to_copy','แตะเพื่อคัดลอก 📋') + '</div>' +
             '</div>' +
             '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Confirmation Code</div>' +
             '<div class="code-row" onclick="copyFromHistory(this,\'' + row.new_confirmation_code + '\')">' +
               '<div class="code-val">' + row.new_confirmation_code + '</div>' +
-              '<div class="copy-hint">แตะเพื่อคัดลอก 📋</div>' +
+              '<div class="copy-hint">' + window.bcT('loy_tap_to_copy','แตะเพื่อคัดลอก 📋') + '</div>' +
             '</div>' +
           '</div>'
         );
@@ -687,7 +687,7 @@ function copyFromHistory(row, text) {
     var hint = row.querySelector('.copy-hint');
     if (!hint) return;
     var orig = hint.textContent;
-    hint.textContent = '✅ คัดลอกแล้ว!';
+    hint.textContent = window.bcT('loy_copied','✅ คัดลอกแล้ว!');
     hint.style.color = '#10b981';
     setTimeout(function() { hint.textContent = orig; hint.style.color = ''; }, 1500);
   });
@@ -695,10 +695,10 @@ function copyFromHistory(row, text) {
 
 function rareTicketGuide() {
   var steps = [
-    { n: '1', label: 'รับไอเทม' },
-    { n: '2', label: 'เข้าตู้เย็น\n(Storage)' },
-    { n: '3', label: 'กดใช้\nทั้งหมด' },
-    { n: '4', label: 'แลกตั๋วทอง' },
+    { n: '1', label: window.bcT('loy_rt_step1','รับไอเทม') },
+    { n: '2', label: window.bcT('loy_rt_step2','เข้าตู้เย็น\n(Storage)') },
+    { n: '3', label: window.bcT('loy_rt_step3','กดใช้\nทั้งหมด') },
+    { n: '4', label: window.bcT('loy_rt_step4','แลกตั๋วทอง') },
   ];
   var stepsHtml = steps.map(function(s, i) {
     var label = s.label.replace(/\n/g, '<br>');
@@ -717,7 +717,7 @@ function rareTicketGuide() {
   }).join('');
   return (
     '<div style="margin-top:16px;padding:14px 16px;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.3);border-radius:14px;">' +
-      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:#C4B5FD;font-weight:700;letter-spacing:0.5px;margin-bottom:14px;">⚠️ วิธีใช้งาน Rare Ticket (อ่านก่อนนะครับ!)</div>' +
+      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:#C4B5FD;font-weight:700;letter-spacing:0.5px;margin-bottom:14px;">' + window.bcT('loy_rt_howto_title','⚠️ วิธีใช้งาน Rare Ticket (อ่านก่อนนะครับ!)') + '</div>' +
       '<div style="display:flex;align-items:flex-start;justify-content:center;gap:0;flex-wrap:nowrap;">' +
         stepsHtml +
       '</div>' +
@@ -732,11 +732,11 @@ function doRedeem() {
   var btn = document.getElementById('redeemBtn');
   var box = document.getElementById('resultBox');
 
-  if (!tc || !cc) { alert('กรุณากรอก Transfer Code และ Confirmation Code'); return; }
-  if (_availableCycles <= 0) { alert('ไม่มีรอบพร้อมแลก'); return; }
+  if (!tc || !cc) { alert(window.bcT('loy_enter_codes_alert','กรุณากรอก Transfer Code และ Confirmation Code')); return; }
+  if (_availableCycles <= 0) { alert(window.bcT('loy_no_cycles_alert','ไม่มีรอบพร้อมแลก')); return; }
 
   btn.disabled = true;
-  btn.textContent = '⏳ กำลังดำเนินการ...';
+  btn.textContent = window.bcT('loy_redeeming_btn','⏳ กำลังดำเนินการ...');
   box.style.display = 'none';
   box.className = 'result-box';
 
@@ -748,7 +748,7 @@ function doRedeem() {
   .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
   .then(function(res) {
     btn.disabled = false;
-    btn.textContent = '🎁 รับของรางวัลเลย';
+    btn.textContent = window.bcT('loy_redeem_now_btn','🎁 รับของรางวัลเลย');
     box.style.display = 'block';
 
     if (res.ok && res.data.success) {
@@ -757,37 +757,37 @@ function doRedeem() {
       var remaining = res.data.cycles_remaining || 0;
       var note = res.data.customer_note || '';
 
-      var html = '<div style="font-family:\'Russo One\',sans-serif;font-size:18px;color:#10b981;margin-bottom:16px;">🎉 รับของสำเร็จ!</div>';
-      html += '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Transfer Code ใหม่</div>';
+      var html = '<div style="font-family:\'Russo One\',sans-serif;font-size:18px;color:#10b981;margin-bottom:16px;">' + window.bcT('loy_redeem_success','🎉 รับของสำเร็จ!') + '</div>';
+      html += '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">' + window.bcT('loy_new_tc_label','Transfer Code ใหม่') + '</div>';
       html += '<div class="code-row" onclick="copyText(this,\'tc\')">';
       html += '<div class="code-val" id="tcVal">' + newTC + '</div>';
-      html += '<div class="copy-hint">แตะเพื่อคัดลอก 📋</div></div>';
+      html += '<div class="copy-hint">' + window.bcT('loy_tap_to_copy','แตะเพื่อคัดลอก 📋') + '</div></div>';
       html += '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Confirmation Code</div>';
       html += '<div class="code-row" onclick="copyText(this,\'cc\')">';
       html += '<div class="code-val" id="ccVal">' + newCC + '</div>';
-      html += '<div class="copy-hint">แตะเพื่อคัดลอก 📋</div></div>';
+      html += '<div class="copy-hint">' + window.bcT('loy_tap_to_copy','แตะเพื่อคัดลอก 📋') + '</div></div>';
       if (note) {
         html += rareTicketGuide();
       }
       if (remaining > 0) {
-        html += '<div style="margin-top:12px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#fbbf24;">🎁 ยังเหลืออีก ' + remaining + ' รอบ — แลกต่อได้เลย</div>';
+        html += '<div style="margin-top:12px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#fbbf24;">' + window.bcT('loy_remaining_cycles','🎁 ยังเหลืออีก {n} รอบ — แลกต่อได้เลย').replace('{n}', remaining) + '</div>';
       }
       document.getElementById('resultContent').innerHTML = html;
       setTimeout(loadStatus, 1200);
     } else {
       box.classList.add('error');
-      var errMsg = (res.data && res.data.detail) ? res.data.detail : 'เกิดข้อผิดพลาด';
+      var errMsg = (res.data && res.data.detail) ? res.data.detail : window.bcT('loy_generic_error','เกิดข้อผิดพลาด');
       document.getElementById('resultContent').innerHTML =
         '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:14px;color:#f87171;line-height:1.6;">❌ ' + errMsg + '</div>';
     }
   })
   .catch(function() {
     btn.disabled = false;
-    btn.textContent = '🎁 รับของรางวัลเลย';
+    btn.textContent = window.bcT('loy_redeem_now_btn','🎁 รับของรางวัลเลย');
     box.style.display = 'block';
     box.classList.add('error');
     document.getElementById('resultContent').innerHTML =
-      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:14px;color:#f87171;">❌ เชื่อมต่อ server ไม่ได้</div>';
+      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:14px;color:#f87171;">' + window.bcT('loy_connect_failed','❌ เชื่อมต่อ server ไม่ได้') + '</div>';
   });
 }
 
@@ -799,11 +799,11 @@ function doRedeemAll() {
   var btn2 = document.getElementById('redeemAllBtn');
   var box  = document.getElementById('resultBox');
 
-  if (!tc || !cc) { alert('กรุณากรอก Transfer Code และ Confirmation Code'); return; }
-  if (_availableCycles <= 0) { alert('ไม่มีรอบพร้อมแลก'); return; }
+  if (!tc || !cc) { alert(window.bcT('loy_enter_codes_alert','กรุณากรอก Transfer Code และ Confirmation Code')); return; }
+  if (_availableCycles <= 0) { alert(window.bcT('loy_no_cycles_alert','ไม่มีรอบพร้อมแลก')); return; }
 
   btn1.disabled = btn2.disabled = true;
-  btn2.textContent = '⏳ กำลังดำเนินการ ' + _availableCycles + ' รอบ...';
+  btn2.textContent = window.bcT('loy_redeeming_n_btn','⏳ กำลังดำเนินการ {n} รอบ...').replace('{n}', _availableCycles);
   box.style.display = 'none';
   box.className = 'result-box';
 
@@ -815,7 +815,7 @@ function doRedeemAll() {
   .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
   .then(function(res) {
     btn1.disabled = btn2.disabled = false;
-    btn2.textContent = '⚡ รับทั้งหมด';
+    btn2.textContent = window.bcT('loy_redeem_all_btn','⚡ รับทั้งหมด');
     box.style.display = 'block';
 
     if (res.ok && res.data.success) {
@@ -823,15 +823,15 @@ function doRedeemAll() {
       var newCC = res.data.new_confirmation_code || '';
       var done  = res.data.cycles_redeemed || _availableCycles;
       var note  = res.data.customer_note || '';
-      var html = '<div style="font-family:\'Russo One\',sans-serif;font-size:18px;color:#10b981;margin-bottom:16px;">🎉 รับสำเร็จ ' + done + ' รอบ ครั้งเดียว!</div>';
-      html += '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Transfer Code ใหม่</div>';
+      var html = '<div style="font-family:\'Russo One\',sans-serif;font-size:18px;color:#10b981;margin-bottom:16px;">' + window.bcT('loy_redeem_all_done','🎉 รับสำเร็จ {n} รอบ ครั้งเดียว!').replace('{n}', done) + '</div>';
+      html += '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">' + window.bcT('loy_new_tc_label','Transfer Code ใหม่') + '</div>';
       html += '<div class="code-row" onclick="copyText(this,\'tc\')">';
       html += '<div class="code-val" id="tcVal">' + newTC + '</div>';
-      html += '<div class="copy-hint">แตะเพื่อคัดลอก 📋</div></div>';
+      html += '<div class="copy-hint">' + window.bcT('loy_tap_to_copy','แตะเพื่อคัดลอก 📋') + '</div></div>';
       html += '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(255,255,255,0.45);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;">Confirmation Code</div>';
       html += '<div class="code-row" onclick="copyText(this,\'cc\')">';
       html += '<div class="code-val" id="ccVal">' + newCC + '</div>';
-      html += '<div class="copy-hint">แตะเพื่อคัดลอก 📋</div></div>';
+      html += '<div class="copy-hint">' + window.bcT('loy_tap_to_copy','แตะเพื่อคัดลอก 📋') + '</div></div>';
       if (note) {
         html += rareTicketGuide();
       }
@@ -840,16 +840,16 @@ function doRedeemAll() {
     } else {
       box.classList.add('error');
       document.getElementById('resultContent').innerHTML =
-        '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:14px;color:#f87171;line-height:1.6;">❌ ' + ((res.data && res.data.detail) || 'เกิดข้อผิดพลาด') + '</div>';
+        '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:14px;color:#f87171;line-height:1.6;">❌ ' + ((res.data && res.data.detail) || window.bcT('loy_generic_error','เกิดข้อผิดพลาด')) + '</div>';
     }
   })
   .catch(function() {
     btn1.disabled = btn2.disabled = false;
-    btn2.textContent = '⚡ รับทั้งหมด';
+    btn2.textContent = window.bcT('loy_redeem_all_btn','⚡ รับทั้งหมด');
     box.style.display = 'block';
     box.classList.add('error');
     document.getElementById('resultContent').innerHTML =
-      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:14px;color:#f87171;">❌ เชื่อมต่อ server ไม่ได้</div>';
+      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:14px;color:#f87171;">' + window.bcT('loy_connect_failed','❌ เชื่อมต่อ server ไม่ได้') + '</div>';
   });
 }
 
@@ -859,15 +859,17 @@ function copyText(row, type) {
   var text = valEl.textContent.trim();
   navigator.clipboard.writeText(text).then(function() {
     var origHint = hintEl.textContent;
-    hintEl.textContent = '✅ คัดลอกแล้ว!';
+    hintEl.textContent = window.bcT('loy_copied','✅ คัดลอกแล้ว!');
     hintEl.style.color = '#10b981';
     setTimeout(function() { hintEl.textContent = origHint; hintEl.style.color = ''; }, 1500);
   });
 }
 
 loadStatus();
+document.addEventListener('bc-lang-changed', function() { loadStatus(); });
 </script>
 <script src="assets/auth.js?v=20260613"></script>
 <script src="assets/nav.js"></script>
+<script src="assets/i18n.js"></script>
 </body>
 </html>

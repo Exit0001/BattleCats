@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-16 22:05:20
+Transfer  : ad237720a
+Confirm   : 2416
+Country   : en
+============================================================
+[OP] Clear Legends ['zl'] max_crown=1 x1
+[BCSFE] ⬇  Downloading save (transfer=ad2377... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ZL] ✔ 32 maps (crown 1-1)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_b224acbe
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260616_220521_ad237720
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: dbd8722a3 | Confirm ใหม่: 8580
+============================================================

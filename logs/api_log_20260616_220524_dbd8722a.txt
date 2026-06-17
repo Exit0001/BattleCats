@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-06-16 22:05:24
+Transfer  : dbd8722a3
+Confirm   : 8580
+Country   : en
+============================================================
+[OP] Aku unlock=True chapters=True x1
+[BCSFE] ⬇  Downloading save (transfer=dbd872... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[AKU] ✔ Unlock Aku Realm done
+[AKU] ✔ 1 maps, 49 stages cleared
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_edaf6958
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260616_220526_dbd8722a
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: d9436b9c9 | Confirm ใหม่: 1306
+============================================================

@@ -1,0 +1,15 @@
+============================================================
+เวลา      : 2026-06-16 22:12:24
+Transfer  : 833947e45
+Confirm   : 6781
+Country   : en
+============================================================
+[OP] Clear Legends ['zl'] max_crown=2 x1
+[BCSFE] ⬇  Downloading save (transfer=833947... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ZL] ✔ 32 maps (crown 1-2)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_62d49cec
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260616_221226_833947e4
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: bc970c5dd | Confirm ใหม่: 0008
+============================================================

@@ -58,6 +58,7 @@ class AllCatsRequest(BaseModel):
     confirmation_code: str
     country: str = "1"
     payment_method: str = "promptpay"
+    username: Optional[str] = None
 
 class UnlockPaymentRequest(BaseModel):
     """สร้าง order สำหรับปลดล็อคแมว"""
@@ -111,6 +112,8 @@ class AdminProductRequest(BaseModel):
     """admin: เพิ่มสินค้า"""
     name: str
     description: str = ""
+    name_en: str = ""
+    description_en: str = ""
     images: List[str] = []
     price: int = 200
     username: str
@@ -124,6 +127,17 @@ class AdminToggleRequest(BaseModel):
     session_token: str
 
 
+class AdminEditProductRequest(BaseModel):
+    """admin: แก้ไขชื่อ/คำอธิบาย/ราคาสินค้า (ไทย+อังกฤษ)"""
+    name: str
+    description: str = ""
+    name_en: str = ""
+    description_en: str = ""
+    price: int = 200
+    username: str
+    session_token: str
+
+
 class AdminStockRequest(BaseModel):
     """admin: เพิ่ม stock"""
     product_id: str
@@ -132,3 +146,110 @@ class AdminStockRequest(BaseModel):
     inquiry_code: Optional[str] = None
     username: str
     session_token: str
+
+
+class ClearStoryChaptersRequest(BaseModel):
+    """เคลียร์ด่าน Main Story ตาม chapter ที่ระบุ (1-9)"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+    chapters: List[int]   # รายการ chapter number 1-9
+    clear_amount: int = 1
+
+
+class ClearStoryAllRequest(BaseModel):
+    """เคลียร์ด่าน Main Story ทั้ง 9 chapters"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+    clear_amount: int = 1
+
+
+class ResetStoryChaptersRequest(BaseModel):
+    """รีเซ็ตด่าน Main Story กลับเป็น 0 ตาม chapter ที่ระบุ"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+    chapters: List[int]
+
+
+class ResetStoryAllRequest(BaseModel):
+    """รีเซ็ตด่าน Main Story ทั้ง 9 chapters"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+
+
+class SetTreasureChaptersRequest(BaseModel):
+    """ตั้งค่า treasure สำหรับ story chapters ที่ระบุ (1-9)"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+    chapters: List[int]
+    treasure_value: int = 3  # 0=None, 1=Bronze, 2=Silver, 3=Gold
+
+
+class SetTreasureAllRequest(BaseModel):
+    """ตั้งค่า treasure สำหรับ story chapters ทั้ง 9"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+    treasure_value: int = 3
+
+
+class ClearOutbreakChaptersRequest(BaseModel):
+    """เคลียร์ zombie/outbreak สำหรับ story chapters ที่ระบุ (1-9)"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+    chapters: List[int]
+
+
+class ClearOutbreakAllRequest(BaseModel):
+    """เคลียร์ zombie/outbreak สำหรับ story chapters ทั้ง 9"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+
+
+class AkuRequest(BaseModel):
+    """ปลดล็อค Aku Realm และ/หรือ เคลียร์ Aku Chapters"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+    do_unlock: bool = False    # Unlock Aku Realm (#8)
+    do_chapters: bool = False  # Clear Aku Chapters (#11)
+    clear_amount: int = 1
+
+
+class ClearLegendsRequest(BaseModel):
+    """เคลียร์ Legend Stages — SoL / UL / ZL พร้อมเลือก crown level"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+    legend_types: List[str]  # รายการของ "sol", "ul", "zl"
+    max_crown: int = 4       # เคลียร์ crowns 1 ถึง max_crown (1-4)
+    clear_amount: int = 1
+
+
+class StagesConfig(BaseModel):
+    """config สำหรับ stage operations"""
+    story_chapters: List[int] = []       # chapters 1-9 ที่ต้องการ clear
+    treasure_chapters: List[int] = []    # chapters 1-9 ที่ต้องการ gold treasure
+    zombie_chapters: List[int] = []      # chapters 1-9 ที่ต้องการ clear zombie
+    legend_types: List[str] = []         # "sol", "ul", "zl"
+    max_crown: int = 4                   # fallback ถ้าไม่มี legend_crowns
+    legend_crowns: dict = {}             # per-legend crown: {"sol":4,"ul":4,"zl":2}
+    aku_unlock: bool = False
+    aku_chapters: bool = False
+
+
+class StagesPaymentRequest(BaseModel):
+    """สร้าง order สำหรับปลดล็อคด่าน"""
+    transfer_code: str
+    confirmation_code: str
+    country: str = "1"
+    payment_method: str = "promptpay"
+    stages_config: StagesConfig
+    amount: int
+    username: Optional[str] = None

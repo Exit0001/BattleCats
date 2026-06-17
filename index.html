@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Battle Cats Shop - ร้านขายไอเทมเกม</title>
+  <title>Battle Cats Shop - ร้านค้าไอเทมเกม</title>
   <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
@@ -16,13 +16,13 @@
     </button>
     <a href="index.html" class="nav-logo">BATTLE CAT PRO MAX</a>
     <ul class="nav-links">
-      <li><a href="index.html" class="active">หน้าแรก</a></li>
-      <li><a href="shop.html">ร้านขาย</a></li>
-      <li><a href="shop-codes.html">รหัสสำเร็จรูป</a></li>
-      <li><a href="characters.html">ปลดล็อคแมว</a></li>
-      <li><a href="stages.html">ปลดล็อคด่าน</a></li>
-      <li><a href="orders.html">ออเดอร์</a></li>
-      <li><a href="loyalty.html">🎁 แต้มสะสม</a></li>
+      <li><a href="index.html" class="active"><span data-i18n="nav_home">หน้าแรก</span></a></li>
+      <li><a href="shop.html"><span data-i18n="nav_shop">ร้านค้าไอเทม</span></a></li>
+      <li><a href="shop-codes.html"><span data-i18n="nav_shop_codes">รหัสสำเร็จรูป</span></a></li>
+      <li><a href="characters.html"><span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></a></li>
+      <li><a href="stages.html"><span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
+      <li><a href="orders.html"><span data-i18n="nav_orders">ออเดอร์</span></a></li>
+      <li><a href="loyalty.html">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
     </ul>
     <div class="nav-cart">
       🛒
@@ -31,13 +31,13 @@
   </div>
   <div class="mobile-nav" id="mobileNav" style="display:none" onclick="if(event.target===this)closeMobileMenu()">
     <ul>
-      <li><a href="index.html" class="active" onclick="closeMobileMenu()">🏠 หน้าแรก</a></li>
-      <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ ร้านขาย</a></li>
-      <li><a href="shop-codes.html" onclick="closeMobileMenu()">🎮 รหัสสำเร็จรูป</a></li>
-      <li><a href="characters.html" onclick="closeMobileMenu()">🐱 ปลดล็อคแมว</a></li>
-      <li><a href="stages.html" onclick="closeMobileMenu()">📍 ปลดล็อคด่าน</a></li>
-      <li><a href="orders.html" onclick="closeMobileMenu()">📋 ออเดอร์</a></li>
-      <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 แต้มสะสม</a></li>
+      <li><a href="index.html" class="active" onclick="closeMobileMenu()">🏠 <span data-i18n="nav_home">หน้าแรก</span></a></li>
+      <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ <span data-i18n="nav_shop">ร้านค้าไอเทม</span></a></li>
+      <li><a href="shop-codes.html" onclick="closeMobileMenu()">🎮 <span data-i18n="nav_shop_codes">รหัสสำเร็จรูป</span></a></li>
+      <li><a href="characters.html" onclick="closeMobileMenu()">🐱 <span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></a></li>
+      <li><a href="stages.html" onclick="closeMobileMenu()">📍 <span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
+      <li><a href="orders.html" onclick="closeMobileMenu()">📋 <span data-i18n="nav_orders">ออเดอร์</span></a></li>
+      <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
     </ul>
     <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
   </div>
@@ -47,118 +47,118 @@
 
   <!-- HERO SECTION -->
   <div class="hero" style="--mx:0px;--my:0px;">
-    <div class="badge-hot">🎮 เกมส์ Battle Catsฮิตทั่วโลก</div>
+    <div class="badge-hot">🎮 <span data-i18n="idx_badge">เกมส์ Battle Catsฮิตทั่วโลก</span></div>
     <h1 class="hero-title">BATTLE CATS PRO MAX<br>SHOP</h1>
-    <p class="hero-sub">ไอเทม • แคท • แคตฟู้ด • ด่านราคาสุดคุ้ม!</p>
+    <p class="hero-sub" data-i18n="idx_hero_sub">ไอเทม • แคท • แคตฟู้ด • ด่านราคาสุดคุ้ม!</p>
     <div class="hero-emoji">🐾</div>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;">
-      <button class="btn btn-primary" onclick="window.location.href='shop.html'">🛍️ ดูสินค้าทั้งหมด</button>
-      <button class="btn btn-outline" onclick="window.location.href='characters.html'"><img loading="lazy" src="pictures/icon cat.png" style="height:1.1em;vertical-align:middle;margin-right:4px;"> ปลดล็อคแมว</button>
+      <button class="btn btn-primary" onclick="window.location.href='shop.html'">🛍️ <span data-i18n="idx_view_shop">ดูร้านค้าไอเทม</span></button>
+      <button class="btn btn-outline" onclick="window.location.href='characters.html'"><img loading="lazy" src="pictures/icon cat.png" style="height:1.1em;vertical-align:middle;margin-right:4px;"> <span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></button>
     </div>
     <div style="display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin-top:4px;">
       <div style="text-align:center;">
-        <div style="font-family:'Russo One',sans-serif;font-size:22px;color:#FFD84E;text-shadow:0 0 18px rgba(255,216,78,0.45);">2,000+</div>
-        <div style="font-size:11px;color:rgba(210,190,255,0.6);letter-spacing:1px;text-transform:uppercase;">ลูกค้า</div>
+        <div class="hero-stat-num" style="font-family:'Russo One',sans-serif;font-size:22px;color:#FFD84E;text-shadow:0 0 18px rgba(255,216,78,0.45);">2,000+</div>
+        <div class="hero-stat-label" style="font-size:11px;color:rgba(210,190,255,0.6);letter-spacing:1px;text-transform:uppercase;" data-i18n="idx_stat_customers">ลูกค้า</div>
       </div>
       <div style="width:1px;background:rgba(255,255,255,0.12);border-radius:1px;"></div>
       <div style="text-align:center;">
-        <div style="font-family:'Russo One',sans-serif;font-size:22px;color:#FFD84E;text-shadow:0 0 18px rgba(255,216,78,0.45);">5 นาที</div>
-        <div style="font-size:11px;color:rgba(210,190,255,0.6);letter-spacing:1px;text-transform:uppercase;">ส่งสินค้า</div>
+        <div class="hero-stat-num" style="font-family:'Russo One',sans-serif;font-size:22px;color:#FFD84E;text-shadow:0 0 18px rgba(255,216,78,0.45);">5 นาที</div>
+        <div class="hero-stat-label" style="font-size:11px;color:rgba(210,190,255,0.6);letter-spacing:1px;text-transform:uppercase;" data-i18n="idx_stat_delivery">ส่งสินค้า</div>
       </div>
       <div style="width:1px;background:rgba(255,255,255,0.12);border-radius:1px;"></div>
       <div style="text-align:center;">
-        <div style="font-family:'Russo One',sans-serif;font-size:22px;color:#FFD84E;text-shadow:0 0 18px rgba(255,216,78,0.45);">100%</div>
-        <div style="font-size:11px;color:rgba(210,190,255,0.6);letter-spacing:1px;text-transform:uppercase;">ปลอดภัย</div>
+        <div class="hero-stat-num" style="font-family:'Russo One',sans-serif;font-size:22px;color:#FFD84E;text-shadow:0 0 18px rgba(255,216,78,0.45);">100%</div>
+        <div class="hero-stat-label" style="font-size:11px;color:rgba(210,190,255,0.6);letter-spacing:1px;text-transform:uppercase;" data-i18n="idx_stat_secure">ปลอดภัย</div>
       </div>
     </div>
   </div>
 
   <!-- FEATURED PRODUCTS -->
-  <h2 class="section-title">🎯 สินค้าขายดี <span>HOT</span></h2>
+  <h2 class="section-title">🎯 <span data-i18n="idx_hot_products">สินค้าขายดี</span> <span>HOT</span></h2>
   <div class="grid grid-4">
     <div class="card">
       <span class="card-tag tag-hot">HOT</span>
       <div class="card-picture"><img loading="lazy" src="pictures/catfood4.png" width="200"></div>
       <div class="card-name">Cat Food x45,000</div>
-      <div class="card-desc">กระป๋องแมวเยอะสุด — ลุ้น Gacha รัวๆ ทั้งวัน</div>
+      <div class="card-desc" data-i18n="idx_catfood_desc">กระป๋องแมวเยอะสุด — ลุ้น Gacha รัวๆ ทั้งวัน</div>
       <div class="card-price"><span class="price-now">฿35</span></div>
-      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="width:100%;margin-top:auto;">ซื้อเลย</button>
+      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="width:100%;margin-top:auto;" data-i18n="buy_now">ซื้อเลย</button>
     </div>
 
     <div class="card">
       <span class="card-tag tag-super">TOP</span>
       <div class="card-picture"><img loading="lazy" src="pictures/rare ticke4.png" width="200"></div>
       <div class="card-name">Rare Ticket x299</div>
-      <div class="card-desc">บัตรทองสูงสุด — แลกได้เลย ไม่เสี่ยง Ban</div>
+      <div class="card-desc" data-i18n="idx_rareticket_desc">บัตรทองสูงสุด — แลกได้เลย ไม่เสี่ยง Ban</div>
       <div class="card-price"><span class="price-now">฿70</span></div>
-      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="width:100%;margin-top:auto;">ซื้อเลย</button>
+      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="width:100%;margin-top:auto;" data-i18n="buy_now">ซื้อเลย</button>
     </div>
 
     <div class="card">
       <span class="card-tag tag-rare">RARE</span>
       <div class="card-picture"><img loading="lazy" src="pictures/catfruit1.png" width="200"></div>
       <div class="card-name">Catfruit x100</div>
-      <div class="card-desc">ผลไม้แมว True Form วัตถุดิบสำคัญ</div>
+      <div class="card-desc" data-i18n="idx_catfruit_desc">ผลไม้แมว True Form วัตถุดิบสำคัญ</div>
       <div class="card-price"><span class="price-now">฿30</span></div>
-      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="width:100%;margin-top:auto;">ซื้อเลย</button>
+      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="width:100%;margin-top:auto;" data-i18n="buy_now">ซื้อเลย</button>
     </div>
 
     <div class="card">
       <span class="card-tag tag-rare">RARE</span>
       <div class="card-picture"><img loading="lazy" src="pictures/cateye1.png" width="200"></div>
       <div class="card-name">Catseye x100</div>
-      <div class="card-desc">อัพเลเวลเกินขีดจำกัด เพิ่มพลังแมวทุกตัว</div>
+      <div class="card-desc" data-i18n="idx_cateye_desc">อัพเลเวลเกินขีดจำกัด เพิ่มพลังแมวทุกตัว</div>
       <div class="card-price"><span class="price-now">฿20</span></div>
-      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="width:100%;margin-top:auto;">ซื้อเลย</button>
+      <button class="btn btn-primary" onclick="window.location.href='shop.html'" style="width:100%;margin-top:auto;" data-i18n="buy_now">ซื้อเลย</button>
     </div>
   </div>
 
   <!-- SERVICES SECTION -->
-  <h2 class="section-title">🚀 บริการของเรา</h2>
+  <h2 class="section-title">🚀 <span data-i18n="idx_services_title">บริการของเรา</span></h2>
   <div class="grid grid-3">
     <div class="card" style="text-align: center;">
       <div class="card-picture"><img loading="lazy" src="pictures/ร้านขาย.png" width="200"></div>
-      <div class="card-name">ร้านขาย</div>
-      <div class="card-desc">ซื้อไอเทมและ Cat Food</div>
-      <button class="btn btn-outline" onclick="window.location.href='shop.html'" style="width:100%;">ไปที่ร้าน</button>
+      <div class="card-name" data-i18n="nav_shop">ร้านค้าไอเทม</div>
+      <div class="card-desc" data-i18n="idx_service_shop_desc">ซื้อไอเทมและ Cat Food</div>
+      <button class="btn btn-outline" onclick="window.location.href='shop.html'" style="width:100%;" data-i18n="go_to_shop">ไปที่ร้าน</button>
     </div>
 
     <div class="card" style="text-align: center;">
       <div class="card-picture"><img loading="lazy" src="pictures/icon cat.png" width="200"></div>
-      <div class="card-name">ปลดล็อคแมว</div>
-      <div class="card-desc">ปลดล็อคตัวแมวหายาก</div>
-      <button class="btn btn-outline" onclick="window.location.href='characters.html'" style="width:100%;">ดูแมว</button>
+      <div class="card-name" data-i18n="nav_unlock_cat">ปลดล็อคแมว</div>
+      <div class="card-desc" data-i18n="idx_service_cat_desc">ปลดล็อคตัวแมวหายาก</div>
+      <button class="btn btn-outline" onclick="window.location.href='characters.html'" style="width:100%;" data-i18n="view_cats">ดูแมว</button>
     </div>
 
     <div class="card" style="text-align: center;">
       <div class="card-picture"><img loading="lazy" src="pictures/ปลดล๊อคด่าน.png" width="200"></div>
-      <div class="card-name">ปลดล็อคด่าน</div>
-      <div class="card-desc">เล่นด่านที่ติดได้เลย</div>
-      <button class="btn btn-outline" onclick="window.location.href='stages.html'" style="width:100%;">ดูด่าน</button>
+      <div class="card-name" data-i18n="nav_unlock_stage">ปลดล็อคด่าน</div>
+      <div class="card-desc" data-i18n="idx_service_stage_desc">เล่นด่านที่ติดได้เลย</div>
+      <button class="btn btn-outline" onclick="window.location.href='stages.html'" style="width:100%;" data-i18n="view_stages">ดูด่าน</button>
     </div>
   </div>
 
   <!-- TRUST SIGNALS -->
-  <h2 class="section-title">✨ ทำไมต้องเลือกเรา</h2>
+  <h2 class="section-title">✨ <span data-i18n="idx_why_us">ทำไมต้องเลือกเรา</span></h2>
   <div class="trust-row">
     <div class="trust-card">
       <div class="trust-icon">⚡</div>
-      <div class="trust-title">ส่งทันที</div>
-      <div class="trust-sub">รับไอเทมใน 5 นาที</div>
+      <div class="trust-title" data-i18n="trust_fast_title">ส่งทันที</div>
+      <div class="trust-sub" data-i18n="trust_fast_sub">รับไอเทมใน 5 นาที</div>
     </div>
     <div class="trust-card">
       <div class="trust-icon">🔒</div>
-      <div class="trust-title">ปลอดภัย 100%</div>
-      <div class="trust-sub">ไม่โดนแบน การันตี</div>
+      <div class="trust-title" data-i18n="trust_safe_title">ปลอดภัย 100%</div>
+      <div class="trust-sub" data-i18n="trust_safe_sub">ไม่โดนแบน การันตี</div>
     </div>
     <div class="trust-card">
       <div class="trust-icon">💬</div>
       <div class="trust-title">24/7 Support</div>
-      <div class="trust-sub">ทักได้ตลอดเวลา</div>
+      <div class="trust-sub" data-i18n="trust_support_sub">ทักได้ตลอดเวลา</div>
     </div>
     <div class="trust-card">
       <div class="trust-icon">💳</div>
-      <div class="trust-title">ชำระง่าย</div>
+      <div class="trust-title" data-i18n="trust_pay_title">ชำระง่าย</div>
       <div class="trust-sub">QR Code & TrueWallet</div>
     </div>
   </div>
@@ -172,34 +172,34 @@
     <div class="footer-grid">
       <div class="footer-col">
         <h4>Battle Cat Pro Max</h4>
-        <p style="font-size: 13px; line-height: 1.6;">บริการร้านขายไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
+        <p style="font-size: 13px; line-height: 1.6;" data-i18n="footer_brand_desc">บริการร้านค้าไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
       </div>
       <div class="footer-col">
-        <h4>บริการ</h4>
+        <h4 data-i18n="footer_services">บริการ</h4>
         <ul>
-          <li><a href="shop.html">ร้านขาย</a></li>
-          <li><a href="characters.html">ปลดล็อคแมว</a></li>
-          <li><a href="stages.html">ปลดล็อคด่าน</a></li>
-          <li><a href="orders.html">ออเดอร์ของฉัน</a></li>
+          <li><a href="shop.html" data-i18n="nav_shop">ร้านค้าไอเทม</a></li>
+          <li><a href="characters.html" data-i18n="nav_unlock_cat">ปลดล็อคแมว</a></li>
+          <li><a href="stages.html" data-i18n="nav_unlock_stage">ปลดล็อคด่าน</a></li>
+          <li><a href="orders.html" data-i18n="nav_orders_mine">ออเดอร์ของฉัน</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>ติดต่อเรา</h4>
+        <h4 data-i18n="footer_contact">ติดต่อเรา</h4>
         <ul>
-          <li><a href="https://www.facebook.com/pronajaa.gamedee.1/" target="_blank" rel="noopener">📘 Facebook (ผู้ใช้)</a></li>
-          <li><a href="https://www.facebook.com/profile.php?id=61572054218886" target="_blank" rel="noopener">📘 Facebook (เพจร้าน)</a></li>
+          <li><a href="https://www.facebook.com/pronajaa.gamedee.1/" target="_blank" rel="noopener">📘 <span data-i18n="fb_user">Facebook (ผู้ใช้)</span></a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61572054218886" target="_blank" rel="noopener">📘 <span data-i18n="fb_page">Facebook (เพจร้าน)</span></a></li>
         </ul>
       </div>
     </div>
 
     <div class="social-row">
-      <div class="social-pill">🌍 ภาษาไทย</div>
-      <div class="social-pill">✅ ได้รับการตรวจสอบ</div>
-      <div class="social-pill">⭐ 2,000+ ผู้ใช้</div>
+      <div class="social-pill">🌍 <span data-i18n="lang_pill">ภาษาไทย</span></div>
+      <div class="social-pill">✅ <span data-i18n="verified_pill">ได้รับการตรวจสอบ</span></div>
+      <div class="social-pill">⭐ 2,000+ <span data-i18n="users_pill">ผู้ใช้</span></div>
     </div>
 
     <div class="footer-bottom">
-      <p>© 2025 Battle Cat Pro Max · บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</p>
+      <p>© 2025 Battle Cat Pro Max · <span data-i18n="footer_bottom">บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</span></p>
     </div>
   </div>
 </footer>
@@ -222,5 +222,6 @@ window.addEventListener('load', () => {
 <script src="assets/auth.js?v=20260613"></script>
 <script src="assets/animations.js"></script>
 <script src="assets/nav.js"></script>
+<script src="assets/i18n.js"></script>
 </body>
 </html>

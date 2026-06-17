@@ -53,13 +53,13 @@
     </button>
     <a href="index.html" class="nav-logo">BATTLE CAT PRO MAX</a>
     <ul class="nav-links">
-      <li><a href="index.html">หน้าแรก</a></li>
-      <li><a href="shop.html">ร้านขาย</a></li>
-      <li><a href="shop-codes.html">รหัสสำเร็จรูป</a></li>
-      <li><a href="characters.html">ปลดล็อคแมว</a></li>
-      <li><a href="stages.html">ปลดล็อคด่าน</a></li>
-      <li><a href="orders.html" class="active">ออเดอร์</a></li>
-      <li><a href="loyalty.html">🎁 แต้มสะสม</a></li>
+      <li><a href="index.html"><span data-i18n="nav_home">หน้าแรก</span></a></li>
+      <li><a href="shop.html"><span data-i18n="nav_shop">ร้านค้าไอเทม</span></a></li>
+      <li><a href="shop-codes.html"><span data-i18n="nav_shop_codes">รหัสสำเร็จรูป</span></a></li>
+      <li><a href="characters.html"><span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></a></li>
+      <li><a href="stages.html"><span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
+      <li><a href="orders.html" class="active"><span data-i18n="nav_orders">ออเดอร์</span></a></li>
+      <li><a href="loyalty.html">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
     </ul>
     <div class="nav-cart">
       🛒
@@ -68,13 +68,13 @@
   </div>
   <div class="mobile-nav" id="mobileNav" style="display:none" onclick="if(event.target===this)closeMobileMenu()">
     <ul>
-      <li><a href="index.html" onclick="closeMobileMenu()">🏠 หน้าแรก</a></li>
-      <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ ร้านขาย</a></li>
-      <li><a href="shop-codes.html" onclick="closeMobileMenu()">🎮 รหัสสำเร็จรูป</a></li>
-      <li><a href="characters.html" onclick="closeMobileMenu()">🐱 ปลดล็อคแมว</a></li>
-      <li><a href="stages.html" onclick="closeMobileMenu()">📍 ปลดล็อคด่าน</a></li>
-      <li><a href="orders.html" class="active" onclick="closeMobileMenu()">📋 ออเดอร์</a></li>
-      <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 แต้มสะสม</a></li>
+      <li><a href="index.html" onclick="closeMobileMenu()">🏠 <span data-i18n="nav_home">หน้าแรก</span></a></li>
+      <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ <span data-i18n="nav_shop">ร้านค้าไอเทม</span></a></li>
+      <li><a href="shop-codes.html" onclick="closeMobileMenu()">🎮 <span data-i18n="nav_shop_codes">รหัสสำเร็จรูป</span></a></li>
+      <li><a href="characters.html" onclick="closeMobileMenu()">🐱 <span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></a></li>
+      <li><a href="stages.html" onclick="closeMobileMenu()">📍 <span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
+      <li><a href="orders.html" class="active" onclick="closeMobileMenu()">📋 <span data-i18n="nav_orders">ออเดอร์</span></a></li>
+      <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
     </ul>
     <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
   </div>
@@ -82,14 +82,14 @@
 
 <div class="container">
 
-  <h1 class="section-title">🛒 ระบบสั่งซื้อ BCSFE</h1>
+  <h1 class="section-title" data-i18n="ord_title">🛒 ระบบสั่งซื้อ</h1>
 
   <!-- ── Order / History tabs ── -->
   <div style="display:flex;gap:0;background:rgba(255,255,255,0.04);border-radius:12px;padding:4px;margin-bottom:24px;max-width:400px;">
     <button id="otab-order" onclick="switchOrderTab('order')"
-      style="flex:1;padding:10px;border:none;border-radius:9px;background:rgba(139,61,255,0.5);color:#fff;font-family:'Kanit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(139,61,255,0.3);transition:all .25s;">🛒 สั่งซื้อ</button>
+      style="flex:1;padding:10px;border:none;border-radius:9px;background:rgba(139,61,255,0.5);color:#fff;font-family:'Kanit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(139,61,255,0.3);transition:all .25s;" data-i18n="ord_tab_order">🛒 สั่งซื้อ</button>
     <button id="otab-history" onclick="switchOrderTab('history')"
-      style="flex:1;padding:10px;border:none;border-radius:9px;background:transparent;color:rgba(255,255,255,0.55);font-family:'Kanit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;">📋 ประวัติ</button>
+      style="flex:1;padding:10px;border:none;border-radius:9px;background:transparent;color:rgba(255,255,255,0.55);font-family:'Kanit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;" data-i18n="ord_tab_history">📋 ประวัติ</button>
   </div>
 
   <!-- ── Order panel ── -->
@@ -97,26 +97,26 @@
   <div class="grid grid-2">
     <div>
       <div class="card" style="padding: 28px;">
-        <h2 class="section-title" style="font-size: 24px; margin-bottom: 14px;">💳 สรุปคำสั่งซื้อ</h2>
+        <h2 class="section-title" style="font-size: 24px; margin-bottom: 14px;" data-i18n="ord_summary_title">💳 สรุปคำสั่งซื้อ</h2>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px;">
-          <span>จำนวนสินค้า:</span>
+          <span data-i18n="ord_items_label">จำนวนสินค้า:</span>
           <span id="totalItems" style="font-weight: 700;">0 รายการ</span>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; font-size: 16px;">
-          <span>รวมทั้งหมด:</span>
+          <span data-i18n="ord_total_label">รวมทั้งหมด:</span>
           <span id="totalPrice" style="font-weight: 700; color: #E8002A; font-size: 22px;">฿0</span>
         </div>
 
         <div id="orderTypeHint" style="border-top: 1px solid rgba(255,255,255,0.12); padding-top: 16px; margin-bottom: 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.6;">
-          <p>📌 ระบุ Transfer Code, Confirmation Code และเซิร์ฟเวอร์ให้ครบ เพื่อสั่งงาน BCSFE ต่อ</p>
+          <p data-i18n="ord_hint">📌 ระบุ Transfer Code, Confirmation Code และเซิร์ฟเวอร์ให้ครบ เพื่อสั่งงาน BCSFE ต่อ</p>
         </div>
 
         <!-- วิดีโอสอนวิธีเอา Transfer Code (accordion ปิด) -->
         <div style="margin-bottom:18px;border:1px solid rgba(124,58,237,0.25);border-radius:10px;overflow:hidden;">
           <button onclick="toggleVidAccordion(this)" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(124,58,237,0.10);border:none;cursor:pointer;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;color:#C4B5FD;text-align:left;">
-            <span>🎬 วิธีดู Transfer Code จากเกม</span>
+            <span data-i18n="ord_video_howto_tc">🎬 วิธีดู Transfer Code จากเกม</span>
             <span style="font-size:18px;transition:transform 0.2s;display:inline-block;">›</span>
           </button>
           <div style="display:none;">
@@ -132,36 +132,36 @@
           <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Transfer Code *</label>
           <input type="text" id="transferCode" placeholder="ABCD1234EFGH5678"
             style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: monospace; background: rgba(255,255,255,0.06); color: white;">
-          <p style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">ได้จาก Settings → Change Device → Save Data to Server</p>
+          <p style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;" data-i18n="ord_tc_hint">ได้จาก Settings → Change Device → Save Data to Server</p>
         </div>
 
         <div style="margin-bottom: 16px;">
           <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Confirmation Code *</label>
-          <input type="text" id="confirmCode" placeholder="12345678" 
+          <input type="text" id="confirmCode" placeholder="12345678"
             style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: monospace; background: rgba(255,255,255,0.06); color: white;">
         </div>
 
         <div style="margin-bottom: 16px;">
           <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Server (Country) *</label>
           <select id="server" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:#0e0620;color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;">
-            <option value="" style="background:#0e0620;color:rgba(237,230,255,0.45);">-- เลือก --</option>
+            <option value="" style="background:#0e0620;color:rgba(237,230,255,0.45);" data-i18n="ord_select_placeholder">-- เลือก --</option>
             <option value="1" style="background:#0e0620;color:#EDE6FF;">EN (Global / TH / EU)</option>
-            <option value="2" style="background:#0e0620;color:#EDE6FF;">JP (ญี่ปุ่น)</option>
-            <option value="3" style="background:#0e0620;color:#EDE6FF;">KR (เกาหลี)</option>
-            <option value="4" style="background:#0e0620;color:#EDE6FF;">TW (ไต้หวัน)</option>
+            <option value="2" style="background:#0e0620;color:#EDE6FF;" data-i18n="stg_server_jp">JP (ญี่ปุ่น)</option>
+            <option value="3" style="background:#0e0620;color:#EDE6FF;" data-i18n="stg_server_kr">KR (เกาหลี)</option>
+            <option value="4" style="background:#0e0620;color:#EDE6FF;" data-i18n="stg_server_tw">TW (ไต้หวัน)</option>
           </select>
-          <div style="margin-top:6px;font-size:11px;color:rgba(251,191,36,0.85);font-family:'Chakra Petch',sans-serif;">
+          <div style="margin-top:6px;font-size:11px;color:rgba(251,191,36,0.85);font-family:'Chakra Petch',sans-serif;" data-i18n="ord_server_tip">
             💡 คนไทยที่เล่นเซิร์ฟปกติ ให้เลือก <strong style="color:#FCD34D;">EN</strong>
           </div>
         </div>
 
-        <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 16px; margin-bottom: 18px; font-size: 13px; color: var(--text-secondary);">
+        <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 16px; margin-bottom: 18px; font-size: 13px; color: var(--text-secondary);" data-i18n="ord_important_warn">
           <strong style="color: #ffb347;">⚠️ สำคัญ:</strong> อย่า Login เข้าเกมขณะรอการทำ edit จะทำให้ Transfer Code หมดอายุ!
         </div>
 
         <!-- ── Payment Method Selector ── -->
         <div style="margin-bottom:16px;">
-          <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;color:rgba(210,190,255,0.55);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">วิธีชำระเงิน</div>
+          <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;color:rgba(210,190,255,0.55);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;" data-i18n="sc_pd_payment_method">วิธีชำระเงิน</div>
           <div style="display:flex;gap:10px;">
             <button id="btnPayPromptPay" onclick="setPayMethod('promptpay')"
               style="flex:1;padding:10px;border-radius:10px;border:2px solid rgba(124,58,237,0.6);background:rgba(124,58,237,0.25);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.18s;">
@@ -172,31 +172,31 @@
               💳 TrueWallet
             </button>
           </div>
-          <div id="payMethodLockMsg" style="display:none;margin-top:8px;padding:8px 12px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.35);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;">
+          <div id="payMethodLockMsg" style="display:none;margin-top:8px;padding:8px 12px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.35);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;" data-i18n="ord_pay_method_lock">
             ⚠️ กำลังรอชำระเงินอยู่ — กรุณายกเลิก order ก่อนเปลี่ยนวิธีชำระ
           </div>
         </div>
 
-        <button class="btn btn-primary" id="checkoutBtn" onclick="checkout()" style="width: 100%; margin-bottom: 12px;">💳 ดำเนินการชำระเงิน</button>
-        <button class="btn btn-outline" onclick="window.location.href='shop.html'" style="width: 100%;">ต่อไปเลือกสินค้าเพิ่ม</button>
+        <button class="btn btn-primary" id="checkoutBtn" onclick="checkout()" style="width: 100%; margin-bottom: 12px;" data-i18n="ord_proceed_pay">💳 ดำเนินการชำระเงิน</button>
+        <button class="btn btn-outline" onclick="window.location.href='shop.html'" style="width: 100%;" data-i18n="ord_continue_shopping">ต่อไปเลือกสินค้าเพิ่ม</button>
 
         <!-- ── Payment Section ── -->
         <div id="paymentSection" style="display:none; margin-top:24px;">
           <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.3);border-radius:18px;padding:24px;">
-            <h3 id="paymentTitle" style="font-family:'Russo One',sans-serif;font-size:17px;color:#FFD84E;margin-bottom:18px;letter-spacing:0.5px;">💳 ชำระเงิน</h3>
+            <h3 id="paymentTitle" style="font-family:'Russo One',sans-serif;font-size:17px;color:#FFD84E;margin-bottom:18px;letter-spacing:0.5px;" data-i18n="sc_pay_title">💳 ชำระเงิน</h3>
 
             <!-- PromptPay QR -->
             <div id="qrSection" style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;">
               <div style="flex-shrink:0;text-align:center;">
                 <div id="qrCanvas" style="background:#fff;padding:12px;border-radius:14px;display:inline-block;box-shadow:0 0 24px rgba(124,58,237,0.3);"></div>
-                <div style="margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);">สแกนด้วยแอปธนาคาร หรือ เป๋าตัง</div>
+                <div style="margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);" data-i18n="sc_qr_scan_hint">สแกนด้วยแอปธนาคาร หรือ เป๋าตัง</div>
               </div>
               <div style="flex:1;min-width:180px;font-family:'Chakra Petch',sans-serif;font-size:13px;">
                 <div style="margin-bottom:8px;color:rgba(210,190,255,0.6);">Order ID</div>
                 <div id="pay-orderId" style="font-family:'Russo One',sans-serif;font-size:13px;color:#FFD84E;margin-bottom:14px;word-break:break-all;"></div>
-                <div style="margin-bottom:4px;color:rgba(210,190,255,0.6);">ยอดที่ต้องชำระ</div>
+                <div style="margin-bottom:4px;color:rgba(210,190,255,0.6);" data-i18n="ord_amount_due">ยอดที่ต้องชำระ</div>
                 <div id="pay-amount" style="font-family:'Russo One',sans-serif;font-size:28px;color:#FF4D92;margin-bottom:16px;"></div>
-                <div style="background:rgba(251,191,36,0.10);border:1px solid rgba(251,191,36,0.28);border-radius:10px;padding:10px;color:#FCD34D;font-size:12px;line-height:1.6;">
+                <div style="background:rgba(251,191,36,0.10);border:1px solid rgba(251,191,36,0.28);border-radius:10px;padding:10px;color:#FCD34D;font-size:12px;line-height:1.6;" data-i18n="sc_dont_close">
                   ⚠️ อย่าปิดหน้านี้จนกว่าจะอัปโหลดสลิปเสร็จ
                 </div>
               </div>
@@ -206,22 +206,22 @@
             <div id="tmSection" style="display:none;">
               <div style="background:rgba(255,120,0,0.08);border:1px solid rgba(255,120,0,0.35);border-radius:14px;padding:20px;text-align:center;">
                 <div style="font-size:32px;margin-bottom:8px;">🧧</div>
-                <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.7);margin-bottom:12px;">ส่งซองอั่งเป่า (Angpao) มูลค่าตามยอดด้านล่าง แล้ววางโค้ด/ลิงก์ในช่องด้านล่างนี้</div>
+                <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.7);margin-bottom:12px;" data-i18n="sc_tw_info">ส่งซองอั่งเป่า (Angpao) มูลค่าตามยอดด้านล่าง แล้ววางโค้ด/ลิงก์ในช่องด้านล่างนี้</div>
                 <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:8px;">Order ID: <span id="pay-orderIdTm" style="color:#FFD84E;"></span></div>
                 <div id="tmFeeBreakdown" style="display:none;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);margin-bottom:4px;line-height:1.8;">
-                  <span>ราคาสินค้า: <span id="pay-baseAmountTm" style="color:#EDE6FF;"></span></span><br>
-                  <span>ค่าธรรมเนียม TrueWallet 2.9% (สูงสุด 20 บาท): <span id="pay-feeTm" style="color:#FBBF24;"></span></span>
+                  <span><span data-i18n="sc_tw_base_label">ราคาสินค้า:</span> <span id="pay-baseAmountTm" style="color:#EDE6FF;"></span></span><br>
+                  <span><span data-i18n="sc_tw_fee_label">ค่าธรรมเนียม TrueWallet 2.9% (สูงสุด 20 บาท):</span> <span id="pay-feeTm" style="color:#FBBF24;"></span></span>
                 </div>
-                <div style="font-family:'Chakra Petch',sans-serif;font-size:14px;color:rgba(210,190,255,0.8);margin-bottom:12px;">ยอดที่ต้องชำระ: <span id="pay-amountTm" style="font-family:'Russo One',sans-serif;font-size:28px;color:#FF4D92;"></span></div>
+                <div style="font-family:'Chakra Petch',sans-serif;font-size:14px;color:rgba(210,190,255,0.8);margin-bottom:12px;"><span data-i18n="sc_tw_total_label">ยอดที่ต้องชำระ:</span> <span id="pay-amountTm" style="font-family:'Russo One',sans-serif;font-size:28px;color:#FF4D92;"></span></div>
                 <div style="background:rgba(251,191,36,0.10);border:1px solid rgba(251,191,36,0.28);border-radius:10px;padding:10px;color:#FCD34D;font-size:12px;line-height:1.6;">
-                  ⚠️ อย่าปิดหน้านี้จนกว่าจะส่งโค้ดซองอั่งเป่าเสร็จ<br>
-                  ⚠️ ต้องใส่เลขให้ตรงตามยอดชำระเท่านั้น <strong>ห้ามเกินหรือขาด</strong>
+                  <span data-i18n="sc_tw_warn">⚠️ อย่าปิดหน้านี้จนกว่าจะส่งโค้ดซองอั่งเป่าเสร็จ</span><br>
+                  <span data-i18n="ord_tm_exact_amount">⚠️ ต้องใส่เลขให้ตรงตามยอดชำระเท่านั้น <strong>ห้ามเกินหรือขาด</strong></span>
                 </div>
               </div>
               <!-- วิดีโอสอนวิธีส่งซองอั่งเป่า (accordion เปิดไว้) -->
               <div style="margin-top:14px;border:1px solid rgba(255,120,0,0.30);border-radius:10px;overflow:hidden;">
                 <button onclick="toggleVidAccordion(this)" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(255,120,0,0.12);border:none;cursor:pointer;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;color:#FCA269;text-align:left;">
-                  <span>🎬 วิธีส่งซองอั่งเป่า TrueWallet</span>
+                  <span data-i18n="ord_tm_video_title">🎬 วิธีส่งซองอั่งเป่า TrueWallet</span>
                   <span style="font-size:18px;transition:transform 0.2s;display:inline-block;transform:rotate(90deg);">›</span>
                 </button>
                 <div>
@@ -236,7 +236,7 @@
 
             <!-- Slip upload (PromptPay) -->
             <div id="slipUploadSection" style="margin-top:20px;">
-              <label style="display:block;font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;color:rgba(210,190,255,0.55);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">อัปโหลดสลิปการโอน</label>
+              <label style="display:block;font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;color:rgba(210,190,255,0.55);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;" data-i18n="sc_upload_slip_label">อัปโหลดสลิปการโอน</label>
               <input type="file" id="slipInput" accept="image/*"
                 style="width:100%;padding:10px 12px;border:1px solid rgba(124,58,237,0.28);border-radius:10px;background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;"
                 onchange="onSlipChange()">
@@ -244,32 +244,32 @@
                 <img id="slipImg" src="" style="max-height:180px;border-radius:10px;object-fit:contain;">
               </div>
               <button class="btn btn-primary" id="submitSlipBtn" onclick="submitSlip()" disabled
-                style="width:100%;margin-top:14px;">📤 ส่งสลิปยืนยันการชำระ</button>
+                style="width:100%;margin-top:14px;" data-i18n="sc_submit_slip_btn">📤 ส่งสลิปยืนยันการชำระ</button>
               <div id="slipMsg" style="display:none;margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:13px;"></div>
             </div>
 
             <!-- Voucher input (TrueMoney Angpao) -->
             <div id="voucherInputSection" style="display:none;margin-top:20px;">
-<label style="display:block;font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;color:rgba(210,190,255,0.55);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">วางโค้ด/ลิงก์ซองอั่งเป่า</label>
+<label style="display:block;font-family:'Chakra Petch',sans-serif;font-size:11px;font-weight:700;color:rgba(210,190,255,0.55);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;" data-i18n="ord_paste_voucher">วางโค้ด/ลิงก์ซองอั่งเป่า</label>
               <input type="text" id="voucherInput" placeholder="https://gift.truemoney.com/campaign/?v=..."
                 style="width:100%;padding:10px 12px;border:1px solid rgba(255,120,0,0.3);border-radius:10px;background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;box-sizing:border-box;display:block;margin-bottom:16px;"
                 oninput="onVoucherChange()">
               <button class="btn btn-primary" id="submitVoucherBtn" onclick="submitVoucher()"
-                style="width:100%;">📤 ส่งโค้ดยืนยันการชำระ</button>
+                style="width:100%;" data-i18n="ord_submit_voucher_btn">📤 ส่งโค้ดยืนยันการชำระ</button>
               <div id="voucherMsg" style="display:none;margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:13px;"></div>
             </div>
 
             <!-- Cancel order -->
             <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.07);text-align:center;">
-              <button id="cancelTriggerBtn" onclick="showCancelConfirm()" style="background:none;border:none;color:rgba(248,113,113,0.7);font-family:'Chakra Petch',sans-serif;font-size:12px;cursor:pointer;text-decoration:underline;transition:color 0.18s;" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='rgba(248,113,113,0.7)'">
+              <button id="cancelTriggerBtn" onclick="showCancelConfirm()" style="background:none;border:none;color:rgba(248,113,113,0.7);font-family:'Chakra Petch',sans-serif;font-size:12px;cursor:pointer;text-decoration:underline;transition:color 0.18s;" onmouseover="this.style.color='#f87171'" onmouseout="this.style.color='rgba(248,113,113,0.7)'" data-i18n="ord_cancel_order_btn">
                 ยกเลิก order นี้ (ยังไม่ได้โอนเงิน)
               </button>
               <div id="cancelConfirmBox" style="display:none;margin-top:12px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:16px;">
-                <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:#FCA5A5;margin-bottom:4px;font-weight:700;">ยืนยันยกเลิก order?</div>
-                <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(248,113,113,0.65);margin-bottom:14px;line-height:1.6;">ถ้าโอนเงินไปแล้ว กรุณาติดต่อ admin ก่อนกดยืนยัน</div>
+                <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:#FCA5A5;margin-bottom:4px;font-weight:700;" data-i18n="ord_cancel_confirm_title">ยืนยันยกเลิก order?</div>
+                <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(248,113,113,0.65);margin-bottom:14px;line-height:1.6;" data-i18n="ord_cancel_confirm_sub">ถ้าโอนเงินไปแล้ว กรุณาติดต่อ admin ก่อนกดยืนยัน</div>
                 <div style="display:flex;gap:8px;justify-content:center;">
-                  <button onclick="cancelOrder()" style="padding:8px 20px;border-radius:8px;border:none;background:rgba(248,113,113,0.85);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">ยืนยันยกเลิก</button>
-                  <button onclick="hideCancelConfirm()" style="padding:8px 20px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:rgba(210,190,255,0.8);font-family:'Chakra Petch',sans-serif;font-size:12px;cursor:pointer;">ไม่ใช่</button>
+                  <button onclick="cancelOrder()" style="padding:8px 20px;border-radius:8px;border:none;background:rgba(248,113,113,0.85);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;cursor:pointer;" data-i18n="ord_cancel_confirm_btn">ยืนยันยกเลิก</button>
+                  <button onclick="hideCancelConfirm()" style="padding:8px 20px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:rgba(210,190,255,0.8);font-family:'Chakra Petch',sans-serif;font-size:12px;cursor:pointer;" data-i18n="ord_cancel_no_btn">ไม่ใช่</button>
                 </div>
               </div>
             </div>
@@ -280,9 +280,9 @@
 
     <div>
       <div class="card" style="padding: 28px; margin-bottom: 20px;">
-        <h2 class="section-title" style="font-size: 24px; margin-bottom: 14px;">🛍️ ตะกร้าสินค้า</h2>
+        <h2 class="section-title" style="font-size: 24px; margin-bottom: 14px;" data-i18n="ord_cart_title">🛍️ ตะกร้าสินค้า</h2>
         <div id="cartItems" style="min-height: 380px;">
-          <p style="color: var(--text-secondary); text-align: center;">ตะกร้าสินค้าว่าง</p>
+          <p style="color: var(--text-secondary); text-align: center;" data-i18n="ord_cart_empty">ตะกร้าสินค้าว่าง</p>
         </div>
       </div>
     </div>
@@ -295,9 +295,9 @@
     <!-- Not logged in -->
     <div id="hist-login-prompt" style="display:none;text-align:center;padding:70px 20px;">
       <div style="font-size:52px;margin-bottom:16px;">🔒</div>
-      <p style="font-size:18px;color:rgba(255,255,255,0.75);margin-bottom:8px;">กรุณาเข้าสู่ระบบก่อน</p>
-      <p style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:24px;">เพื่อดูประวัติการสั่งซื้อของคุณ</p>
-      <a href="login.html" class="btn btn-primary">🔑 เข้าสู่ระบบ</a>
+      <p style="font-size:18px;color:rgba(255,255,255,0.75);margin-bottom:8px;" data-i18n="ord_login_first">กรุณาเข้าสู่ระบบก่อน</p>
+      <p style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:24px;" data-i18n="ord_login_to_view_history">เพื่อดูประวัติการสั่งซื้อของคุณ</p>
+      <a href="login.html" class="btn btn-primary">🔑 <span data-i18n="ord_login_btn">เข้าสู่ระบบ</span></a>
     </div>
 
     <!-- Logged in: order list -->
@@ -313,34 +313,34 @@
     <div class="footer-grid">
       <div class="footer-col">
         <h4>Battle Cat Pro Max</h4>
-        <p style="font-size: 13px; line-height: 1.6;">บริการร้านขายไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
+        <p style="font-size: 13px; line-height: 1.6;" data-i18n="footer_brand_desc">บริการร้านค้าไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
       </div>
       <div class="footer-col">
-        <h4>บริการ</h4>
+        <h4 data-i18n="footer_services">บริการ</h4>
         <ul>
-          <li><a href="shop.html">ร้านขาย</a></li>
-          <li><a href="characters.html">ปลดล็อคแมว</a></li>
-          <li><a href="stages.html">ปลดล็อคด่าน</a></li>
-          <li><a href="orders.html">ออเดอร์ของฉัน</a></li>
+          <li><a href="shop.html" data-i18n="nav_shop">ร้านค้าไอเทม</a></li>
+          <li><a href="characters.html" data-i18n="nav_unlock_cat">ปลดล็อคแมว</a></li>
+          <li><a href="stages.html" data-i18n="nav_unlock_stage">ปลดล็อคด่าน</a></li>
+          <li><a href="orders.html" data-i18n="nav_orders_mine">ออเดอร์ของฉัน</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>ติดต่อเรา</h4>
+        <h4 data-i18n="footer_contact">ติดต่อเรา</h4>
         <ul>
-          <li><a href="https://www.facebook.com/pronajaa.gamedee.1/" target="_blank" rel="noopener">📘 Facebook (ผู้ใช้)</a></li>
-          <li><a href="https://www.facebook.com/profile.php?id=61572054218886" target="_blank" rel="noopener">📘 Facebook (เพจร้าน)</a></li>
+          <li><a href="https://www.facebook.com/pronajaa.gamedee.1/" target="_blank" rel="noopener">📘 <span data-i18n="fb_user">Facebook (ผู้ใช้)</span></a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61572054218886" target="_blank" rel="noopener">📘 <span data-i18n="fb_page">Facebook (เพจร้าน)</span></a></li>
         </ul>
       </div>
     </div>
 
     <div class="social-row">
-      <div class="social-pill">🌍 ภาษาไทย</div>
-      <div class="social-pill">✅ ได้รับการตรวจสอบ</div>
-      <div class="social-pill">⭐ 2,000+ ผู้ใช้</div>
+      <div class="social-pill">🌍 <span data-i18n="lang_pill">ภาษาไทย</span></div>
+      <div class="social-pill">✅ <span data-i18n="verified_pill">ได้รับการตรวจสอบ</span></div>
+      <div class="social-pill">⭐ 2,000+ <span data-i18n="users_pill">ผู้ใช้</span></div>
     </div>
 
     <div class="footer-bottom">
-      <p>© 2025 Battle Cat Pro Max · บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</p>
+      <p>© 2025 Battle Cat Pro Max · <span data-i18n="footer_bottom">บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</span></p>
     </div>
   </div>
 </footer>
@@ -350,24 +350,24 @@
   <div class="modal-content" style="max-width: 500px; text-align: center;">
     <div class="modal-body" style="padding: 40px 20px;">
       <div id="modal-icon" style="font-size: 48px; margin-bottom: 16px;">✅</div>
-      <h2 id="modal-title" style="font-family: 'Kanit', sans-serif; font-size: 24px; color: #22c55e; margin-bottom: 12px;">ออเดอร์สำเร็จ!</h2>
-      <p style="color: #666; margin-bottom: 12px;">ออเดอร์ #<span id="orderID" style="font-weight: 700; color: #FF6B00;">BC-001</span></p>
+      <h2 id="modal-title" style="font-family: 'Kanit', sans-serif; font-size: 24px; color: #22c55e; margin-bottom: 12px;" data-i18n="ord_success_title">ออเดอร์สำเร็จ!</h2>
+      <p style="color: #666; margin-bottom: 12px;"><span data-i18n="ord_order_hash">ออเดอร์ #</span><span id="orderID" style="font-weight: 700; color: #FF6B00;">BC-001</span></p>
       <p id="resultSummary" style="font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 20px;"></p>
 
       <!-- Success: แสดง Transfer Code ใหม่ -->
       <div id="modal-success-box" style="text-align: left; background: #f9fafb; border: 1px solid #d1d5db; border-radius: 12px; padding: 18px; margin-bottom: 18px; color: #1f2937;">
         <div style="margin-bottom: 12px;">
-          <div style="font-size:11px;font-weight:700;color:#6b7280;margin-bottom:4px;">TRANSFER CODE ใหม่</div>
+          <div style="font-size:11px;font-weight:700;color:#6b7280;margin-bottom:4px;" data-i18n="ord_new_tc_label">TRANSFER CODE ใหม่</div>
           <div style="display:flex;align-items:center;gap:8px;">
             <span id="newTransferCode" style="font-family:monospace;font-size:15px;font-weight:700;color:#111827;word-break:break-all;flex:1;">-</span>
-            <button onclick="copyCode('newTransferCode',this)" style="flex-shrink:0;padding:5px 12px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Chakra Petch',sans-serif;">คัดลอก</button>
+            <button onclick="copyCode('newTransferCode',this)" style="flex-shrink:0;padding:5px 12px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Chakra Petch',sans-serif;" data-i18n="copy_label">คัดลอก</button>
           </div>
         </div>
         <div>
-          <div style="font-size:11px;font-weight:700;color:#6b7280;margin-bottom:4px;">CONFIRMATION CODE ใหม่</div>
+          <div style="font-size:11px;font-weight:700;color:#6b7280;margin-bottom:4px;" data-i18n="ord_new_cc_label">CONFIRMATION CODE ใหม่</div>
           <div style="display:flex;align-items:center;gap:8px;">
             <span id="newConfirmCode" style="font-family:monospace;font-size:15px;font-weight:700;color:#111827;flex:1;">-</span>
-            <button onclick="copyCode('newConfirmCode',this)" style="flex-shrink:0;padding:5px 12px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Chakra Petch',sans-serif;">คัดลอก</button>
+            <button onclick="copyCode('newConfirmCode',this)" style="flex-shrink:0;padding:5px 12px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Chakra Petch',sans-serif;" data-i18n="copy_label">คัดลอก</button>
           </div>
         </div>
       </div>
@@ -375,7 +375,7 @@
       <!-- วิดีโอสอนวิธีใส่รหัสใหม่ (accordion ปิด) -->
       <div style="margin-bottom:18px;border:1px solid #d1d5db;border-radius:10px;overflow:hidden;">
         <button onclick="toggleVidAccordion(this)" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f3f4f6;border:none;cursor:pointer;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;color:#374151;text-align:left;">
-          <span>🎬 วิธีนำรหัสใหม่ไปใส่ในเกม</span>
+          <span data-i18n="ord_video_howto_newcode">🎬 วิธีนำรหัสใหม่ไปใส่ในเกม</span>
           <span style="font-size:18px;transition:transform 0.2s;display:inline-block;">›</span>
         </button>
         <div style="display:none;">
@@ -389,9 +389,9 @@
 
       <!-- Error: retry form -->
       <div id="modal-retry-box" style="display:none; text-align:left; background:#fff3f3; border:1px solid #fca5a5; border-radius:12px; padding:18px; margin-bottom:18px;">
-        <p style="color:#991b1b; font-size:13px; margin-bottom:14px;">💡 เงินของคุณปลอดภัย — กรอก Transfer Code และ Confirmation Code ใหม่แล้วลองใหม่อีกครั้ง</p>
+        <p style="color:#991b1b; font-size:13px; margin-bottom:14px;" data-i18n="ord_money_safe_msg">💡 เงินของคุณปลอดภัย — กรอก Transfer Code และ Confirmation Code ใหม่แล้วลองใหม่อีกครั้ง</p>
         <div style="margin-bottom:10px;">
-          <label style="display:block; font-size:12px; font-weight:700; color:#666; margin-bottom:4px;">Transfer Code ใหม่</label>
+          <label style="display:block; font-size:12px; font-weight:700; color:#666; margin-bottom:4px;" data-i18n="ord_new_tc_field_label">Transfer Code ใหม่</label>
           <input type="text" id="retry-tc" placeholder="ABCD1234EFGH5678"
             style="width:100%; padding:8px 10px; border:1px solid #d1d5db; border-radius:8px; font-family:monospace; box-sizing:border-box;">
         </div>
@@ -401,31 +401,31 @@
             style="width:100%; padding:8px 10px; border:1px solid #d1d5db; border-radius:8px; font-family:monospace; box-sizing:border-box;">
         </div>
         <button id="retryBtn" onclick="retryBCSFE()"
-          style="width:100%; padding:10px; background:#dc2626; color:#fff; border:none; border-radius:8px; font-family:'Kanit',sans-serif; font-size:14px; font-weight:700; cursor:pointer;">
+          style="width:100%; padding:10px; background:#dc2626; color:#fff; border:none; border-radius:8px; font-family:'Kanit',sans-serif; font-size:14px; font-weight:700; cursor:pointer;" data-i18n="ord_retry_btn">
           🔄 ลองใหม่อีกครั้ง
         </button>
         <div id="retryMsg" style="display:none; margin-top:10px; font-size:13px;"></div>
       </div>
 
       <div style="background: #e5f6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px; margin-bottom: 18px; color: #0f172a; text-align: left;">
-        <p style="margin-bottom: 8px;"><strong>สรุปรายการ:</strong></p>
+        <p style="margin-bottom: 8px;"><strong data-i18n="ord_summary_recap">สรุปรายการ:</strong></p>
         <div id="orderSummary" style="font-size: 13px; line-height: 1.6;"></div>
       </div>
       <!-- วิธีใช้ Rare Ticket (แสดงเฉพาะถ้าซื้อ Rare Ticket) -->
       <div id="rare-ticket-howto" style="display:none; text-align:left; background:#fffbeb; border:2px solid #f59e0b; border-radius:12px; padding:16px 18px; margin-top:16px; margin-bottom:4px; box-shadow:0 0 0 4px rgba(245,158,11,0.12);">
-        <div style="font-weight:700; color:#92400e; margin-bottom:10px; font-size:13px; font-family:'Chakra Petch',sans-serif;">⚠️ วิธีใช้งาน Rare Ticket (อ่านก่อนนะครับ!)</div>
+        <div style="font-weight:700; color:#92400e; margin-bottom:10px; font-size:13px; font-family:'Chakra Petch',sans-serif;" data-i18n="shop_rt_howto_title">⚠️ วิธีใช้งาน Rare Ticket (อ่านก่อนนะครับ!)</div>
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-family:'Chakra Petch',sans-serif; font-size:12px; color:#1f2937;">
-          <span style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:4px 10px; font-weight:600;">① รับไอเทม</span>
+          <span style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:4px 10px; font-weight:600;" data-i18n="shop_rt_step1">① รับไอเทม</span>
           <span style="color:#d97706; font-weight:700;">→</span>
-          <span style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:4px 10px; font-weight:600;">② เข้าตู้เย็น (Storage)</span>
+          <span style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:4px 10px; font-weight:600;" data-i18n="shop_rt_step2">② เข้าตู้เย็น (Storage)</span>
           <span style="color:#d97706; font-weight:700;">→</span>
-          <span style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:4px 10px; font-weight:600;">③ กดใช้ทั้งหมด</span>
+          <span style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:4px 10px; font-weight:600;" data-i18n="shop_rt_step3">③ กดใช้ทั้งหมด</span>
           <span style="color:#d97706; font-weight:700;">→</span>
-          <span style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:4px 10px; font-weight:600;">④ แลกตั๋วทอง</span>
+          <span style="background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; padding:4px 10px; font-weight:600;" data-i18n="shop_rt_step4">④ แลกตั๋วทอง</span>
         </div>
       </div>
 
-      <button id="modal-back-btn" class="btn btn-primary" onclick="modalGoBack()" style="margin-top: 20px;">กลับไปเลือกสินค้าเพิ่มเติม</button>
+      <button id="modal-back-btn" class="btn btn-primary" onclick="modalGoBack()" style="margin-top: 20px;" data-i18n="ord_back_to_shop">กลับไปเลือกสินค้าเพิ่มเติม</button>
     </div>
   </div>
 </div>
@@ -460,8 +460,8 @@ function displayCart() {
   var total = 0;
 
   if (cart.length === 0) {
-    document.getElementById('cartItems').innerHTML = '<p style="color: #666; text-align: center;">ตะกร้าสินค้าว่าง</p>';
-    document.getElementById('totalItems').textContent = '0 รายการ';
+    document.getElementById('cartItems').innerHTML = '<p style="color: #666; text-align: center;">' + window.bcT('ord_cart_empty','ตะกร้าสินค้าว่าง') + '</p>';
+    document.getElementById('totalItems').textContent = window.bcT('ord_items_unit','{n} รายการ').replace('{n}', '0');
     document.getElementById('totalPrice').textContent = '฿0';
     document.getElementById('cartCount').textContent = '0';
     _updateOrderTypeHint([]);
@@ -474,7 +474,7 @@ function displayCart() {
     var imgHtml = isUnlock
       ? '<img src="/api/cat-image/' + item.cat_id + '" style="width:40px;height:40px;border-radius:8px;object-fit:cover;margin-right:10px;background:#1a0a2e;" onerror="this.style.display=\'none\'">'
       : '';
-    var amountText = (!isUnlock && item.amount) ? ' • จำนวน ' + item.amount.toLocaleString() : '';
+    var amountText = (!isUnlock && item.amount) ? window.bcT('ord_qty_label',' • จำนวน ') + item.amount.toLocaleString() : '';
     cartHTML +=
       '<div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">' +
         '<div style="display:flex;align-items:center;">' +
@@ -484,18 +484,39 @@ function displayCart() {
             '<div style="font-size:12px;color:#888;">฿' + item.price.toLocaleString() + '</div>' +
           '</div>' +
         '</div>' +
-        '<button onclick="removeFromCart(' + index + ')" style="background:#ffebee;color:#e8002a;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px;">ลบ</button>' +
+        '<button onclick="removeFromCart(' + index + ')" style="background:#ffebee;color:#e8002a;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px;">' + window.bcT('ord_remove_btn','ลบ') + '</button>' +
       '</div>';
   });
 
   document.getElementById('cartItems').innerHTML = cartHTML;
-  document.getElementById('totalItems').textContent = cart.length + ' รายการ';
+  document.getElementById('totalItems').textContent = window.bcT('ord_items_unit','{n} รายการ').replace('{n}', cart.length);
   document.getElementById('totalPrice').textContent = '฿' + total.toLocaleString();
   document.getElementById('cartCount').textContent = cart.length;
   _updateOrderTypeHint(cart);
 }
 
 var _PER_CAT_SVC_KEYS = { upgrade_cat:1, trueform_cat:1, ultraform_cat:1, talents_cat:1 };
+
+function _stageItemsToConfig(items) {
+  var storyCh=[], treasureCh=[], zombieCh=[], legendTypes=[], legendCrowns={};
+  var akuUnlock=false, akuChaps=false;
+  items.forEach(function(i) {
+    if (i.stage_cat === 'story') {
+      if (i.stage_field === 'clear')    storyCh    = storyCh.concat(i.stage_chapters||[]);
+      if (i.stage_field === 'treasure') treasureCh = treasureCh.concat(i.stage_chapters||[]);
+      if (i.stage_field === 'zombie')   zombieCh   = zombieCh.concat(i.stage_chapters||[]);
+    } else if (i.stage_cat === 'legend') {
+      legendTypes.push(i.stage_target);
+      legendCrowns[i.stage_target] = i.stage_crown || 4;
+    } else if (i.stage_cat === 'aku') {
+      if (i.stage_field === 'unlock')   akuUnlock = true;
+      if (i.stage_field === 'chapters') akuChaps  = true;
+    }
+  });
+  return { story_chapters:storyCh, treasure_chapters:treasureCh, zombie_chapters:zombieCh,
+           legend_types:legendTypes, max_crown:4, legend_crowns:legendCrowns,
+           aku_unlock:akuUnlock, aku_chapters:akuChaps };
+}
 var _PER_CAT_SVC_LABEL = { upgrade_cat:'Upgrade Max', trueform_cat:'True Form', ultraform_cat:'Ultra Form', talents_cat:'Talent Max' };
 
 function _updateOrderTypeHint(cart) {
@@ -503,19 +524,25 @@ function _updateOrderTypeHint(cart) {
   if (!hint) return;
   var hasUnlock  = cart.some(function(i){ return i.key === 'unlock_cat'; });
   var hasPerCat  = cart.some(function(i){ return _PER_CAT_SVC_KEYS[i.key]; });
-  var hasRegular = cart.some(function(i){ return !_PER_CAT_SVC_KEYS[i.key] && i.key !== 'unlock_cat'; });
+  var hasStages  = cart.some(function(i){ return i.type === 'stage_service' || i.key === 'stages'; });
+  var hasRegular = cart.some(function(i){ return !_PER_CAT_SVC_KEYS[i.key] && i.key !== 'unlock_cat' && i.type !== 'stage_service' && i.key !== 'stages'; });
   var parts = [];
-  if (hasUnlock)  parts.push('<strong>ปลดล็อคแมว</strong>');
-  if (hasPerCat)  parts.push('<strong>บริการต่อตัว</strong> (Upgrade/TrueForm/UltraForm/Talents)');
-  if (hasRegular) parts.push('<strong>ไอเทม</strong>');
-  if (parts.length > 1) {
-    hint.innerHTML = '<p style="color:#60a5fa;">🛍️ ตะกร้ามี ' + parts.join(' + ') + ' — ระบบจะดำเนินการตามลำดับอัตโนมัติ</p>';
+  if (hasUnlock)  parts.push(window.bcT('ord_hint_label_unlock','<strong>ปลดล็อคแมว</strong>'));
+  if (hasPerCat)  parts.push(window.bcT('ord_hint_label_percat','<strong>บริการต่อตัว</strong> (Upgrade/TrueForm/UltraForm/Talents)'));
+  if (hasStages)  parts.push(window.bcT('ord_hint_label_stage','<strong>ปลดล็อคด่าน</strong>'));
+  if (hasRegular) parts.push(window.bcT('ord_hint_label_item','<strong>ไอเทม</strong>'));
+  if (hasStages && (hasUnlock || hasPerCat || hasRegular)) {
+    hint.innerHTML = '<p style="color:#fbbf24;">' + window.bcT('ord_stage_mix_warn','⚠️ ตะกร้ามี <strong>ปลดล็อคด่าน</strong> ปนกับรายการอื่น — กรุณาลบรายการด่านออกก่อน แล้วชำระแยกกัน') + '</p>';
+  } else if (parts.length > 1) {
+    hint.innerHTML = '<p style="color:#60a5fa;">' + window.bcT('ord_hint_multi','🛍️ ตะกร้ามี {parts} — ระบบจะดำเนินการตามลำดับอัตโนมัติ').replace('{parts}', parts.join(' + ')) + '</p>';
+  } else if (hasStages) {
+    hint.innerHTML = '<p style="color:#4ade80;">' + window.bcT('ord_stage_only_hint','📍 ตะกร้านี้เป็นคำสั่ง <strong>ปลดล็อคด่าน</strong> — ชำระเงินแล้วระบบจะดำเนินการอัตโนมัติ') + '</p>';
   } else if (hasUnlock) {
-    hint.innerHTML = '<p style="color:#4ade80;">🐱 ตะกร้านี้เป็นคำสั่ง <strong>ปลดล็อคแมว</strong> — ชำระเงินแล้วระบบจะปลดล็อคอัตโนมัติ</p>';
+    hint.innerHTML = '<p style="color:#4ade80;">' + window.bcT('ord_cat_only_hint','🐱 ตะกร้านี้เป็นคำสั่ง <strong>ปลดล็อคแมว</strong> — ชำระเงินแล้วระบบจะปลดล็อคอัตโนมัติ') + '</p>';
   } else if (hasPerCat) {
-    hint.innerHTML = '<p style="color:#c4b5fd;">✨ ตะกร้านี้มี <strong>บริการต่อตัว</strong> — ระบบจะดำเนินการให้อัตโนมัติหลังชำระเงิน</p>';
+    hint.innerHTML = '<p style="color:#c4b5fd;">' + window.bcT('ord_hint_percat_only','✨ ตะกร้านี้มี <strong>บริการต่อตัว</strong> — ระบบจะดำเนินการให้อัตโนมัติหลังชำระเงิน') + '</p>';
   } else {
-    hint.innerHTML = '<p>📌 ระบุ Transfer Code, Confirmation Code และเซิร์ฟเวอร์ให้ครบ เพื่อสั่งงาน BCSFE ต่อ</p>';
+    hint.innerHTML = '<p>' + window.bcT('ord_hint','📌 ระบุ Transfer Code, Confirmation Code และเซิร์ฟเวอร์ให้ครบ เพื่อสั่งงาน BCSFE ต่อ') + '</p>';
   }
 }
 
@@ -523,7 +550,7 @@ function copyText(text, btn) {
   if (!text || text === '-') return;
   navigator.clipboard.writeText(text).then(function() {
     var orig = btn.textContent;
-    btn.textContent = '✓ คัดลอกแล้ว';
+    btn.textContent = window.bcT('copy_done','✓ คัดลอกแล้ว');
     btn.style.background = '#22c55e';
     btn.style.color = '#fff';
     setTimeout(function() { btn.textContent = orig; btn.style.background = ''; btn.style.color = ''; }, 1800);
@@ -532,8 +559,8 @@ function copyText(text, btn) {
     ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.select(); document.execCommand('copy');
     document.body.removeChild(ta);
-    btn.textContent = '✓ คัดลอกแล้ว';
-    setTimeout(function() { btn.textContent = 'คัดลอก'; }, 1800);
+    btn.textContent = window.bcT('copy_done','✓ คัดลอกแล้ว');
+    setTimeout(function() { btn.textContent = window.bcT('copy_label','คัดลอก'); }, 1800);
   });
 }
 
@@ -544,7 +571,7 @@ function copyCode(elId, btn) {
 
 function removeFromCart(index) {
   if (_paymentLocked) {
-    alert('⚠️ ไม่สามารถแก้ตะกร้าได้ เพราะ QR ชำระเงินถูกสร้างไปแล้ว\nหากต้องการเปลี่ยน กรุณา refresh หน้าเพื่อเริ่มใหม่');
+    alert(window.bcT('ord_cart_locked_alert','⚠️ ไม่สามารถแก้ตะกร้าได้ เพราะ QR ชำระเงินถูกสร้างไปแล้ว\nหากต้องการเปลี่ยน กรุณา refresh หน้าเพื่อเริ่มใหม่'));
     return;
   }
   let cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -594,7 +621,7 @@ function setSubmitState(isSubmitting) {
   const button = document.getElementById('checkoutBtn');
   if (!button) return;
   button.disabled = isSubmitting;
-  button.textContent = isSubmitting ? 'กำลังส่งคำสั่ง...' : '🚀 ชำระเงินเลย';
+  button.textContent = isSubmitting ? window.bcT('ord_submitting','กำลังส่งคำสั่ง...') : window.bcT('ord_pay_now_btn','🚀 ชำระเงินเลย');
 }
 
 // ── Checkout: call API → show payment section ─────────────────
@@ -605,40 +632,77 @@ async function checkout() {
   var cart         = JSON.parse(localStorage.getItem('cart') || '[]');
 
   if (!transferCode || !confirmCode || !server) {
-    alert('❌ กรุณากรอก Transfer Code, Confirmation Code และเลือก Server!'); return;
+    alert(window.bcT('ord_fill_required_alert','❌ กรุณากรอก Transfer Code, Confirmation Code และเลือก Server!')); return;
   }
-  if (cart.length === 0) { alert('❌ ตะกร้าว่างเปล่า!'); return; }
+  if (cart.length === 0) { alert(window.bcT('ord_empty_cart_alert','❌ ตะกร้าว่างเปล่า!')); return; }
 
   setSubmitState(true);
   try {
-    var total    = cart.reduce(function(s,i){ return s + i.price; }, 0);
-    var catItems = cart.filter(function(i){ return i.key === 'unlock_cat'; });
-    var catIds   = catItems.length ? catItems.map(function(i){ return i.cat_id; }) : null;
-    var catUnlockTotal = catItems.reduce(function(s,i){ return s + i.price; }, 0);
+    var stageServiceItems = cart.filter(function(i){ return i.type === 'stage_service'; });
+    var oldStageBundle    = cart.find(function(i){ return i.key === 'stages'; });
+    var hasStages = stageServiceItems.length > 0 || !!oldStageBundle;
+    var nonStagesCart = cart.filter(function(i){ return i.type !== 'stage_service' && i.key !== 'stages'; });
 
-    var items = cart.filter(function(i){ return i.key !== 'unlock_cat'; })
-                    .map(function(i){
-                      var obj = { key: i.key, amount: i.amount };
-                      if (i.cat_id != null) obj.cat_id = i.cat_id;
-                      return obj;
-                    });
+    if (hasStages && nonStagesCart.length > 0) {
+      alert(window.bcT('ord_stage_separate_alert','⚠️ กรุณาชำระด่านแยกจากรายการอื่น\nลบรายการด่านออกก่อน แล้วค่อยชำระรายการนี้'));
+      setSubmitState(false);
+      return;
+    }
 
-    var res = await fetch('/api/payment/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        transfer_code:      transferCode,
-        confirmation_code:  confirmCode,
-        country:            server,
-        items:              items,
-        cat_ids:            catIds,
-        cat_unlock_total:   catUnlockTotal,
-        payment_method:     _selectedPayMethod,
-        username:           (typeof AUTH !== 'undefined' && AUTH.getCurrentUser()) || '',
-      }),
-    });
-    var data = await res.json();
-    if (!res.ok) throw new Error(data.detail || 'สร้าง order ไม่สำเร็จ');
+    var res, data;
+
+    if (hasStages) {
+      var stagesConfig = stageServiceItems.length > 0
+        ? _stageItemsToConfig(stageServiceItems)
+        : oldStageBundle.stages_config;
+      var stagesTotal = stageServiceItems.length > 0
+        ? stageServiceItems.reduce(function(s,i){ return s+i.price; }, 0)
+        : oldStageBundle.price;
+      res = await fetch('/api/payment/create-stages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transfer_code:     transferCode,
+          confirmation_code: confirmCode,
+          country:           server,
+          payment_method:    _selectedPayMethod,
+          stages_config:     stagesConfig,
+          amount:            stagesTotal,
+          username:          (typeof AUTH !== 'undefined' && AUTH.getCurrentUser()) || '',
+        }),
+      });
+      data = await res.json();
+      if (!res.ok) throw new Error(data.detail || window.bcT('ord_create_order_failed','สร้าง order ไม่สำเร็จ'));
+    } else {
+      var total    = cart.reduce(function(s,i){ return s + i.price; }, 0);
+      var catItems = cart.filter(function(i){ return i.key === 'unlock_cat'; });
+      var catIds   = catItems.length ? catItems.map(function(i){ return i.cat_id; }) : null;
+      var catUnlockTotal = catItems.reduce(function(s,i){ return s + i.price; }, 0);
+
+      var items = cart.filter(function(i){ return i.key !== 'unlock_cat'; })
+                      .map(function(i){
+                        var obj = { key: i.key, amount: i.amount };
+                        if (i.cat_id != null) obj.cat_id = i.cat_id;
+                        return obj;
+                      });
+
+      res = await fetch('/api/payment/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transfer_code:      transferCode,
+          confirmation_code:  confirmCode,
+          country:            server,
+          items:              items,
+          cat_ids:            catIds,
+          cat_unlock_total:   catUnlockTotal,
+          payment_method:     _selectedPayMethod,
+          username:           (typeof AUTH !== 'undefined' && AUTH.getCurrentUser()) || '',
+        }),
+      });
+      data = await res.json();
+      if (!res.ok) throw new Error(data.detail || window.bcT('ord_create_order_failed','สร้าง order ไม่สำเร็จ'));
+    }
 
     _currentOrderId = data.order_id;
 
@@ -648,7 +712,7 @@ async function checkout() {
 
     showPaymentSection(data.order_id, data.amount, data.qr_base64, data.payment_method, data.truemoney_id, data.base_amount, data.truemoney_fee);
   } catch (err) {
-    alert('❌ สร้าง order ไม่สำเร็จ: ' + (err.message || err));
+    alert(window.bcT('ord_create_order_failed_alert','❌ สร้าง order ไม่สำเร็จ: ') + (err.message || err));
     console.error(err);
   } finally {
     setSubmitState(false);
@@ -681,7 +745,7 @@ function showPaymentSection(orderId, total, qr_base64, paymentMethod, truemoneyI
   document.getElementById('paymentSection').style.display = 'block';
 
   var isTM = (paymentMethod === 'truemoney');
-  document.getElementById('paymentTitle').textContent = isTM ? '💳 ชำระเงินผ่าน TrueWallet' : '💳 ชำระเงินผ่าน PromptPay';
+  document.getElementById('paymentTitle').textContent = isTM ? window.bcT('ord_pay_via_truewallet','💳 ชำระเงินผ่าน TrueWallet') : window.bcT('ord_pay_via_promptpay','💳 ชำระเงินผ่าน PromptPay');
   document.getElementById('qrSection').style.display = isTM ? 'none' : 'flex';
   document.getElementById('tmSection').style.display = isTM ? '' : 'none';
   document.getElementById('slipUploadSection').style.display   = isTM ? 'none' : '';
@@ -731,14 +795,14 @@ function onSlipChange() {
 // ── Submit slip → verify with SlipOK → run BCSFE ──────────────
 async function submitSlip() {
   var file = document.getElementById('slipInput').files[0];
-  if (!file || !_currentOrderId) { alert('❌ กรุณาเลือกไฟล์สลิปก่อน'); return; }
+  if (!file || !_currentOrderId) { alert(window.bcT('ord_choose_slip_alert','❌ กรุณาเลือกไฟล์สลิปก่อน')); return; }
 
   var btn = document.getElementById('submitSlipBtn');
   var msg = document.getElementById('slipMsg');
-  btn.disabled = true; btn.textContent = '⏳ กำลังตรวจสอบสลิป...';
+  btn.disabled = true; btn.textContent = window.bcT('ord_checking_slip_btn','⏳ กำลังตรวจสอบสลิป...');
   msg.style.display = 'block';
   msg.style.color = 'rgba(255,255,255,0.6)';
-  msg.textContent = '🔍 กำลังตรวจสอบสลิปกับ SlipOK...';
+  msg.textContent = window.bcT('ord_checking_slip_msg','🔍 กำลังตรวจสอบสลิปกับ SlipOK...');
 
   try {
     var formData = new FormData();
@@ -752,7 +816,7 @@ async function submitSlip() {
 
     if (!res.ok) {
       // slip error (400) — ยังไม่ได้รับเงิน ให้ลองส่งสลิปใหม่
-      throw new Error(data.detail || 'ยืนยันสลิปไม่สำเร็จ');
+      throw new Error(data.detail || window.bcT('ord_slip_verify_failed','ยืนยันสลิปไม่สำเร็จ'));
     }
 
     var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
@@ -793,11 +857,11 @@ async function submitSlip() {
     if (data.bcsfe_failed) {
       showSuccessModal(_currentOrderId, currentOrder ? currentOrder.items : [], { success: false, latest_transfer_code: data.latest_transfer_code, latest_confirmation_code: data.latest_confirmation_code });
       msg.style.color = '#f59e0b';
-      msg.textContent = '⚠️ สลิปผ่านแล้ว กรุณากรอก Transfer/Confirmation Code ใหม่ใน popup';
+      msg.textContent = window.bcT('ord_slip_passed_redo_codes','⚠️ สลิปผ่านแล้ว กรุณากรอก Transfer/Confirmation Code ใหม่ใน popup');
     } else {
       showSuccessModal(_currentOrderId, currentOrder ? currentOrder.items : [], data);
       msg.style.color = '#4ade80';
-      msg.textContent = '✅ ชำระเงินสำเร็จ! ระบบดำเนินการอัตโนมัติแล้ว';
+      msg.textContent = window.bcT('ord_paid_success_msg','✅ ชำระเงินสำเร็จ! ระบบดำเนินการอัตโนมัติแล้ว');
     }
 
   } catch (err) {
@@ -808,7 +872,7 @@ async function submitSlip() {
     msg.style.display = 'block';
     msg.style.color = '#f87171';
     msg.textContent = '❌ ' + errMsg;
-    btn.disabled = false; btn.textContent = '📤 ส่งสลิปยืนยันการชำระ';
+    btn.disabled = false; btn.textContent = window.bcT('sc_submit_slip_btn','📤 ส่งสลิปยืนยันการชำระ');
   }
 }
 
@@ -825,16 +889,16 @@ async function submitVoucher() {
   if (!code) {
     msg.style.display = 'block';
     msg.style.color = '#F87171';
-    msg.textContent = '⚠️ กรุณาวางโค้ด/ลิงก์ซองอั่งเป่า';
+    msg.textContent = window.bcT('ord_paste_voucher_warn','⚠️ กรุณาวางโค้ด/ลิงก์ซองอั่งเป่า');
     return;
   }
-  if (!_currentOrderId) { alert('❌ ไม่พบ Order ID'); return; }
+  if (!_currentOrderId) { alert(window.bcT('ord_no_orderid_alert','❌ ไม่พบ Order ID')); return; }
 
   var btn = document.getElementById('submitVoucherBtn');
-  btn.disabled = true; btn.textContent = '⏳ กำลังตรวจสอบซองอั่งเป่า...';
+  btn.disabled = true; btn.textContent = window.bcT('ord_checking_voucher_btn','⏳ กำลังตรวจสอบซองอั่งเป่า...');
   msg.style.display = 'block';
   msg.style.color = 'rgba(255,255,255,0.6)';
-  msg.textContent = '🔍 กำลังแลกซองอั่งเป่ากับ TrueWallet...';
+  msg.textContent = window.bcT('ord_checking_voucher_msg','🔍 กำลังแลกซองอั่งเป่ากับ TrueWallet...');
 
   try {
     var res = await fetch('/api/payment/verify-voucher/' + _currentOrderId, {
@@ -845,7 +909,7 @@ async function submitVoucher() {
     var data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.detail || 'ยืนยันซองอั่งเป่าไม่สำเร็จ');
+      throw new Error(data.detail || window.bcT('ord_voucher_verify_failed','ยืนยันซองอั่งเป่าไม่สำเร็จ'));
     }
 
     var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
@@ -884,11 +948,11 @@ async function submitVoucher() {
     if (data.bcsfe_failed) {
       showSuccessModal(_currentOrderId, currentOrder ? currentOrder.items : [], { success: false, latest_transfer_code: data.latest_transfer_code, latest_confirmation_code: data.latest_confirmation_code });
       msg.style.color = '#f59e0b';
-      msg.textContent = '⚠️ ซองอั่งเป่าผ่านแล้ว กรุณากรอก Transfer/Confirmation Code ใหม่ใน popup';
+      msg.textContent = window.bcT('ord_voucher_passed_redo_codes','⚠️ ซองอั่งเป่าผ่านแล้ว กรุณากรอก Transfer/Confirmation Code ใหม่ใน popup');
     } else {
       showSuccessModal(_currentOrderId, currentOrder ? currentOrder.items : [], data);
       msg.style.color = '#4ade80';
-      msg.textContent = '✅ ชำระเงินสำเร็จ! ระบบดำเนินการอัตโนมัติแล้ว';
+      msg.textContent = window.bcT('ord_paid_success_msg','✅ ชำระเงินสำเร็จ! ระบบดำเนินการอัตโนมัติแล้ว');
     }
 
   } catch (err) {
@@ -899,7 +963,7 @@ async function submitVoucher() {
     msg.style.display = 'block';
     msg.style.color = '#f87171';
     msg.textContent = '❌ ' + errMsg;
-    btn.disabled = false; btn.textContent = '📤 ส่งโค้ดยืนยันการชำระ';
+    btn.disabled = false; btn.textContent = window.bcT('ord_submit_voucher_btn','📤 ส่งโค้ดยืนยันการชำระ');
   }
 }
 
@@ -966,7 +1030,7 @@ async function renderHistory() {
   var content = document.getElementById('hist-content');
   prompt.style.display  = 'none';
   content.style.display = 'block';
-  content.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.45);">⏳ กำลังโหลด...</div>';
+  content.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.45);">' + window.bcT('ord_loading','⏳ กำลังโหลด...') + '</div>';
 
   try {
     var local = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
@@ -1005,8 +1069,8 @@ async function renderHistory() {
       content.innerHTML =
         '<div style="text-align:center;padding:70px 20px;color:rgba(255,255,255,0.45);">' +
         '<div style="font-size:52px;margin-bottom:16px;">📋</div>' +
-        '<p style="font-size:18px;margin-bottom:8px;">ยังไม่มีประวัติการสั่งซื้อ</p>' +
-        '<p style="font-size:13px;">สั่งซื้อสินค้าเพื่อดูประวัติที่นี่</p>' +
+        '<p style="font-size:18px;margin-bottom:8px;">' + window.bcT('ord_no_history_title','ยังไม่มีประวัติการสั่งซื้อ') + '</p>' +
+        '<p style="font-size:13px;">' + window.bcT('ord_no_history_sub','สั่งซื้อสินค้าเพื่อดูประวัติที่นี่') + '</p>' +
         '</div>';
       return;
     }
@@ -1017,13 +1081,14 @@ async function renderHistory() {
       try {
         var r = await fetch('/api/payment/status/' + order.id);
         var d = await r.json();
-        var extra = { status: d.status || 'unknown', order_type: d.order_type || '' };
+        var fetchedStatus = (r.ok && d.status) ? d.status : '';
+        var extra = { status: fetchedStatus || order.status || 'unknown', order_type: (r.ok && d.order_type) ? d.order_type : (order.order_type || '') };
         // รับ codes จาก API (เชื่อถือได้กว่า localStorage)
-        if (d.new_transfer_code)     extra.new_transfer_code     = d.new_transfer_code;
-        if (d.new_confirmation_code) extra.new_confirmation_code = d.new_confirmation_code;
+        if (r.ok && d.new_transfer_code)     extra.new_transfer_code     = d.new_transfer_code;
+        if (r.ok && d.new_confirmation_code) extra.new_confirmation_code = d.new_confirmation_code;
         return Object.assign({}, order, extra);
       } catch (e) {
-        return Object.assign({}, order, { status: 'unknown' });
+        return Object.assign({}, order, { status: order.status || 'unknown' });
       }
     }));
 
@@ -1034,18 +1099,47 @@ async function renderHistory() {
       expired:      '⌛ หมดอายุ',
       bcsfe_failed: '❌ ดำเนินการไม่สำเร็จ',
       cancelled:    '🚫 ยกเลิกแล้ว',
+      unknown:      '❓ ไม่ทราบสถานะ',
     };
     var STATUS_COLOR = {
       pending:'#facc15', paid:'#60a5fa', done:'#4ade80',
       expired:'#94a3b8', bcsfe_failed:'#f87171', cancelled:'#94a3b8',
+      unknown:'#94a3b8',
     };
 
     content.innerHTML = orders.map(function(order) {
       // display_items มาจาก localStorage (มี .name), items มาจาก server (มี .key)
       var displayItems = order.display_items || order.items || [];
-      var items = displayItems.map(function(item) {
-        var label = item.name || item.key || '';
-        if (!label) return '';
+
+      // stage orders: สร้าง label จาก stages_config เมื่อ items ว่างเปล่า
+      var itemLabels = [];
+      if (displayItems.length > 0) {
+        displayItems.forEach(function(item) {
+          var label = item.name || item.key || '';
+          if (label) itemLabels.push(label);
+        });
+      } else if ((order.order_type === 'stages' || order.stages_config) && order.stages_config) {
+        var sc = order.stages_config;
+        var CH_NAMES = {1:'EoC',2:'ItF',3:'CotC',4:'Ch.4',5:'Ch.5',6:'Ch.6',7:'Ch.7',8:'Ch.8',9:'Ch.9'};
+        if (sc.story_chapters && sc.story_chapters.length)
+          itemLabels.push('ด่าน: ' + sc.story_chapters.map(function(c){ return CH_NAMES[c]||('Ch.'+c); }).join(', '));
+        if (sc.treasure_chapters && sc.treasure_chapters.length)
+          itemLabels.push('Treasure: ' + sc.treasure_chapters.map(function(c){ return CH_NAMES[c]||('Ch.'+c); }).join(', '));
+        if (sc.zombie_chapters && sc.zombie_chapters.length)
+          itemLabels.push('Zombie: ' + sc.zombie_chapters.map(function(c){ return CH_NAMES[c]||('Ch.'+c); }).join(', '));
+        if (sc.legend_types && sc.legend_types.length) {
+          var lc = sc.legend_crowns || {};
+          sc.legend_types.forEach(function(lt) {
+            var crown = lc[lt] || sc.max_crown || 4;
+            var name = lt === 'sol' ? 'SoL' : lt === 'ul' ? 'UL' : lt === 'zl' ? 'ZL' : lt.toUpperCase();
+            itemLabels.push(name + ' ' + '👑'.repeat(crown));
+          });
+        }
+        if (sc.aku_unlock) itemLabels.push('Aku Realm Unlock');
+        if (sc.aku_chapters) itemLabels.push('Aku Chapters');
+      }
+
+      var items = itemLabels.map(function(label) {
         return '<span style="display:inline-block;background:rgba(255,255,255,0.06);' +
           'border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.82);' +
           'padding:3px 11px;border-radius:20px;font-size:12px;margin:2px;">' +
@@ -1057,28 +1151,28 @@ async function renderHistory() {
       var shortId = (order.id || order.order_id || 'N/A').toUpperCase();
       var status  = order.status || 'pending';
       var statusColor = STATUS_COLOR[status] || '#facc15';
-      var statusLabel = STATUS_LABEL[status] || status;
+      var statusLabel = window.bcStatusLabel(status, STATUS_LABEL[status] || status);
 
       // กล่อง Transfer Code ใหม่ (เฉพาะ done)
       var codeBox = '';
       if (status === 'bcsfe_failed') {
-        var _retryBtn = '<button onclick="openRetryFromHistory(\'' + order.id + '\')" style="margin-top:10px;width:100%;padding:7px;background:rgba(220,38,38,0.18);color:#f87171;border:1px solid rgba(220,38,38,0.4);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;">🔄 ลองใหม่อีกครั้ง</button>';
+        var _retryBtn = '<button onclick="openRetryFromHistory(\'' + order.id + '\')" style="margin-top:10px;width:100%;padding:7px;background:rgba(220,38,38,0.18);color:#f87171;border:1px solid rgba(220,38,38,0.4);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;">' + window.bcT('ord_retry_short','🔄 ลองใหม่อีกครั้ง') + '</button>';
         if (order.latest_transfer_code) {
           var _ltc = order.latest_transfer_code;
           var _lcc = order.latest_confirmation_code || '-';
           var _copyBtnStyle = 'flex-shrink:0;padding:4px 10px;background:rgba(251,191,36,0.25);color:#92400e;border:1px solid rgba(251,191,36,0.6);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;';
           codeBox =
             '<div style="margin-top:12px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.30);border-radius:12px;padding:12px 14px;">' +
-            '<div style="font-size:10px;color:#FBBF24;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">⚠️ รหัสล่าสุด — ติดต่อแอดมิน</div>' +
+            '<div style="font-size:10px;color:#FBBF24;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">' + window.bcT('ord_admin_contact_label','⚠️ รหัสล่าสุด — ติดต่อแอดมิน') + '</div>' +
             '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code</div>' +
             '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
             '<div style="font-family:monospace;font-size:14px;color:#FFD84E;word-break:break-all;flex:1;">' + _ltc + '</div>' +
-            '<button onclick="copyText(\'' + _ltc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">คัดลอก</button>' +
+            '<button onclick="copyText(\'' + _ltc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">' + window.bcT('copy_label','คัดลอก') + '</button>' +
             '</div>' +
             '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code</div>' +
             '<div style="display:flex;align-items:center;gap:8px;">' +
             '<div style="font-family:monospace;font-size:14px;color:#FFD84E;flex:1;">' + _lcc + '</div>' +
-            '<button onclick="copyText(\'' + _lcc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">คัดลอก</button>' +
+            '<button onclick="copyText(\'' + _lcc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">' + window.bcT('copy_label','คัดลอก') + '</button>' +
             '</div>' +
             _retryBtn +
             '</div>';
@@ -1092,16 +1186,16 @@ async function renderHistory() {
         var _copyBtnStyle = 'flex-shrink:0;padding:4px 10px;background:rgba(99,102,241,0.25);color:#c4b5fd;border:1px solid rgba(99,102,241,0.4);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;';
         codeBox =
           '<div style="margin-top:12px;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:12px 14px;">' +
-          (_isCodeShop ? '<div style="font-size:10px;color:#4ade80;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">🎮 รหัสสำเร็จรูปของคุณ</div>' : '') +
-          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code' + (_isCodeShop ? '' : ' ใหม่') + '</div>' +
+          (_isCodeShop ? '<div style="font-size:10px;color:#4ade80;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">' + window.bcT('ord_codeshop_label','🎮 รหัสสำเร็จรูปของคุณ') + '</div>' : '') +
+          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code' + (_isCodeShop ? '' : window.bcT('ord_new_label',' ใหม่')) + '</div>' +
           '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">' +
           '<div style="font-family:monospace;font-size:14px;color:#FFD84E;word-break:break-all;flex:1;">' + _tc + '</div>' +
-          '<button onclick="copyText(\'' + _tc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">คัดลอก</button>' +
+          '<button onclick="copyText(\'' + _tc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">' + window.bcT('copy_label','คัดลอก') + '</button>' +
           '</div>' +
-          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code' + (_isCodeShop ? '' : ' ใหม่') + '</div>' +
+          '<div style="font-size:10px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code' + (_isCodeShop ? '' : window.bcT('ord_new_label',' ใหม่')) + '</div>' +
           '<div style="display:flex;align-items:center;gap:8px;">' +
           '<div style="font-family:monospace;font-size:14px;color:#FFD84E;flex:1;">' + _cc + '</div>' +
-          '<button onclick="copyText(\'' + _cc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">คัดลอก</button>' +
+          '<button onclick="copyText(\'' + _cc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">' + window.bcT('copy_label','คัดลอก') + '</button>' +
           '</div>' +
           '</div>';
       }
@@ -1117,7 +1211,7 @@ async function renderHistory() {
         '<div style="font-family:\'Russo One\',sans-serif;font-size:14px;color:var(--yellow);margin-bottom:8px;">#' + shortId + '</div>' +
         (items ? '<div style="margin-bottom:6px;">' + items + '</div>' : '') +
         codeBox +
-        (order.display_items && order.display_items.some(function(i){ return i.key === 'rare_ticket' || (i.name && i.name.toLowerCase().indexOf('rare ticket') !== -1); }) || (order.items && order.items.some(function(i){ return i.key === 'rare_ticket'; })) ? '<div style="margin-top:10px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:10px 12px;font-size:11px;color:rgba(210,190,255,0.75);font-family:\'Chakra Petch\',sans-serif;">📌 วิธีรับ Rare Ticket: รับไอเทม → เข้าตู้เย็น (Storage) → กดใช้ทั้งหมด → แลกตั๋วทอง</div>' : '') +
+        (order.display_items && order.display_items.some(function(i){ return i.key === 'rare_ticket' || (i.name && i.name.toLowerCase().indexOf('rare ticket') !== -1); }) || (order.items && order.items.some(function(i){ return i.key === 'rare_ticket'; })) ? '<div style="margin-top:10px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:10px 12px;font-size:11px;color:rgba(210,190,255,0.75);font-family:\'Chakra Petch\',sans-serif;">' + window.bcT('ord_rare_ticket_howto_hint','📌 วิธีรับ Rare Ticket: รับไอเทม → เข้าตู้เย็น (Storage) → กดใช้ทั้งหมด → แลกตั๋วทอง') + '</div>' : '') +
         '</div>' +
         '<div style="text-align:right;flex-shrink:0;">' +
         '<div style="font-family:\'Russo One\',sans-serif;font-size:24px;color:var(--red);">฿' + total + '</div>' +
@@ -1128,7 +1222,7 @@ async function renderHistory() {
     }).join('');
 
   } catch (err) {
-    content.innerHTML = '<div style="text-align:center;padding:40px;color:#f87171;">❌ โหลดประวัติไม่ได้: ' + (err.message || err) + '</div>';
+    content.innerHTML = '<div style="text-align:center;padding:40px;color:#f87171;">' + window.bcT('ord_load_history_failed','❌ โหลดประวัติไม่ได้: ') + (err.message || err) + '</div>';
     console.error(err);
   }
 }
@@ -1141,12 +1235,12 @@ function showSuccessModal(orderId, cart, result) {
 
   // icon + title
   document.getElementById('modal-icon').textContent  = isSuccess ? '✅' : '⚠️';
-  document.getElementById('modal-title').textContent = isSuccess ? 'ออเดอร์สำเร็จ!' : 'ชำระเงินสำเร็จ — กรุณาแก้ไข Code';
+  document.getElementById('modal-title').textContent = isSuccess ? window.bcT('ord_success_title','ออเดอร์สำเร็จ!') : window.bcT('ord_partial_success_title','ชำระเงินสำเร็จ — กรุณาแก้ไข Code');
   document.getElementById('modal-title').style.color = isSuccess ? '#22c55e' : '#f59e0b';
 
   document.getElementById('resultSummary').textContent = isSuccess
-    ? 'BCSFE ดำเนินการสำเร็จ! ใช้ Transfer Code ใหม่เพื่อโหลด Save ในเกม'
-    : 'เงินของคุณถูกรับแล้ว แต่ Transfer/Confirmation Code ไม่ถูกต้อง กรุณากรอกใหม่';
+    ? window.bcT('ord_success_summary','BCSFE ดำเนินการสำเร็จ! ใช้ Transfer Code ใหม่เพื่อโหลด Save ในเกม')
+    : window.bcT('ord_partial_success_summary','เงินของคุณถูกรับแล้ว แต่ Transfer/Confirmation Code ไม่ถูกต้อง กรุณากรอกใหม่');
 
   document.getElementById('modal-success-box').style.display = isSuccess ? 'block' : 'none';
   document.getElementById('modal-retry-box').style.display   = isBcsfeFail ? 'block' : 'none';
@@ -1240,12 +1334,12 @@ async function retryBCSFE() {
   var msg = document.getElementById('retryMsg');
   var btn = document.getElementById('retryBtn');
 
-  if (!tc || !cc) { alert('❌ กรุณากรอกทั้ง Transfer Code และ Confirmation Code'); return; }
+  if (!tc || !cc) { alert(window.bcT('ord_enter_both_codes_alert','❌ กรุณากรอกทั้ง Transfer Code และ Confirmation Code')); return; }
 
-  btn.disabled = true; btn.textContent = '⏳ กำลังดำเนินการ...';
+  btn.disabled = true; btn.textContent = window.bcT('ord_processing_btn','⏳ กำลังดำเนินการ...');
   msg.style.display = 'block';
   msg.style.color = 'rgba(0,0,0,0.5)';
-  msg.textContent = '🔄 กำลังดำเนินการ ใช้เวลา 1-3 นาที';
+  msg.textContent = window.bcT('ord_processing_msg','🔄 กำลังดำเนินการ ใช้เวลา 1-3 นาที');
 
   try {
     var res = await fetch('/api/payment/retry/' + _currentOrderId, {
@@ -1254,22 +1348,22 @@ async function retryBCSFE() {
       body: JSON.stringify({ transfer_code: tc, confirmation_code: cc }),
     });
     var data = await res.json();
-    if (!res.ok) throw new Error(data.detail || 'ลองใหม่ไม่สำเร็จ');
+    if (!res.ok) throw new Error(data.detail || window.bcT('ord_retry_failed','ลองใหม่ไม่สำเร็จ'));
 
     // สำเร็จ — สลับ UI เป็น success
     document.getElementById('modal-retry-box').style.display   = 'none';
     document.getElementById('modal-success-box').style.display = 'block';
     document.getElementById('modal-icon').textContent  = '✅';
-    document.getElementById('modal-title').textContent = 'ออเดอร์สำเร็จ!';
+    document.getElementById('modal-title').textContent = window.bcT('ord_success_title','ออเดอร์สำเร็จ!');
     document.getElementById('modal-title').style.color = '#22c55e';
-    document.getElementById('resultSummary').textContent = 'BCSFE ดำเนินการสำเร็จ! ใช้ Transfer Code ใหม่เพื่อโหลด Save ในเกม';
+    document.getElementById('resultSummary').textContent = window.bcT('ord_success_summary','BCSFE ดำเนินการสำเร็จ! ใช้ Transfer Code ใหม่เพื่อโหลด Save ในเกม');
     document.getElementById('newTransferCode').textContent = data.new_transfer_code || '-';
     document.getElementById('newConfirmCode').textContent  = data.new_confirmation_code || '-';
 
   } catch (err) {
     msg.style.color = '#dc2626';
-    msg.textContent = '❌ ' + (err.message || err) + ' — ตรวจสอบ Code แล้วลองใหม่';
-    btn.disabled = false; btn.textContent = '🔄 ลองใหม่อีกครั้ง';
+    msg.textContent = '❌ ' + (err.message || err) + window.bcT('ord_retry_failed_suffix',' — ตรวจสอบ Code แล้วลองใหม่');
+    btn.disabled = false; btn.textContent = window.bcT('ord_retry_short','🔄 ลองใหม่อีกครั้ง');
   }
 }
 
@@ -1305,6 +1399,11 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     link.classList.add('active');
   }
 });
+
+document.addEventListener('bc-lang-changed', function() {
+  displayCart();
+  if (document.getElementById('panel-history').style.display !== 'none') renderHistory();
+});
 </script>
 
 <script src="assets/supabase-client.js"></script>
@@ -1312,5 +1411,6 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 <script src="assets/auth.js?v=20260613"></script>
 <script src="assets/animations.js"></script>
 <script src="assets/nav.js"></script>
+<script src="assets/i18n.js"></script>
 </body>
 </html>

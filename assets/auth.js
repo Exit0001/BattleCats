@@ -62,20 +62,21 @@ var AUTH = (function () {
 
   // ── Register (Supabase profiles table — ไม่ต้อง email confirm) ─
   async function register(username, password) {
+    var isEn = localStorage.getItem('bc_lang') === 'en';
     username = (username || '').trim();
     password = (password || '').trim();
-    if (!username || !password)  return { ok: false, err: 'กรอกข้อมูลให้ครบถ้วน' };
-    if (username.length < 3)     return { ok: false, err: 'ชื่อผู้ใช้ต้องมีอย่างน้อย 3 ตัวอักษร' };
-    if (password.length < 6)     return { ok: false, err: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร' };
+    if (!username || !password)  return { ok: false, err: isEn ? 'Please fill in all fields' : 'กรอกข้อมูลให้ครบถ้วน' };
+    if (username.length < 3)     return { ok: false, err: isEn ? 'Username must be at least 3 characters' : 'ชื่อผู้ใช้ต้องมีอย่างน้อย 3 ตัวอักษร' };
+    if (password.length < 6)     return { ok: false, err: isEn ? 'Password must be at least 6 characters' : 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร' };
 
     var ready = await _waitDB();
-    if (!ready) return { ok: false, err: 'เชื่อมต่อ Supabase ไม่ได้ กรุณารีเฟรชแล้วลองใหม่' };
+    if (!ready) return { ok: false, err: isEn ? 'Could not connect — please refresh and try again' : 'เชื่อมต่อ Supabase ไม่ได้ กรุณารีเฟรชแล้วลองใหม่' };
 
     // ตรวจ username ซ้ำ
     var chk = await window.DB.from('profiles')
       .select('username', { count: 'exact', head: true })
       .eq('username', username);
-    if ((chk.count || 0) > 0) return { ok: false, err: 'ชื่อผู้ใช้นี้ถูกใช้งานแล้ว' };
+    if ((chk.count || 0) > 0) return { ok: false, err: isEn ? 'This username is already taken' : 'ชื่อผู้ใช้นี้ถูกใช้งานแล้ว' };
 
     var ins = await window.DB.from('profiles').insert([{
       username:      username,
@@ -89,9 +90,10 @@ var AUTH = (function () {
 
   // ── Login (Supabase profiles → localStorage fallback) ─────────
   async function login(username, password) {
+    var isEn = localStorage.getItem('bc_lang') === 'en';
     username = (username || '').trim();
     password = (password || '').trim();
-    if (!username || !password) return { ok: false, err: 'กรอกข้อมูลให้ครบถ้วน' };
+    if (!username || !password) return { ok: false, err: isEn ? 'Please fill in all fields' : 'กรอกข้อมูลให้ครบถ้วน' };
 
     var ready = await _waitDB();
     if (ready) {
@@ -107,13 +109,13 @@ var AUTH = (function () {
       var has = await window.DB.from('profiles')
         .select('username', { count: 'exact', head: true })
         .eq('username', username);
-      if ((has.count || 0) > 0) return { ok: false, err: 'รหัสผ่านไม่ถูกต้อง' };
+      if ((has.count || 0) > 0) return { ok: false, err: isEn ? 'Incorrect password' : 'รหัสผ่านไม่ถูกต้อง' };
     }
 
     // Fallback: old localStorage accounts
     var users = _localUsers();
-    if (!users[username]) return { ok: false, err: 'ไม่พบชื่อผู้ใช้นี้' };
-    if (users[username].pw !== _hash(password)) return { ok: false, err: 'รหัสผ่านไม่ถูกต้อง' };
+    if (!users[username]) return { ok: false, err: isEn ? 'Username not found' : 'ไม่พบชื่อผู้ใช้นี้' };
+    if (users[username].pw !== _hash(password)) return { ok: false, err: isEn ? 'Incorrect password' : 'รหัสผ่านไม่ถูกต้อง' };
     _setSession(username, _hash(password));
     return { ok: true };
   }
@@ -137,6 +139,7 @@ var AUTH = (function () {
     var nav = document.querySelector('.nav-container');
     if (!nav || document.getElementById('bc-nav-user')) return;
 
+    var isEn = localStorage.getItem('bc_lang') === 'en';
     var user = getCurrentUser();
     var el   = document.createElement('div');
     el.id    = 'bc-nav-user';
@@ -144,7 +147,7 @@ var AUTH = (function () {
 
     if (user) {
       el.innerHTML =
-        '<a href="loyalty.html" id="bc-loyalty-badge" title="แต้มสะสม" ' +
+        '<a href="loyalty.html" id="bc-loyalty-badge" title="' + (isEn ? 'Loyalty Points' : 'แต้มสะสม') + '" ' +
         'style="font-size:11px;font-weight:700;color:#fbbf24;' +
         'background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.35);' +
         'padding:4px 9px;border-radius:20px;white-space:nowrap;text-decoration:none;' +
@@ -156,9 +159,9 @@ var AUTH = (function () {
         '<button id="bc-logout-btn" style="font-size:11px;color:rgba(255,255,255,0.6);' +
         'background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);' +
         'padding:4px 9px;border-radius:20px;cursor:pointer;' +
-        "font-family:'Chakra Petch',sans-serif;transition:all 0.2s;" + '">ออก</button>';
+        "font-family:'Chakra Petch',sans-serif;transition:all 0.2s;" + '">' + (isEn ? 'Log out' : 'ออก') + '</button>';
       el.querySelector('#bc-logout-btn').addEventListener('click', function () {
-        if (confirm('ออกจากระบบหรือไม่?')) logout();
+        if (confirm(isEn ? 'Log out?' : 'ออกจากระบบหรือไม่?')) logout();
       });
       // โหลด loyalty status และอัพเดท badge
       fetch('/api/loyalty/status?username=' + encodeURIComponent(user))
@@ -169,14 +172,14 @@ var AUTH = (function () {
           var cycles = d.available_cycles || 0;
           var pct    = d.progress_pct || 0;
           if (cycles > 0) {
-            badge.textContent = '🎁 ' + cycles + ' รอบ';
-            badge.title = cycles + ' รอบพร้อมแลก! — คลิกเพื่อแลก';
+            badge.textContent = isEn ? ('🎁 ' + cycles + ' round(s)') : ('🎁 ' + cycles + ' รอบ');
+            badge.title = isEn ? (cycles + ' redemption(s) ready! — click to redeem') : (cycles + ' รอบพร้อมแลก! — คลิกเพื่อแลก');
             badge.style.background = 'rgba(251,191,36,0.22)';
             badge.style.borderColor = 'rgba(251,191,36,0.6)';
             badge.style.boxShadow = '0 0 10px rgba(251,191,36,0.25)';
           } else {
             badge.textContent = '🎁 ฿' + (d.progress_baht || 0);
-            badge.title = 'สะสม ฿' + (d.progress_baht || 0) + '/200';
+            badge.title = isEn ? ('Saved ฿' + (d.progress_baht || 0) + '/200') : ('สะสม ฿' + (d.progress_baht || 0) + '/200');
           }
           badge.style.display = '';
         })
@@ -187,14 +190,14 @@ var AUTH = (function () {
         'color:rgba(255,255,255,0.9);background:linear-gradient(135deg,#7C3AED,#F43F5E);' +
         'padding:6px 16px;border-radius:20px;text-decoration:none;white-space:nowrap;' +
         'box-shadow:0 4px 16px rgba(124,58,237,0.3);transition:filter 0.2s;"' +
-        ' onmouseover="this.style.filter=\'brightness(1.1)\'" onmouseout="this.style.filter=\'\'">🔑 เข้าสู่ระบบ</a>';
+        ' onmouseover="this.style.filter=\'brightness(1.1)\'" onmouseout="this.style.filter=\'\'">🔑 ' + (isEn ? 'Log In' : 'เข้าสู่ระบบ') + '</a>';
     }
 
     var cart = nav.querySelector('.nav-cart');
     if (cart) {
       nav.insertBefore(el, cart);
       cart.style.cursor = 'pointer';
-      cart.title = 'ดูออเดอร์ของฉัน';
+      cart.title = isEn ? 'View my orders' : 'ดูออเดอร์ของฉัน';
       cart.addEventListener('click', function () {
         window.location.href = 'orders.html';
       });
@@ -205,13 +208,14 @@ var AUTH = (function () {
 
   // ── Page loader ───────────────────────────────────────────────
   function _injectLoader() {
+    var loadingText = (localStorage.getItem('bc_lang') === 'en') ? 'Loading...' : 'กำลังโหลด...';
     var loader = document.createElement('div');
     loader.id = 'bc-page-loader';
     loader.innerHTML =
       '<div style="text-align:center;">' +
         '<div style="font-size:52px;animation:bc-paw-pulse 0.8s ease-in-out infinite;">🐾</div>' +
         '<div style="margin-top:18px;font-family:\'Chakra Petch\',sans-serif;font-size:15px;' +
-             'font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:1px;">กำลังโหลด...</div>' +
+             'font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:1px;">' + loadingText + '</div>' +
         '<div style="margin-top:16px;width:120px;height:3px;background:rgba(255,255,255,0.08);' +
              'border-radius:99px;overflow:hidden;">' +
           '<div id="bc-loader-bar" style="height:100%;width:0;' +
@@ -258,6 +262,7 @@ var AUTH = (function () {
   // ── Login-required modal ──────────────────────────────────────
   function _showLoginModal() {
     if (document.getElementById('bc-login-modal')) return;
+    var isEn = localStorage.getItem('bc_lang') === 'en';
     var overlay = document.createElement('div');
     overlay.id = 'bc-login-modal';
     overlay.style.cssText =
@@ -275,18 +280,18 @@ var AUTH = (function () {
            'max-width:380px;width:100%;text-align:center;box-shadow:0 40px 120px rgba(0,0,0,0.6);' +
            'animation:bc-card-in 0.3s ease-out;">' +
         '<div style="font-size:48px;margin-bottom:12px;">🔐</div>' +
-        '<div style="font-family:\'Russo One\',sans-serif;font-size:20px;color:#fff;margin-bottom:8px;">กรุณาเข้าสู่ระบบก่อน</div>' +
+        '<div style="font-family:\'Russo One\',sans-serif;font-size:20px;color:#fff;margin-bottom:8px;">' + (isEn ? 'Please log in first' : 'กรุณาเข้าสู่ระบบก่อน') + '</div>' +
         '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:14px;color:rgba(255,255,255,0.55);margin-bottom:28px;line-height:1.6;">' +
-          'ต้องมีบัญชีสมาชิกจึงจะสามารถ<br>เพิ่มสินค้าหรือสั่งซื้อได้' +
+          (isEn ? 'You need an account to<br>add items or place an order' : 'ต้องมีบัญชีสมาชิกจึงจะสามารถ<br>เพิ่มสินค้าหรือสั่งซื้อได้') +
         '</div>' +
         '<a href="login.html" style="display:block;padding:13px;border-radius:12px;' +
            'background:linear-gradient(135deg,#7C3AED,#b75bff 45%,#F43F5E);' +
            'color:#fff;font-family:\'Chakra Petch\',sans-serif;font-size:15px;font-weight:700;' +
-           'text-decoration:none;margin-bottom:12px;box-shadow:0 8px 24px rgba(124,58,237,0.35);">🔑 เข้าสู่ระบบ / สมัครสมาชิก</a>' +
+           'text-decoration:none;margin-bottom:12px;box-shadow:0 8px 24px rgba(124,58,237,0.35);">🔑 ' + (isEn ? 'Log In / Sign Up' : 'เข้าสู่ระบบ / สมัครสมาชิก') + '</a>' +
         '<button onclick="document.getElementById(\'bc-login-modal\').remove()" ' +
            'style="width:100%;padding:11px;border-radius:12px;background:rgba(255,255,255,0.06);' +
            'border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);' +
-           'font-family:\'Chakra Petch\',sans-serif;font-size:14px;cursor:pointer;">ปิด</button>' +
+           'font-family:\'Chakra Petch\',sans-serif;font-size:14px;cursor:pointer;">' + (isEn ? 'Close' : 'ปิด') + '</button>' +
       '</div>';
     overlay.addEventListener('click', function (e) { if (e.target === overlay) overlay.remove(); });
     document.body.appendChild(overlay);
