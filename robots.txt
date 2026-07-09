@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /orders_manager.html
+Disallow: /test_no_payment.html
+
+Sitemap: https://battlecatpromax.cloud/sitemap.xml

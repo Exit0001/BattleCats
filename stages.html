@@ -5,6 +5,12 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ปลดล็อคด่าน - Battle Cats Shop</title>
+  <meta name="description" content="ปลดล็อคด่าน The Battle Cats EoC, ItF, CoTC, Legend Stages และอื่นๆ ส่งผ่าน Transfer Code ภายใน 5 นาที ปลอดภัย 100%">
+  <link rel="canonical" href="https://battlecatpromax.cloud/stages.html">
+  <meta property="og:title" content="ปลดล็อคด่าน - Battle Cats Shop">
+  <meta property="og:description" content="ปลดล็อคด่าน The Battle Cats EoC, ItF, CoTC, Legend Stages และอื่นๆ ส่งผ่าน Transfer Code ภายใน 5 นาที">
+  <meta property="og:url" content="https://battlecatpromax.cloud/stages.html">
+  <meta property="og:image" content="https://battlecatpromax.cloud/pictures/logo.png">
   <link rel="stylesheet" href="assets/styles.css">
   <style>
     /* ── Stage card grid ───────────────────────────────────── */
@@ -771,9 +777,9 @@ var storyState = {
 };
 var LEGEND_MAX_CROWN = { sol: 4, ul: 4, zl: 2 };
 var legendState = {
-  sol: { clear: true, crown: 1 },
-  ul:  { clear: true, crown: 1 },
-  zl:  { clear: true, crown: 1 },
+  sol: { clear: false, crown: 1 },
+  ul:  { clear: false, crown: 1 },
+  zl:  { clear: false, crown: 1 },
 };
 var akuState = { unlock: false, chapters: false };
 
@@ -844,6 +850,13 @@ function openStgModal(section, key) {
   _currentSection = section;
   _currentCard    = key;
   var info = CARD_INFO[key];
+
+  // การ์ด Legend ที่ยังไม่เคยเลือกอะไรเลย (ไม่อยู่ในตะกร้า) — ติ๊ก Clear + crown 1 ไว้ก่อน
+  // ให้เห็นราคาทันทีตอนเปิด แต่ถ้ามีของอยู่ในตะกร้าแล้วจะไม่ไปรีเซ็ตทับของเดิม
+  if (section === 'legend' && !legendState[key].clear) {
+    legendState[key].clear = true;
+    legendState[key].crown = legendState[key].crown || 1;
+  }
 
   document.getElementById('stgTitle').textContent    = info.title;
   document.getElementById('stgSubtitle').textContent = info.sub;
@@ -1405,7 +1418,35 @@ function showToast(msg) {
 window.addEventListener('load', function() {
   var cart = JSON.parse(localStorage.getItem('cart') || '[]');
   document.getElementById('cartCount').textContent = cart.length;
+  _restoreStateFromCart(cart);
 });
+
+// ── Restore card state (Choose/Edit Service + badges) จากตะกร้าเดิม ──
+function _restoreStateFromCart(cart) {
+  var stageItems = cart.filter(function(i) { return i.type === 'stage_service'; });
+  stageItems.forEach(function(item) {
+    if (item.stage_cat === 'story') {
+      var s = storyState[item.stage_target];
+      if (!s) return;
+      s[item.stage_field] = true;
+      (item.stage_chapters || []).forEach(function(ch) {
+        if (s.selCh.indexOf(ch) < 0) s.selCh.push(ch);
+      });
+      s.selCh.sort(function(a, b) { return a - b; });
+    } else if (item.stage_cat === 'legend') {
+      var l = legendState[item.stage_target];
+      if (!l) return;
+      l.clear = true;
+      if (item.stage_crown) l.crown = item.stage_crown;
+    } else if (item.stage_cat === 'aku') {
+      akuState[item.stage_field] = true;
+    }
+  });
+  ['eoc', 'itf', 'cotc'].forEach(function(k) { updateCardVisual(k, 'story'); });
+  ['sol', 'ul', 'zl'].forEach(function(k) { updateCardVisual(k, 'legend'); });
+  updateCardVisual('aku', 'aku');
+  recalc();
+}
 
 // ── Re-render dynamic parts when language toggles ───────────────
 document.addEventListener('bc-lang-changed', function() {

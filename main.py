@@ -82,7 +82,6 @@ from payment import (
     redeem_truemoney_voucher,
     mark_slip_used,
     get_user_loyalty,
-    update_user_loyalty_spent,
     increment_loyalty_redeemed,
     add_loyalty_redeemed_cycles,
     save_loyalty_redemption,
@@ -100,6 +99,8 @@ from payment import (
     add_code_product,
     update_code_product,
     toggle_code_product,
+    get_monthly_revenue,
+    get_daily_revenue,
     delete_code_product,
     add_code_stock,
     delete_code_stock,
@@ -707,9 +708,6 @@ async def payment_verify(order_id: str, slip: UploadFile = File(...)):
             "new_confirmation_code": new_cc,
             "done_at":               datetime.now().isoformat(),
         })
-        if order.get("username"):
-            update_user_loyalty_spent(order["username"], order.get("base_amount", order["amount"]))
-
         return {
             "success":               True,
             "new_transfer_code":     new_tc,
@@ -771,9 +769,6 @@ async def payment_verify_voucher(order_id: str, body: VoucherRedeemRequest):
             "new_confirmation_code": new_cc,
             "done_at":               datetime.now().isoformat(),
         })
-        if order.get("username"):
-            update_user_loyalty_spent(order["username"], order.get("base_amount", order["amount"]))
-
         return {
             "success":               True,
             "new_transfer_code":     new_tc,
@@ -2158,6 +2153,22 @@ def api_my_purchases(username: str, session_token: str):
 
 # ── Admin routes ──
 
+@app.get("/api/admin/revenue")
+def api_admin_revenue(year: int, month: int):
+    if month < 1 or month > 12:
+        raise HTTPException(status_code=400, detail="month ต้องอยู่ระหว่าง 1-12")
+    return get_monthly_revenue(year, month)
+
+
+@app.get("/api/admin/revenue/daily")
+def api_admin_revenue_daily(year: int, month: int, day: int):
+    if month < 1 or month > 12:
+        raise HTTPException(status_code=400, detail="month ต้องอยู่ระหว่าง 1-12")
+    if day < 1 or day > 31:
+        raise HTTPException(status_code=400, detail="day ต้องอยู่ระหว่าง 1-31")
+    return get_daily_revenue(year, month, day)
+
+
 @app.get("/api/admin/code-shop/products")
 def api_admin_products(username: str, session_token: str):
     if not verify_admin_session(username, session_token):
@@ -2255,11 +2266,14 @@ def sitemap():
     from fastapi.responses import Response
     content = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://battlecatpromax.cloud/</loc></url>
-  <url><loc>https://battlecatpromax.cloud/static/shop.html</loc></url>
-  <url><loc>https://battlecatpromax.cloud/static/index.html</loc></url>
-  <url><loc>https://battlecatpromax.cloud/static/characters.html</loc></url>
-  <url><loc>https://battlecatpromax.cloud/static/stages.html</loc></url>
+  <url><loc>https://battlecatpromax.cloud/index.html</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://battlecatpromax.cloud/shop.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://battlecatpromax.cloud/shop-codes.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://battlecatpromax.cloud/characters.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://battlecatpromax.cloud/stages.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://battlecatpromax.cloud/orders.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://battlecatpromax.cloud/loyalty.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://battlecatpromax.cloud/login.html</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
 </urlset>"""
     return Response(content, media_type="application/xml")
 

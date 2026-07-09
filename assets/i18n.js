@@ -12,7 +12,7 @@
     // Nav (shared across all pages)
     nav_home:         'Home',
     nav_shop:         'Item Shop',
-    nav_shop_codes:   'Ready Codes',
+    nav_shop_codes:   'Ready Accounts',
     nav_unlock_cat:   'Unlock Cats',
     nav_unlock_stage: 'Unlock Stages',
     nav_orders:       'Orders',
@@ -24,6 +24,7 @@
     idx_view_shop:      'View Item Shop',
     idx_stat_customers: 'Customers',
     idx_stat_delivery:  'Delivery',
+    idx_stat_5min:      '5 min',
     idx_stat_secure:    'Secure',
     idx_hot_products:   'Best Sellers',
     idx_catfood_desc:    'The biggest cat food bundle — spin Gacha all day',
@@ -106,8 +107,8 @@
     shop_added_to_cart: '✅ Added {item} to cart!',
 
     // shop-codes.html
-    sc_title:  '🎮 Ready-Made Codes',
-    sc_banner: '💡 Buy a ready-made code — get your Transfer Code + Confirmation Code instantly after payment, no need to wait for an admin<br>' +
+    sc_title:  '🎮 Ready Accounts',
+    sc_banner: '💡 Buy a ready-made account — get your Transfer Code + Confirmation Code instantly after payment, no need to wait for an admin<br>' +
                '<span style="color:rgba(253,224,71,0.5)">• You must be logged in to buy &nbsp;•&nbsp; Pay via PromptPay or TrueWallet</span>',
     sc_empty_products: 'No products available right now',
     sc_no_image: 'No image',
@@ -272,7 +273,7 @@
     ord_retry_short: '🔄 Try Again',
     ord_admin_contact_label: '⚠️ Latest code — please contact an admin',
     ord_new_label: ' (new)',
-    ord_codeshop_label: '🎮 Your ready-made code',
+    ord_codeshop_label: '🎮 Your ready-made account',
     ord_rare_ticket_howto_hint: '📌 How to use your Rare Ticket: Receive item → Storage (fridge) → Use All → Trade for Gold Ticket',
     ord_success_title: 'Order Successful!',
     ord_partial_success_title: 'Payment received — please fix your Code',
@@ -454,8 +455,14 @@
 
   var EN_DICT = EN;
 
+  function _detectBrowserLang() {
+    var nav = navigator.language || (navigator.languages && navigator.languages[0]) || '';
+    return nav.toLowerCase().indexOf('th') === 0 ? 'th' : 'en';
+  }
+
   function getLang() {
-    return localStorage.getItem(STORAGE_KEY) || 'th';
+    var stored = localStorage.getItem(STORAGE_KEY);
+    return stored || _detectBrowserLang();
   }
 
   function applyLang(lang) {
@@ -486,15 +493,10 @@
     });
   }
 
-  function updateToggleLabel(btn, lang) {
-    btn.textContent = (lang === 'en') ? '🇹🇭 ไทย' : '🇬🇧 EN';
-  }
-
   function setLang(lang) {
     localStorage.setItem(STORAGE_KEY, lang);
     applyLang(lang);
-    var btn = document.getElementById('bc-lang-toggle');
-    if (btn) updateToggleLabel(btn, lang);
+    _updateWidget(lang);
     document.dispatchEvent(new CustomEvent('bc-lang-changed', { detail: { lang: lang } }));
   }
 
@@ -505,44 +507,82 @@
   };
   window.bcLang = getLang;
 
+  var LANGS = [
+    { code: 'th', flag: '🇹🇭', label: 'ไทย' },
+    { code: 'en', flag: '🇬🇧', label: 'English' },
+  ];
+
+  function _updateWidget(lang) {
+    var cur = LANGS.find(function (l) { return l.code === lang; }) || LANGS[0];
+    var btn = document.getElementById('bc-lang-toggle');
+    if (btn) btn.innerHTML = cur.flag + ' ' + cur.label + ' <span style="font-size:10px;">▾</span>';
+    document.querySelectorAll('#bc-lang-menu [data-lang]').forEach(function (item) {
+      var check = item.querySelector('.bc-lang-check');
+      if (check) check.style.visibility = (item.getAttribute('data-lang') === lang) ? 'visible' : 'hidden';
+    });
+  }
+
+  // ── Floating language widget (bottom-left, dropdown style) ────
   function injectToggle() {
     if (document.getElementById('bc-lang-toggle')) return;
-    var nav = document.querySelector('.nav-container');
+
+    var wrap = document.createElement('div');
+    wrap.id = 'bc-lang-widget';
+    wrap.style.cssText = "position:fixed;bottom:20px;left:20px;z-index:99999;font-family:'Chakra Petch',sans-serif;";
+
     var btn = document.createElement('button');
     btn.id = 'bc-lang-toggle';
     btn.type = 'button';
     btn.setAttribute('aria-label', 'Switch language');
     btn.style.cssText = [
-      'background:rgba(124,58,237,0.18)',
-      'border:1px solid rgba(124,58,237,0.45)', 'color:#EDE6FF',
-      'border-radius:8px', 'padding:6px 11px', 'font-size:12px',
+      'display:flex', 'align-items:center', 'gap:6px',
+      'background:rgba(18,8,36,0.92)', 'backdrop-filter:blur(10px)',
+      'border:1px solid rgba(124,58,237,0.5)', 'color:#EDE6FF',
+      'border-radius:999px', 'padding:9px 16px', 'font-size:13px',
       'font-weight:700', 'cursor:pointer', "font-family:'Chakra Petch',sans-serif",
-      'flex-shrink:0', 'white-space:nowrap',
+      'box-shadow:0 8px 24px rgba(0,0,0,0.45)', 'white-space:nowrap',
     ].join(';');
-    btn.addEventListener('click', function () {
-      setLang(getLang() === 'en' ? 'th' : 'en');
+
+    var menu = document.createElement('div');
+    menu.id = 'bc-lang-menu';
+    menu.style.cssText = [
+      'position:absolute', 'bottom:calc(100% + 8px)', 'left:0',
+      'background:rgba(18,8,36,0.97)', 'backdrop-filter:blur(14px)',
+      'border:1px solid rgba(124,58,237,0.4)', 'border-radius:14px',
+      'padding:6px', 'min-width:160px', 'display:none',
+      'box-shadow:0 16px 48px rgba(0,0,0,0.55)',
+    ].join(';');
+
+    LANGS.forEach(function (l) {
+      var item = document.createElement('div');
+      item.setAttribute('data-lang', l.code);
+      item.style.cssText = [
+        'display:flex', 'align-items:center', 'justify-content:space-between', 'gap:10px',
+        'padding:9px 12px', 'border-radius:9px', 'cursor:pointer',
+        'font-size:13px', 'font-weight:700', 'color:#EDE6FF', 'transition:background 0.15s',
+      ].join(';');
+      item.innerHTML = '<span>' + l.flag + ' ' + l.label + '</span><span class="bc-lang-check" style="color:#4ADE80;visibility:hidden;">✓</span>';
+      item.addEventListener('mouseenter', function () { item.style.background = 'rgba(124,58,237,0.22)'; });
+      item.addEventListener('mouseleave', function () { item.style.background = ''; });
+      item.addEventListener('click', function () {
+        setLang(l.code);
+        menu.style.display = 'none';
+      });
+      menu.appendChild(item);
     });
-    if (!nav) {
-      // หน้าที่ไม่มี navbar (เช่น login.html) — ลอยมุมขวาบนแทน
-      btn.style.cssText += ';position:fixed;top:16px;right:16px;z-index:9999;';
-      document.body.appendChild(btn);
-      updateToggleLabel(btn, getLang());
-      return;
-    }
-    var cart = nav.querySelector('.nav-cart');
-    if (cart) {
-      // ห่อ toggle + cart ไว้ใน wrapper เดียว เพื่อให้ nav-container ยังเห็นแค่
-      // 2 flex children (hamburger / wrapper) เหมือนเดิม — กัน space-between
-      // ดันตำแหน่ง cart ไปทับ logo ที่ลอย absolute กลางจอบนมือถือ
-      var wrapper = document.createElement('div');
-      wrapper.style.cssText = 'display:flex;align-items:center;gap:8px;flex-shrink:0;';
-      cart.parentNode.insertBefore(wrapper, cart);
-      wrapper.appendChild(btn);
-      wrapper.appendChild(cart);
-    } else {
-      nav.appendChild(btn);
-    }
-    updateToggleLabel(btn, getLang());
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      menu.style.display = (menu.style.display === 'none') ? 'block' : 'none';
+    });
+    document.addEventListener('click', function (e) {
+      if (!wrap.contains(e.target)) menu.style.display = 'none';
+    });
+
+    wrap.appendChild(menu);
+    wrap.appendChild(btn);
+    document.body.appendChild(wrap);
+    _updateWidget(getLang());
   }
 
   function init() {

@@ -19,7 +19,7 @@ from pathlib import Path
 # CONFIG — แก้ค่าตรงนี้
 # ══════════════════════════════════════════
 
-PROMPTPAY_ID   = "0634515901"            # เบอร์ / เลขบัตรปชช ที่รับเงิน
+PROMPTPAY_ID   = "004999236376637"       # K PLUS e-Wallet ID (15 หลัก) ที่รับเงิน
 TRUEMONEY_ID   = "0634515901"       # TrueMoney Wallet phone number (แก้ถ้าต่างกัน)
 EASYSLIP_API_KEY = "1c49e3f0-85f9-4718-b3f6-de74ec35fe30"  # API Key จาก easyslip.com
 ORDER_DB       = Path("orders.json")
@@ -195,17 +195,24 @@ def _supabase_upsert(order: dict):
 # QR GENERATOR
 # ══════════════════════════════════════════
 
-def _promptpay_payload(phone: str, amount: float) -> str:
-    """สร้าง PromptPay QR payload string ตามมาตรฐาน EMVCo"""
-    phone = phone.replace("-", "").replace(" ", "")
-    if phone.startswith("0"):
-        phone = "66" + phone[1:]
-    phone_padded = phone.zfill(13)
+def _promptpay_payload(target_id: str, amount: float) -> str:
+    """สร้าง PromptPay QR payload string ตามมาตรฐาน EMVCo
+    รองรับ 3 รูปแบบ: เบอร์โทร (subtag 01) / เลขบัตรประชาชน 13 หลัก (subtag 02) / e-Wallet ID 15 หลัก (subtag 03)"""
+    target_id = target_id.replace("-", "").replace(" ", "")
+
+    if len(target_id) == 15:
+        id_type, id_value = "03", target_id
+    elif len(target_id) == 13:
+        id_type, id_value = "02", target_id
+    else:
+        if target_id.startswith("0"):
+            target_id = "66" + target_id[1:]
+        id_type, id_value = "01", target_id.zfill(13)
 
     def tlv(tag: str, value: str) -> str:
         return f"{tag}{len(value):02d}{value}"
 
-    merchant_info = tlv("00", "A000000677010111") + tlv("01", phone_padded)
+    merchant_info = tlv("00", "A000000677010111") + tlv(id_type, id_value)
     amount_str = f"{amount:.2f}"
 
     payload = (
@@ -663,46 +670,35 @@ def mark_slip_used(transaction_id: str):
 # ══════════════════════════════════════════
 
 def get_user_loyalty(username: str) -> dict:
-    """ดึง loyalty data จาก profiles table"""
+    """ดึง loyalty data — total_spent คำนวณสดจากตาราง orders (กัน drift จาก RPC ที่อาจล้มเหลว)"""
+    redeemed_cycles = 0
     try:
         with httpx.Client(timeout=8) as client:
             resp = client.get(
                 f"{SUPABASE_URL}/rest/v1/profiles",
-                params={"username": f"eq.{username}", "select": "total_spent,loyalty_redeemed_cycles"},
+                params={"username": f"eq.{username}", "select": "loyalty_redeemed_cycles"},
                 headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"},
             )
             data = resp.json()
             if data:
-                return {
-                    "total_spent": data[0].get("total_spent") or 0,
-                    "loyalty_redeemed_cycles": data[0].get("loyalty_redeemed_cycles") or 0,
-                }
+                redeemed_cycles = data[0].get("loyalty_redeemed_cycles") or 0
     except Exception as e:
         print(f"[LOYALTY] get error: {e}")
-    return {"total_spent": 0, "loyalty_redeemed_cycles": 0}
 
-
-def update_user_loyalty_spent(username: str, amount: int):
-    """เพิ่ม total_spent หลังชำระเงินสำเร็จ — ใช้ RPC increment (atomic)"""
-    if not username or amount <= 0:
-        return
+    total_spent = 0
     try:
         with httpx.Client(timeout=8) as client:
-            resp = client.post(
-                f"{SUPABASE_URL}/rest/v1/rpc/increment_total_spent",
-                headers={
-                    "apikey": SUPABASE_KEY,
-                    "Authorization": f"Bearer {SUPABASE_KEY}",
-                    "Content-Type": "application/json",
-                },
-                json={"p_username": username, "p_amount": amount},
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/orders",
+                params={"username": f"eq.{username}", "status": "eq.done", "select": "amount,base_amount"},
+                headers=_sh(),
             )
-        if resp.status_code in (200, 204):
-            print(f"[LOYALTY] ✅ {username}: total_spent +{amount}")
-        else:
-            print(f"[LOYALTY] ❌ RPC ล้มเหลว {resp.status_code}: {resp.text[:300]}")
+            orders = resp.json() if resp.status_code == 200 else []
+        total_spent = sum((o.get("base_amount") if o.get("base_amount") is not None else o.get("amount") or 0) for o in orders)
     except Exception as e:
-        print(f"[LOYALTY] update_spent error: {e}")
+        print(f"[LOYALTY] total_spent calc error: {e}")
+
+    return {"total_spent": total_spent, "loyalty_redeemed_cycles": redeemed_cycles}
 
 
 def add_loyalty_redeemed_cycles(username: str, count: int):
@@ -831,6 +827,78 @@ def _sh(extra: dict | None = None) -> dict:
     return h
 
 
+def _get_revenue_for_range(start: datetime, end: datetime) -> dict:
+    """สรุปยอดรายได้ระหว่าง start-end (ไม่นับ order ของบัญชี admin) — ใช้ร่วมกันทั้งรายเดือน/รายวัน"""
+    with httpx.Client(timeout=8) as client:
+        admin_resp = client.get(
+            f"{SUPABASE_URL}/rest/v1/profiles",
+            params={"is_admin": "eq.true", "select": "username"},
+            headers=_sh(),
+        )
+    admin_usernames = [p["username"] for p in admin_resp.json()] if admin_resp.status_code == 200 else []
+
+    with httpx.Client(timeout=8) as client:
+        resp = client.get(
+            f"{SUPABASE_URL}/rest/v1/orders",
+            params={
+                "status": "eq.done",
+                "created_at": [f"gte.{start.isoformat()}", f"lt.{end.isoformat()}"],
+                "select": "order_id,amount,base_amount,order_type,username,created_at",
+            },
+            headers=_sh(),
+        )
+    all_orders = resp.json() if resp.status_code == 200 else []
+    # ไม่นับ order ของ admin และ order ที่ไม่มี username (guest/ทดสอบ)
+    orders = [o for o in all_orders if o.get("username") and o.get("username") not in admin_usernames]
+
+    # ใช้ base_amount (ไม่รวมค่าธรรมเนียม TrueMoney 2.9%) ไม่นับเป็นรายได้
+    def _rev(o):
+        return o.get("base_amount") if o.get("base_amount") is not None else (o.get("amount") or 0)
+
+    total_revenue = sum(_rev(o) for o in orders)
+    by_type: dict = {}
+    for o in orders:
+        t = o.get("order_type") or "unknown"
+        by_type[t] = by_type.get(t, 0) + _rev(o)
+
+    orders_sorted = sorted(orders, key=lambda o: o.get("created_at") or "")
+
+    return {
+        "total_revenue": total_revenue,
+        "total_orders": len(orders),
+        "by_type": by_type,
+        "excluded_admins": admin_usernames,
+        "excluded_no_username_count": len(all_orders) - len(orders) - sum(
+            1 for o in all_orders if o.get("username") in admin_usernames
+        ),
+        "orders": orders_sorted,
+    }
+
+
+def get_monthly_revenue(year: int, month: int) -> dict:
+    """admin: สรุปยอดรายได้ของเดือนนั้น (ไม่นับ order ของบัญชี admin)"""
+    try:
+        start = datetime(year, month, 1, tzinfo=TZ_THAI)
+        end = datetime(year + 1, 1, 1, tzinfo=TZ_THAI) if month == 12 else datetime(year, month + 1, 1, tzinfo=TZ_THAI)
+        return {"year": year, "month": month, **_get_revenue_for_range(start, end)}
+    except Exception as e:
+        print(f"[REVENUE] error: {e}")
+        return {"year": year, "month": month, "total_revenue": 0, "total_orders": 0,
+                "by_type": {}, "excluded_admins": [], "orders": [], "error": str(e)}
+
+
+def get_daily_revenue(year: int, month: int, day: int) -> dict:
+    """admin: สรุปยอดรายได้ของวันนั้น (ไม่นับ order ของบัญชี admin)"""
+    try:
+        start = datetime(year, month, day, tzinfo=TZ_THAI)
+        end = start + timedelta(days=1)
+        return {"year": year, "month": month, "day": day, **_get_revenue_for_range(start, end)}
+    except Exception as e:
+        print(f"[REVENUE] error: {e}")
+        return {"year": year, "month": month, "day": day, "total_revenue": 0, "total_orders": 0,
+                "by_type": {}, "excluded_admins": [], "orders": [], "error": str(e)}
+
+
 def verify_admin_session(username: str, session_token: str) -> bool:
     """ตรวจว่า user เป็น admin (is_admin = TRUE + password ถูกต้อง)"""
     if not username or not session_token:
@@ -926,6 +994,7 @@ def get_code_product(product_id: str) -> dict | None:
 
 def get_available_stock(product_id: str) -> dict | None:
     """ดึง stock item ที่ available ตัวแรก"""
+    release_expired_reserved_stock(product_id)
     try:
         with httpx.Client(timeout=8) as client:
             resp = client.get(
@@ -1143,8 +1212,34 @@ def delete_code_stock(stock_id: str) -> bool:
         return False
 
 
+def release_expired_reserved_stock(product_id: str | None = None) -> int:
+    """คืน stock ที่ค้างสถานะ reserved ของ order ที่หมดอายุ/ถูกยกเลิกไปแล้ว แต่ไม่มีใครมา cancel/verify ซ้ำ
+    (เช่นลูกค้าปิดหน้าทิ้งหลังสร้าง QR แล้วไม่กลับมาเลย — stock ค้าง reserved ตลอดไปไม่งั้น)"""
+    released = 0
+    try:
+        params = {"status": "eq.reserved", "select": "id,order_id"}
+        if product_id:
+            params["product_id"] = f"eq.{product_id}"
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(f"{SUPABASE_URL}/rest/v1/code_stock", params=params, headers=_sh())
+        reserved = resp.json() if resp.status_code == 200 else []
+        for item in reserved:
+            order = get_order(item.get("order_id", ""))
+            should_release = (
+                order is None
+                or order.get("status") in ("cancelled", "expired")
+                or (order.get("status") not in ("done",) and is_order_expired(order))
+            )
+            if should_release and release_stock(item["id"]):
+                released += 1
+    except Exception as e:
+        print(f"[CODE-SHOP] release_expired_reserved_stock error: {e}")
+    return released
+
+
 def get_product_stock(product_id: str) -> list:
     """admin: ดู stock ทั้งหมดของสินค้า"""
+    release_expired_reserved_stock(product_id)
     try:
         with httpx.Client(timeout=8) as client:
             resp = client.get(

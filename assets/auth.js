@@ -190,7 +190,7 @@ var AUTH = (function () {
         'color:rgba(255,255,255,0.9);background:linear-gradient(135deg,#7C3AED,#F43F5E);' +
         'padding:6px 16px;border-radius:20px;text-decoration:none;white-space:nowrap;' +
         'box-shadow:0 4px 16px rgba(124,58,237,0.3);transition:filter 0.2s;"' +
-        ' onmouseover="this.style.filter=\'brightness(1.1)\'" onmouseout="this.style.filter=\'\'">🔑 ' + (isEn ? 'Log In' : 'เข้าสู่ระบบ') + '</a>';
+        ' onmouseover="this.style.filter=\'brightness(1.1)\'" onmouseout="this.style.filter=\'\'">🔑 ' + (isEn ? 'Log In / Sign Up' : 'เข้าสู่ระบบ / สมัครสมาชิก') + '</a>';
     }
 
     var cart = nav.querySelector('.nav-cart');

@@ -5,6 +5,12 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ร้านค้าไอเทม - Battle Cats Shop</title>
+  <meta name="description" content="ซื้อไอเทม The Battle Cats ราคาถูก เติม Catfood, XP, Catseye, Catfruit, Lucky Ticket, Rare Ticket ส่งผ่าน Transfer Code ภายใน 5 นาที ปลอดภัย 100%">
+  <link rel="canonical" href="https://battlecatpromax.cloud/shop.html">
+  <meta property="og:title" content="ร้านค้าไอเทม - Battle Cats Shop">
+  <meta property="og:description" content="ซื้อไอเทม The Battle Cats ราคาถูก เติม Catfood, XP, Catseye, Catfruit, Lucky Ticket, Rare Ticket ส่งผ่าน Transfer Code ภายใน 5 นาที">
+  <meta property="og:url" content="https://battlecatpromax.cloud/shop.html">
+  <meta property="og:image" content="https://battlecatpromax.cloud/pictures/logo.png">
   <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
@@ -667,6 +673,13 @@ const MAX_VALUES = {
 
 function _fmt(n) { return n.toLocaleString('en-US'); }
 
+function _maxChipText(maxVal, isMax) {
+  var isEn = (localStorage.getItem('bc_lang') === 'en');
+  return isEn
+    ? (isMax ? '✦ This is the in-game MAX (' + _fmt(maxVal) + ')' : '⚠ in-game max: ' + _fmt(maxVal))
+    : (isMax ? '✦ นี่คือ MAX ในเกม (' + _fmt(maxVal) + ')' : '⚠ max ในเกม: ' + _fmt(maxVal));
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.card button[onclick^="addToCart"]').forEach(function (btn) {
     var m = btn.getAttribute('onclick').match(/addToCart\('([^']+)'/);
@@ -679,15 +692,20 @@ document.addEventListener('DOMContentLoaded', function () {
     var chip = document.createElement('div');
     var isMax = product.amount >= maxVal;
     chip.className = 'card-max ' + (isMax ? 'card-max-full' : 'card-max-warn');
-    var _isEn = (localStorage.getItem('bc_lang') === 'en');
-    chip.textContent = _isEn
-      ? (isMax ? '✦ This is the in-game MAX (' + _fmt(maxVal) + ')' : '⚠ in-game max: ' + _fmt(maxVal))
-      : (isMax ? '✦ นี่คือ MAX ในเกม (' + _fmt(maxVal) + ')' : '⚠ max ในเกม: ' + _fmt(maxVal));
+    chip.dataset.maxVal = maxVal;
+    chip.dataset.isMax  = isMax ? '1' : '0';
+    chip.textContent = _maxChipText(maxVal, isMax);
 
     var card = btn.closest('.card');
     var price = card.querySelector('.card-price');
     if (price) card.insertBefore(chip, price);
     else card.insertBefore(chip, btn);
+  });
+});
+
+document.addEventListener('bc-lang-changed', function () {
+  document.querySelectorAll('.card-max').forEach(function (chip) {
+    chip.textContent = _maxChipText(parseInt(chip.dataset.maxVal, 10), chip.dataset.isMax === '1');
   });
 });
 
