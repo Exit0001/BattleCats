@@ -146,12 +146,14 @@ var AUTH = (function () {
     el.style.cssText = 'display:flex;align-items:center;gap:8px;flex-shrink:0;';
 
     if (user) {
+      var _authSess = (function() { try { return JSON.parse(localStorage.getItem('bc_session')) || {}; } catch(e) { return {}; } })();
+      var tok = _authSess.hash || '';
       el.innerHTML =
-        '<a href="loyalty.html" id="bc-loyalty-badge" title="' + (isEn ? 'Loyalty Points' : 'แต้มสะสม') + '" ' +
-        'style="font-size:11px;font-weight:700;color:#fbbf24;' +
-        'background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.35);' +
+        '<a href="wallet.html" id="bc-wallet-badge" title="' + (isEn ? 'My Wallet' : 'กระเป๋าเงิน') + '" ' +
+        'style="font-size:11px;font-weight:700;color:#34d399;' +
+        'background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.35);' +
         'padding:4px 9px;border-radius:20px;white-space:nowrap;text-decoration:none;' +
-        "font-family:'Chakra Petch',sans-serif;transition:all 0.2s;display:none;" + '">🎁 —</a>' +
+        "font-family:'Chakra Petch',sans-serif;transition:all 0.2s;display:none;" + '">💰 ฿—</a>' +
         '<span style="font-size:12px;font-weight:700;color:#fff;' +
         'background:rgba(124,58,237,0.3);border:1px solid rgba(124,58,237,0.5);' +
         'padding:4px 10px;border-radius:20px;white-space:nowrap;max-width:110px;' +
@@ -163,30 +165,23 @@ var AUTH = (function () {
       el.querySelector('#bc-logout-btn').addEventListener('click', function () {
         if (confirm(isEn ? 'Log out?' : 'ออกจากระบบหรือไม่?')) logout();
       });
-      // โหลด loyalty status และอัพเดท badge
-      fetch('/api/loyalty/status?username=' + encodeURIComponent(user))
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-          var badge = document.getElementById('bc-loyalty-badge');
-          if (!badge) return;
-          var cycles = d.available_cycles || 0;
-          var pct    = d.progress_pct || 0;
-          if (cycles > 0) {
-            badge.textContent = isEn ? ('🎁 ' + cycles + ' round(s)') : ('🎁 ' + cycles + ' รอบ');
-            badge.title = isEn ? (cycles + ' redemption(s) ready! — click to redeem') : (cycles + ' รอบพร้อมแลก! — คลิกเพื่อแลก');
-            badge.style.background = 'rgba(251,191,36,0.22)';
-            badge.style.borderColor = 'rgba(251,191,36,0.6)';
-            badge.style.boxShadow = '0 0 10px rgba(251,191,36,0.25)';
-          } else {
-            badge.textContent = '🎁 ฿' + (d.progress_baht || 0);
-            badge.title = isEn ? ('Saved ฿' + (d.progress_baht || 0) + '/200') : ('สะสม ฿' + (d.progress_baht || 0) + '/200');
-          }
-          badge.style.display = '';
-        })
-        .catch(function() {});  // fail silently
+      // โหลด wallet balance และอัพเดท badge
+      if (tok) {
+        fetch('/api/wallet/balance?username=' + encodeURIComponent(user) + '&session_token=' + encodeURIComponent(tok))
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            var badge = document.getElementById('bc-wallet-badge');
+            if (!badge) return;
+            var bal = d.balance !== undefined ? d.balance : 0;
+            badge.textContent = '💰 ฿' + bal;
+            badge.title = isEn ? ('Wallet: ฿' + bal) : ('กระเป๋าเงิน: ฿' + bal);
+            badge.style.display = '';
+          })
+          .catch(function() {});
+      }
     } else {
       el.innerHTML =
-        '<a href="login.html" style="font-size:13px;font-weight:700;' +
+        '<a href="login.html?returnTo=' + (window.location.pathname.split('/').pop() || 'index.html') + '" style="font-size:13px;font-weight:700;' +
         'color:rgba(255,255,255,0.9);background:linear-gradient(135deg,#7C3AED,#F43F5E);' +
         'padding:6px 16px;border-radius:20px;text-decoration:none;white-space:nowrap;' +
         'box-shadow:0 4px 16px rgba(124,58,237,0.3);transition:filter 0.2s;"' +

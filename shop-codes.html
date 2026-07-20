@@ -170,6 +170,7 @@
       <li><a href="stages.html"><span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
       <li><a href="orders.html"><span data-i18n="nav_orders">ออเดอร์</span></a></li>
       <li><a href="loyalty.html">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
+      <li><a href="wallet.html">💰 <span data-i18n="nav_wallet">เติมเงิน</span></a></li>
     </ul>
     <div class="nav-cart">🛒<span class="cart-badge" id="cartCount">0</span></div>
   </div>
@@ -182,6 +183,8 @@
       <li><a href="stages.html" onclick="closeMobileMenu()">📍 <span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
       <li><a href="orders.html" onclick="closeMobileMenu()">📋 <span data-i18n="nav_orders">ออเดอร์</span></a></li>
       <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
+      <li><a href="wallet.html" onclick="closeMobileMenu()">💰 <span data-i18n="nav_wallet">เติมเงิน</span></a></li>
+      <li><a href="cookie-run.html" onclick="closeMobileMenu()" style="color:#f97316">🍪 Cookie Run</a></li>
     </ul>
     <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
   </div>
@@ -298,6 +301,16 @@
         </div>
       </div>
 
+      <!-- Wallet section -->
+      <div id="payWLSection" style="display:none;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.3);border-radius:14px;padding:20px;text-align:center;margin-bottom:10px">
+        <div style="font-size:28px;margin-bottom:6px">💰</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:4px">ยอดคงเหลือ</div>
+        <div id="payWLBal" style="font-family:'Russo One',sans-serif;font-size:26px;color:#34d399;margin-bottom:4px">฿—</div>
+        <div id="payWLAmt" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);margin-bottom:12px"></div>
+        <div id="payWLLow" data-i18n="wl_low_balance" style="display:none;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#f87171;margin-bottom:10px">ยอดเงินไม่พอ — <a href="wallet.html" style="color:#34d399">เติมเงิน</a></div>
+        <button id="payWLBtn" data-i18n="wl_confirm_btn" onclick="payWithWalletCode()" style="width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:14px;font-weight:700;cursor:pointer">✅ ยืนยันชำระด้วยกระเป๋าเงิน</button>
+      </div>
+
       <div id="payMsg" style="display:none;margin-top:10px" class="status-msg"></div>
     </div>
     <div id="payResult" style="display:none">
@@ -312,6 +325,7 @@
         <button class="btn-copy" onclick="copyText('resCC')">📋 Copy</button>
       </div>
       <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.4);margin-top:12px;text-align:center" data-i18n="sc_save_code_warn">⚠ บันทึกรหัสนี้ไว้ก่อนปิด</div>
+      <div id="scWalletCreditedMsg" style="display:none;margin-top:10px;padding:8px 12px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#34d399;text-align:center;"></div>
       <button class="btn btn-primary" style="width:100%;margin-top:14px" onclick="closePayModal()" data-i18n="close_btn">ปิด</button>
     </div>
   </div>
@@ -416,6 +430,7 @@
       <div style="display:flex;gap:7px;margin-bottom:6px">
         <button id="pdBtnPP" onclick="pdSelectMethod('promptpay')" class="btn-pay-method" style="flex:1;font-size:12px;padding:7px 8px">🏦 PromptPay</button>
         <button id="pdBtnTW" onclick="pdSelectMethod('truemoney')" class="btn-pay-method" style="flex:1;font-size:12px;padding:7px 8px">💚 TrueWallet</button>
+        <button id="pdBtnWL" onclick="pdSelectMethod('wallet')" class="btn-pay-method" style="flex:1;font-size:12px;padding:7px 8px">💰 Wallet</button>
       </div>
       <div id="pdPayWarn" style="display:none;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#f87171;margin-bottom:8px" data-i18n="sc_pd_pay_warn">⚠ กรุณาเลือกวิธีชำระเงินก่อนกดซื้อ</div>
       <div class="pd-buy-btn">
@@ -425,7 +440,7 @@
   </div>
 </div>
 
-<script src="assets/auth.js?v=20260614"></script>
+<script src="assets/auth.js?v=20260717"></script>
 <script src="assets/nav.js"></script>
 <script src="assets/i18n.js"></script>
 <script>
@@ -496,6 +511,7 @@ function openPD(product, startImg) {
   _payMethod = null;
   document.getElementById('pdBtnPP').classList.remove('active');
   document.getElementById('pdBtnTW').classList.remove('active');
+  document.getElementById('pdBtnWL').classList.remove('active');
   document.getElementById('pdPayWarn').style.display = 'none';
   document.getElementById('pdModal').classList.add('open');
 }
@@ -635,6 +651,7 @@ function pdSelectMethod(m) {
   _payMethod = m;
   document.getElementById('pdBtnPP').classList.toggle('active', m === 'promptpay');
   document.getElementById('pdBtnTW').classList.toggle('active', m === 'truemoney');
+  document.getElementById('pdBtnWL').classList.toggle('active', m === 'wallet');
   document.getElementById('pdPayWarn').style.display = 'none';
 }
 
@@ -645,6 +662,7 @@ async function buyProduct(productId, stockCount) {
   if (stockCount === 0) return;
   const modal = document.getElementById('payModal');
   const isTW = _payMethod === 'truemoney';
+  const isWL = _payMethod === 'wallet';
 
   /* reset UI */
   document.getElementById('payQrSection').style.display = 'block';
@@ -652,22 +670,29 @@ async function buyProduct(productId, stockCount) {
   document.getElementById('payMsg').style.display = 'none';
 
   /* show correct section */
-  document.getElementById('payPPSection').style.display = isTW ? 'none' : 'block';
+  document.getElementById('payPPSection').style.display = (!isTW && !isWL) ? 'block' : 'none';
   document.getElementById('payTWSection').style.display = isTW ? 'block' : 'none';
+  document.getElementById('payWLSection').style.display = isWL ? 'block' : 'none';
 
-  if (!isTW) {
+  if (!isTW && !isWL) {
     document.getElementById('payQrImg').src = '';
     document.getElementById('payQrImg').style.display = 'none';
     document.getElementById('payQrLoading').style.display = 'flex';
     document.getElementById('payOrderId').textContent = '...';
     document.getElementById('payAmount').textContent = '฿...';
     document.getElementById('paySlipFile').value = '';
-  } else {
+  } else if (isTW) {
     document.getElementById('payTWLoading').style.display = 'flex';
     document.getElementById('payTWInfo').style.display = 'none';
     document.getElementById('payOrderIdTW').textContent = '...';
     document.getElementById('payAmountTW').textContent = '฿...';
     document.getElementById('payVoucherInput').value = '';
+  } else {
+    document.getElementById('payWLBal').textContent = '฿—';
+    document.getElementById('payWLAmt').textContent = '';
+    document.getElementById('payWLLow').style.display = 'none';
+    document.getElementById('payWLBtn').disabled = false;
+    document.getElementById('payWLBtn').style.opacity = '1';
   }
 
   modal.classList.add('open');
@@ -680,7 +705,7 @@ async function buyProduct(productId, stockCount) {
     if (!r.ok) throw new Error(d.detail || 'สร้าง order ไม่ได้');
     _currentOrderId = d.order_id;
 
-    if (!isTW) {
+    if (!isTW && !isWL) {
       document.getElementById('payOrderId').textContent = d.order_id;
       document.getElementById('payAmount').textContent = `฿${d.amount}`;
       if (d.qr_base64) {
@@ -689,7 +714,7 @@ async function buyProduct(productId, stockCount) {
         img.style.display = 'block';
         document.getElementById('payQrLoading').style.display = 'none';
       }
-    } else {
+    } else if (isTW) {
       document.getElementById('payOrderIdTW').textContent = d.order_id;
       document.getElementById('payAmountTW').textContent = `฿${(d.amount || 0).toLocaleString()}`;
       document.getElementById('payTWPhone').textContent = d.truemoney_id || '—';
@@ -702,6 +727,19 @@ async function buyProduct(productId, stockCount) {
       }
       document.getElementById('payTWLoading').style.display = 'none';
       document.getElementById('payTWInfo').style.display = 'block';
+    } else {
+      document.getElementById('payWLAmt').textContent = `ยอดที่ต้องชำระ ฿${d.amount}`;
+      try {
+        const wb = await fetch(`${BASE}/api/wallet/balance?username=${encodeURIComponent(sess.username)}&session_token=${encodeURIComponent(sess.hash || '')}`);
+        const wbd = await wb.json();
+        const bal = wbd.balance || 0;
+        document.getElementById('payWLBal').textContent = `฿${bal}`;
+        if (bal < d.amount) {
+          document.getElementById('payWLLow').style.display = 'block';
+          document.getElementById('payWLBtn').disabled = true;
+          document.getElementById('payWLBtn').style.opacity = '0.5';
+        }
+      } catch {}
     }
   } catch (e) {
     document.getElementById('payQrLoading').style.display = 'none';
@@ -735,9 +773,52 @@ async function submitVoucher() {
       body: JSON.stringify({ voucher_code: code }),
     });
     const d = await r.json();
+    if (d.insufficient) {
+      document.getElementById('payTWSection').style.display = 'none';
+      document.getElementById('payWLSection').style.display = 'block';
+      document.getElementById('payWLAmt').textContent = window.bcT('wl_still_short','ยังขาดอีก ฿') + d.remaining;
+      const sess = getSession();
+      if (sess?.username) {
+        try {
+          const wb = await fetch(`${BASE}/api/wallet/balance?username=${encodeURIComponent(sess.username)}&session_token=${encodeURIComponent(sess.hash||'')}`);
+          const wbd = await wb.json();
+          const bal = wbd.balance || 0;
+          document.getElementById('payWLBal').textContent = `฿${bal}`;
+          const wlBtn = document.getElementById('payWLBtn');
+          if (bal < d.remaining) { document.getElementById('payWLLow').style.display='block'; wlBtn.disabled=true; wlBtn.style.opacity='0.5'; }
+          else { document.getElementById('payWLLow').style.display='none'; wlBtn.disabled=false; wlBtn.style.opacity='1'; }
+        } catch {}
+      }
+      const _scMsgEl = document.getElementById('payMsg');
+      _scMsgEl.style.display = 'block'; _scMsgEl.className = 'status-msg status-err';
+      _scMsgEl.innerHTML = d.reason.replace(/\n/g, '<br>');
+      return;
+    }
     if (!r.ok) throw new Error(d.detail || 'ตรวจสอบไม่ผ่าน');
     showResult(d);
   } catch (e) { showMsg('payMsg','err',e.message); }
+}
+
+async function payWithWalletCode() {
+  if (!_currentOrderId) return;
+  const sess = getSession();
+  if (!sess?.username) { showMsg('payMsg','err','กรุณาเข้าสู่ระบบก่อน'); return; }
+  document.getElementById('payWLBtn').disabled = true;
+  document.getElementById('payWLBtn').style.opacity = '0.5';
+  showMsg('payMsg','info','⏳ กำลังชำระเงิน...');
+  try {
+    const r = await fetch(`${BASE}/api/code-shop/pay-wallet/${_currentOrderId}`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ username: sess.username, session_token: sess.hash || '' }),
+    });
+    const d = await r.json();
+    if (!r.ok || !d.success) throw new Error(d.detail || d.error || 'ชำระเงินไม่สำเร็จ');
+    showResult(d);
+  } catch (e) {
+    showMsg('payMsg','err',e.message);
+    document.getElementById('payWLBtn').disabled = false;
+    document.getElementById('payWLBtn').style.opacity = '1';
+  }
 }
 
 function showResult(d) {
@@ -745,6 +826,13 @@ function showResult(d) {
   document.getElementById('resCC').textContent = d.confirmation_code || '—';
   document.getElementById('payQrSection').style.display = 'none';
   document.getElementById('payResult').style.display = 'block';
+  if (d.wallet_credited) {
+    var _wcEl = document.getElementById('scWalletCreditedMsg');
+    _wcEl.textContent = (window.bcLang && window.bcLang() === 'en')
+      ? '💰 Surplus ฿' + d.wallet_credited + ' added to your wallet'
+      : '💰 เงินที่เกิน ฿' + d.wallet_credited + ' เข้ากระเป๋าเงินของคุณแล้ว';
+    _wcEl.style.display = '';
+  }
   _currentOrderId = null;
   loadProducts();
   loadCodeHistory();

@@ -253,3 +253,66 @@ class StagesPaymentRequest(BaseModel):
     stages_config: StagesConfig
     amount: int
     username: Optional[str] = None
+
+
+class WalletTopupRequest(BaseModel):
+    """เติมเงิน wallet ผ่าน PromptPay"""
+    username: str
+    session_token: str
+    amount: int
+
+
+class WalletVoucherRequest(BaseModel):
+    """เติมเงิน wallet ผ่านซองอั่งเป่า TrueMoney"""
+    username: str
+    session_token: str
+    voucher_code: str
+
+
+class WalletPayRequest(BaseModel):
+    """จ่ายด้วย wallet balance"""
+    username: str
+    session_token: str
+
+
+class CRBuyRequest(BaseModel):
+    """ซื้อ CR license key"""
+    product_id: str
+    username: str
+    session_token: str
+    payment_method: str = "promptpay"
+    quantity: int = 1
+
+
+class CRAdminProductRequest(BaseModel):
+    """admin: เพิ่มสินค้า CR"""
+    name: str
+    description: str = ""
+    name_en: str = ""
+    description_en: str = ""
+    license_type: str = "single"
+    duration: str = "permanent"
+    price: int = 200
+    download_url: str = ""
+    username: str
+    session_token: str
+
+
+class CRAdminEditProductRequest(BaseModel):
+    """admin: แก้ไขสินค้า CR"""
+    name: str
+    description: str = ""
+    name_en: str = ""
+    description_en: str = ""
+    price: int = 200
+    download_url: str = ""
+    username: str
+    session_token: str
+
+
+class CRAdminStockRequest(BaseModel):
+    """admin: เพิ่ม license key เข้า CR stock"""
+    product_id: str
+    license_key: str
+    username: str
+    session_token: str

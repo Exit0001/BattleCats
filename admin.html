@@ -256,6 +256,68 @@
     <div id="loyaltyMsg" style="font-family:'Chakra Petch',sans-serif;font-size:13px;margin-top:6px;"></div>
   </div>
 
+  <!-- ── CR Admin ── -->
+  <div style="margin-top:36px;border-top:1px solid rgba(249,115,22,0.2);padding-top:28px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+      <h2 class="section-title" style="font-size:18px;margin-bottom:0;">🍪 Cookie Run Pro Max — License Keys</h2>
+      <div style="display:flex;gap:8px;">
+        <button onclick="toggleAddCRForm()" class="save-btn" style="background:rgba(249,115,22,0.25);border:1px solid rgba(249,115,22,0.45);color:#fb923c;">➕ เพิ่มสินค้า</button>
+        <button onclick="loadCRProducts()" class="save-btn" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#EDE6FF;">🔄</button>
+      </div>
+    </div>
+
+    <!-- Add product form -->
+    <div id="crAddForm" style="display:none;background:rgba(249,115,22,0.04);border:1px solid rgba(249,115,22,0.2);border-radius:14px;padding:20px;margin-bottom:20px;">
+      <div style="font-family:'Russo One',sans-serif;font-size:14px;color:#fb923c;margin-bottom:14px;">➕ เพิ่มสินค้าใหม่</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px;">
+        <div>
+          <div class="detail-label">ชื่อ (TH) *</div>
+          <input id="crNewName" type="text" placeholder="จอเดียว 1 วัน" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">ชื่อ (EN)</div>
+          <input id="crNewNameEn" type="text" placeholder="Single 1 Day" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">ประเภท *</div>
+          <select id="crNewType" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:#1a0a35;color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+            <option value="single">🖥️ จอเดียว (Single)</option>
+            <option value="multi">🖥️🖥️ หลายจอ (Multi)</option>
+          </select>
+        </div>
+        <div>
+          <div class="detail-label">ระยะเวลา *</div>
+          <select id="crNewDuration" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:#1a0a35;color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+            <option value="1d">1 วัน</option>
+            <option value="7d">7 วัน</option>
+            <option value="30d">30 วัน</option>
+            <option value="permanent">ถาวร</option>
+          </select>
+        </div>
+        <div>
+          <div class="detail-label">ราคา (฿) *</div>
+          <input id="crNewPrice" type="number" placeholder="199" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+      </div>
+      <div style="margin-bottom:10px;">
+        <div class="detail-label">Download URL</div>
+        <input id="crNewDownloadUrl" type="text" placeholder="https://drive.google.com/..." style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:14px;">
+        <div class="detail-label">คำอธิบาย</div>
+        <input id="crNewDesc" type="text" placeholder="รายละเอียดสินค้า (ไม่บังคับ)" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <button onclick="addCRProduct()" class="save-btn" style="background:linear-gradient(135deg,#f97316,#dc2626);">💾 บันทึกสินค้า</button>
+        <button onclick="toggleAddCRForm()" style="padding:7px 16px;border-radius:9px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:rgba(210,190,255,0.6);font-family:'Chakra Petch',sans-serif;font-size:12px;cursor:pointer;">ยกเลิก</button>
+      </div>
+      <div id="crAddMsg" style="font-family:'Chakra Petch',sans-serif;font-size:12px;margin-top:8px;"></div>
+    </div>
+
+    <!-- Product list -->
+    <div id="crProductList" style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.4);">⏳ กำลังโหลด...</div>
+  </div>
+
 </div>
 </div><!-- /adminMain -->
 
@@ -561,6 +623,207 @@ async function loyaltyResetCycles() {
   }
 }
 
+// ── CR Admin ──────────────────────────────────────────────────
+var _crProducts = [];
+
+function escH(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toggleAddCRForm() {
+  var f = document.getElementById('crAddForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  document.getElementById('crAddMsg').textContent = '';
+}
+
+async function loadCRProducts() {
+  document.getElementById('crProductList').innerHTML =
+    '<div style="color:rgba(210,190,255,0.4);padding:20px 0;">⏳ กำลังโหลด...</div>';
+  try {
+    var res = await DB.from('cr_products')
+      .select('*, cr_stock(id, status)')
+      .order('license_type', {ascending:true})
+      .order('created_at', {ascending:true});
+    if (res.error) throw res.error;
+    _crProducts = res.data || [];
+    renderCRProducts();
+  } catch(e) {
+    document.getElementById('crProductList').innerHTML =
+      '<div style="color:#f87171;">❌ ' + e.message + '</div>';
+  }
+}
+
+function renderCRProducts() {
+  if (!_crProducts.length) {
+    document.getElementById('crProductList').innerHTML =
+      '<div style="color:rgba(210,190,255,0.35);padding:20px 0;">ยังไม่มีสินค้า — กด "เพิ่มสินค้า" เพื่อเริ่ม</div>';
+    return;
+  }
+  var TYPE_LABEL = { single: '🖥️ จอเดียว', multi: '🖥️🖥️ หลายจอ' };
+  var DUR_LABEL  = { '1d': '1 วัน', '7d': '7 วัน', '30d': '30 วัน', permanent: 'ถาวร' };
+
+  document.getElementById('crProductList').innerHTML = _crProducts.map(function(p) {
+    var stock = p.cr_stock || [];
+    var avail = stock.filter(function(s){ return s.status === 'available'; }).length;
+    var total = stock.length;
+    return '<div id="crp-' + p.id + '" style="background:rgba(14,6,32,0.88);border:1px solid rgba(249,115,22,' + (p.is_active ? '0.22' : '0.08') + ');border-radius:14px;padding:16px 18px;margin-bottom:10px;">' +
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;">' +
+        '<div>' +
+          '<div style="font-family:\'Russo One\',sans-serif;font-size:14px;color:#fb923c;">' + escH(p.name) + '</div>' +
+          '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);margin-top:3px;">' +
+            (TYPE_LABEL[p.license_type]||p.license_type) + ' &nbsp;|&nbsp; ' + (DUR_LABEL[p.duration]||p.duration) +
+            (p.name_en ? ' &nbsp;|&nbsp; ' + escH(p.name_en) : '') +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">' +
+          '<div style="font-family:\'Russo One\',sans-serif;font-size:18px;color:var(--red);">฿' + (p.price||0).toLocaleString() + '</div>' +
+          '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:' + (p.is_active ? '#4ade80' : '#f87171') + ';">' + (p.is_active ? '✅ Active' : '❌ Inactive') + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">' +
+        '<span style="background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.25);color:#fb923c;font-family:\'Chakra Petch\',sans-serif;font-size:11px;padding:3px 10px;border-radius:999px;">🗝️ ' + avail + '/' + total + ' keys</span>' +
+        (p.download_url ? '<span style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);">📥 มี download URL</span>' : '') +
+      '</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+        '<button onclick="toggleCRStock(\'' + p.id + '\')" style="padding:6px 14px;border-radius:9px;border:1px solid rgba(249,115,22,0.3);background:rgba(249,115,22,0.08);color:#fb923c;font-family:\'Chakra Petch\',sans-serif;font-size:11px;cursor:pointer;">🗂️ จัดการ Keys</button>' +
+        '<button onclick="toggleCRActive(\'' + p.id + '\',' + p.is_active + ')" style="padding:6px 14px;border-radius:9px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:rgba(210,190,255,0.7);font-family:\'Chakra Petch\',sans-serif;font-size:11px;cursor:pointer;">' + (p.is_active ? '⏸️ ปิดขาย' : '▶️ เปิดขาย') + '</button>' +
+        '<button onclick="deleteCRProduct(\'' + p.id + '\')" style="padding:6px 14px;border-radius:9px;border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.07);color:#f87171;font-family:\'Chakra Petch\',sans-serif;font-size:11px;cursor:pointer;">🗑️ ลบ</button>' +
+      '</div>' +
+      '<div id="crstock-' + p.id + '" style="display:none;margin-top:14px;border-top:1px solid rgba(249,115,22,0.12);padding-top:14px;"></div>' +
+    '</div>';
+  }).join('');
+}
+
+async function addCRProduct() {
+  var name = document.getElementById('crNewName').value.trim();
+  var name_en = document.getElementById('crNewNameEn').value.trim();
+  var license_type = document.getElementById('crNewType').value;
+  var duration = document.getElementById('crNewDuration').value;
+  var price = parseInt(document.getElementById('crNewPrice').value || '0', 10);
+  var download_url = document.getElementById('crNewDownloadUrl').value.trim();
+  var description = document.getElementById('crNewDesc').value.trim();
+  var msg = document.getElementById('crAddMsg');
+  if (!name || !price) { msg.innerHTML = '<span style="color:#f87171;">กรอกชื่อและราคาก่อน</span>'; return; }
+  try {
+    var res = await DB.from('cr_products').insert({ name: name, name_en: name_en, license_type: license_type, duration: duration, price: price, download_url: download_url, description: description }).select().single();
+    if (res.error) throw res.error;
+    msg.innerHTML = '<span style="color:#4ade80;">✅ เพิ่มสินค้าแล้ว</span>';
+    ['crNewName','crNewNameEn','crNewPrice','crNewDownloadUrl','crNewDesc'].forEach(function(id){ document.getElementById(id).value = ''; });
+    await loadCRProducts();
+  } catch(e) {
+    msg.innerHTML = '<span style="color:#f87171;">❌ ' + e.message + '</span>';
+  }
+}
+
+async function toggleCRActive(productId, currentActive) {
+  try {
+    var res = await DB.from('cr_products').update({ is_active: !currentActive }).eq('id', productId);
+    if (res.error) throw res.error;
+    await loadCRProducts();
+  } catch(e) { alert('❌ ' + e.message); }
+}
+
+async function deleteCRProduct(productId) {
+  var p = _crProducts.find(function(x){ return x.id === productId; });
+  var stock = p ? (p.cr_stock||[]) : [];
+  var soldCount = stock.filter(function(s){ return s.status === 'sold'; }).length;
+  if (!confirm('ลบสินค้า "' + escH(p ? p.name : productId) + '"?\n' + (soldCount ? '⚠️ มี ' + soldCount + ' keys ที่ขายแล้วด้วย!\n' : '') + 'การลบจะลบ stock ทั้งหมดพร้อมกัน')) return;
+  try {
+    await DB.from('cr_stock').delete().eq('product_id', productId);
+    var res = await DB.from('cr_products').delete().eq('id', productId);
+    if (res.error) throw res.error;
+    await loadCRProducts();
+  } catch(e) { alert('❌ ' + e.message); }
+}
+
+async function toggleCRStock(productId) {
+  var el = document.getElementById('crstock-' + productId);
+  if (el.style.display !== 'none') { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = '<div style="color:rgba(210,190,255,0.4);">⏳ โหลด keys...</div>';
+  try {
+    var res = await DB.from('cr_stock').select('*').eq('product_id', productId).order('created_at', { ascending: false });
+    if (res.error) throw res.error;
+    renderCRStock(productId, res.data || []);
+  } catch(e) { el.innerHTML = '<div style="color:#f87171;">❌ ' + e.message + '</div>'; }
+}
+
+function renderCRStock(productId, stocks) {
+  var el = document.getElementById('crstock-' + productId);
+  if (!el) return;
+  var SC = { available: '#4ade80', reserved: '#fbbf24', sold: '#a78bfa' };
+  var counts = { available: 0, reserved: 0, sold: 0 };
+  stocks.forEach(function(s) { if (counts[s.status] !== undefined) counts[s.status]++; });
+
+  var statsHtml = '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">' +
+    ['available','reserved','sold'].map(function(s) {
+      var rgb = s === 'available' ? '74,222,128' : s === 'reserved' ? '251,191,36' : '167,139,250';
+      return '<span style="background:rgba(' + rgb + ',0.1);border:1px solid rgba(' + rgb + ',0.28);color:' + SC[s] + ';font-family:\'Chakra Petch\',sans-serif;font-size:11px;padding:3px 10px;border-radius:999px;">' + counts[s] + ' ' + s + '</span>';
+    }).join('') + '</div>';
+
+  var listHtml = stocks.length ? stocks.map(function(s) {
+    var masked = s.status === 'sold' ? '••••-••••-••••' : escH(s.license_key);
+    return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,0.03);margin-bottom:6px;flex-wrap:wrap;">' +
+      '<div>' +
+        '<span style="font-family:monospace;font-size:12px;color:#EDE6FF;">' + masked + '</span>' +
+        '<span style="margin-left:8px;font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:' + (SC[s.status]||'#fff') + ';">' + s.status + '</span>' +
+        (s.buyer_username ? '<span style="margin-left:6px;font-size:10px;color:rgba(210,190,255,0.4);">→ ' + escH(s.buyer_username) + '</span>' : '') +
+      '</div>' +
+      (s.status === 'available' ? '<button onclick="deleteCRStock(\'' + s.id + '\',\'' + productId + '\')" style="padding:3px 10px;border-radius:7px;border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.07);color:#f87171;font-family:\'Chakra Petch\',sans-serif;font-size:10px;cursor:pointer;">🗑️</button>' : '') +
+    '</div>';
+  }).join('') : '<div style="color:rgba(210,190,255,0.3);font-family:\'Chakra Petch\',sans-serif;font-size:12px;margin-bottom:10px;">ยังไม่มี keys</div>';
+
+  var addHtml = '<div style="margin-top:12px;">' +
+    '<div class="detail-label" style="margin-bottom:6px;">เพิ่ม License Keys (วางได้หลายบรรทัด)</div>' +
+    '<textarea id="crStockInput-' + productId + '" rows="4" placeholder="KEY1-XXXX-XXXX\nKEY2-YYYY-YYYY\n..." style="width:100%;padding:9px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.3);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:monospace;font-size:12px;resize:vertical;box-sizing:border-box;"></textarea>' +
+    '<div style="display:flex;gap:8px;margin-top:8px;align-items:center;">' +
+      '<button onclick="addCRStockBulk(\'' + productId + '\')" class="save-btn" style="background:linear-gradient(135deg,#f97316,#dc2626);font-size:12px;">➕ เพิ่ม Keys</button>' +
+      '<div id="crStockMsg-' + productId + '" style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;"></div>' +
+    '</div>' +
+  '</div>';
+
+  el.innerHTML = statsHtml + listHtml + addHtml;
+}
+
+async function addCRStockBulk(productId) {
+  var ta = document.getElementById('crStockInput-' + productId);
+  var msg = document.getElementById('crStockMsg-' + productId);
+  var keys = (ta.value || '').split('\n').map(function(k){ return k.trim(); }).filter(function(k){ return k; });
+  if (!keys.length) { msg.innerHTML = '<span style="color:#f87171;">วาง key ก่อน</span>'; return; }
+  msg.innerHTML = '<span style="color:rgba(210,190,255,0.5);">⏳ กำลังเพิ่ม ' + keys.length + ' keys...</span>';
+  try {
+    var rows = keys.map(function(k){ return { product_id: productId, license_key: k }; });
+    var res = await DB.from('cr_stock').insert(rows);
+    if (res.error) throw res.error;
+    var stockRes = await DB.from('cr_stock').select('*').eq('product_id', productId).order('created_at', { ascending: false });
+    if (!stockRes.error) {
+      var p = _crProducts.find(function(x){ return x.id === productId; });
+      if (p) p.cr_stock = stockRes.data || [];
+      renderCRProducts();
+      document.getElementById('crstock-' + productId).style.display = 'block';
+      renderCRStock(productId, stockRes.data || []);
+    }
+  } catch(e) {
+    if (msg) msg.innerHTML = '<span style="color:#f87171;">❌ ' + e.message + '</span>';
+  }
+}
+
+async function deleteCRStock(stockId, productId) {
+  if (!confirm('ลบ key นี้?')) return;
+  try {
+    var res = await DB.from('cr_stock').delete().eq('id', stockId);
+    if (res.error) throw res.error;
+    var stockRes = await DB.from('cr_stock').select('*').eq('product_id', productId).order('created_at', { ascending: false });
+    if (!stockRes.error) {
+      var p = _crProducts.find(function(x){ return x.id === productId; });
+      if (p) p.cr_stock = stockRes.data || [];
+      renderCRProducts();
+      document.getElementById('crstock-' + productId).style.display = 'block';
+      renderCRStock(productId, stockRes.data || []);
+    }
+  } catch(e) { alert('❌ ' + e.message); }
+}
+
 // ── Init ──────────────────────────────────────────────────────
 window.addEventListener('load', function() {
   var saved = sessionStorage.getItem('bc_admin');
@@ -568,6 +831,7 @@ window.addEventListener('load', function() {
     _adminUser = saved;
     showAdminPanel();
   }
+  loadCRProducts();
 });
 </script>
 </body>

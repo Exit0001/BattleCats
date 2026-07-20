@@ -1,4 +1,4 @@
-﻿# main.py - FastAPI server เธชเธณเธซเธฃเธฑเธ BCSFE order system
+﻿# main.py - FastAPI server สำหรับ BCSFE order system
 import sys
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -6,7 +6,7 @@ if hasattr(sys.stderr, 'reconfigure'):
     sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Query
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, Response
@@ -15,9 +15,10 @@ import httpx
 import asyncio
 import shutil
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 _BASE_DIR = Path(__file__).parent
 import re as _re
+import hashlib
 
 # ── Cat unlock price table ─────────────────────────────────────────
 _CAT_UNLOCK_PRICE = {"N": 5, "EX": 15, "RR": 20, "SR": 25, "UR": 39, "LR": 79}
@@ -66,7 +67,7 @@ def _calc_stages_price(cfg) -> int:
     if cfg.aku_chapters: total += _STAGE_AKU_CHAPTERS
     return total
 
-from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest, LoyaltyRedeemRequest, CodeShopBuyRequest, AdminProductRequest, AdminToggleRequest, AdminEditProductRequest, AdminStockRequest, ClearStoryChaptersRequest, ClearStoryAllRequest, ResetStoryChaptersRequest, ResetStoryAllRequest, SetTreasureChaptersRequest, SetTreasureAllRequest, ClearOutbreakChaptersRequest, ClearOutbreakAllRequest, AkuRequest, ClearLegendsRequest, StagesPaymentRequest
+from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest, LoyaltyRedeemRequest, CodeShopBuyRequest, AdminProductRequest, AdminToggleRequest, AdminEditProductRequest, AdminStockRequest, ClearStoryChaptersRequest, ClearStoryAllRequest, ResetStoryChaptersRequest, ResetStoryAllRequest, SetTreasureChaptersRequest, SetTreasureAllRequest, ClearOutbreakChaptersRequest, ClearOutbreakAllRequest, AkuRequest, ClearLegendsRequest, StagesPaymentRequest, WalletTopupRequest, WalletVoucherRequest, WalletPayRequest, CRBuyRequest, CRAdminProductRequest, CRAdminEditProductRequest, CRAdminStockRequest
 from runner import BCSFERunner
 from config import ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES
 from payment import (
@@ -108,6 +109,39 @@ from payment import (
     create_stages_order,
     create_code_shop_order,
     get_user_code_purchases,
+    get_wallet_balance,
+    credit_wallet,
+    deduct_wallet,
+    create_topup_order,
+    redeem_angpao_for_wallet,
+    get_cr_products,
+    get_all_cr_products,
+    get_cr_product,
+    get_available_cr_stock,
+    get_available_cr_stock_bulk,
+    reserve_cr_stock,
+    reserve_cr_stock_bulk,
+    mark_cr_stock_sold,
+    mark_cr_stock_sold_bulk,
+    release_cr_stock,
+    release_cr_stock_bulk,
+    get_cr_stock_by_order,
+    get_cr_stocks_by_order,
+    get_cr_order,
+    update_cr_order_status,
+    create_cr_order,
+    get_user_cr_purchases,
+    add_cr_product,
+    update_cr_product,
+    toggle_cr_product,
+    delete_cr_product,
+    add_cr_stock,
+    delete_cr_stock,
+    get_cr_product_stock,
+    verify_cr_slip,
+    redeem_truemoney_voucher_cr,
+    get_cr_monthly_revenue,
+    get_cr_daily_revenue,
 )
 
 ALL_PACKAGE_MAP = {
@@ -122,24 +156,30 @@ ALL_PACKAGE_MAP = {
 
 CRAZED_CAT_IDS = list(range(91, 100))  # 91-99
 
-# Import เน€เธเธดเนเธกเน€เธ•เธดเธกเธชเธณเธซเธฃเธฑเธ /api/orders/list
+# Import เพิ่มเติมสำหรับ /api/orders/list
 from payment import ORDER_DB
 
 # โ”€โ”€ Cat image proxy โ€” disk cache โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€
 CAT_CACHE_DIR = Path("pictures/cats")
 CAT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-# semaphore เธเนเธญเธเธเธฑเธ fetch เธเธฃเนเธญเธกเธเธฑเธเธกเธฒเธเน€เธเธดเธ
+# semaphore ป้องกัน fetch พร้อมกันมากเกิน
 _fetch_sem = asyncio.Semaphore(8)
 
-HEADERS = {"User-Agent": "BattleCatsShop/1.0 (image-proxy)"}
+HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
 
-# URL patterns โ€” Miraheze เน€เธ—เนเธฒเธเธฑเนเธ (Fandom block hotlink 403)
-# pattern 1: Gatyachara_{id:03d}_f.png  โ’ cats เธ—เธฑเนเธงเนเธ 836+ เธ•เธฑเธง
-# pattern 2: Uni{id}_s00.png            โ’ Ancient Egg series เนเธฅเธฐ special cats
+# URL patterns โ€” Miraheze เท่านั้น (Fandom block hotlink 403)
+# pattern 1: Gatyachara_{id:03d}_f.png  โ’ cats ทั่วไป 836+ ตัว
+# pattern 2: Uni{id}_s00.png            โ’ Ancient Egg series และ special cats
+def _wikitide_url(fname: str) -> str:
+    h = hashlib.md5(fname.encode()).hexdigest()
+    return f"https://static.wikitide.net/battlecatswiki/{h[0]}/{h[:2]}/{fname}"
+
 def _cat_img_urls(cat_id: int) -> list[str]:
     p3 = f"{cat_id:03d}"
     return [
+        _wikitide_url(f"{cat_id}_1.png"),
+        _wikitide_url(f"Gatyachara_{p3}_f.png"),
         f"https://battlecats.miraheze.org/wiki/Special:FilePath/Gatyachara_{p3}_f.png",
         f"https://battlecats.miraheze.org/wiki/Special:FilePath/Uni{cat_id}_s00.png",
     ]
@@ -164,22 +204,22 @@ async def _fetch_cat_image(cat_id: int) -> bytes | None:
     return None
 
 
-# เนเธเธฅเน€เธ”เธญเธฃเนเน€เธเนเธ backup save files
+# โฟลเดอร์เก็บ backup save files
 BACKUP_DIR = Path("saves_backup")
 BACKUP_DIR.mkdir(exist_ok=True)
 
-# path เธ—เธตเน bcsfe เธเธฑเธเธ—เธถเธ SAVE_DATA เนเธงเน
+# path ที่ bcsfe บันทึก SAVE_DATA ไว้
 BCSFE_SAVE_PATH = Path.home() / "Documents" / "bcsfe" / "saves" / "SAVE_DATA"
 
 def backup_save(transfer_code: str) -> str | None:
     """
-    copy SAVE_DATA เธเธฒเธ bcsfe เนเธเน€เธเนเธเนเธ saves_backup/
-    เธ•เธฑเนเธเธเธทเนเธญเนเธเธฅเนเธ•เธฒเธก timestamp + transfer code
-    เธเธทเธ path เธ—เธตเนเธเธฑเธเธ—เธถเธ เธซเธฃเธทเธญ None เธ–เนเธฒเนเธกเนเธเธเนเธเธฅเน
+    copy SAVE_DATA จาก bcsfe ไปเก็บใน saves_backup/
+    ตั้งชื่อไฟล์ตาม timestamp + transfer code
+    คืน path ที่บันทึก หรือ None ถ้าไม่พบไฟล์
     """
     try:
         if not BCSFE_SAVE_PATH.exists():
-            print(f"[BACKUP] โ ๏ธ เนเธกเนเธเธ SAVE_DATA เธ—เธตเน {BCSFE_SAVE_PATH}")
+            print(f"[BACKUP] โ ๏ธ ไม่พบ SAVE_DATA ที่ {BCSFE_SAVE_PATH}")
             return None
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -187,16 +227,16 @@ def backup_save(transfer_code: str) -> str | None:
         dest = BACKUP_DIR / filename
 
         shutil.copy2(BCSFE_SAVE_PATH, dest)
-        print(f"[BACKUP] โ… เธเธฑเธเธ—เธถเธ save โ’ {dest}")
+        print(f"[BACKUP] โ… บันทึก save โ’ {dest}")
         return str(dest)
     except Exception as e:
-        print(f"[BACKUP] โ backup เธฅเนเธกเน€เธซเธฅเธง: {e}")
+        print(f"[BACKUP] โ backup ล้มเหลว: {e}")
         return None
 
-# เธชเธฃเนเธฒเธ FastAPI app
+# สร้าง FastAPI app
 app = FastAPI(title="BCSFE Order System")
 
-# BCSFE operations เธ•เนเธญเธเธฃเธฑเธเธ—เธตเธฅเธฐ 1 เน€เธ—เนเธฒเธเธฑเนเธ (SAVE_DATA เนเธเนเธฃเนเธงเธกเธเธฑเธ)
+# BCSFE operations ต้องรันทีละ 1 เท่านั้น (SAVE_DATA ใช้ร่วมกัน)
 import asyncio
 
 
@@ -204,7 +244,7 @@ _bcsfe_lock = asyncio.Lock()
 
 
 async def run_bcsfe(fn, *args, **kwargs):
-    """เธฃเธฑเธ BCSFE operation เธ เธฒเธขเนเธ•เน lock โ€” เธเนเธญเธเธเธฑเธ concurrent SAVE_DATA conflict"""
+    """รัน BCSFE operation ภายใต้ lock โ€” ป้องกัน concurrent SAVE_DATA conflict"""
     async with _bcsfe_lock:
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, lambda: fn(*args, **kwargs))
@@ -261,7 +301,7 @@ async def verify_recaptcha(body: dict):
 @app.get("/api/items")
 def get_items():
     """
-    เธชเนเธเธเนเธญเธกเธนเธฅ ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES เนเธฅเธฐเธฃเธฒเธเธฒเธชเธดเธเธเนเธฒ
+    ส่งข้อมูล ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES และราคาสินค้า
     """
     return {
         "items": ITEM_MAP,
@@ -272,25 +312,25 @@ def get_items():
 
 @app.post("/api/payment/create")
 async def payment_create(order: OrderRequest):
-    """เธชเธฃเนเธฒเธ order โ€” เธฃเธญเธเธฃเธฑเธ items, cat_ids, เธซเธฃเธทเธญเธ—เธฑเนเธเธชเธญเธเธเธฃเนเธญเธกเธเธฑเธ"""
+    """สร้าง order โ€” รองรับ items, cat_ids, หรือทั้งสองพร้อมกัน"""
     has_items  = bool(order.items)
     has_unlock = bool(order.cat_ids)
 
     if not has_items and not has_unlock:
-        raise HTTPException(status_code=400, detail="เธ•เนเธญเธเน€เธฅเธทเธญเธ item เธซเธฃเธทเธญเนเธกเธงเธ—เธตเนเธเธฐเธเธฅเธ”เธฅเนเธญเธเธญเธขเนเธฒเธเธเนเธญเธข 1 เธฃเธฒเธขเธเธฒเธฃ")
+        raise HTTPException(status_code=400, detail="ต้องเลือก item หรือแมวที่จะปลดล็อคอย่างน้อย 1 รายการ")
 
     if order.country not in COUNTRIES:
-        raise HTTPException(status_code=400, detail=f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {order.country}")
+        raise HTTPException(status_code=400, detail=f"Country ไม่ถูกต้อง: {order.country}")
 
     for item in order.items:
         if item.key in ALL_PACKAGE_MAP:
             continue  # all-package items bypass ITEM_MAP validation
         if item.key not in ITEM_MAP:
-            raise HTTPException(status_code=400, detail=f"เนเธกเนเธฃเธนเนเธเธฑเธ item: {item.key}")
+            raise HTTPException(status_code=400, detail=f"ไม่รู้จัก item: {item.key}")
         if item.amount <= 0:
-            raise HTTPException(status_code=400, detail=f"เธเธณเธเธงเธ {item.key} เธ•เนเธญเธเธกเธฒเธเธเธงเนเธฒ 0")
+            raise HTTPException(status_code=400, detail=f"จำนวน {item.key} ต้องมากกว่า 0")
         if item.amount > ITEM_MAP[item.key]["max"]:
-            raise HTTPException(status_code=400, detail=f"{ITEM_MAP[item.key]['label']} เน€เธเธดเธเธเธณเธเธงเธเธชเธนเธเธชเธธเธ” ({ITEM_MAP[item.key]['max']})")
+            raise HTTPException(status_code=400, detail=f"{ITEM_MAP[item.key]['label']} เกินจำนวนสูงสุด ({ITEM_MAP[item.key]['max']})")
 
     # คำนวณราคา all-package items แยก แล้วรวมเข้า total
     pkg_extra = sum(
@@ -362,11 +402,11 @@ async def payment_create_all_package(package_type: str, body: AllCatsRequest):
 
 @app.post("/api/payment/create-unlock")
 async def payment_create_unlock(body: UnlockPaymentRequest):
-    """เธชเธฃเนเธฒเธ order เธเธฅเธ”เธฅเนเธญเธเนเธกเธง เธเธฃเนเธญเธก QR PromptPay"""
+    """สร้าง order ปลดล็อคแมว พร้อม QR PromptPay"""
     if not body.cat_ids:
-        raise HTTPException(status_code=400, detail="เธ•เนเธญเธเน€เธฅเธทเธญเธเนเธกเธงเธญเธขเนเธฒเธเธเนเธญเธข 1 เธ•เธฑเธง")
+        raise HTTPException(status_code=400, detail="ต้องเลือกแมวอย่างน้อย 1 ตัว")
     if body.total <= 0:
-        raise HTTPException(status_code=400, detail="เธขเธญเธ”เธเธณเธฃเธฐเธ•เนเธญเธเธกเธฒเธเธเธงเนเธฒ 0")
+        raise HTTPException(status_code=400, detail="ยอดชำระต้องมากกว่า 0")
 
     order = create_unlock_order(
         transfer_code=body.transfer_code,
@@ -659,21 +699,21 @@ async def payment_create_stages(body: StagesPaymentRequest):
 
 @app.post("/api/payment/verify/{order_id}")
 async def payment_verify(order_id: str, slip: UploadFile = File(...)):
-    """เน€เธเนเธเธชเธฅเธดเธ เนเธฅเธฐ เธ–เนเธฒเธเนเธฒเธ เนเธซเนเธฃเธฑเธ BCSFE เธ•เนเธญ"""
+    """เช็คสลิป และ ถ้าผ่าน ให้รัน BCSFE ต่อ"""
     order = get_order(order_id)
     if not order:
-        raise HTTPException(status_code=404, detail="เนเธกเนเธเธ order เธเธตเน")
+        raise HTTPException(status_code=404, detail="ไม่พบ order นี้")
 
     if is_order_expired(order):
-        raise HTTPException(status_code=400, detail="order เธซเธกเธ”เธญเธฒเธขเธธเนเธฅเนเธง เธเธฃเธธเธ“เธฒเธชเธฑเนเธเนเธซเธกเน")
+        raise HTTPException(status_code=400, detail="order หมดอายุแล้ว กรุณาสั่งใหม่")
 
-    # bcsfe_failed = เธเธณเธฃเธฐเนเธฅเนเธงเนเธ•เน code เธเธดเธ” โ’ เธเธญเธ frontend เนเธซเนเนเธชเธ”เธ retry form
+    # bcsfe_failed = ชำระแล้วแต่ code ผิด โ’ บอก frontend ให้แสดง retry form
     if order["status"] == "bcsfe_failed":
         return {"success": False, "bcsfe_failed": True,
-                "error": "เธชเธฅเธดเธเธเนเธฒเธเนเธฅเนเธงเนเธ•เน Code เนเธกเนเธ–เธนเธเธ•เนเธญเธ เธเธฃเธธเธ“เธฒเธเธฃเธญเธ Code เนเธซเธกเน"}
+                "error": "สลิปผ่านแล้วแต่ Code ไม่ถูกต้อง กรุณากรอก Code ใหม่"}
 
     if order["status"] in ("paid", "done", "retrying"):
-        raise HTTPException(status_code=400, detail="order เธเธตเนเธ”เธณเน€เธเธดเธเธเธฒเธฃเนเธฅเนเธง")
+        raise HTTPException(status_code=400, detail="order นี้ดำเนินการแล้ว")
 
     slip_bytes = await slip.read()
     slip_result = await verify_slip(slip_bytes, order_id)
@@ -708,17 +748,21 @@ async def payment_verify(order_id: str, slip: UploadFile = File(...)):
             "new_confirmation_code": new_cc,
             "done_at":               datetime.now().isoformat(),
         })
+        surplus = slip_result.get("surplus", 0)
+        if surplus > 0 and order.get("username"):
+            credit_wallet(order["username"], surplus)
         return {
             "success":               True,
             "new_transfer_code":     new_tc,
             "new_confirmation_code": new_cc,
             "summary":               step_result["summary"],
+            "wallet_credited":       surplus if surplus > 0 else None,
         }
 
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}")
+        raise HTTPException(status_code=500, detail=f"เกิดข้อผิดพลาด: {e}")
 
 @app.post("/api/payment/verify-voucher/{order_id}")
 async def payment_verify_voucher(order_id: str, body: VoucherRedeemRequest):
@@ -738,10 +782,24 @@ async def payment_verify_voucher(order_id: str, body: VoucherRedeemRequest):
         raise HTTPException(status_code=400, detail="order นี้ดำเนินการแล้ว")
 
     voucher_result = await redeem_truemoney_voucher(body.voucher_code, order_id)
+    if voucher_result.get("insufficient"):
+        return {
+            "success":      False,
+            "insufficient": True,
+            "credited":     voucher_result.get("credited", 0),
+            "remaining":    voucher_result.get("remaining", 0),
+            "reason":       voucher_result.get("reason", ""),
+        }
     if not voucher_result["success"]:
         raise HTTPException(status_code=400, detail=voucher_result["reason"])
 
     transaction_id = voucher_result.get("transaction_id", "")
+
+    # Credit surplus ทันทีหลัง redeem ซองสำเร็จ — ไม่รอ BCSFE
+    surplus = voucher_result.get("surplus", 0)
+    if surplus > 0 and order.get("username"):
+        credit_wallet(order["username"], surplus)
+        print(f"[ANGPAO] surplus ฿{surplus} → wallet ของ {order.get('username')}")
 
     try:
         step_result = await run_bcsfe(_run_bcsfe_steps, order, order["transfer_code"], order["confirmation_code"])
@@ -759,6 +817,7 @@ async def payment_verify_voucher(order_id: str, body: VoucherRedeemRequest):
                 "error": step_result["error"],
                 "latest_transfer_code":     latest_tc,
                 "latest_confirmation_code": latest_cc,
+                "wallet_credited":          surplus if surplus > 0 else None,
             }
 
         new_tc, new_cc = step_result["new_tc"], step_result["new_cc"]
@@ -774,6 +833,7 @@ async def payment_verify_voucher(order_id: str, body: VoucherRedeemRequest):
             "new_transfer_code":     new_tc,
             "new_confirmation_code": new_cc,
             "summary":               step_result["summary"],
+            "wallet_credited":       surplus if surplus > 0 else None,
         }
 
     except HTTPException:
@@ -851,7 +911,7 @@ async def loyalty_history(username: str):
 def payment_status(order_id: str):
     order = get_order(order_id)
     if not order:
-        raise HTTPException(status_code=404, detail="เนเธกเนเธเธ order")
+        raise HTTPException(status_code=404, detail="ไม่พบ order")
     resp = {
         "order_id":   order_id,
         "status":     order["status"],
@@ -873,59 +933,59 @@ def payment_status(order_id: str):
 @app.post("/api/order", response_model=OrderResponse)
 async def place_order(order: OrderRequest):
     """
-    เธฃเธฑเธ order เธเธฒเธเธฅเธนเธเธเนเธฒ โ’ เธฃเธฑเธ BCSFE โ’ เธชเนเธ Transfer Code เนเธซเธกเนเธเธฅเธฑเธ
+    รับ order จากลูกค้า โ’ รัน BCSFE โ’ ส่ง Transfer Code ใหม่กลับ
     """
     
     # ===== Validation =====
     if not order.transfer_code or not order.confirmation_code:
         raise HTTPException(
             status_code=400,
-            detail="Transfer Code เนเธฅเธฐ Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"
+            detail="Transfer Code และ Confirmation Code ห้ามว่าง"
         )
     
     if not order.items or len(order.items) == 0:
         raise HTTPException(
             status_code=400,
-            detail="เธ•เนเธญเธเน€เธฅเธทเธญเธ item เธญเธขเนเธฒเธเธเนเธญเธข 1 เธเธดเนเธ"
+            detail="ต้องเลือก item อย่างน้อย 1 ชิ้น"
         )
     
-    # Validate เนเธ•เนเธฅเธฐ item
+    # Validate แต่ละ item
     for item in order.items:
         if item.key in ALL_PACKAGE_MAP:
             continue  # all-package items bypass ITEM_MAP validation
         if item.key not in ITEM_MAP:
             raise HTTPException(
                 status_code=400,
-                detail=f"เนเธกเนเธฃเธนเนเธเธฑเธ item: {item.key}"
+                detail=f"ไม่รู้จัก item: {item.key}"
             )
         
         cfg = ITEM_MAP[item.key]
         if item.amount <= 0:
             raise HTTPException(
                 status_code=400,
-                detail=f"เธเธณเธเธงเธ {item.key} เธ•เนเธญเธเธกเธฒเธเธเธงเนเธฒ 0"
+                detail=f"จำนวน {item.key} ต้องมากกว่า 0"
             )
         
         if item.amount > cfg["max"]:
             raise HTTPException(
                 status_code=400,
-                detail=f"{cfg['label']} เน€เธเธดเธเธเธณเธเธงเธเธชเธนเธเธชเธธเธ” ({cfg['max']})"
+                detail=f"{cfg['label']} เกินจำนวนสูงสุด ({cfg['max']})"
             )
     
     # Validate country
     if order.country not in COUNTRIES:
         raise HTTPException(
             status_code=400,
-            detail=f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {order.country}"
+            detail=f"Country ไม่ถูกต้อง: {order.country}"
         )
     
-    # ===== เธฃเธฑเธ BCSFE =====
+    # ===== รัน BCSFE =====
     try:
         print(f"\n{'='*60}")
-        print(f"[ORDER] เน€เธฃเธดเนเธกเธ•เนเธ order เนเธซเธกเน")
+        print(f"[ORDER] เริ่มต้น order ใหม่")
         print(f"  Transfer Code: {order.transfer_code[:8]}...")
         print(f"  Country: {COUNTRIES[order.country]}")
-        print(f"  Items: {len(order.items)} เธฃเธฒเธขเธเธฒเธฃ")
+        print(f"  Items: {len(order.items)} รายการ")
         print(f"{'='*60}\n")
         
         runner = BCSFERunner(
@@ -934,14 +994,14 @@ async def place_order(order: OrderRequest):
             country=order.country,
         )
         
-        # เนเธเธฅเธ items เน€เธเนเธ list[dict]
+        # แปลง items เป็น list[dict]
         items_list = [{"key": i.key, "amount": i.amount} for i in order.items]
         
-        # เธฃเธฑเธ
+        # รัน
         result = await run_bcsfe(runner.run, items_list)
         
         if result["success"]:
-            # เธชเธฃเนเธฒเธ summary
+            # สร้าง summary
             summary = [
                 ItemSummary(
                     item=ITEM_MAP[i.key]["label"],
@@ -950,9 +1010,9 @@ async def place_order(order: OrderRequest):
                 for i in order.items
             ]
             
-            print(f"\n[ORDER] โ… เธชเธณเน€เธฃเนเธ!")
+            print(f"\n[ORDER] โ… สำเร็จ!")
 
-            # เธเธฑเธเธ—เธถเธ SAVE_DATA เธญเธฑเธ•เนเธเธกเธฑเธ•เธดเธซเธฅเธฑเธ order เธชเธณเน€เธฃเนเธ
+            # บันทึก SAVE_DATA อัตโนมัติหลัง order สำเร็จ
             codes = result.get("new_transfer_code", {})
             new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
             backup_save(new_tc or order.transfer_code)
@@ -964,7 +1024,7 @@ async def place_order(order: OrderRequest):
                 summary=summary,
             )
         else:
-            print(f"\n[ORDER] โ เธฅเนเธกเน€เธซเธฅเธง: {result['error']}")
+            print(f"\n[ORDER] โ ล้มเหลว: {result['error']}")
             raise HTTPException(
                 status_code=500,
                 detail=result["error"]
@@ -973,7 +1033,7 @@ async def place_order(order: OrderRequest):
     except HTTPException:
         raise
     except Exception as e:
-        error_msg = f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {str(e)}"
+        error_msg = f"เกิดข้อผิดพลาด: {str(e)}"
         print(f"\n[ORDER] โ {error_msg}")
         raise HTTPException(status_code=500, detail=error_msg)
 
@@ -981,11 +1041,11 @@ async def place_order(order: OrderRequest):
 
 @app.get("/api/orders/list")
 def list_orders():
-    """เธ”เธถเธ orders เธ—เธฑเนเธเธซเธกเธ”"""
+    """ดึง orders ทั้งหมด"""
     try:
         orders_dict = {}
         
-        # เธฅเธญเธ load เธเธฒเธ orders.json เธ•เธฃเธ
+        # ลอง load จาก orders.json ตรง
         if ORDER_DB.exists():
             import json
             with open(ORDER_DB, 'r', encoding='utf-8') as f:
@@ -994,7 +1054,7 @@ def list_orders():
                 except:
                     pass
         
-        # Filter เน€เธเธเธฒเธฐ top 20 orders เธฅเนเธฒเธชเธธเธ”
+        # Filter เฉพาะ top 20 orders ล่าสุด
         if orders_dict:
             items = list(orders_dict.items())
             items.sort(key=lambda x: x[1].get('created_at', ''), reverse=True)
@@ -1059,7 +1119,7 @@ def my_orders(username: str):
 @app.post("/api/test/bcsfe")
 async def test_bcsfe(request: TestBCSFERequest):
     """
-    เธ—เธ”เธชเธญเธเธเธฒเธฃเน€เธเธดเนเธกเธเธญเธเน€เธเนเธฒเน€เธเธกเธเนเธฒเธ BCSFE เนเธ”เธขเนเธกเนเธ•เนเธญเธเธเนเธฒเธเธฃเธฐเธเธเธเธฒเธฃเธเนเธฒเธขเน€เธเธดเธ
+    ทดสอบการเพิ่มของเข้าเกมผ่าน BCSFE โดยไม่ต้องผ่านระบบการจ่ายเงิน
     """
     try:
         transfer_code = request.transfer_code.strip()
@@ -1073,47 +1133,47 @@ async def test_bcsfe(request: TestBCSFERequest):
         if not transfer_code or not confirmation_code:
             return {
                 "success": False,
-                "error": "Transfer Code เนเธฅเธฐ Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"
+                "error": "Transfer Code และ Confirmation Code ห้ามว่าง"
             }
         
         if not item_key or item_key not in ITEM_MAP:
             return {
                 "success": False,
-                "error": f"เนเธกเนเธฃเธนเนเธเธฑเธ item: {item_key}"
+                "error": f"ไม่รู้จัก item: {item_key}"
             }
         
         if amount <= 0:
             return {
                 "success": False,
-                "error": f"เธเธณเธเธงเธเธ•เนเธญเธเธกเธฒเธเธเธงเนเธฒ 0"
+                "error": f"จำนวนต้องมากกว่า 0"
             }
         
         cfg = ITEM_MAP[item_key]
         if amount > cfg["max"]:
             return {
                 "success": False,
-                "error": f"{cfg['label']} เน€เธเธดเธเธเธณเธเธงเธเธชเธนเธเธชเธธเธ” ({cfg['max']})"
+                "error": f"{cfg['label']} เกินจำนวนสูงสุด ({cfg['max']})"
             }
         
         if country not in COUNTRIES:
             return {
                 "success": False,
-                "error": f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {country}"
+                "error": f"Country ไม่ถูกต้อง: {country}"
             }
         
         print(f"\n{'='*60}")
-        print(f"[TEST-BCSFE] ๐งช เธ—เธ”เธชเธญเธเธเธฒเธฃเน€เธเธดเนเธกเธเธญเธ")
+        print(f"[TEST-BCSFE] ๐งช ทดสอบการเพิ่มของ")
         print(f"  Transfer Code: {transfer_code[:8]}...")
         print(f"  Item: {cfg['label']} x{amount}")
         print(f"  Country: {COUNTRIES[country]}")
         print(f"{'='*60}\n")
         
-        # เธชเธฃเนเธฒเธ items list
+        # สร้าง items list
         items_list = [{"key": item_key, "amount": amount}]
         if sub_type:
             items_list[0]["sub_type"] = sub_type
         
-        # เธฃเธฑเธ BCSFE
+        # รัน BCSFE
         runner = BCSFERunner(
             transfer=transfer_code,
             confirm=confirmation_code,
@@ -1127,10 +1187,10 @@ async def test_bcsfe(request: TestBCSFERequest):
             new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
             new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
 
-            # เธเธฑเธเธ—เธถเธ SAVE_DATA
+            # บันทึก SAVE_DATA
             backup_save(new_tc or transfer_code)
 
-            # เธชเธฃเนเธฒเธ summary
+            # สร้าง summary
             summary = [
                 {
                     "item": cfg["label"],
@@ -1138,7 +1198,7 @@ async def test_bcsfe(request: TestBCSFERequest):
                 }
             ]
 
-            print(f"[TEST-BCSFE] โ… เธชเธณเน€เธฃเนเธ!")
+            print(f"[TEST-BCSFE] โ… สำเร็จ!")
 
             resp = {
                 "success": True,
@@ -1150,7 +1210,7 @@ async def test_bcsfe(request: TestBCSFERequest):
                 resp["customer_note"] = result["customer_note"]
             return resp
         else:
-            print(f"[TEST-BCSFE] โ เธฅเนเธกเน€เธซเธฅเธง: {result['error']}")
+            print(f"[TEST-BCSFE] โ ล้มเหลว: {result['error']}")
             latest = result.get("latest_transfer_code")
             return {
                 "success": False,
@@ -1159,7 +1219,7 @@ async def test_bcsfe(request: TestBCSFERequest):
             }
 
     except Exception as e:
-        error_msg = f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {str(e)}"
+        error_msg = f"เกิดข้อผิดพลาด: {str(e)}"
         print(f"[TEST-BCSFE] โ {error_msg}")
         return {
             "success": False,
@@ -1169,7 +1229,7 @@ async def test_bcsfe(request: TestBCSFERequest):
 @app.post("/api/test/bcsfe/batch")
 async def test_bcsfe_batch(request: OrderRequest):
     """
-    เธ—เธ”เธชเธญเธเน€เธเธดเนเธกเธเธญเธเธซเธฅเธฒเธขเธฃเธฒเธขเธเธฒเธฃเนเธเธเธฃเธฑเนเธเน€เธ”เธตเธขเธง โ€” download เธเธฃเธฑเนเธเน€เธ”เธตเธขเธง เนเธเนเธ—เธธเธ item เนเธฅเนเธง upload เธเธฃเธฑเนเธเน€เธ”เธตเธขเธง
+    ทดสอบเพิ่มของหลายรายการในครั้งเดียว โ€” download ครั้งเดียว แก้ทุก item แล้ว upload ครั้งเดียว
     """
     try:
         transfer_code     = request.transfer_code.strip()
@@ -1177,19 +1237,19 @@ async def test_bcsfe_batch(request: OrderRequest):
         country           = request.country
 
         if not transfer_code or not confirmation_code:
-            return {"success": False, "error": "Transfer Code เนเธฅเธฐ Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"}
+            return {"success": False, "error": "Transfer Code และ Confirmation Code ห้ามว่าง"}
         if country not in COUNTRIES:
-            return {"success": False, "error": f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {country}"}
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {country}"}
         if not request.items:
-            return {"success": False, "error": "เนเธกเนเธกเธต item เนเธเธฃเธฒเธขเธเธฒเธฃ"}
+            return {"success": False, "error": "ไม่มี item ในรายการ"}
 
         items_list = []
         for item in request.items:
             if item.key not in ITEM_MAP:
-                return {"success": False, "error": f"เนเธกเนเธฃเธนเนเธเธฑเธ item: {item.key}"}
+                return {"success": False, "error": f"ไม่รู้จัก item: {item.key}"}
             cfg = ITEM_MAP[item.key]
             if item.amount <= 0 or item.amount > cfg["max"]:
-                return {"success": False, "error": f"{cfg['label']} เธเธณเธเธงเธเนเธกเนเธ–เธนเธเธ•เนเธญเธ ({item.amount})"}
+                return {"success": False, "error": f"{cfg['label']} จำนวนไม่ถูกต้อง ({item.amount})"}
             entry = {"key": item.key, "amount": item.amount}
             if item.sub_type:
                 entry["sub_type"] = item.sub_type
@@ -1214,12 +1274,12 @@ async def test_bcsfe_batch(request: OrderRequest):
                     "latest_transfer_code": latest}
 
     except Exception as e:
-        return {"success": False, "error": f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {str(e)}"}
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {str(e)}"}
 
 
 @app.post("/api/unlock/characters")
 async def unlock_characters(request: UnlockCharactersRequest):
-    """เธเธฅเธ”เธฅเนเธญเธเธ•เธฑเธงเธฅเธฐเธเธฃเธ•เธฒเธก cat_ids เธเนเธฒเธ BCSFE"""
+    """ปลดล็อคตัวละครตาม cat_ids ผ่าน BCSFE"""
     try:
         transfer_code     = request.transfer_code.strip()
         confirmation_code = request.confirmation_code.strip()
@@ -1227,14 +1287,14 @@ async def unlock_characters(request: UnlockCharactersRequest):
         cat_ids           = request.cat_ids
 
         if not transfer_code or not confirmation_code:
-            return {"success": False, "error": "Transfer Code เนเธฅเธฐ Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"}
+            return {"success": False, "error": "Transfer Code และ Confirmation Code ห้ามว่าง"}
         if not cat_ids:
-            return {"success": False, "error": "เธ•เนเธญเธเธฃเธฐเธเธธ cat_ids เธญเธขเนเธฒเธเธเนเธญเธข 1 เธ•เธฑเธง"}
+            return {"success": False, "error": "ต้องระบุ cat_ids อย่างน้อย 1 ตัว"}
         if country not in COUNTRIES:
-            return {"success": False, "error": f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {country}"}
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {country}"}
 
         print(f"\n{'='*60}")
-        print(f"[UNLOCK-CHARS] ๐ฑ เธเธฅเธ”เธฅเนเธญเธ {len(cat_ids)} เธ•เธฑเธงเธฅเธฐเธเธฃ")
+        print(f"[UNLOCK-CHARS] ๐ฑ ปลดล็อค {len(cat_ids)} ตัวละคร")
         print(f"  Transfer Code: {transfer_code[:8]}...")
         print(f"  Country: {COUNTRIES[country]}")
         print(f"  IDs: {str(cat_ids[:10])}{'...' if len(cat_ids) > 10 else ''}")
@@ -1252,7 +1312,7 @@ async def unlock_characters(request: UnlockCharactersRequest):
             new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
             new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
             backup_save(new_tc or transfer_code)
-            print(f"[UNLOCK-CHARS] โ… เธชเธณเน€เธฃเนเธ!")
+            print(f"[UNLOCK-CHARS] โ… สำเร็จ!")
             return {
                 "success": True,
                 "new_transfer_code": new_tc,
@@ -1260,26 +1320,26 @@ async def unlock_characters(request: UnlockCharactersRequest):
                 "unlocked_count": len(cat_ids),
             }
         else:
-            print(f"[UNLOCK-CHARS] โ เธฅเนเธกเน€เธซเธฅเธง: {result['error']}")
+            print(f"[UNLOCK-CHARS] โ ล้มเหลว: {result['error']}")
             return {"success": False, "error": result.get("error", "Unknown error")}
 
     except Exception as e:
-        error_msg = f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {str(e)}"
+        error_msg = f"เกิดข้อผิดพลาด: {str(e)}"
         print(f"[UNLOCK-CHARS] โ {error_msg}")
         return {"success": False, "error": error_msg}
 
 @app.post("/api/upgrade/characters")
 async def upgrade_characters(request: UnlockCharactersRequest):
-    """เธญเธฑเธเน€เธเธฃเธ”เธ•เธฑเธงเธฅเธฐเธเธฃเธ–เธถเธ max level"""
+    """อัพเกรดตัวละครถึง max level"""
     try:
         if not request.transfer_code.strip() or not request.confirmation_code.strip():
-            return {"success": False, "error": "Transfer/Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"}
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
         if not request.cat_ids:
-            return {"success": False, "error": "เธ•เนเธญเธเธฃเธฐเธเธธ cat_ids เธญเธขเนเธฒเธเธเนเธญเธข 1 เธ•เธฑเธง"}
+            return {"success": False, "error": "ต้องระบุ cat_ids อย่างน้อย 1 ตัว"}
         if request.country not in COUNTRIES:
-            return {"success": False, "error": f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {request.country}"}
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
 
-        print(f"\n[UPGRADE-CHARS] โฌ๏ธ upgrade {len(request.cat_ids)} เธ•เธฑเธงเธฅเธฐเธเธฃ")
+        print(f"\n[UPGRADE-CHARS] โฌ๏ธ upgrade {len(request.cat_ids)} ตัวละคร")
         runner = BCSFERunner(transfer=request.transfer_code.strip(),
                              confirm=request.confirmation_code.strip(),
                              country=request.country)
@@ -1293,17 +1353,17 @@ async def upgrade_characters(request: UnlockCharactersRequest):
                     "new_confirmation_code": new_cc, "count": len(request.cat_ids), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
-        return {"success": False, "error": f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}"}
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
 
 
 @app.post("/api/unlock/all")
 async def unlock_all_characters(request: AllCatsRequest):
-    """Unlock เธ—เธธเธเธ•เธฑเธงเธฅเธฐเธเธฃเนเธเน€เธเธก"""
+    """Unlock ทุกตัวละครในเกม"""
     try:
         if not request.transfer_code.strip() or not request.confirmation_code.strip():
-            return {"success": False, "error": "Transfer/Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"}
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
         if request.country not in COUNTRIES:
-            return {"success": False, "error": f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {request.country}"}
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
 
         print(f"\n[UNLOCK-ALL] ๐ฑ unlock all cats")
         runner = BCSFERunner(transfer=request.transfer_code.strip(),
@@ -1319,17 +1379,17 @@ async def unlock_all_characters(request: AllCatsRequest):
                     "new_confirmation_code": new_cc, "count": result.get("count", 0), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
-        return {"success": False, "error": f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}"}
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
 
 
 @app.post("/api/upgrade/all")
 async def upgrade_all_characters(request: AllCatsRequest):
-    """Upgrade base max เธ—เธธเธเธ•เธฑเธงเธ—เธตเน unlock เธญเธขเธนเนเนเธเธฃเธซเธฑเธช"""
+    """Upgrade base max ทุกตัวที่ unlock อยู่ในรหัส"""
     try:
         if not request.transfer_code.strip() or not request.confirmation_code.strip():
-            return {"success": False, "error": "Transfer/Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"}
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
         if request.country not in COUNTRIES:
-            return {"success": False, "error": f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {request.country}"}
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
 
         print(f"\n[UPGRADE-ALL] โฌ๏ธ upgrade all unlocked cats")
         runner = BCSFERunner(transfer=request.transfer_code.strip(),
@@ -1345,17 +1405,17 @@ async def upgrade_all_characters(request: AllCatsRequest):
                     "new_confirmation_code": new_cc, "count": result.get("count", 0), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
-        return {"success": False, "error": f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}"}
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
 
 
 @app.post("/api/trueform/all")
 async def trueform_all_characters(request: AllCatsRequest):
-    """True Form เธ—เธธเธเธ•เธฑเธงเธ—เธตเนเธฅเธนเธเธเนเธฒเธกเธตเธญเธขเธนเนเนเธฅเนเธง"""
+    """True Form ทุกตัวที่ลูกค้ามีอยู่แล้ว"""
     try:
         if not request.transfer_code.strip() or not request.confirmation_code.strip():
-            return {"success": False, "error": "Transfer/Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"}
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
         if request.country not in COUNTRIES:
-            return {"success": False, "error": f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {request.country}"}
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
 
         print(f"\n[TRUEFORM-ALL] โจ true form all unlocked cats")
         runner = BCSFERunner(transfer=request.transfer_code.strip(),
@@ -1371,17 +1431,17 @@ async def trueform_all_characters(request: AllCatsRequest):
                     "new_confirmation_code": new_cc, "count": result.get("count", 0), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
-        return {"success": False, "error": f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}"}
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
 
 
 @app.post("/api/ultraform/all")
 async def ultraform_all_characters(request: AllCatsRequest):
-    """Ultra Form เธ—เธธเธเธ•เธฑเธงเธ—เธตเนเธฅเธนเธเธเนเธฒเธกเธตเธญเธขเธนเนเนเธฅเนเธง"""
+    """Ultra Form ทุกตัวที่ลูกค้ามีอยู่แล้ว"""
     try:
         if not request.transfer_code.strip() or not request.confirmation_code.strip():
-            return {"success": False, "error": "Transfer/Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"}
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
         if request.country not in COUNTRIES:
-            return {"success": False, "error": f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {request.country}"}
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
 
         print(f"\n[ULTRAFORM-ALL] ๐’ฅ ultra form all unlocked cats")
         runner = BCSFERunner(transfer=request.transfer_code.strip(),
@@ -1397,17 +1457,17 @@ async def ultraform_all_characters(request: AllCatsRequest):
                     "new_confirmation_code": new_cc, "count": result.get("count", 0), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
-        return {"success": False, "error": f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}"}
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
 
 
 @app.post("/api/talents/all")
 async def talents_all_characters(request: AllCatsRequest):
-    """Max Talents เธ—เธธเธเธ•เธฑเธงเธ—เธตเนเธฅเธนเธเธเนเธฒเธกเธตเธญเธขเธนเนเนเธฅเนเธง"""
+    """Max Talents ทุกตัวที่ลูกค้ามีอยู่แล้ว"""
     try:
         if not request.transfer_code.strip() or not request.confirmation_code.strip():
-            return {"success": False, "error": "Transfer/Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"}
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
         if request.country not in COUNTRIES:
-            return {"success": False, "error": f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {request.country}"}
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
 
         print(f"\n[TALENTS-ALL] ๐ talents max all unlocked cats")
         runner = BCSFERunner(transfer=request.transfer_code.strip(),
@@ -1423,7 +1483,7 @@ async def talents_all_characters(request: AllCatsRequest):
                     "new_confirmation_code": new_cc, "count": result.get("count", 0), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
-        return {"success": False, "error": f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}"}
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
 
 
 
@@ -1776,16 +1836,16 @@ async def check_id(request: CheckIDRequest):
 
 @app.post("/api/trueform/characters")
 async def trueform_characters(request: UnlockCharactersRequest):
-    """True Form เธ•เธฑเธงเธฅเธฐเธเธฃ"""
+    """True Form ตัวละคร"""
     try:
         if not request.transfer_code.strip() or not request.confirmation_code.strip():
-            return {"success": False, "error": "Transfer/Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"}
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
         if not request.cat_ids:
-            return {"success": False, "error": "เธ•เนเธญเธเธฃเธฐเธเธธ cat_ids เธญเธขเนเธฒเธเธเนเธญเธข 1 เธ•เธฑเธง"}
+            return {"success": False, "error": "ต้องระบุ cat_ids อย่างน้อย 1 ตัว"}
         if request.country not in COUNTRIES:
-            return {"success": False, "error": f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {request.country}"}
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
 
-        print(f"\n[TRUEFORM-CHARS] โจ true form {len(request.cat_ids)} เธ•เธฑเธงเธฅเธฐเธเธฃ")
+        print(f"\n[TRUEFORM-CHARS] โจ true form {len(request.cat_ids)} ตัวละคร")
         runner = BCSFERunner(transfer=request.transfer_code.strip(),
                              confirm=request.confirmation_code.strip(),
                              country=request.country)
@@ -1799,21 +1859,21 @@ async def trueform_characters(request: UnlockCharactersRequest):
                     "new_confirmation_code": new_cc, "count": len(request.cat_ids), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
-        return {"success": False, "error": f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}"}
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
 
 
 @app.post("/api/ultraform/characters")
 async def ultraform_characters(request: UnlockCharactersRequest):
-    """Ultra Form เธ•เธฑเธงเธฅเธฐเธเธฃ (4th Form)"""
+    """Ultra Form ตัวละคร (4th Form)"""
     try:
         if not request.transfer_code.strip() or not request.confirmation_code.strip():
-            return {"success": False, "error": "Transfer/Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"}
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
         if not request.cat_ids:
-            return {"success": False, "error": "เธ•เนเธญเธเธฃเธฐเธเธธ cat_ids เธญเธขเนเธฒเธเธเนเธญเธข 1 เธ•เธฑเธง"}
+            return {"success": False, "error": "ต้องระบุ cat_ids อย่างน้อย 1 ตัว"}
         if request.country not in COUNTRIES:
-            return {"success": False, "error": f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {request.country}"}
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
 
-        print(f"\n[ULTRAFORM-CHARS] ๐’ฅ ultra form {len(request.cat_ids)} เธ•เธฑเธงเธฅเธฐเธเธฃ")
+        print(f"\n[ULTRAFORM-CHARS] ๐’ฅ ultra form {len(request.cat_ids)} ตัวละคร")
         runner = BCSFERunner(transfer=request.transfer_code.strip(),
                              confirm=request.confirmation_code.strip(),
                              country=request.country)
@@ -1827,21 +1887,21 @@ async def ultraform_characters(request: UnlockCharactersRequest):
                     "new_confirmation_code": new_cc, "count": len(request.cat_ids), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
-        return {"success": False, "error": f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}"}
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
 
 
 @app.post("/api/talents/characters")
 async def talents_characters(request: UnlockCharactersRequest):
-    """Max Talents เธ•เธฑเธงเธฅเธฐเธเธฃ"""
+    """Max Talents ตัวละคร"""
     try:
         if not request.transfer_code.strip() or not request.confirmation_code.strip():
-            return {"success": False, "error": "Transfer/Confirmation Code เธซเนเธฒเธกเธงเนเธฒเธ"}
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
         if not request.cat_ids:
-            return {"success": False, "error": "เธ•เนเธญเธเธฃเธฐเธเธธ cat_ids เธญเธขเนเธฒเธเธเนเธญเธข 1 เธ•เธฑเธง"}
+            return {"success": False, "error": "ต้องระบุ cat_ids อย่างน้อย 1 ตัว"}
         if request.country not in COUNTRIES:
-            return {"success": False, "error": f"Country เนเธกเนเธ–เธนเธเธ•เนเธญเธ: {request.country}"}
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
 
-        print(f"\n[TALENTS-CHARS] ๐ talents max {len(request.cat_ids)} เธ•เธฑเธงเธฅเธฐเธเธฃ")
+        print(f"\n[TALENTS-CHARS] ๐ talents max {len(request.cat_ids)} ตัวละคร")
         runner = BCSFERunner(transfer=request.transfer_code.strip(),
                              confirm=request.confirmation_code.strip(),
                              country=request.country)
@@ -1855,24 +1915,24 @@ async def talents_characters(request: UnlockCharactersRequest):
                     "new_confirmation_code": new_cc, "count": len(request.cat_ids), "log": result.get("log", [])}
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
-        return {"success": False, "error": f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}"}
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
 
 
 # ============= Utility Routes =============
 
 @app.get("/api/cat-image/{cat_id}")
 async def cat_image(cat_id: int):
-    """เน€เธชเธดเธฃเนเธเธฃเธนเธเนเธกเธงเธเธฒเธ disk cache เธซเธฃเธทเธญ fetch เธเธฒเธ wiki เนเธฅเนเธงเธเธฑเธเธ—เธถเธ"""
+    """เสิร์ฟรูปแมวจาก disk cache หรือ fetch จาก wiki แล้วบันทึก"""
     cache_path = CAT_CACHE_DIR / f"{cat_id}.png"
 
-    # disk hit โ’ เน€เธชเธดเธฃเนเธเธ—เธฑเธเธ—เธต
+    # disk hit โ’ เสิร์ฟทันที
     if cache_path.exists():
         return FileResponse(str(cache_path), media_type="image/png",
                             headers={"Cache-Control": "public, max-age=604800"})
 
     data = await _fetch_cat_image(cat_id)
     if data is None:
-        raise HTTPException(status_code=404, detail="เนเธกเนเธเธเธฃเธนเธเนเธกเธง")
+        raise HTTPException(status_code=404, detail="ไม่พบรูปแมว")
 
     return Response(data, media_type="image/png",
                     headers={"Cache-Control": "public, max-age=604800"})
@@ -1880,34 +1940,34 @@ async def cat_image(cat_id: int):
 
 @app.get("/api/cat-image/prewarm")
 async def prewarm_cat_images():
-    """เน€เธฃเธดเนเธก background pre-download เธฃเธนเธเธ—เธตเนเธขเธฑเธเนเธกเนเธกเธตเนเธ cache"""
+    """เริ่ม background pre-download รูปที่ยังไม่มีใน cache"""
     asyncio.create_task(_prewarm_all())
     cached = sum(1 for f in CAT_CACHE_DIR.glob("*.png"))
-    return {"message": "เธเธณเธฅเธฑเธ pre-download เธฃเธนเธเนเธกเธงเธ—เธฑเนเธเธซเธกเธ”เนเธ background", "already_cached": cached}
+    return {"message": "กำลัง pre-download รูปแมวทั้งหมดใน background", "already_cached": cached}
 
 
 async def _prewarm_all():
-    missing = [i for i in range(866) if not (CAT_CACHE_DIR / f"{i}.png").exists()]
+    missing = [i for i in range(871) if not (CAT_CACHE_DIR / f"{i}.png").exists()]
     if not missing:
-        print("[CAT-IMG] โ… Cache เธเธฃเธเธ—เธธเธเธ•เธฑเธงเนเธฅเนเธง")
+        print("[CAT-IMG] โ… Cache ครบทุกตัวแล้ว")
         return
-    print(f"[CAT-IMG] ๐” Pre-warming {len(missing)} เธฃเธนเธเธ—เธตเนเธขเธฑเธเนเธกเนเธกเธต cache...")
+    print(f"[CAT-IMG] ๐” Pre-warming {len(missing)} รูปที่ยังไม่มี cache...")
     await asyncio.gather(*[_fetch_cat_image(i) for i in missing], return_exceptions=True)
     cached = sum(1 for f in CAT_CACHE_DIR.glob("*.png"))
-    print(f"[CAT-IMG] โ… Pre-warm เน€เธชเธฃเนเธ โ€” cached {cached}/866")
+    print(f"[CAT-IMG] โ… Pre-warm เสร็จ โ€” cached {cached}/870")
 
 
 @app.post("/api/payment/retry/{order_id}")
 async def payment_retry(order_id: str, body: RetryRequest):
-    """เธฅเธญเธเนเธซเธกเนเธ”เนเธงเธข Transfer/Confirmation Code เนเธซเธกเน เธชเธณเธซเธฃเธฑเธ order เธ—เธตเน BCSFE เธฅเนเธกเน€เธซเธฅเธง"""
+    """ลองใหม่ด้วย Transfer/Confirmation Code ใหม่ สำหรับ order ที่ BCSFE ล้มเหลว"""
     order = get_order(order_id)
     if not order:
-        raise HTTPException(status_code=404, detail="เนเธกเนเธเธ order เธเธตเน")
+        raise HTTPException(status_code=404, detail="ไม่พบ order นี้")
 
     if order["status"] not in ("bcsfe_failed", "paid"):
         raise HTTPException(
             status_code=400,
-            detail=f"เนเธกเนเธชเธฒเธกเธฒเธฃเธ–เธฅเธญเธเนเธซเธกเนเนเธ”เน เธชเธ–เธฒเธเธฐเธเธฑเธเธเธธเธเธฑเธ: {order['status']}"
+            detail=f"ไม่สามารถลองใหม่ได้ สถานะปัจจุบัน: {order['status']}"
         )
 
     update_order_status(order_id, "retrying", {
@@ -1916,7 +1976,7 @@ async def payment_retry(order_id: str, body: RetryRequest):
     })
 
     try:
-        # เนเธเน code เนเธซเธกเนเธเธฒเธ retry form
+        # ใช้ code ใหม่จาก retry form
         step_result = await run_bcsfe(_run_bcsfe_steps, order, body.transfer_code, body.confirmation_code)
 
         if not step_result["success"]:
@@ -1936,12 +1996,12 @@ async def payment_retry(order_id: str, body: RetryRequest):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"เน€เธเธดเธ”เธเนเธญเธเธดเธ”เธเธฅเธฒเธ”: {e}")
+        raise HTTPException(status_code=500, detail=f"เกิดข้อผิดพลาด: {e}")
 
 
 @app.get("/health")
 def health_check():
-    """เธ•เธฃเธงเธเธชเธญเธเธชเธธเธเธ เธฒเธ server"""
+    """ตรวจสอบสุขภาพ server"""
     return {"status": "ok"}
 
 @app.get("/")
@@ -1955,7 +2015,7 @@ def serve_html(page: str):
         return FileResponse(path)
     raise HTTPException(status_code=404, detail="Not found")
 
-# Static files (CSS, JS, images) โ€” เธ•เนเธญเธ mount เธซเธฅเธฑเธ API routes
+# Static files (CSS, JS, images) โ€” ต้อง mount หลัง API routes
 app.mount("/assets", StaticFiles(directory=str(_BASE_DIR / "assets")), name="assets")
 app.mount("/pictures", StaticFiles(directory=str(_BASE_DIR / "pictures")), name="pictures")
 
@@ -1964,7 +2024,7 @@ app.mount("/pictures", StaticFiles(directory=str(_BASE_DIR / "pictures")), name=
 def favicon():
     return FileResponse("favicon.ico", media_type="image/x-icon")
 
-# โ”€โ”€ serve HTML pages เธเนเธฒเธ http:// เน€เธเธทเนเธญเธซเธฅเธตเธเน€เธฅเธตเนเธขเธ file:// security errors โ”€โ”€
+# โ”€โ”€ serve HTML pages ผ่าน http:// เพื่อหลีกเลี่ยง file:// security errors โ”€โ”€
 _HTML_PAGES = ["index","shop","characters","stages","orders","admin","login",
                 "orders_manager","test_no_payment","shop-codes"]
 
@@ -1977,9 +2037,36 @@ async def serve_html(page: str):
 @app.on_event("startup")
 async def startup_prewarm():
     cached = sum(1 for _ in CAT_CACHE_DIR.glob("*.png"))
-    print(f"[CAT-IMG] cache เธกเธตเธญเธขเธนเนเนเธฅเนเธง {cached}/861 เธฃเธนเธ")
+    print(f"[CAT-IMG] cache มีอยู่แล้ว {cached}/861 รูป")
     if cached < 861:
         asyncio.create_task(_prewarm_all())
+    _cleanup_old_files()
+
+
+def _cleanup_old_files(days: int = 30):
+    from bcsfe import core as _bcsfe_core
+    cutoff = datetime.now() - timedelta(days=days)
+    deleted = 0
+    for folder in [Path("saves_backup"), Path("logs")]:
+        if not folder.exists():
+            continue
+        for f in folder.iterdir():
+            if f.is_file() and datetime.fromtimestamp(f.stat().st_mtime) < cutoff:
+                try:
+                    f.unlink()
+                    deleted += 1
+                except Exception:
+                    pass
+    bcsfe_saves = Path(str(_bcsfe_core.SaveFile.get_saves_path()))
+    if bcsfe_saves.exists():
+        for f in bcsfe_saves.iterdir():
+            if f.is_file() and f.name.startswith("SAVE_DATA_") and datetime.fromtimestamp(f.stat().st_mtime) < cutoff:
+                try:
+                    f.unlink()
+                    deleted += 1
+                except Exception:
+                    pass
+    print(f"[CLEANUP] ลบไฟล์เก่ากว่า {days} วัน: {deleted} ไฟล์")
 
 
 # ============= Main =============
@@ -2081,11 +2168,15 @@ async def api_code_shop_verify(order_id: str, slip: UploadFile = File(...)):
         "transaction_id": transaction_id,
     })
 
+    surplus = slip_result.get("surplus", 0)
+    if surplus > 0 and order.get("username"):
+        credit_wallet(order["username"], surplus)
     print(f"[CODE-SHOP] ✅ order {order_id} ส่งรหัสให้ {order.get('username')}")
     return {
         "success":           True,
         "transfer_code":     stock["transfer_code"],
         "confirmation_code": stock["confirmation_code"],
+        "wallet_credited":   surplus if surplus > 0 else None,
     }
 
 
@@ -2112,10 +2203,24 @@ async def api_code_shop_verify_voucher(order_id: str, body: VoucherRedeemRequest
         raise HTTPException(status_code=400, detail="order นี้ดำเนินการแล้ว")
 
     voucher_result = await redeem_truemoney_voucher(body.voucher_code, order_id)
+    if voucher_result.get("insufficient"):
+        return {
+            "success":      False,
+            "insufficient": True,
+            "credited":     voucher_result.get("credited", 0),
+            "remaining":    voucher_result.get("remaining", 0),
+            "reason":       voucher_result.get("reason", ""),
+        }
     if not voucher_result["success"]:
         raise HTTPException(status_code=400, detail=voucher_result["reason"])
 
     transaction_id = voucher_result.get("transaction_id", "")
+
+    # Credit surplus ทันทีหลัง redeem ซองสำเร็จ
+    surplus = voucher_result.get("surplus", 0)
+    if surplus > 0 and order.get("username"):
+        credit_wallet(order["username"], surplus)
+        print(f"[CODE-SHOP] surplus ฿{surplus} → wallet ของ {order.get('username')}")
 
     # บันทึกก่อนว่าเงินเข้าแล้ว เผื่อ step ถัดไปพัง admin จะได้รู้
     update_order_status(order_id, "paid", {
@@ -2135,11 +2240,14 @@ async def api_code_shop_verify_voucher(order_id: str, body: VoucherRedeemRequest
         "transaction_id": transaction_id,
     })
 
+    if surplus > 0 and order.get("username"):
+        credit_wallet(order["username"], surplus)
     print(f"[CODE-SHOP] ✅ TrueWallet order {order_id} ส่งรหัสให้ {order.get('username')}")
     return {
         "success":           True,
         "transfer_code":     stock["transfer_code"],
         "confirmation_code": stock["confirmation_code"],
+        "wallet_credited":   surplus if surplus > 0 else None,
     }
 
 
@@ -2167,6 +2275,33 @@ def api_admin_revenue_daily(year: int, month: int, day: int):
     if day < 1 or day > 31:
         raise HTTPException(status_code=400, detail="day ต้องอยู่ระหว่าง 1-31")
     return get_daily_revenue(year, month, day)
+
+
+@app.get("/api/admin/cr/orders")
+def api_cr_admin_orders():
+    from payment import _load_cr_orders
+    EXCLUDE = {"test", "mod"}
+    orders = _load_cr_orders()
+    items = [(k, v) for k, v in orders.items()
+             if v.get("username") not in EXCLUDE]
+    items.sort(key=lambda x: x[1].get("created_at", ""), reverse=True)
+    return {"orders": [v for _, v in items[:100]]}
+
+
+@app.get("/api/admin/cr/revenue")
+def api_cr_admin_revenue(year: int, month: int):
+    if month < 1 or month > 12:
+        raise HTTPException(status_code=400, detail="month ต้องอยู่ระหว่าง 1-12")
+    return get_cr_monthly_revenue(year, month)
+
+
+@app.get("/api/admin/cr/revenue/daily")
+def api_cr_admin_revenue_daily(year: int, month: int, day: int):
+    if month < 1 or month > 12:
+        raise HTTPException(status_code=400, detail="month ต้องอยู่ระหว่าง 1-12")
+    if day < 1 or day > 31:
+        raise HTTPException(status_code=400, detail="day ต้องอยู่ระหว่าง 1-31")
+    return get_cr_daily_revenue(year, month, day)
 
 
 @app.get("/api/admin/code-shop/products")
@@ -2261,6 +2396,239 @@ def api_admin_list_images(username: str, session_token: str):
         return {"images": []}
 
 
+@app.get("/api/cr/products")
+def api_cr_products():
+    return {"products": get_cr_products()}
+
+
+@app.post("/api/cr/buy")
+async def api_cr_buy(body: CRBuyRequest):
+    if not verify_loyalty_session(body.username, body.session_token):
+        raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบก่อนซื้อ")
+    product = get_cr_product(body.product_id)
+    if not product or not product.get("is_active"):
+        raise HTTPException(status_code=404, detail="ไม่พบสินค้า")
+    qty = max(1, min(int(body.quantity or 1), 10))
+    stocks = get_available_cr_stock_bulk(body.product_id, qty)
+    if len(stocks) < qty:
+        raise HTTPException(status_code=400, detail=f"สต๊อกไม่พอ (มีแค่ {len(stocks)} ชิ้น)")
+    stock_ids = [s["id"] for s in stocks]
+    order = create_cr_order(body.product_id, stock_ids, body.username, product["price"],
+                            body.payment_method, quantity=qty)
+    if not reserve_cr_stock_bulk(stock_ids, body.username, order["order_id"]):
+        update_cr_order_status(order["order_id"], "cancelled")
+        raise HTTPException(status_code=400, detail="สินค้าถูกจองโดยคนอื่นพอดี กรุณาลองใหม่")
+    resp = {
+        "order_id":       order["order_id"],
+        "amount":         order["amount"],
+        "base_amount":    order.get("base_amount", order["amount"]),
+        "truemoney_fee":  order.get("truemoney_fee", 0),
+        "quantity":       qty,
+        "expires_at":     order["expires_at"],
+        "payment_method": order["payment_method"],
+        "product_name":   product.get("name", ""),
+    }
+    if body.payment_method == "promptpay":
+        resp["qr_base64"] = order.get("qr_base64")
+    if body.payment_method == "truemoney":
+        resp["truemoney_id"] = TRUEMONEY_ID
+    resp["wallet_balance"] = get_wallet_balance(body.username)
+    return resp
+
+
+@app.post("/api/cr/cancel/{order_id}")
+def api_cr_cancel(order_id: str, username: str = Query(None)):
+    order = get_cr_order(order_id)
+    if not order:
+        return {"success": True}
+    if order.get("status") in ("done", "cancelled", "expired"):
+        return {"success": True}
+    stock_ids = order.get("stock_ids") or []
+    if not stock_ids:
+        sid = order.get("stock_id", "")
+        if sid:
+            stock_ids = [sid]
+    if stock_ids:
+        release_cr_stock_bulk(stock_ids)
+    update_cr_order_status(order_id, "cancelled")
+    return {"success": True}
+
+
+@app.post("/api/cr/verify/{order_id}")
+async def api_cr_verify(order_id: str, slip: UploadFile = File(...)):
+    order = get_cr_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="ไม่พบ order นี้")
+    if order.get("order_type") != "cr_shop":
+        raise HTTPException(status_code=400, detail="order type ไม่ถูกต้อง")
+    slip_bytes = await slip.read()
+    result = await verify_cr_slip(slip_bytes, order_id)
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("reason", "verify ไม่สำเร็จ"))
+    stocks = get_cr_stocks_by_order(order_id)
+    if not stocks:
+        raise HTTPException(status_code=500, detail="ไม่พบ license key ที่จอง กรุณาติดต่อ admin")
+    mark_cr_stock_sold_bulk([s["id"] for s in stocks])
+    update_cr_order_status(order_id, "done", {"done_at": datetime.now().isoformat()})
+    product = get_cr_product(order.get("product_id", "")) or {}
+    keys = [s["license_key"] for s in stocks]
+    print(f"[CR] ✅ slip order {order_id} ส่ง {len(keys)} license key ให้ {order.get('username')}")
+    return {
+        "success":        True,
+        "license_key":    keys[0],
+        "license_keys":   keys,
+        "download_url":   product.get("download_url", ""),
+    }
+
+
+@app.post("/api/cr/verify-voucher/{order_id}")
+async def api_cr_verify_voucher(order_id: str, body: VoucherRedeemRequest):
+    order = get_cr_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="ไม่พบ order นี้")
+    if order.get("order_type") != "cr_shop":
+        raise HTTPException(status_code=400, detail="order type ไม่ถูกต้อง")
+    voucher_result = await redeem_truemoney_voucher_cr(body.voucher_code, order_id)
+    surplus = voucher_result.get("surplus", 0)
+    if surplus > 0 and order.get("username"):
+        credit_wallet(order["username"], surplus)
+        print(f"[CR-ANGPAO] surplus ฿{surplus} → wallet ของ {order.get('username')}")
+    if not voucher_result.get("success"):
+        return voucher_result
+    stocks = get_cr_stocks_by_order(order_id)
+    if not stocks:
+        raise HTTPException(status_code=500, detail="ไม่พบ license key ที่จอง กรุณาติดต่อ admin")
+    mark_cr_stock_sold_bulk([s["id"] for s in stocks])
+    update_cr_order_status(order_id, "done", {"done_at": datetime.now().isoformat()})
+    product = get_cr_product(order.get("product_id", "")) or {}
+    keys = [s["license_key"] for s in stocks]
+    print(f"[CR] ✅ TrueWallet order {order_id} ส่ง {len(keys)} license key ให้ {order.get('username')}")
+    return {
+        "success":         True,
+        "license_key":     keys[0],
+        "license_keys":    keys,
+        "download_url":    product.get("download_url", ""),
+        "wallet_credited": surplus if surplus > 0 else None,
+    }
+
+
+@app.post("/api/cr/pay-wallet/{order_id}")
+async def api_cr_pay_wallet(order_id: str, body: WalletPayRequest):
+    if not verify_loyalty_session(body.username, body.session_token):
+        raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบก่อน")
+    order = get_cr_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="ไม่พบ order")
+    if order.get("order_type") != "cr_shop":
+        raise HTTPException(status_code=400, detail="order type ไม่ถูกต้อง")
+    if order["status"] == "done":
+        raise HTTPException(status_code=400, detail="order นี้ดำเนินการแล้ว")
+    if is_order_expired(order):
+        raise HTTPException(status_code=400, detail="order หมดอายุแล้ว กรุณาซื้อใหม่")
+    amount = int(order.get("amount", 0))
+    balance = get_wallet_balance(body.username)
+    if balance < amount:
+        raise HTTPException(status_code=400, detail=f"ยอดเงินไม่พอ (มี ฿{balance} ต้องใช้ ฿{amount})")
+    stocks = get_cr_stocks_by_order(order_id)
+    if not stocks:
+        raise HTTPException(status_code=500, detail="ไม่พบ license key ที่จอง กรุณาติดต่อ admin")
+    if not deduct_wallet(body.username, amount):
+        raise HTTPException(status_code=400, detail="หักเงินไม่สำเร็จ กรุณาลองใหม่")
+    mark_cr_stock_sold_bulk([s["id"] for s in stocks])
+    update_cr_order_status(order_id, "done", {
+        "done_at": datetime.now().isoformat(),
+        "payment_method": "wallet",
+    })
+    product = get_cr_product(order.get("product_id", "")) or {}
+    keys = [s["license_key"] for s in stocks]
+    print(f"[CR] ✅ wallet order {order_id} ส่ง {len(keys)} license key ให้ {body.username}")
+    return {
+        "success":      True,
+        "license_key":  keys[0],
+        "license_keys": keys,
+        "download_url": product.get("download_url", ""),
+    }
+
+
+@app.get("/api/cr/my-purchases")
+def api_cr_my_purchases(username: str, session_token: str):
+    if not verify_loyalty_session(username, session_token):
+        raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบก่อน")
+    return {"purchases": get_user_cr_purchases(username)}
+
+
+# ── CR Admin Routes ──
+
+@app.get("/api/admin/cr/products")
+def api_admin_cr_products(username: str, session_token: str):
+    if not verify_admin_session(username, session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    return {"products": get_all_cr_products()}
+
+
+@app.post("/api/admin/cr/products")
+def api_admin_cr_add_product(body: CRAdminProductRequest):
+    if not verify_admin_session(body.username, body.session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    product = add_cr_product(body.name, body.description, body.license_type, body.duration,
+                             body.price, body.download_url, body.name_en, body.description_en)
+    if not product:
+        raise HTTPException(status_code=500, detail="เพิ่มสินค้าไม่ได้")
+    return {"success": True, "product": product}
+
+
+@app.put("/api/admin/cr/products/{product_id}")
+def api_admin_cr_edit_product(product_id: str, body: CRAdminEditProductRequest):
+    if not verify_admin_session(body.username, body.session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    ok = update_cr_product(product_id, body.name, body.description, body.price,
+                           body.download_url, body.name_en, body.description_en)
+    if not ok:
+        raise HTTPException(status_code=500, detail="แก้ไขสินค้าไม่ได้")
+    return {"success": True}
+
+
+@app.patch("/api/admin/cr/products/{product_id}")
+def api_admin_cr_toggle_product(product_id: str, body: AdminToggleRequest):
+    if not verify_admin_session(body.username, body.session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    toggle_cr_product(product_id, body.is_active)
+    return {"success": True}
+
+
+@app.delete("/api/admin/cr/products/{product_id}")
+def api_admin_cr_delete_product(product_id: str, username: str, session_token: str):
+    if not verify_admin_session(username, session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    delete_cr_product(product_id)
+    return {"success": True}
+
+
+@app.get("/api/admin/cr/products/{product_id}/stock")
+def api_admin_cr_get_stock(product_id: str, username: str, session_token: str):
+    if not verify_admin_session(username, session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    return {"stock": get_cr_product_stock(product_id)}
+
+
+@app.post("/api/admin/cr/stock")
+def api_admin_cr_add_stock(body: CRAdminStockRequest):
+    if not verify_admin_session(body.username, body.session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    item = add_cr_stock(body.product_id, body.license_key)
+    if not item:
+        raise HTTPException(status_code=500, detail="เพิ่ม license key ไม่ได้")
+    return {"success": True, "stock": item}
+
+
+@app.delete("/api/admin/cr/stock/{stock_id}")
+def api_admin_cr_delete_stock(stock_id: str, username: str, session_token: str):
+    if not verify_admin_session(username, session_token):
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+    delete_cr_stock(stock_id)
+    return {"success": True}
+
+
 @app.get("/sitemap.xml")
 def sitemap():
     from fastapi.responses import Response
@@ -2277,11 +2645,203 @@ def sitemap():
 </urlset>"""
     return Response(content, media_type="application/xml")
 
+
+@app.post("/api/payment/pay-wallet/{order_id}")
+async def api_payment_pay_wallet(order_id: str, body: WalletPayRequest):
+    """จ่ายด้วย wallet — deduct balance แล้วรัน BCSFE"""
+    if not verify_loyalty_session(body.username, body.session_token):
+        raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบก่อน")
+    order = get_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="ไม่พบ order")
+    if order["status"] in ("paid", "done", "retrying"):
+        raise HTTPException(status_code=400, detail="order นี้ดำเนินการแล้ว")
+    if is_order_expired(order):
+        raise HTTPException(status_code=400, detail="order หมดอายุแล้ว กรุณาสั่งใหม่")
+
+    amount = int(order.get("amount", 0))
+    balance = get_wallet_balance(body.username)
+    if balance < amount:
+        raise HTTPException(status_code=400, detail=f"ยอดเงินไม่พอ (มี ฿{balance} ต้องใช้ ฿{amount})")
+
+    if not deduct_wallet(body.username, amount):
+        raise HTTPException(status_code=400, detail="หักเงินไม่สำเร็จ กรุณาลองใหม่")
+
+    update_order_status(order_id, "paid", {
+        "paid_at":        datetime.now().isoformat(),
+        "payment_method": "wallet",
+    })
+
+    try:
+        step_result = await run_bcsfe(_run_bcsfe_steps, order, order["transfer_code"], order["confirmation_code"])
+
+        if not step_result["success"]:
+            latest_tc = step_result.get("latest_tc")
+            latest_cc = step_result.get("latest_cc")
+            update_order_status(order_id, "bcsfe_failed", {
+                "error": step_result["error"],
+                "latest_transfer_code":     latest_tc,
+                "latest_confirmation_code": latest_cc,
+            })
+            return {
+                "success": False, "bcsfe_failed": True,
+                "error": step_result["error"],
+                "latest_transfer_code":     latest_tc,
+                "latest_confirmation_code": latest_cc,
+            }
+
+        new_tc, new_cc = step_result["new_tc"], step_result["new_cc"]
+        backup_save(new_tc or order["transfer_code"])
+        update_order_status(order_id, "done", {
+            "new_transfer_code":     new_tc,
+            "new_confirmation_code": new_cc,
+            "done_at":               datetime.now().isoformat(),
+        })
+        return {
+            "success":               True,
+            "new_transfer_code":     new_tc,
+            "new_confirmation_code": new_cc,
+            "summary":               step_result["summary"],
+        }
+
+    except HTTPException:
+        credit_wallet(body.username, amount)
+        raise
+    except Exception as e:
+        credit_wallet(body.username, amount)
+        raise HTTPException(status_code=500, detail=f"เกิดข้อผิดพลาด: {e}")
+
+
+@app.post("/api/code-shop/pay-wallet/{order_id}")
+async def api_code_shop_pay_wallet(order_id: str, body: WalletPayRequest):
+    """จ่าย code-shop ด้วย wallet"""
+    if not verify_loyalty_session(body.username, body.session_token):
+        raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบก่อน")
+    order = get_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="ไม่พบ order")
+    if order.get("order_type") != "code_shop":
+        raise HTTPException(status_code=400, detail="order type ไม่ถูกต้อง")
+    if order["status"] == "done":
+        raise HTTPException(status_code=400, detail="order นี้ดำเนินการแล้ว")
+    if is_order_expired(order):
+        raise HTTPException(status_code=400, detail="order หมดอายุแล้ว กรุณาซื้อใหม่")
+
+    amount = int(order.get("amount", 0))
+    balance = get_wallet_balance(body.username)
+    if balance < amount:
+        raise HTTPException(status_code=400, detail=f"ยอดเงินไม่พอ (มี ฿{balance} ต้องใช้ ฿{amount})")
+
+    stock_id = order.get("stock_id", "")
+    stock = get_stock_by_order(order_id)
+    if not stock:
+        raise HTTPException(status_code=500, detail="ไม่พบรหัสที่จอง กรุณาติดต่อ admin")
+
+    if not deduct_wallet(body.username, amount):
+        raise HTTPException(status_code=400, detail="หักเงินไม่สำเร็จ กรุณาลองใหม่")
+
+    mark_stock_sold(stock_id)
+    update_order_status(order_id, "done", {
+        "done_at":        datetime.now().isoformat(),
+        "payment_method": "wallet",
+    })
+    print(f"[CODE-SHOP] ✅ wallet order {order_id} ส่งรหัสให้ {body.username}")
+    return {
+        "success":           True,
+        "transfer_code":     stock["transfer_code"],
+        "confirmation_code": stock["confirmation_code"],
+    }
+
+
+# ══════════════════════════════════════════
+# WALLET ENDPOINTS
+# ══════════════════════════════════════════
+
+@app.get("/api/wallet/balance")
+def api_wallet_balance(username: str, session_token: str):
+    if not verify_loyalty_session(username, session_token):
+        raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบก่อน")
+    balance = get_wallet_balance(username)
+    return {"balance": balance}
+
+
+@app.post("/api/wallet/topup")
+async def api_wallet_topup(body: WalletTopupRequest):
+    """สร้าง order เติม wallet ผ่าน PromptPay"""
+    if not verify_loyalty_session(body.username, body.session_token):
+        raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบก่อน")
+    if body.amount < 1:
+        raise HTTPException(status_code=400, detail="จำนวนเงินต้องมากกว่า 0 บาท")
+    order = create_topup_order(body.username, body.amount, "promptpay")
+    return {
+        "success":  True,
+        "order_id": order["order_id"],
+        "amount":   order["amount"],
+        "qr_base64": order["qr_base64"],
+        "expires_at": order["expires_at"],
+    }
+
+
+@app.post("/api/wallet/verify/{order_id}")
+async def api_wallet_verify(order_id: str, slip: UploadFile = File(...), session_token: str = Form(...), username: str = Form(...)):
+    """verify สลิป PromptPay แล้วเติมเงิน wallet"""
+    if not verify_loyalty_session(username, session_token):
+        raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบก่อน")
+
+    order = get_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="ไม่พบ order นี้")
+    if order.get("order_type") != "topup":
+        raise HTTPException(status_code=400, detail="order type ไม่ถูกต้อง")
+    if order.get("username") != username:
+        raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์")
+    if order["status"] == "done":
+        raise HTTPException(status_code=400, detail="order นี้เติมเงินแล้ว")
+    if is_order_expired(order):
+        raise HTTPException(status_code=400, detail="order หมดอายุแล้ว กรุณาสร้างใหม่")
+
+    slip_bytes = await slip.read()
+    slip_result = await verify_slip(slip_bytes, order_id)
+    if not slip_result["success"]:
+        raise HTTPException(status_code=400, detail=slip_result["reason"])
+
+    credited = int(order["amount"])
+    mark_slip_used(slip_result.get("transaction_id", ""))
+    update_order_status(order_id, "done", {"done_at": datetime.now().isoformat()})
+    credit_wallet(username, credited)
+    surplus = slip_result.get("surplus", 0)
+    if surplus > 0:
+        credit_wallet(username, surplus)
+        credited += surplus
+    print(f"[WALLET] ✅ topup order {order_id} credited ฿{credited} to {username}")
+    return {"success": True, "credited": credited, "balance": get_wallet_balance(username)}
+
+
+@app.post("/api/wallet/topup-voucher")
+async def api_wallet_topup_voucher(body: WalletVoucherRequest):
+    """เติม wallet โดยตรงด้วยซองอั่งเป่า TrueMoney (ไม่ต้องมี order)"""
+    if not verify_loyalty_session(body.username, body.session_token):
+        raise HTTPException(status_code=401, detail="กรุณาเข้าสู่ระบบก่อน")
+    result = await redeem_angpao_for_wallet(body.voucher_code, body.username)
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["reason"])
+    credit_wallet(body.username, result["credited"])
+    balance = get_wallet_balance(body.username)
+    return {
+        "success":  True,
+        "received": result["received"],
+        "fee":      result["fee"],
+        "credited": result["credited"],
+        "balance":  balance,
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
-    print("๐€ BCSFE Order System เน€เธฃเธดเนเธกเธ•เนเธ...")
-    print("๐“ เน€เธเธดเธ”เธซเธเนเธฒเน€เธงเนเธ: http://localhost:8000")
+    print("๐€ BCSFE Order System เริ่มต้น...")
+    print("๐“ เปิดหน้าเว็บ: http://localhost:8000")
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
 
 
 

@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-07-14 00:08:07
+Transfer  : dadd27435
+Confirm   : 1737
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=dadd27... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] NP: 125 → 225  (+100)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_683e5be8
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260714_000809_dadd2743
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 2fff64e68 | Confirm ใหม่: 0674
+============================================================
+============================================================

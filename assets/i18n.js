@@ -17,6 +17,46 @@
     nav_unlock_stage: 'Unlock Stages',
     nav_orders:       'Orders',
     nav_loyalty:      'Loyalty Points',
+    nav_wallet:       'Wallet',
+
+    // Wallet payment UI (shared across pages)
+    wl_title:           'Wallet',
+    wl_login_notice:    'Please <a href="login.html">log in</a> to use your wallet',
+    wl_bal_label:       'Wallet balance',
+    wl_low_balance:     'Insufficient balance — <a href="wallet.html" style="color:#34d399;">Top up</a>',
+    wl_confirm_btn:     '✅ Confirm payment with Wallet',
+    wl_pay_method_title:'💰 Pay with Wallet',
+    wl_still_short:     'Still short ฿',
+    wl_pay_remaining_btn:'✅ Pay remaining with Wallet',
+    wl_topup_first_btn: '💰 Top up first',
+
+    // Wallet page content (wallet.html)
+    wl_bal_card_label:   'Balance',
+    wl_loading:          'Loading...',
+    wl_bal_ready:        'Available instantly',
+    wl_bal_load_fail:    'Failed to load',
+    wl_bal_login_needed: 'Please log in',
+    wl_tab_pp:           '📱 PromptPay (Scan QR)',
+    wl_tab_tw:           '🧧 TrueWallet Angpao',
+    wl_pp_amt_label:     'Amount to top up (THB)',
+    wl_pp_amt_ph:        'e.g. 100',
+    wl_pp_create_btn:    'Generate QR Code',
+    wl_pp_creating:      '⏳ Generating...',
+    wl_pp_scan_note:     'Scan and upload your slip below',
+    wl_pp_upload_label:  'Tap to choose slip image',
+    wl_pp_verify_btn:    '✅ Confirm Slip',
+    wl_pp_verifying:     '⏳ Checking slip...',
+    wl_pp_verifying_msg: '⏳ Verifying slip...',
+    wl_tw_code_label:    'TrueWallet Angpao link or code',
+    wl_tw_fee_note:      'Fee 2.9% (rounded up, max ฿20) — minimum ฿2<br>Example: ฿100 angpao → fee ฿3 → you receive ฿97',
+    wl_tw_redeem_btn:    '🧧 Redeem Angpao',
+    wl_tw_redeeming:     '⏳ Redeeming...',
+    wl_tw_checking_msg:  '⏳ Checking angpao...',
+    wl_alert_enter_amt:  'Please enter an amount',
+    wl_alert_choose_slip:'Please choose a slip image',
+    wl_alert_create_qr:  'Please generate a QR code first',
+    wl_alert_enter_code: 'Please paste the angpao link or code',
+    wl_err_connect:      '❌ Connection failed',
 
     // index.html
     idx_badge:          'Battle Cats — Trending Worldwide',
@@ -581,6 +621,67 @@
 
     wrap.appendChild(menu);
     wrap.appendChild(btn);
+
+    var GAMES = [
+      { label: '🐱 Battle Cats', href: 'index.html', active: !window.location.pathname.includes('cookie-run') },
+      { label: '🍪 Cookie Run Pro Max', href: 'cookie-run.html', active: window.location.pathname.includes('cookie-run') },
+    ];
+    var currentGame = GAMES.find(function(g){ return g.active; }) || GAMES[0];
+
+    var gameWrap = document.createElement('div');
+    gameWrap.style.cssText = "position:relative;margin-left:8px;";
+
+    var gameBtn = document.createElement('button');
+    gameBtn.type = 'button';
+    gameBtn.style.cssText = [
+      'display:flex', 'align-items:center', 'gap:6px',
+      'background:rgba(18,8,36,0.92)', 'backdrop-filter:blur(10px)',
+      'border:1px solid rgba(124,58,237,0.5)', 'color:#EDE6FF',
+      'border-radius:999px', 'padding:9px 16px', 'font-size:13px',
+      'font-weight:700', 'cursor:pointer', "font-family:'Chakra Petch',sans-serif",
+      'box-shadow:0 8px 24px rgba(0,0,0,0.45)', 'white-space:nowrap',
+    ].join(';');
+    gameBtn.innerHTML = currentGame.label + ' <span style="font-size:10px;opacity:0.5;margin-left:2px;">▲</span>';
+
+    var gameMenu = document.createElement('div');
+    gameMenu.style.cssText = [
+      'position:absolute', 'bottom:calc(100% + 8px)', 'left:0',
+      'background:rgba(18,8,36,0.97)', 'backdrop-filter:blur(14px)',
+      'border:1px solid rgba(124,58,237,0.4)', 'border-radius:14px',
+      'padding:6px', 'min-width:200px', 'display:none',
+      'box-shadow:0 16px 48px rgba(0,0,0,0.55)',
+    ].join(';');
+
+    GAMES.forEach(function(g) {
+      var item = document.createElement('a');
+      item.href = g.href;
+      item.style.cssText = [
+        'display:flex', 'align-items:center', 'justify-content:space-between', 'gap:10px',
+        'padding:9px 12px', 'border-radius:9px', 'cursor:pointer',
+        'font-size:13px', 'font-weight:700', 'color:#EDE6FF',
+        'text-decoration:none', 'transition:background 0.15s',
+      ].join(';');
+      item.innerHTML = '<span>' + g.label + '</span>' + (g.active ? '<span style="color:#4ADE80;">✓</span>' : '');
+      item.addEventListener('mouseenter', function(){ item.style.background = 'rgba(124,58,237,0.22)'; });
+      item.addEventListener('mouseleave', function(){ item.style.background = ''; });
+      gameMenu.appendChild(item);
+    });
+
+    gameBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      gameMenu.style.display = (gameMenu.style.display === 'none') ? 'block' : 'none';
+      menu.style.display = 'none';
+    });
+    document.addEventListener('click', function(e) {
+      if (!gameWrap.contains(e.target)) gameMenu.style.display = 'none';
+    });
+
+    gameWrap.appendChild(gameMenu);
+    gameWrap.appendChild(gameBtn);
+
+    wrap.style.cssText = "position:fixed;bottom:20px;left:20px;z-index:99999;font-family:'Chakra Petch',sans-serif;display:flex;align-items:center;";
+    wrap.appendChild(gameWrap);
+
     document.body.appendChild(wrap);
     _updateWidget(getLang());
   }

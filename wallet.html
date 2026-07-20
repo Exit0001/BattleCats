@@ -1,0 +1,501 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>กระเป๋าเงิน - Battle Cats Shop</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    .wallet-hero {
+      text-align: center;
+      padding: 48px 20px 36px;
+    }
+    .wallet-icon {
+      font-size: 64px;
+      display: block;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 24px rgba(52,211,153,0.5));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    .wallet-title {
+      font-family: 'Russo One', sans-serif;
+      font-size: 32px;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .balance-card {
+      background: linear-gradient(135deg, rgba(52,211,153,0.18), rgba(16,185,129,0.08));
+      border: 1px solid rgba(52,211,153,0.4);
+      border-radius: 20px;
+      padding: 28px 32px;
+      margin: 0 auto 36px;
+      max-width: 340px;
+      box-shadow: 0 0 32px rgba(52,211,153,0.12);
+    }
+    .balance-label {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(52,211,153,0.7);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .balance-amount {
+      font-family: 'Russo One', sans-serif;
+      font-size: 48px;
+      color: #34d399;
+      line-height: 1;
+    }
+    .balance-sub {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(196,181,253,0.5);
+      margin-top: 6px;
+    }
+
+    .method-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .method-tab {
+      flex: 1;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1.5px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      cursor: pointer;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.55);
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .method-tab:hover { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.8); }
+    .method-tab.active {
+      background: rgba(124,58,237,0.22);
+      border-color: rgba(124,58,237,0.6);
+      color: #c4b5fd;
+      box-shadow: 0 0 16px rgba(124,58,237,0.2);
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(196,181,253,0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px;
+      color: #fff;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: rgba(124,58,237,0.6); }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #7C3AED, #6d28d9);
+      color: #fff;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(124,58,237,0.35);
+    }
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.12); }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .btn-green {
+      background: linear-gradient(135deg, #059669, #10b981);
+      box-shadow: 0 4px 16px rgba(16,185,129,0.35);
+    }
+
+    .qr-box {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      margin-bottom: 18px;
+    }
+    .qr-box img { max-width: 220px; border-radius: 12px; margin-bottom: 12px; }
+    .qr-amount {
+      font-family: 'Russo One', sans-serif;
+      font-size: 24px;
+      color: #a78bfa;
+      margin-bottom: 4px;
+    }
+    .qr-note {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(196,181,253,0.5);
+    }
+
+    .slip-upload-area {
+      display: none;
+      border: 2px dashed rgba(124,58,237,0.4);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      margin-bottom: 18px;
+      transition: border-color 0.2s;
+    }
+    .slip-upload-area:hover { border-color: rgba(124,58,237,0.7); }
+    .slip-upload-area input { display: none; }
+    .slip-upload-label {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 14px;
+      color: rgba(196,181,253,0.7);
+    }
+
+    .result-box {
+      display: none;
+      padding: 18px 20px;
+      border-radius: 16px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-top: 16px;
+    }
+    .result-box.success {
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.35);
+      color: #34d399;
+    }
+    .result-box.error {
+      background: rgba(244,63,94,0.1);
+      border: 1px solid rgba(244,63,94,0.35);
+      color: #f87171;
+    }
+    .result-box.loading {
+      background: rgba(124,58,237,0.1);
+      border: 1px solid rgba(124,58,237,0.3);
+      color: #c4b5fd;
+    }
+
+    .fee-note {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(196,181,253,0.45);
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    .login-notice {
+      text-align: center;
+      padding: 40px 20px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px;
+      color: rgba(196,181,253,0.6);
+    }
+    .login-notice a {
+      color: #a78bfa;
+      text-decoration: none;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="mainNav">
+  <div class="nav-container">
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="เมนู">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="index.html" class="nav-logo">BATTLE CAT PRO MAX</a>
+    <ul class="nav-links">
+      <li><a href="index.html"><span data-i18n="nav_home">หน้าแรก</span></a></li>
+      <li><a href="shop.html"><span data-i18n="nav_shop">ร้านค้าไอเทม</span></a></li>
+      <li><a href="shop-codes.html"><span data-i18n="nav_shop_codes">รหัสสำเร็จรูป</span></a></li>
+      <li><a href="characters.html"><span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></a></li>
+      <li><a href="stages.html"><span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
+      <li><a href="orders.html"><span data-i18n="nav_orders">ออเดอร์</span></a></li>
+      <li><a href="loyalty.html">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
+      <li><a href="wallet.html" class="active">💰 <span data-i18n="nav_wallet">เติมเงิน</span></a></li>
+    </ul>
+    <div class="nav-cart">🛒<span class="cart-badge" id="cartCount">0</span></div>
+  </div>
+  <div class="mobile-nav" id="mobileNav" style="display:none" onclick="if(event.target===this)closeMobileMenu()">
+    <ul>
+      <li><a href="index.html" onclick="closeMobileMenu()">🏠 <span data-i18n="nav_home">หน้าแรก</span></a></li>
+      <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ <span data-i18n="nav_shop">ร้านค้าไอเทม</span></a></li>
+      <li><a href="shop-codes.html" onclick="closeMobileMenu()">🎮 <span data-i18n="nav_shop_codes">รหัสสำเร็จรูป</span></a></li>
+      <li><a href="characters.html" onclick="closeMobileMenu()">🐱 <span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></a></li>
+      <li><a href="stages.html" onclick="closeMobileMenu()">📍 <span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
+      <li><a href="orders.html" onclick="closeMobileMenu()">📋 <span data-i18n="nav_orders">ออเดอร์</span></a></li>
+      <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
+      <li><a href="wallet.html" class="active" onclick="closeMobileMenu()">💰 <span data-i18n="nav_wallet">เติมเงิน</span></a></li>
+      <li><a href="cookie-run.html" onclick="closeMobileMenu()" style="color:#f97316">🍪 Cookie Run</a></li>
+    </ul>
+    <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="wallet-hero">
+    <span class="wallet-icon">💰</span>
+    <h1 class="wallet-title" data-i18n="wl_title">กระเป๋าเงิน</h1>
+  </div>
+
+  <!-- Balance Card -->
+  <div class="balance-card" id="balanceCard">
+    <div class="balance-label" data-i18n="wl_bal_card_label">ยอดเงินคงเหลือ</div>
+    <div class="balance-amount" id="balanceAmount">฿—</div>
+    <div class="balance-sub" id="balanceSub" data-i18n="wl_loading">กำลังโหลด...</div>
+  </div>
+
+  <!-- Login notice (shown when not logged in) -->
+  <div id="loginNotice" class="login-notice" data-i18n="wl_login_notice" style="display:none">
+    กรุณา <a href="login.html">เข้าสู่ระบบ</a> เพื่อใช้งานกระเป๋าเงิน
+  </div>
+
+  <!-- Top-up section (shown when logged in) -->
+  <div id="topupSection" style="display:none;max-width:480px;margin:0 auto 60px;">
+
+    <!-- Method tabs -->
+    <div class="method-tabs">
+      <div class="method-tab active" id="tabPromptPay" onclick="switchTab('promptpay')" data-i18n="wl_tab_pp">
+        📱 PromptPay (สแกน QR)
+      </div>
+      <div class="method-tab" id="tabTrueMoney" onclick="switchTab('truemoney')" data-i18n="wl_tab_tw">
+        🧧 TrueWallet อั่งเป่า
+      </div>
+    </div>
+
+    <!-- PromptPay panel -->
+    <div class="panel active" id="panelPromptPay">
+      <div class="form-group">
+        <label class="form-label" data-i18n="wl_pp_amt_label">จำนวนเงินที่ต้องการเติม (บาท)</label>
+        <input type="number" class="form-input" id="ppAmount" min="1" step="1" placeholder="เช่น 100" data-i18n-placeholder="wl_pp_amt_ph">
+      </div>
+      <button class="btn-primary" id="ppCreateBtn" data-i18n="wl_pp_create_btn" onclick="createQR()">สร้าง QR Code</button>
+
+      <div class="qr-box" id="qrBox">
+        <img id="qrImg" src="" alt="QR PromptPay">
+        <div class="qr-amount" id="qrAmountLabel">฿0</div>
+        <div class="qr-note" data-i18n="wl_pp_scan_note">สแกนแล้วอัพโหลดสลิปด้านล่าง</div>
+      </div>
+
+      <div class="slip-upload-area" id="slipArea" onclick="document.getElementById('slipFile').click()">
+        <div style="font-size:36px;margin-bottom:10px;">📎</div>
+        <div class="slip-upload-label" data-i18n="wl_pp_upload_label">แตะเพื่อเลือกรูปสลิป</div>
+        <input type="file" id="slipFile" accept="image/*" onchange="previewSlip(this)">
+        <div id="slipPreviewName" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#a78bfa;margin-top:8px;"></div>
+      </div>
+      <button class="btn-primary btn-green" id="ppVerifyBtn" data-i18n="wl_pp_verify_btn" style="display:none;" onclick="verifySlip()">✅ ยืนยันสลิป</button>
+
+      <div class="result-box" id="ppResult"></div>
+    </div>
+
+    <!-- TrueMoney panel -->
+    <div class="panel" id="panelTrueMoney">
+      <div class="form-group">
+        <label class="form-label" data-i18n="wl_tw_code_label">ลิงก์หรือโค้ดซองอั่งเป่า TrueWallet</label>
+        <input type="text" class="form-input" id="tmVoucher" placeholder="https://gift.truemoney.com/campaign/?v=XXXXXX">
+      </div>
+      <div class="fee-note" data-i18n="wl_tw_fee_note">
+        ค่าธรรมเนียม 2.9% (ปัดขึ้น สูงสุด ฿20) — ขั้นต่ำ ฿2<br>
+        ตัวอย่าง: อั่งเป่า ฿100 → หักค่าธรรมเนียม ฿3 → ได้รับ ฿97
+      </div>
+      <button class="btn-primary" style="margin-top:14px;" id="tmRedeemBtn" data-i18n="wl_tw_redeem_btn" onclick="redeemVoucher()">🧧 แลกซองอั่งเป่า</button>
+      <div class="result-box" id="tmResult"></div>
+    </div>
+
+  </div>
+
+</div><!-- /.container -->
+
+<script>
+var _sess = (function() { try { return JSON.parse(localStorage.getItem('bc_session')) || {}; } catch(e) { return {}; } })();
+var _username     = _sess.username || '';
+var _sessionToken = _sess.hash     || '';
+var _currentOrderId = null;
+
+// ── Auth check & balance load ─────────────────────────────────────
+function initWallet() {
+  if (!_username || !_sessionToken) {
+    document.getElementById('loginNotice').style.display = 'block';
+    document.getElementById('balanceSub').textContent = window.bcT('wl_bal_login_needed','กรุณาเข้าสู่ระบบ');
+    document.getElementById('balanceAmount').textContent = '฿—';
+    return;
+  }
+  document.getElementById('topupSection').style.display = 'block';
+  loadBalance();
+}
+
+function loadBalance() {
+  fetch('/api/wallet/balance?username=' + encodeURIComponent(_username) + '&session_token=' + encodeURIComponent(_sessionToken))
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var bal = d.balance !== undefined ? d.balance : 0;
+      document.getElementById('balanceAmount').textContent = '฿' + bal;
+      document.getElementById('balanceSub').textContent = window.bcT('wl_bal_ready','ใช้ได้ทันที');
+      // sync navbar badge if present
+      var navBadge = document.getElementById('bc-wallet-badge');
+      if (navBadge) { navBadge.textContent = '💰 ฿' + bal; navBadge.style.display = ''; }
+    })
+    .catch(function() {
+      document.getElementById('balanceSub').textContent = window.bcT('wl_bal_load_fail','โหลดไม่สำเร็จ');
+    });
+}
+
+// ── Tab switch ────────────────────────────────────────────────────
+function switchTab(method) {
+  document.getElementById('tabPromptPay').classList.toggle('active', method === 'promptpay');
+  document.getElementById('tabTrueMoney').classList.toggle('active', method === 'truemoney');
+  document.getElementById('panelPromptPay').classList.toggle('active', method === 'promptpay');
+  document.getElementById('panelTrueMoney').classList.toggle('active', method === 'truemoney');
+}
+
+// ── PromptPay flow ────────────────────────────────────────────────
+function createQR() {
+  var amt = parseInt(document.getElementById('ppAmount').value, 10);
+  if (!amt || amt < 1) { alert(window.bcT('wl_alert_enter_amt','กรุณาระบุจำนวนเงิน')); return; }
+
+  var btn = document.getElementById('ppCreateBtn');
+  btn.disabled = true; btn.textContent = window.bcT('wl_pp_creating','⏳ กำลังสร้าง...');
+
+  fetch('/api/wallet/topup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: _username, session_token: _sessionToken, amount: amt })
+  })
+  .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+  .then(function(res) {
+    btn.disabled = false; btn.textContent = window.bcT('wl_pp_create_btn','สร้าง QR Code');
+    if (!res.ok) { showResult('ppResult', 'error', '❌ ' + (res.data.detail || 'เกิดข้อผิดพลาด')); return; }
+    _currentOrderId = res.data.order_id;
+    var qrBox = document.getElementById('qrBox');
+    document.getElementById('qrImg').src = 'data:image/png;base64,' + res.data.qr_base64;
+    document.getElementById('qrAmountLabel').textContent = '฿' + res.data.amount;
+    qrBox.style.display = 'block';
+    document.getElementById('slipArea').style.display = 'block';
+  })
+  .catch(function(e) {
+    btn.disabled = false; btn.textContent = window.bcT('wl_pp_create_btn','สร้าง QR Code');
+    showResult('ppResult', 'error', window.bcT('wl_err_connect','❌ เชื่อมต่อไม่ได้'));
+  });
+}
+
+function previewSlip(input) {
+  var name = input.files && input.files[0] ? input.files[0].name : '';
+  document.getElementById('slipPreviewName').textContent = name ? '📎 ' + name : '';
+  document.getElementById('ppVerifyBtn').style.display = name ? 'block' : 'none';
+}
+
+function verifySlip() {
+  var file = document.getElementById('slipFile').files[0];
+  if (!file) { alert(window.bcT('wl_alert_choose_slip','กรุณาเลือกรูปสลิป')); return; }
+  if (!_currentOrderId) { alert(window.bcT('wl_alert_create_qr','กรุณาสร้าง QR ก่อน')); return; }
+
+  var btn = document.getElementById('ppVerifyBtn');
+  btn.disabled = true; btn.textContent = window.bcT('wl_pp_verifying','⏳ กำลังตรวจสลิป...');
+  showResult('ppResult', 'loading', window.bcT('wl_pp_verifying_msg','⏳ กำลังตรวจสอบสลิป...'));
+
+  var fd = new FormData();
+  fd.append('slip', file);
+  fd.append('username', _username);
+  fd.append('session_token', _sessionToken);
+
+  fetch('/api/wallet/verify/' + _currentOrderId, { method: 'POST', body: fd })
+    .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+    .then(function(res) {
+      btn.disabled = false; btn.textContent = window.bcT('wl_pp_verify_btn','✅ ยืนยันสลิป');
+      if (!res.ok) { showResult('ppResult', 'error', '❌ ' + (res.data.detail || 'เกิดข้อผิดพลาด')); return; }
+      var credited = res.data.credited || 0;
+      var balance  = res.data.balance  !== undefined ? res.data.balance : '—';
+      var _en = window.bcLang && window.bcLang() === 'en';
+      showResult('ppResult', 'success', _en
+        ? '✅ Top-up successful!<br>Added ฿' + credited + ' to wallet<br>Balance: <strong>฿' + balance + '</strong>'
+        : '✅ เติมเงินสำเร็จ!<br>เติม ฿' + credited + ' เข้ากระเป๋า<br>ยอดคงเหลือ: <strong>฿' + balance + '</strong>');
+      updateBalance(balance);
+      _currentOrderId = null;
+    })
+    .catch(function() {
+      btn.disabled = false; btn.textContent = window.bcT('wl_pp_verify_btn','✅ ยืนยันสลิป');
+      showResult('ppResult', 'error', window.bcT('wl_err_connect','❌ เชื่อมต่อไม่ได้'));
+    });
+}
+
+// ── TrueMoney angpao flow ─────────────────────────────────────────
+function redeemVoucher() {
+  var code = document.getElementById('tmVoucher').value.trim();
+  if (!code) { alert(window.bcT('wl_alert_enter_code','กรุณาวางลิงก์หรือโค้ดซองอั่งเป่า')); return; }
+
+  var btn = document.getElementById('tmRedeemBtn');
+  btn.disabled = true; btn.textContent = window.bcT('wl_tw_redeeming','⏳ กำลังแลก...');
+  showResult('tmResult', 'loading', window.bcT('wl_tw_checking_msg','⏳ กำลังตรวจสอบซองอั่งเป่า...'));
+
+  fetch('/api/wallet/topup-voucher', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: _username, session_token: _sessionToken, voucher_code: code })
+  })
+  .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+  .then(function(res) {
+    btn.disabled = false; btn.textContent = window.bcT('wl_tw_redeem_btn','🧧 แลกซองอั่งเป่า');
+    if (!res.ok) { showResult('tmResult', 'error', '❌ ' + (res.data.detail || 'เกิดข้อผิดพลาด')); return; }
+    var d = res.data;
+    var _en2 = window.bcLang && window.bcLang() === 'en';
+    showResult('tmResult', 'success', _en2
+      ? '✅ Redeemed!<br>Angpao amount: ฿' + (d.received || 0) + '<br>Fee: ฿' + (d.fee || 0) + '<br>Received: <strong>฿' + (d.credited || 0) + '</strong><br>Balance: <strong>฿' + (d.balance || 0) + '</strong>'
+      : '✅ แลกสำเร็จ!<br>ยอดซอง: ฿' + (d.received || 0) + '<br>ค่าธรรมเนียม: ฿' + (d.fee || 0) + '<br>ได้รับ: <strong>฿' + (d.credited || 0) + '</strong><br>ยอดคงเหลือ: <strong>฿' + (d.balance || 0) + '</strong>');
+    updateBalance(d.balance);
+    document.getElementById('tmVoucher').value = '';
+  })
+  .catch(function() {
+    btn.disabled = false; btn.textContent = window.bcT('wl_tw_redeem_btn','🧧 แลกซองอั่งเป่า');
+    showResult('tmResult', 'error', window.bcT('wl_err_connect','❌ เชื่อมต่อไม่ได้'));
+  });
+}
+
+// ── Helpers ───────────────────────────────────────────────────────
+function showResult(id, type, msg) {
+  var el = document.getElementById(id);
+  el.className = 'result-box ' + type;
+  el.innerHTML = msg;
+  el.style.display = 'block';
+}
+
+function updateBalance(bal) {
+  document.getElementById('balanceAmount').textContent = '฿' + bal;
+  var navBadge = document.getElementById('bc-wallet-badge');
+  if (navBadge) { navBadge.textContent = '💰 ฿' + bal; navBadge.style.display = ''; }
+}
+
+initWallet();
+</script>
+<script src="assets/auth.js?v=20260717"></script>
+<script src="assets/nav.js"></script>
+<script src="assets/i18n.js"></script>
+</body>
+</html>

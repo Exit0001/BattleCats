@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-07-14 00:31:46
+Transfer  : 3af2208f6
+Confirm   : 1017
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=3af220... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 45000 → 45000  (+0)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_bee2bc3a
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260714_003148_3af2208f
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: f3c64816a | Confirm ใหม่: 3953
+============================================================
+============================================================

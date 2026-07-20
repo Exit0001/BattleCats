@@ -439,6 +439,7 @@
       <li><a href="stages.html" class="active"><span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
       <li><a href="orders.html"><span data-i18n="nav_orders">ออเดอร์</span></a></li>
       <li><a href="loyalty.html">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
+      <li><a href="wallet.html">💰 <span data-i18n="nav_wallet">เติมเงิน</span></a></li>
     </ul>
     <div class="nav-cart" onclick="openCartPayModal()" style="cursor:pointer;">🛒<span class="cart-badge" id="cartCount">0</span></div>
   </div>
@@ -451,6 +452,8 @@
       <li><a href="stages.html" class="active" onclick="closeMobileMenu()">📍 <span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
       <li><a href="orders.html" onclick="closeMobileMenu()">📋 <span data-i18n="nav_orders">ออเดอร์</span></a></li>
       <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
+      <li><a href="wallet.html" onclick="closeMobileMenu()">💰 <span data-i18n="nav_wallet">เติมเงิน</span></a></li>
+      <li><a href="cookie-run.html" onclick="closeMobileMenu()" style="color:#f97316">🍪 Cookie Run</a></li>
     </ul>
     <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
   </div>
@@ -704,6 +707,7 @@
       <div class="pay-method-row">
         <button id="pmBtnPP" class="pay-method-btn pm-active" onclick="setPayMethod('promptpay')">📱 PromptPay</button>
         <button id="pmBtnTM" class="pay-method-btn" onclick="setPayMethod('truemoney')">💳 TrueWallet</button>
+        <button id="pmBtnWL" class="pay-method-btn" onclick="setPayMethod('wallet')">💰 Wallet</button>
       </div>
 
       <button class="btn btn-primary" style="width:100%;" onclick="createStageOrder()"><span data-i18n="stg_pay_now">ชำระเงิน</span> →</button>
@@ -733,6 +737,15 @@
         <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;margin-bottom:10px;" data-i18n="sc_tw_paste_label">วางโค้ด/ลิงก์ซองอั่งเป่าด้านล่าง</div>
         <input type="text" id="payVoucherInput" class="pay-input" placeholder="https://gift.truemoney.com/campaign/?v=..." oninput="voucherChanged(this)">
       </div>
+      <!-- Wallet confirm -->
+      <div id="payWalletBlock" style="display:none;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.3);border-radius:14px;padding:20px;text-align:center;margin-bottom:12px;">
+        <div style="font-size:28px;margin-bottom:6px;">💰</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:4px;">ยอดคงเหลือ</div>
+        <div id="payWalletBal" style="font-family:'Russo One',sans-serif;font-size:26px;color:#34d399;margin-bottom:4px;">฿—</div>
+        <div id="payWalletAmt" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);margin-bottom:12px;"></div>
+        <div id="payWalletLow" data-i18n="wl_low_balance" style="display:none;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#f87171;margin-bottom:10px;">ยอดเงินไม่พอ — <a href="wallet.html" style="color:#34d399;">เติมเงิน</a></div>
+        <button id="payWalletBtn" data-i18n="wl_confirm_btn" onclick="stagePayWallet()" style="width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">✅ ยืนยันชำระด้วยกระเป๋าเงิน</button>
+      </div>
       <button class="btn btn-primary" style="width:100%;" id="payVerifyBtn" onclick="verifyPayment()" disabled data-i18n="stg_verify_payment">ยืนยันการชำระเงิน</button>
     </div>
 
@@ -743,6 +756,7 @@
       <div id="payNewTC" class="new-code-box" onclick="copyCode('payNewTC')"></div>
       <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;" data-i18n="stg_new_cc">Confirmation Code ใหม่</div>
       <div id="payNewCC" class="new-code-box" onclick="copyCode('payNewCC')"></div>
+      <div id="payWalletCreditedMsg" style="display:none;margin-top:8px;padding:8px 12px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#34d399;text-align:center;"></div>
       <button class="btn btn-outline" style="width:100%;margin-top:8px;" onclick="closePayModal()" data-i18n="close_btn">ปิด</button>
     </div>
 
@@ -1251,13 +1265,16 @@ function setPayMethod(m) {
   _payMethod = m;
   var pp = document.getElementById('pmBtnPP');
   var tm = document.getElementById('pmBtnTM');
+  var wl = document.getElementById('pmBtnWL');
+  [pp, tm, wl].forEach(function(b) { if(b) { b.className='pay-method-btn'; b.style.background=''; b.style.borderColor=''; b.style.color=''; } });
   if (m === 'promptpay') {
-    pp.className = 'pay-method-btn pm-active'; pp.style.background = ''; pp.style.borderColor = ''; pp.style.color = '';
-    tm.className = 'pay-method-btn'; tm.style.background = ''; tm.style.borderColor = ''; tm.style.color = '';
-  } else {
+    pp.className = 'pay-method-btn pm-active';
+  } else if (m === 'truemoney') {
     tm.className = 'pay-method-btn pm-active';
     tm.style.background = 'rgba(255,120,0,0.18)'; tm.style.borderColor = 'rgba(255,120,0,0.6)'; tm.style.color = '#FF6B00';
-    pp.className = 'pay-method-btn'; pp.style.background = ''; pp.style.borderColor = ''; pp.style.color = '';
+  } else if (m === 'wallet') {
+    wl.className = 'pay-method-btn pm-active';
+    wl.style.background = 'rgba(52,211,153,0.18)'; wl.style.borderColor = 'rgba(52,211,153,0.6)'; wl.style.color = '#34d399';
   }
 }
 
@@ -1296,10 +1313,13 @@ async function createStageOrder() {
       localStorage.setItem('bc_order_history', JSON.stringify(hist.slice(0, 30)));
     })();
     var isTM = (data.payment_method === 'truemoney');
-    document.getElementById('payQrBlock').style.display     = isTM ? 'none' : '';
-    document.getElementById('payTmBlock').style.display     = isTM ? '' : 'none';
-    document.getElementById('paySlipBlock').style.display   = isTM ? 'none' : '';
+    var isWL = (data.payment_method === 'wallet');
+    document.getElementById('payQrBlock').style.display      = (!isTM && !isWL) ? '' : 'none';
+    document.getElementById('payTmBlock').style.display      = isTM ? '' : 'none';
+    document.getElementById('paySlipBlock').style.display    = (!isTM && !isWL) ? '' : 'none';
     document.getElementById('payVoucherBlock').style.display = isTM ? '' : 'none';
+    document.getElementById('payWalletBlock').style.display  = isWL ? '' : 'none';
+    document.getElementById('payVerifyBtn').style.display    = isWL ? 'none' : '';
     if (isTM) {
       document.getElementById('payTmAmt').textContent = '฿' + data.amount;
       if (data.truemoney_fee && data.truemoney_fee > 0) {
@@ -1308,6 +1328,21 @@ async function createStageOrder() {
         document.getElementById('payFeeAmt').textContent  = '+฿' + data.truemoney_fee;
       } else {
         document.getElementById('payTmFeeBreakdown').style.display = 'none';
+      }
+    } else if (isWL) {
+      document.getElementById('payWalletAmt').textContent = 'ยอดที่ต้องชำระ ฿' + data.amount;
+      var _wlSess = (function(){ try { return JSON.parse(localStorage.getItem('bc_session')) || {}; } catch(e) { return {}; } })();
+      var _wlUser = _wlSess.username || ''; var _wlTok = _wlSess.hash || '';
+      if (_wlUser && _wlTok) {
+        fetch('/api/wallet/balance?username=' + encodeURIComponent(_wlUser) + '&session_token=' + encodeURIComponent(_wlTok))
+          .then(function(r){ return r.json(); }).then(function(wb){
+            var bal = wb.balance || 0;
+            document.getElementById('payWalletBal').textContent = '฿' + bal;
+            var lowMsg = document.getElementById('payWalletLow');
+            var wlBtn  = document.getElementById('payWalletBtn');
+            if (bal < data.amount) { lowMsg.style.display = ''; wlBtn.disabled = true; wlBtn.style.opacity = '0.5'; }
+            else { lowMsg.style.display = 'none'; wlBtn.disabled = false; wlBtn.style.opacity = '1'; }
+          }).catch(function(){});
       }
     } else {
       document.getElementById('payQrAmt').textContent = '฿' + data.amount;
@@ -1355,6 +1390,25 @@ async function verifyPayment() {
       resp = await fetch('/api/payment/verify/' + _orderId, { method: 'POST', body: fd });
     }
     data = await resp.json();
+    if (data.insufficient) {
+      document.getElementById('payVoucherBlock').style.display = 'none';
+      document.getElementById('payVerifyBtn').style.display = 'none';
+      document.getElementById('payWalletBlock').style.display = '';
+      document.getElementById('payWalletAmt').textContent = window.bcT('wl_still_short','ยังขาดอีก ฿') + data.remaining;
+      var _stgSessI = (function(){ try{ return JSON.parse(localStorage.getItem('bc_session'))||{}; }catch(e){ return {}; } })();
+      fetch('/api/wallet/balance?username=' + encodeURIComponent(_stgSessI.username||'') + '&session_token=' + encodeURIComponent(_stgSessI.hash||''))
+        .then(function(r){ return r.json(); }).then(function(d){
+          var bal = d.balance||0;
+          document.getElementById('payWalletBal').textContent = '฿' + bal;
+          var wlBtn = document.getElementById('payWalletBtn');
+          var lowEl = document.getElementById('payWalletLow');
+          if (bal < data.remaining) { lowEl.style.display=''; wlBtn.disabled=true; wlBtn.style.opacity='0.5'; }
+          else { lowEl.style.display='none'; wlBtn.disabled=false; wlBtn.style.opacity='1'; }
+        }).catch(function(){});
+      var _stgErrEl = document.getElementById('payError');
+      _stgErrEl.style.display = ''; _stgErrEl.innerHTML = data.reason.replace(/\n/g, '<br>');
+      return;
+    }
     if (!resp.ok || !data.success) {
       payShowErr(data.detail || data.error || window.bcT('stg_verify_failed','ยืนยันการชำระเงินไม่ผ่าน'));
       return;
@@ -1381,9 +1435,55 @@ async function verifyPayment() {
     }
     document.getElementById('payStep-qr').style.display   = 'none';
     document.getElementById('payStep-done').style.display = '';
+    if (data.wallet_credited) {
+      var _wcEl = document.getElementById('payWalletCreditedMsg');
+      _wcEl.textContent = (window.bcLang && window.bcLang() === 'en')
+        ? '💰 Surplus ฿' + data.wallet_credited + ' added to your wallet'
+        : '💰 เงินที่เกิน ฿' + data.wallet_credited + ' เข้ากระเป๋าเงินของคุณแล้ว';
+      _wcEl.style.display = '';
+    }
     payShowErr('');
   } catch(e) {
     payShowErr(window.bcT('stg_api_error','เชื่อมต่อ API ไม่ได้: ') + e.message);
+  } finally { payLoading(false); }
+}
+
+async function stagePayWallet() {
+  if (!_orderId) return;
+  var _wlSess = (function(){ try { return JSON.parse(localStorage.getItem('bc_session')) || {}; } catch(e) { return {}; } })();
+  var _wlUser = _wlSess.username || ''; var _wlTok = _wlSess.hash || '';
+  if (!_wlUser || !_wlTok) { payShowErr('กรุณาเข้าสู่ระบบก่อน'); return; }
+  payLoading(true);
+  try {
+    var resp = await fetch('/api/payment/pay-wallet/' + _orderId, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: _wlUser, session_token: _wlTok }),
+    });
+    var data = await resp.json();
+    if (!resp.ok || !data.success) { payShowErr(data.detail || data.error || 'ชำระเงินไม่สำเร็จ'); return; }
+    document.getElementById('payNewTC').textContent = data.new_transfer_code || '-';
+    document.getElementById('payNewCC').textContent = data.new_confirmation_code || '-';
+    (function() {
+      var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+      hist = hist.map(function(o) {
+        if ((o.id || o.order_id) !== _orderId) return o;
+        return Object.assign({}, o, { new_transfer_code: data.new_transfer_code, new_confirmation_code: data.new_confirmation_code });
+      });
+      localStorage.setItem('bc_order_history', JSON.stringify(hist));
+    })();
+    if (_checkoutFromCart) {
+      var c = JSON.parse(localStorage.getItem('cart') || '[]');
+      c = c.filter(function(i) { return i.type !== 'stage_service' && i.key !== 'stages'; });
+      localStorage.setItem('cart', JSON.stringify(c));
+      document.getElementById('cartCount').textContent = c.length;
+      _checkoutFromCart = false;
+    }
+    document.getElementById('payStep-qr').style.display   = 'none';
+    document.getElementById('payStep-done').style.display = '';
+    payShowErr('');
+  } catch(e) {
+    payShowErr('เชื่อมต่อ API ไม่ได้: ' + e.message);
   } finally { payLoading(false); }
 }
 
@@ -1460,7 +1560,7 @@ document.addEventListener('bc-lang-changed', function() {
 });
 </script>
 
-<script src="assets/auth.js?v=20260613"></script>
+<script src="assets/auth.js?v=20260717"></script>
 <script src="assets/animations.js"></script>
 <script src="assets/nav.js"></script>
 <script src="assets/i18n.js"></script>

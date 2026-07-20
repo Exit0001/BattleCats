@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🍪 CR Orders Manager</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root { --cr: #f97316; --cr2: #fb923c; }
+    body { background: #0d0b1a; color: #EDE6FF; font-family: 'Chakra Petch', sans-serif; }
+    .cr-panel { background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.2); border-radius: 14px; padding: 22px; margin-bottom: 20px; }
+    .cr-title { font-family: 'Russo One', sans-serif; font-size: 18px; color: var(--cr); margin-bottom: 16px; }
+    .cr-btn { background: linear-gradient(135deg, #f97316, #dc2626); color: #fff; border: none; border-radius: 10px; padding: 10px 22px; font-family: 'Chakra Petch', sans-serif; font-size: 14px; cursor: pointer; font-weight: 700; }
+    .cr-btn:hover { opacity: 0.85; }
+    input[type=month], input[type=date], input[type=text], input[type=password] {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(249,115,22,0.3); border-radius: 8px;
+      color: #fff; padding: 9px 12px; font-family: 'Chakra Petch', sans-serif; font-size: 14px; width: 100%; box-sizing: border-box;
+    }
+    label { font-size: 13px; color: rgba(210,190,255,0.6); display: block; margin-bottom: 6px; }
+    .stat-box { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
+    .stat-card { flex: 1; min-width: 140px; background: rgba(255,255,255,0.05); border: 1px solid rgba(249,115,22,0.2); border-radius: 12px; padding: 14px 18px; text-align: center; }
+    .stat-num { font-family: 'Russo One', sans-serif; font-size: 26px; color: var(--cr); }
+    .stat-label { font-size: 12px; color: rgba(210,190,255,0.5); margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 10px 12px; color: rgba(210,190,255,0.5); border-bottom: 1px solid rgba(249,115,22,0.15); font-weight: 400; }
+    td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+    tr:hover td { background: rgba(249,115,22,0.05); }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .badge-done { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .badge-pending { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+    .badge-cancelled { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+    .by-method span { display: inline-block; margin-right: 14px; font-size: 13px; color: rgba(210,190,255,0.7); }
+    .by-method strong { color: #fff; }
+    #loginGate { max-width: 380px; margin: 100px auto; background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.2); border-radius: 16px; padding: 32px; }
+    #mainContent { display: none; }
+    .overflow-x { overflow-x: auto; }
+  </style>
+</head>
+<body>
+
+<div id="loginGate">
+  <div style="text-align:center;margin-bottom:24px;">
+    <div style="font-size:40px">🍪</div>
+    <div style="font-family:'Russo One',sans-serif;font-size:20px;color:var(--cr);margin-top:8px">CR Orders Manager</div>
+  </div>
+  <label>Username</label>
+  <input type="text" id="lgUser" style="margin-bottom:12px">
+  <label>Password</label>
+  <input type="password" id="lgPass" style="margin-bottom:16px" onkeydown="if(event.key==='Enter')login()">
+  <button class="cr-btn" style="width:100%" onclick="login()">เข้าสู่ระบบ</button>
+  <div id="lgErr" style="display:none;color:#f87171;font-size:13px;text-align:center;margin-top:10px"></div>
+</div>
+
+<div id="mainContent">
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="cookie-run.html" class="nav-logo" style="color:#f97316">🍪 COOKIE RUN PRO MAX</a>
+      <ul class="nav-links">
+        <li><a href="orders_manager.html">📦 BC Orders</a></li>
+        <li><a href="cr_orders_manager.html" class="active">🍪 CR Orders</a></li>
+      </ul>
+      <button class="copy-btn" onclick="logout()">ออกจากระบบ</button>
+    </div>
+  </nav>
+
+  <div class="container" style="max-width:1100px;padding-top:90px">
+    <div style="font-family:'Russo One',sans-serif;font-size:22px;color:#fff;margin-bottom:24px">🍪 Cookie Run — Orders Manager</div>
+
+    <!-- Revenue Month -->
+    <div class="cr-panel">
+      <div class="cr-title">📊 รายได้รายเดือน</div>
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px"><label>เลือกเดือน</label><input type="month" id="revMonth"></div>
+        <button class="cr-btn" onclick="loadMonth()">📈 ดูยอด</button>
+      </div>
+      <div id="resMonth"></div>
+    </div>
+
+    <!-- Revenue Day -->
+    <div class="cr-panel">
+      <div class="cr-title">📊 รายได้รายวัน</div>
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px"><label>เลือกวัน</label><input type="date" id="revDay"></div>
+        <button class="cr-btn" onclick="loadDay()">📈 ดูยอด</button>
+      </div>
+      <div id="resDay"></div>
+    </div>
+
+    <!-- Orders List -->
+    <div class="cr-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div class="cr-title" style="margin:0">📋 รายการ Order ล่าสุด (100 รายการ)</div>
+        <button class="cr-btn" onclick="loadOrders()">🔄 รีเฟรช</button>
+      </div>
+      <div class="overflow-x">
+        <table>
+          <thead><tr>
+            <th>Order ID</th><th>Username</th><th>จำนวน</th><th>ยอด</th><th>วิธีจ่าย</th><th>สถานะ</th><th>วันที่</th>
+          </tr></thead>
+          <tbody id="ordersTbody"><tr><td colspan="7" style="text-align:center;color:rgba(210,190,255,0.4);padding:24px">กำลังโหลด...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/supabase-client.js"></script>
+<script>
+const API = '';
+let _user = '', _token = '';
+
+window.addEventListener('DOMContentLoaded', function() {
+  var saved = sessionStorage.getItem('cr_admin');
+  if (saved) {
+    _user = saved;
+    document.getElementById('loginGate').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    init();
+  }
+});
+
+async function login() {
+  _user = document.getElementById('lgUser').value.trim();
+  var pass = document.getElementById('lgPass').value;
+  var errEl = document.getElementById('lgErr');
+  errEl.style.display = 'none';
+  if (!_user || !pass) return;
+  try {
+    var hash = btoa(unescape(encodeURIComponent(pass)));
+    var res = await DB.from('profiles').select('username,is_admin,password_hash').eq('username', _user).maybeSingle();
+    if (res.error) throw new Error('DB error');
+    if (!res.data) { errEl.style.display=''; errEl.textContent='ไม่พบ username'; return; }
+    if (res.data.password_hash !== hash) { errEl.style.display=''; errEl.textContent='รหัสผ่านไม่ถูกต้อง'; return; }
+    if (!res.data.is_admin) { errEl.style.display=''; errEl.textContent='ไม่มีสิทธิ์ admin'; return; }
+    _token = hash;
+    sessionStorage.setItem('cr_admin', _user);
+    document.getElementById('loginGate').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    init();
+  } catch(e) {
+    errEl.style.display=''; errEl.textContent='เชื่อมต่อไม่ได้: ' + e.message;
+  }
+}
+
+function logout() {
+  _user = ''; _token = '';
+  sessionStorage.removeItem('cr_admin');
+  document.getElementById('loginGate').style.display = '';
+  document.getElementById('mainContent').style.display = 'none';
+}
+
+function init() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('revMonth').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}`;
+  document.getElementById('revDay').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  loadMonth(); loadDay(); loadOrders();
+}
+
+function renderRevenue(data, el) {
+  if (data.error) { el.innerHTML = `<div style="color:#f87171;margin-top:12px">${data.error}</div>`; return; }
+  const byMethod = data.by_method || {};
+  const methodStr = Object.entries(byMethod).map(([k,v]) =>
+    `<span>${k}: <strong>฿${v.toLocaleString()}</strong></span>`).join('');
+  el.innerHTML = `
+    <div class="stat-box">
+      <div class="stat-card"><div class="stat-num">฿${(data.total_revenue||0).toLocaleString()}</div><div class="stat-label">รายได้รวม</div></div>
+      <div class="stat-card"><div class="stat-num">${data.total_orders||0}</div><div class="stat-label">จำนวน Order</div></div>
+    </div>
+    ${methodStr ? `<div class="by-method" style="margin-top:12px">${methodStr}</div>` : ''}
+    ${(data.orders||[]).length ? renderOrdersTable(data.orders) : ''}
+  `;
+}
+
+function renderOrdersTable(orders) {
+  const rows = [...orders].reverse().map(o => `
+    <tr>
+      <td style="font-family:'Russo One',sans-serif;color:var(--cr);font-size:13px">${o.order_id||''}</td>
+      <td>${o.username||'—'}</td>
+      <td style="text-align:center">${o.quantity||1}</td>
+      <td style="font-family:'Russo One',sans-serif;color:#FFD84E">฿${(o.base_amount??o.amount)?.toLocaleString()??'—'}</td>
+      <td>${o.payment_method||'—'}</td>
+      <td><span class="badge badge-${o.status==='done'?'done':o.status==='cancelled'?'cancelled':'pending'}">${o.status||'—'}</span></td>
+      <td style="color:rgba(210,190,255,0.5);font-size:12px">${fmtDate(o.done_at||o.created_at)}</td>
+    </tr>`).join('');
+  return `<div class="overflow-x" style="margin-top:14px"><table><thead><tr>
+    <th>Order ID</th><th>Username</th><th>จำนวน</th><th>ยอด</th><th>วิธีจ่าย</th><th>สถานะ</th><th>วันที่</th>
+  </tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function fmtDate(s) {
+  if (!s) return '—';
+  const d = new Date(s);
+  return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function loadMonth() {
+  const val = document.getElementById('revMonth').value;
+  if (!val) return;
+  const [y, m] = val.split('-');
+  const el = document.getElementById('resMonth');
+  el.innerHTML = '<div style="margin-top:12px;color:rgba(210,190,255,0.4)">กำลังโหลด...</div>';
+  fetch(`${API}/api/admin/cr/revenue?year=${y}&month=${parseInt(m)}`)
+    .then(r => r.json()).then(d => renderRevenue(d, el)).catch(() => { el.innerHTML = '<div style="color:#f87171">โหลดไม่ได้</div>'; });
+}
+
+function loadDay() {
+  const val = document.getElementById('revDay').value;
+  if (!val) return;
+  const [y, m, d] = val.split('-');
+  const el = document.getElementById('resDay');
+  el.innerHTML = '<div style="margin-top:12px;color:rgba(210,190,255,0.4)">กำลังโหลด...</div>';
+  fetch(`${API}/api/admin/cr/revenue/daily?year=${y}&month=${parseInt(m)}&day=${parseInt(d)}`)
+    .then(r => r.json()).then(d => renderRevenue(d, el)).catch(() => { el.innerHTML = '<div style="color:#f87171">โหลดไม่ได้</div>'; });
+}
+
+function loadOrders() {
+  const tb = document.getElementById('ordersTbody');
+  tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:rgba(210,190,255,0.4);padding:24px">กำลังโหลด...</td></tr>';
+  fetch(`${API}/api/admin/cr/orders`)
+    .then(r => r.json())
+    .then(d => {
+      const orders = d.orders || [];
+      if (!orders.length) { tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:rgba(210,190,255,0.4);padding:24px">ไม่มี order</td></tr>'; return; }
+      tb.innerHTML = orders.map(o => `
+        <tr>
+          <td style="font-family:'Russo One',sans-serif;color:var(--cr);font-size:13px">${o.order_id||''}</td>
+          <td>${o.username||'—'}</td>
+          <td style="text-align:center">${o.quantity||1}</td>
+          <td style="font-family:'Russo One',sans-serif;color:#FFD84E">฿${(o.base_amount??o.amount)?.toLocaleString()??'—'}</td>
+          <td>${o.payment_method||'—'}</td>
+          <td><span class="badge badge-${o.status==='done'?'done':o.status==='cancelled'?'cancelled':'pending'}">${o.status||'—'}</span></td>
+          <td style="color:rgba(210,190,255,0.5);font-size:12px">${fmtDate(o.done_at||o.created_at)}</td>
+        </tr>`).join('');
+    })
+    .catch(() => { tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#f87171;padding:24px">โหลดไม่ได้</td></tr>'; });
+}
+</script>
+</body>
+</html>

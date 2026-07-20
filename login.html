@@ -262,7 +262,8 @@ async function _verifyRecaptcha(action) {
   }
 }
 
-if (AUTH.isLoggedIn()) window.location.href = 'index.html';
+var _returnTo = new URLSearchParams(window.location.search).get('returnTo') || 'index.html';
+if (AUTH.isLoggedIn()) window.location.href = _returnTo;
 
 function switchTab(tab) {
   var login = tab === 'login';
@@ -308,7 +309,7 @@ async function doLogin() {
   var res = await AUTH.login(user, pw);
   if (res.ok) {
     btn.textContent = window.bcT('login_success_btn','✅ สำเร็จ! กำลังพาไป...');
-    setTimeout(function () { window.location.href = 'index.html'; }, 500);
+    setTimeout(function () { window.location.href = _returnTo; }, 500);
   } else {
     _showMsg('l-err', res.err);
     btn.disabled = false;
@@ -341,7 +342,7 @@ async function doRegister() {
     var loginRes = await AUTH.login(user, pw);
     if (loginRes.ok) {
       _showMsg('r-ok', window.bcT('login_register_success_redirect','✅ สมัครสมาชิกสำเร็จ! กำลังพาไปหน้าแรก...'));
-      setTimeout(function () { window.location.href = 'index.html'; }, 800);
+      setTimeout(function () { window.location.href = _returnTo; }, 800);
     } else {
       _showMsg('r-ok', window.bcT('login_register_success_login','✅ สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ'));
       setTimeout(function () { switchTab('login'); }, 1200);

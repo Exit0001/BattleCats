@@ -128,15 +128,41 @@ class BCSFERunner:
         env["PYTHONUTF8"] = "1"
 
         cli_path_str = str(self._cli_save_path)
+        _backup_path = None
 
         if use_local:
-            # ใช้ --input-path โหลดจาก unique path โดยตรง → ข้าม initial menu → parallel ได้
+            # backup ก่อนรัน CLI — BCSFE error-handling อาจเขียนทับ/corrupt cli_save_path
+            _backup_path = BCSFE_SAVES_DIR / f"SAVE_DATA_backup_{self._session_id}"
+            try:
+                shutil.copy2(cli_path_str, str(_backup_path))
+            except Exception as _be:
+                self._log(f"[CLI] ⚠ backup ล้มเหลว: {_be}")
+                _backup_path = None
+
             self._log(f"[CLI] โหลดจาก {cli_path_str} (--input-path)")
-            inputs = "\n".join(nav + ["2", "3"]) + "\n"
+            inputs = "\n".join(nav + ["2", "2", "2", "3"]) + "\n"
             result = self._cli_communicate(inputs, env, cli_args=["--input-path", cli_path_str])
+
+            # ถ้า upload ล้มเหลว → retry ด้วย backup (clean file) + full nav (re-add tickets)
+            if not result.get("success") and result.get("upload_failed"):
+                self._log("[CLI] ⚠ Upload ล้มเหลว (rate limit) — รอ 15 วินาทีแล้ว retry ด้วย backup...")
+                time.sleep(15)
+                if _backup_path and _backup_path.exists():
+                    self._log(f"[CLI] retry โหลดจาก backup: {_backup_path}")
+                    result = self._cli_communicate(inputs, env,
+                                                   cli_args=["--input-path", str(_backup_path)],
+                                                   label="RETRY")
+                    if not result.get("success"):
+                        self._log(f"[CLI] ❌ Upload ล้มเหลวทั้งสองรอบ — เก็บ backup ไว้ให้แอดมิน")
+                        self._log(f"[CLI] 📁 save ที่แก้แล้ว (มีของอยู่): {_backup_path}")
+                        self._log(f"[CLI] 👨‍💼 TC ปัจจุบัน: {self._latest_tc} / {self._latest_cc}")
+                        _backup_path = None  # ป้องกันไม่ให้ cleanup ลบไฟล์นี้
+                else:
+                    self._log("[CLI] ❌ ไม่มี backup — retry ไม่ได้")
+                    result = {"success": False, "error": "Upload ล้มเหลวและไม่มี backup"}
         else:
             # Download: ส่ง unique path แทน "" → save ลง cli_save_path ของ session นี้
-            inputs = "\n".join(["1", transfer, confirm, cc_num, cli_path_str] + nav + ["2", "3"]) + "\n"
+            inputs = "\n".join(["1", transfer, confirm, cc_num, cli_path_str] + nav + ["2", "2", "3"]) + "\n"
             result = self._cli_communicate(inputs, env)
 
         # ── Lucky Ticket: ตรวจ current value จาก CLI output แล้ว re-run ถ้าจำเป็น ──
@@ -149,9 +175,36 @@ class BCSFERunner:
                 if correct_add != value_to_send:
                     self._log(f"[CLI] Lucky Ticket current จริง={actual_current} ≠ assumed={current} → re-run ด้วย {actual_current}+{amount}={correct_add}")
                     nav2 = ["3", "21", "1", str(correct_add)]
-                    inputs2 = "\n".join(nav2 + ["2", "3"]) + "\n"
-                    result = self._cli_communicate(inputs2, env,
-                                                   cli_args=["--input-path", str(self._cli_save_path)])
+                    inputs2 = "\n".join(nav2 + ["2", "2", "2", "3"]) + "\n"
+                    self._log("[CLI] รอ 15 วินาที (rate limit cooldown หลัง first run upload)...")
+                    time.sleep(15)
+                    rerun_result = self._cli_communicate(inputs2, env,
+                                                        cli_args=["--input-path", str(self._cli_save_path)])
+                    if not rerun_result.get("success"):
+                        self._log("[CLI] Lucky Ticket re-run ครั้งแรกล้มเหลว — รอ 15s แล้ว retry...")
+                        time.sleep(15)
+                        rerun_result = self._cli_communicate(inputs2, env,
+                                                            cli_args=["--input-path", str(self._cli_save_path)])
+                    if rerun_result.get("success"):
+                        result = rerun_result
+                    else:
+                        self._log("[CLI] Lucky Ticket re-run ล้มเหลว ทุก retry — restore backup (ของอื่นครบ ยกเว้น Lucky Ticket)")
+                        if _backup_path and _backup_path.exists():
+                            try:
+                                time.sleep(15)
+                                inputs_restore = "\n".join(["2", "3"]) + "\n"
+                                restore_result = self._cli_communicate(inputs_restore, env,
+                                                                      cli_args=["--input-path", str(_backup_path)])
+                                if restore_result.get("success"):
+                                    self._log(f"[CLI] Backup restore ✅ TC: {restore_result['transfer']} | Confirm: {restore_result['confirmation']}")
+                                    result = restore_result
+                                    _backup_path = None  # ป้องกัน cleanup ลบก่อนใช้
+                                else:
+                                    self._log("[CLI] Backup restore upload ล้มเหลว")
+                            except Exception as _be:
+                                self._log(f"[CLI] Backup restore error: {_be}")
+                        else:
+                            self._log("[CLI] ไม่มี backup file สำหรับ restore")
 
         # ── Rare Ticket: ตรวจ current value จาก CLI output แล้ว re-run ถ้าจำเป็น ──
         if key == "rare_ticket" and result.get("success"):
@@ -163,16 +216,23 @@ class BCSFERunner:
                 if correct_add != to_add:
                     self._log(f"[CLI] Rare Ticket current จริง={actual_current} ≠ assumed={current} → re-run ด้วย to_add={correct_add}")
                     nav2 = ["3", "6", str(correct_add)]
-                    inputs2 = "\n".join(nav2 + ["2", "3"]) + "\n"
+                    inputs2 = "\n".join(nav2 + ["2", "2", "3"]) + "\n"
                     result = self._cli_communicate(inputs2, env,
                                                    cli_args=["--input-path", str(self._cli_save_path)])
                 else:
                     self._log(f"[CLI] Rare Ticket verified: actual_current={actual_current} ✓ to_add={correct_add}")
 
+        if _backup_path:
+            try:
+                _backup_path.unlink(missing_ok=True)
+            except Exception:
+                pass
+
         return result
 
     def _cli_communicate(self, inputs: str, env: dict, label: str = "", cli_args: list = None) -> dict:
-        """รัน CLI ด้วย communicate() แล้ว parse transfer code"""
+        """รัน CLI แล้ว parse transfer code"""
+        lp = f"[{label}]" if label else "[CLI]"
         try:
             cmd = BCSFE_CLI + (cli_args or [])
             proc = subprocess.Popen(
@@ -188,8 +248,7 @@ class BCSFERunner:
             self._last_cli_output = clean  # เก็บไว้ให้ caller ตรวจสอบ
             for line in clean.splitlines():
                 if line.strip():
-                    prefix = f"[{label}]" if label else "[CLI]"
-                    self._log_file.write(f"  {prefix} {line}\n")
+                    self._log_file.write(f"  {lp} {line}\n")
             self._log_file.flush()
 
             tc_list = re.findall(r'Transfer Code[:\s]+([a-f0-9]{8,9})', clean)
@@ -198,28 +257,23 @@ class BCSFERunner:
             if tc_list:
                 new_tc = tc_list[-1]
                 new_cc = cc_list[-1] if cc_list else None
-                self._log(f"[CLI] ✅ Transfer ใหม่: {new_tc} | Confirm ใหม่: {new_cc}")
+                self._log(f"{lp} ✅ Transfer ใหม่: {new_tc} | Confirm ใหม่: {new_cc}")
                 return {"success": True, "transfer": new_tc, "confirmation": new_cc}
 
             if "Failed to upload save file" in clean:
-                self._log("[CLI] ⚠ Upload ล้มเหลว (rate limit) — รอ 8 วินาทีแล้ว retry...")
-                time.sleep(8)
-                retry_inputs = "\n".join(["2", "3"]) + "\n"
-                return self._cli_communicate(retry_inputs, env,
-                                             cli_args=["--input-path", str(self._cli_save_path)],
-                                             label="RETRY")
+                return {"success": False, "upload_failed": True, "error": "Upload ล้มเหลว (rate limit)"}
 
-            self._log("[CLI] ❌ parse transfer code ไม่ได้")
+            self._log(f"{lp} ❌ parse transfer code ไม่ได้")
             for line in clean.splitlines()[-15:]:
                 self._log(f"  {line}")
             return {"success": False, "error": "parse transfer code ไม่ได้"}
 
         except subprocess.TimeoutExpired:
             proc.kill()
-            self._log("[CLI] ❌ timeout (120s)")
+            self._log(f"{lp} ❌ timeout (120s)")
             return {"success": False, "error": "CLI timeout"}
         except Exception as e:
-            self._log(f"[CLI] ❌ {e}")
+            self._log(f"{lp} ❌ {e}")
             return {"success": False, "error": str(e)}
 
     # ──────────────────────────────────────────────────
@@ -425,20 +479,12 @@ class BCSFERunner:
             for item in items:
                 self._edit_item(save_file, item)
 
-            # ── Python API items: upload ──
-            codes = self._upload_save(save_file)
-            current_tc = codes["transfer"]
-            current_cc = codes["confirmation"]
-
-            if self.TEST_ERROR_STAGE == "after_upload":
-                raise Exception("🧪 TEST: error หลัง upload (มี TC ใหม่แล้ว) — ดู latest_transfer_code ใน response")
-
             # ── CLI deferred items (lucky_ticket / rare_ticket) ──
+            # ถ้ามี CLI items → save ลง disk ให้ CLI upload ครั้งเดียว (ไม่ต้อง API upload ก่อน = ไม่มี rate limit)
+            # ถ้าไม่มี CLI items → upload ผ่าน API ตามปกติ
             has_rare = False
             if self._deferred_cli:
-                self._log("[CLI] รอ 4 วินาที (rate limit)...")
-                time.sleep(4)
-                # บันทึก save ที่แก้แล้วสำหรับ --input-path → ข้าม startup menu (Linux safe)
+                # save to disk — CLI จะ upload แทน (TC เดิมยังใช้ได้ถ้า CLI ล้มเหลว)
                 try:
                     cli_bcsfe_path = core.SaveFile.get_saves_path().add(f"SAVE_DATA_cli_{self._session_id}")
                     save_file.to_file(cli_bcsfe_path)
@@ -446,6 +492,22 @@ class BCSFERunner:
                     self._log(f"[CLI] บันทึก save → {self._cli_save_path}")
                 except Exception as e:
                     self._log(f"[CLI] ⚠ บันทึก CLI save ล้มเหลว: {e}")
+                self._backup(self._cli_save_path)  # permanent backup สำหรับ admin
+
+                # API upload ก่อน → ลูกค้ามี safety TC แม้ CLI จะล้มเหลว
+                codes = self._upload_save(save_file)
+                current_tc = codes["transfer"]
+                current_cc = codes["confirmation"]
+                self._latest_tc = current_tc
+                self._latest_cc = current_cc
+
+                # รอ PONOS rate limit cooldown ก่อนรัน CLI upload
+                self._log("[CLI] รอ 15 วินาที (PONOS rate limit cooldown หลัง API upload)...")
+                time.sleep(15)
+
+                if self.TEST_ERROR_STAGE == "after_upload":
+                    raise Exception("🧪 TEST: error ก่อน CLI (after_upload stage)")
+
                 for deferred in self._deferred_cli:
                     key = deferred["key"]
                     r = self._run_cli_item(current_tc, current_cc, key, deferred["amount"], deferred.get("current", 0), use_local=True)
@@ -457,11 +519,19 @@ class BCSFERunner:
                         if key == "rare_ticket":
                             has_rare = True
                     else:
-                        self._log(f"[BCSFE] ⚠ {deferred['label']} CLI ล้มเหลว — คืน transfer code ที่ได้จาก upload แล้ว")
+                        self._log(f"[BCSFE] ⚠ {deferred['label']} CLI ล้มเหลว — ลูกค้าใช้ TC จาก API upload ได้: {current_tc}")
                 try:
                     self._cli_save_path.unlink(missing_ok=True)
                 except Exception:
                     pass
+            else:
+                # ── Python API items: upload ──
+                codes = self._upload_save(save_file)
+                current_tc = codes["transfer"]
+                current_cc = codes["confirmation"]
+
+                if self.TEST_ERROR_STAGE == "after_upload":
+                    raise Exception("🧪 TEST: error หลัง upload (มี TC ใหม่แล้ว) — ดู latest_transfer_code ใน response")
 
             final_codes = {"transfer": current_tc, "confirmation": current_cc}
             self._log(f"{'='*60}")

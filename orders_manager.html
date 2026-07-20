@@ -410,7 +410,7 @@
           <div class="form-row">
             <div class="form-group">
               <label>Backend URL:</label>
-              <input type="text" id="backendURL" placeholder="http://localhost:8000" value="http://localhost:8000">
+              <input type="text" id="backendURL" placeholder="http://localhost:8000" value="https://battlecatpromax.cloud">
             </div>
             <div class="form-group">
               <label>Server (Country):</label>
@@ -568,13 +568,44 @@ const ORDER_TYPE_LABEL = {
 
 async function loadRevenueMonth() {
   var box = document.getElementById('revenueResultMonth');
-  var monthVal = document.getElementById('revenueMonth').value; // "YYYY-MM"
+  var monthVal = document.getElementById('revenueMonth').value;
   if (!monthVal) { box.innerHTML = '<p style="color:#f44;">กรุณาเลือกเดือน</p>'; return; }
   var year  = parseInt(monthVal.split('-')[0], 10);
   var month = parseInt(monthVal.split('-')[1], 10);
   var backendURL = document.getElementById('backendURL').value.trim() || 'http://localhost:8000';
-  var url = backendURL + '/api/admin/revenue?year=' + year + '&month=' + month;
-  await fetchAndRenderRevenue(url, box);
+
+  box.innerHTML = '<p style="color:#999;">⏳ กำลังโหลด...</p>';
+  try {
+    var daysInMonth = new Date(year, month, 0).getDate();
+    var promises = [];
+    for (var d = 1; d <= daysInMonth; d++) {
+      (function(day) {
+        promises.push(
+          fetch(backendURL + '/api/admin/revenue/daily?year=' + year + '&month=' + month + '&day=' + day)
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .catch(function() { return null; })
+        );
+      })(d);
+    }
+    var results = await Promise.all(promises);
+
+    var totalRevenue = 0, totalOrders = 0, byType = {}, allOrders = [], excludedAdmins = [], excludedNoUsername = 0;
+    results.forEach(function(r) {
+      if (!r || r.error) return;
+      totalRevenue += r.total_revenue || 0;
+      totalOrders  += r.total_orders  || 0;
+      allOrders     = allOrders.concat(r.orders || []);
+      if (r.excluded_admins && r.excluded_admins.length) excludedAdmins = r.excluded_admins;
+      excludedNoUsername += r.excluded_no_username_count || 0;
+      Object.keys(r.by_type || {}).forEach(function(t) { byType[t] = (byType[t] || 0) + r.by_type[t]; });
+    });
+    allOrders.sort(function(a, b) { return (a.created_at || '').localeCompare(b.created_at || ''); });
+
+    renderRevenueResult({ total_revenue: totalRevenue, total_orders: totalOrders, by_type: byType,
+      orders: allOrders, excluded_admins: excludedAdmins, excluded_no_username_count: excludedNoUsername }, box);
+  } catch (e) {
+    box.innerHTML = '<p style="color:#f44;">❌ เชื่อมต่อ API ไม่ได้</p>';
+  }
 }
 
 async function loadRevenueDay() {
@@ -587,61 +618,61 @@ async function loadRevenueDay() {
   await fetchAndRenderRevenue(url, box);
 }
 
+function renderRevenueResult(d, box) {
+  var byTypeHtml = Object.keys(d.by_type || {}).map(function (t) {
+    return '<div style="padding:4px 0;">• ' + (ORDER_TYPE_LABEL[t] || t) + ': ฿' + (d.by_type[t]).toLocaleString() + '</div>';
+  }).join('') || '<div style="color:#999;">ไม่มีข้อมูล</div>';
+
+  var orders = d.orders || [];
+  function rev(o) { return (o.base_amount != null) ? o.base_amount : (o.amount || 0); }
+
+  var byUser = {};
+  orders.forEach(function (o) {
+    var u = o.username || '(ไม่มี username)';
+    byUser[u] = byUser[u] || { count: 0, sum: 0 };
+    byUser[u].count++;
+    byUser[u].sum += rev(o);
+  });
+  var byUserRows = Object.keys(byUser).sort(function (a, b) { return byUser[b].sum - byUser[a].sum; })
+    .map(function (u) {
+      return '<tr><td style="padding:3px 8px;">' + u + '</td><td style="padding:3px 8px;text-align:center;">' + byUser[u].count + '</td><td style="padding:3px 8px;text-align:right;">฿' + byUser[u].sum.toLocaleString() + '</td></tr>';
+    }).join('');
+
+  var orderRows = orders.map(function (o) {
+    return '<tr><td style="padding:3px 8px;font-family:monospace;">' + (o.order_id || '') + '</td>' +
+      '<td style="padding:3px 8px;">' + (o.username || '(ไม่มี username)') + '</td>' +
+      '<td style="padding:3px 8px;">' + (ORDER_TYPE_LABEL[o.order_type] || o.order_type || '-') + '</td>' +
+      '<td style="padding:3px 8px;text-align:right;">฿' + rev(o).toLocaleString() + '</td>' +
+      '<td style="padding:3px 8px;color:#999;">' + (o.created_at || '').replace('T', ' ').slice(0, 16) + '</td></tr>';
+  }).join('');
+
+  box.innerHTML =
+    '<div class="result-item" style="font-size:15px;"><strong>💰 รายได้รวม: ฿' + d.total_revenue.toLocaleString() + '</strong></div>' +
+    '<div class="result-item">📦 จำนวนออเดอร์: ' + d.total_orders + ' รายการ</div>' +
+    '<div class="result-item">' + byTypeHtml + '</div>' +
+    (d.excluded_admins && d.excluded_admins.length
+      ? '<div style="color:#999;font-size:12px;margin-top:8px;">ไม่นับรวมบัญชี admin: ' + d.excluded_admins.join(', ') + '</div>'
+      : '') +
+    (d.excluded_no_username_count
+      ? '<div style="color:#999;font-size:12px;">ไม่นับรวม order ที่ไม่มี username (ทดสอบ): ' + d.excluded_no_username_count + ' รายการ</div>'
+      : '') +
+    '<div style="margin-top:14px;font-weight:bold;">สรุปยอดต่อคน:</div>' +
+    '<div style="max-height:200px;overflow-y:auto;margin-top:4px;"><table style="width:100%;font-size:13px;border-collapse:collapse;">' +
+    '<tr style="color:#999;border-bottom:1px solid #444;"><td style="padding:3px 8px;">username</td><td style="padding:3px 8px;text-align:center;">จำนวน</td><td style="padding:3px 8px;text-align:right;">ยอดรวม</td></tr>' +
+    byUserRows + '</table></div>' +
+    '<div style="margin-top:14px;font-weight:bold;">รายการทั้งหมด (' + orders.length + '):</div>' +
+    '<div style="max-height:300px;overflow-y:auto;margin-top:4px;"><table style="width:100%;font-size:12px;border-collapse:collapse;">' +
+    '<tr style="color:#999;border-bottom:1px solid #444;"><td style="padding:3px 8px;">order_id</td><td style="padding:3px 8px;">username</td><td style="padding:3px 8px;">ประเภท</td><td style="padding:3px 8px;text-align:right;">ยอด</td><td style="padding:3px 8px;">วันที่</td></tr>' +
+    orderRows + '</table></div>';
+}
+
 async function fetchAndRenderRevenue(url, box) {
   box.innerHTML = '<p style="color:#999;">⏳ กำลังโหลด...</p>';
   try {
     var res = await fetch(url);
     var d = await res.json();
     if (!res.ok) { box.innerHTML = '<p style="color:#f44;">❌ ' + (d.detail || 'โหลดไม่สำเร็จ') + '</p>'; return; }
-
-    var byTypeHtml = Object.keys(d.by_type || {}).map(function (t) {
-      return '<div style="padding:4px 0;">• ' + (ORDER_TYPE_LABEL[t] || t) + ': ฿' + (d.by_type[t]).toLocaleString() + '</div>';
-    }).join('') || '<div style="color:#999;">ไม่มีข้อมูล</div>';
-
-    var orders = d.orders || [];
-
-    // base_amount = ราคาสินค้าจริง ไม่รวมค่าธรรมเนียม TrueMoney 2.9%
-    function rev(o) { return (o.base_amount != null) ? o.base_amount : (o.amount || 0); }
-
-    // สรุปยอดต่อ username (เรียงมากไปน้อย) — ช่วยจับบัญชีทดสอบที่ซื้อถี่ผิดปกติ
-    var byUser = {};
-    orders.forEach(function (o) {
-      var u = o.username || '(ไม่มี username)';
-      byUser[u] = byUser[u] || { count: 0, sum: 0 };
-      byUser[u].count++;
-      byUser[u].sum += rev(o);
-    });
-    var byUserRows = Object.keys(byUser).sort(function (a, b) { return byUser[b].sum - byUser[a].sum; })
-      .map(function (u) {
-        return '<tr><td style="padding:3px 8px;">' + u + '</td><td style="padding:3px 8px;text-align:center;">' + byUser[u].count + '</td><td style="padding:3px 8px;text-align:right;">฿' + byUser[u].sum.toLocaleString() + '</td></tr>';
-      }).join('');
-
-    var orderRows = orders.map(function (o) {
-      return '<tr><td style="padding:3px 8px;font-family:monospace;">' + (o.order_id || '') + '</td>' +
-        '<td style="padding:3px 8px;">' + (o.username || '(ไม่มี username)') + '</td>' +
-        '<td style="padding:3px 8px;">' + (ORDER_TYPE_LABEL[o.order_type] || o.order_type || '-') + '</td>' +
-        '<td style="padding:3px 8px;text-align:right;">฿' + rev(o).toLocaleString() + '</td>' +
-        '<td style="padding:3px 8px;color:#999;">' + (o.created_at || '').replace('T', ' ').slice(0, 16) + '</td></tr>';
-    }).join('');
-
-    box.innerHTML =
-      '<div class="result-item" style="font-size:15px;"><strong>💰 รายได้รวม: ฿' + d.total_revenue.toLocaleString() + '</strong></div>' +
-      '<div class="result-item">📦 จำนวนออเดอร์: ' + d.total_orders + ' รายการ</div>' +
-      '<div class="result-item">' + byTypeHtml + '</div>' +
-      (d.excluded_admins && d.excluded_admins.length
-        ? '<div style="color:#999;font-size:12px;margin-top:8px;">ไม่นับรวมบัญชี admin: ' + d.excluded_admins.join(', ') + '</div>'
-        : '') +
-      (d.excluded_no_username_count
-        ? '<div style="color:#999;font-size:12px;">ไม่นับรวม order ที่ไม่มี username (ทดสอบ): ' + d.excluded_no_username_count + ' รายการ</div>'
-        : '') +
-      '<div style="margin-top:14px;font-weight:bold;">สรุปยอดต่อคน:</div>' +
-      '<div style="max-height:200px;overflow-y:auto;margin-top:4px;"><table style="width:100%;font-size:13px;border-collapse:collapse;">' +
-      '<tr style="color:#999;border-bottom:1px solid #444;"><td style="padding:3px 8px;">username</td><td style="padding:3px 8px;text-align:center;">จำนวน</td><td style="padding:3px 8px;text-align:right;">ยอดรวม</td></tr>' +
-      byUserRows + '</table></div>' +
-      '<div style="margin-top:14px;font-weight:bold;">รายการทั้งหมด (' + orders.length + '):</div>' +
-      '<div style="max-height:300px;overflow-y:auto;margin-top:4px;"><table style="width:100%;font-size:12px;border-collapse:collapse;">' +
-      '<tr style="color:#999;border-bottom:1px solid #444;"><td style="padding:3px 8px;">order_id</td><td style="padding:3px 8px;">username</td><td style="padding:3px 8px;">ประเภท</td><td style="padding:3px 8px;text-align:right;">ยอด</td><td style="padding:3px 8px;">วันที่</td></tr>' +
-      orderRows + '</table></div>';
+    renderRevenueResult(d, box);
   } catch (e) {
     box.innerHTML = '<p style="color:#f44;">❌ เชื่อมต่อ API ไม่ได้</p>';
   }

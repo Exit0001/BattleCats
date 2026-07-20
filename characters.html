@@ -305,6 +305,7 @@
       <li><a href="stages.html"><span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
       <li><a href="orders.html"><span data-i18n="nav_orders">ออเดอร์</span></a></li>
       <li><a href="loyalty.html">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
+      <li><a href="wallet.html">💰 <span data-i18n="nav_wallet">เติมเงิน</span></a></li>
     </ul>
     <div class="nav-cart">
       🛒
@@ -320,6 +321,8 @@
       <li><a href="stages.html" onclick="closeMobileMenu()">📍 <span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
       <li><a href="orders.html" onclick="closeMobileMenu()">📋 <span data-i18n="nav_orders">ออเดอร์</span></a></li>
       <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
+      <li><a href="wallet.html" onclick="closeMobileMenu()">💰 <span data-i18n="nav_wallet">เติมเงิน</span></a></li>
+      <li><a href="cookie-run.html" onclick="closeMobileMenu()" style="color:#f97316">🍪 Cookie Run</a></li>
     </ul>
     <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
   </div>
@@ -649,6 +652,7 @@
         <div style="display:flex;gap:10px;">
           <button id="apBtnPP" onclick="apSetPayMethod('promptpay')" style="flex:1;padding:9px;border-radius:10px;border:1px solid rgba(124,58,237,0.6);background:rgba(124,58,237,0.25);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;cursor:pointer;">📱 PromptPay</button>
           <button id="apBtnTM" onclick="apSetPayMethod('truemoney')" style="flex:1;padding:9px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:transparent;color:rgba(210,190,255,0.55);font-family:'Chakra Petch',sans-serif;font-size:13px;cursor:pointer;">💳 TrueWallet</button>
+          <button id="apBtnWL" onclick="apSetPayMethod('wallet')" style="flex:1;padding:9px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:transparent;color:rgba(210,190,255,0.55);font-family:'Chakra Petch',sans-serif;font-size:13px;cursor:pointer;">💰 Wallet</button>
         </div>
       </div>
       <button class="btn btn-primary" style="width:100%;" onclick="apCreateOrder()"><span data-i18n="stg_pay_now">ชำระเงิน</span> →</button>
@@ -683,6 +687,15 @@
           style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,120,0,0.3);border-radius:10px;color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;margin-bottom:12px;"
           oninput="apVoucherChanged(this)">
       </div>
+      <!-- Wallet confirm -->
+      <div id="apWalletBlock" style="display:none;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.3);border-radius:14px;padding:20px;text-align:center;margin-bottom:12px;">
+        <div style="font-size:28px;margin-bottom:6px;">💰</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:4px;">ยอดคงเหลือ</div>
+        <div id="apWalletBal" style="font-family:'Russo One',sans-serif;font-size:26px;color:#34d399;margin-bottom:4px;">฿—</div>
+        <div id="apWalletAmt" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);margin-bottom:12px;"></div>
+        <div id="apWalletLow" data-i18n="wl_low_balance" style="display:none;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#f87171;margin-bottom:10px;">ยอดเงินไม่พอ — <a href="wallet.html" style="color:#34d399;">เติมเงิน</a></div>
+        <button id="apWalletBtn" data-i18n="wl_confirm_btn" onclick="apPayWallet()" style="width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">✅ ยืนยันชำระด้วยกระเป๋าเงิน</button>
+      </div>
       <button class="btn btn-primary" style="width:100%;" id="apVerifyBtn" onclick="apVerify()" disabled data-i18n="stg_verify_payment">ยืนยันการชำระเงิน</button>
     </div>
     <div id="apStep-done" style="display:none;text-align:center;">
@@ -691,7 +704,8 @@
       <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;" data-i18n="char_ap_new_tc_send">Transfer Code ใหม่ (ส่งให้ลูกค้า)</div>
       <div id="apNewTC" style="font-family:monospace;font-size:16px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:12px;border-radius:8px;word-break:break-all;margin-bottom:8px;cursor:pointer;" onclick="navigator.clipboard.writeText(this.textContent).then(function(){alert(window.bcT('char_ap_copied','✅ Copy แล้ว'));})"></div>
       <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;" data-i18n="stg_new_cc">Confirmation Code ใหม่</div>
-      <div id="apNewCC" style="font-family:monospace;font-size:16px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:12px;border-radius:8px;margin-bottom:16px;cursor:pointer;" onclick="navigator.clipboard.writeText(this.textContent).then(function(){alert(window.bcT('char_ap_copied','✅ Copy แล้ว'));})"></div>
+      <div id="apNewCC" style="font-family:monospace;font-size:16px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:12px;border-radius:8px;margin-bottom:12px;cursor:pointer;" onclick="navigator.clipboard.writeText(this.textContent).then(function(){alert(window.bcT('char_ap_copied','✅ Copy แล้ว'));})"></div>
+      <div id="apWalletCreditedMsg" style="display:none;margin-bottom:12px;padding:8px 12px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#34d399;text-align:center;"></div>
       <button class="btn btn-outline" style="width:100%;" onclick="apClose()" data-i18n="close_btn">ปิด</button>
     </div>
     <div id="apError" style="display:none;margin-top:12px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:10px;padding:12px;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#F87171;"></div>
@@ -699,7 +713,7 @@
   </div>
 </div>
 
-<script src="assets/characters_data.js"></script>
+<script src="assets/characters_data.js?v=2"></script>
 <script>
 // ── Tier colour system ─────────────────────────────────────────
 var TIER_COL = { N:'#9CA3AF', EX:'#60A5FA', RR:'#4ADE80', SR:'#C4B5FD', UR:'#FBBF24', LR:'#F87171' };
@@ -998,20 +1012,14 @@ function apSetPayMethod(method) {
   _apPayMethod = method;
   var btnPP = document.getElementById('apBtnPP');
   var btnTM = document.getElementById('apBtnTM');
+  var btnWL = document.getElementById('apBtnWL');
+  [btnPP, btnTM, btnWL].forEach(function(b) { if(b) { b.style.background='transparent'; b.style.borderColor='rgba(255,255,255,0.12)'; b.style.color='rgba(210,190,255,0.55)'; } });
   if (method === 'promptpay') {
-    btnPP.style.background = 'rgba(124,58,237,0.25)';
-    btnPP.style.borderColor = 'rgba(124,58,237,0.6)';
-    btnPP.style.color = '#EDE6FF';
-    btnTM.style.background = 'transparent';
-    btnTM.style.borderColor = 'rgba(255,255,255,0.12)';
-    btnTM.style.color = 'rgba(210,190,255,0.55)';
-  } else {
-    btnTM.style.background = 'rgba(255,120,0,0.18)';
-    btnTM.style.borderColor = 'rgba(255,120,0,0.6)';
-    btnTM.style.color = '#FF6B00';
-    btnPP.style.background = 'transparent';
-    btnPP.style.borderColor = 'rgba(255,255,255,0.12)';
-    btnPP.style.color = 'rgba(210,190,255,0.55)';
+    btnPP.style.background = 'rgba(124,58,237,0.25)'; btnPP.style.borderColor = 'rgba(124,58,237,0.6)'; btnPP.style.color = '#EDE6FF';
+  } else if (method === 'truemoney') {
+    btnTM.style.background = 'rgba(255,120,0,0.18)'; btnTM.style.borderColor = 'rgba(255,120,0,0.6)'; btnTM.style.color = '#FF6B00';
+  } else if (method === 'wallet') {
+    btnWL.style.background = 'rgba(52,211,153,0.18)'; btnWL.style.borderColor = 'rgba(52,211,153,0.6)'; btnWL.style.color = '#34d399';
   }
 }
 
@@ -1064,12 +1072,31 @@ async function apCreateOrder() {
         created_at: new Date().toISOString() });
       localStorage.setItem('bc_order_history', JSON.stringify(hist.slice(0, 30)));
     })();
+    var isWL = (data.payment_method === 'wallet');
     var isTM = (data.payment_method === 'truemoney');
-    document.getElementById('apQrBlock').style.display = isTM ? 'none' : '';
-    document.getElementById('apTmBlock').style.display = isTM ? '' : 'none';
-    document.getElementById('apSlipBlock').style.display    = isTM ? 'none' : '';
+    document.getElementById('apQrBlock').style.display      = (!isTM && !isWL) ? '' : 'none';
+    document.getElementById('apTmBlock').style.display      = isTM ? '' : 'none';
+    document.getElementById('apSlipBlock').style.display    = (!isTM && !isWL) ? '' : 'none';
     document.getElementById('apVoucherBlock').style.display = isTM ? '' : 'none';
-    if (isTM) {
+    document.getElementById('apWalletBlock').style.display  = isWL ? '' : 'none';
+    document.getElementById('apVerifyBtn').style.display    = isWL ? 'none' : '';
+    if (isWL) {
+      var _apSess = (function() { try { return JSON.parse(localStorage.getItem('bc_session')) || {}; } catch(e) { return {}; } })();
+      document.getElementById('apWalletAmt').textContent = 'ต้องใช้ ฿' + data.amount;
+      document.getElementById('apWalletBtn').disabled = true;
+      document.getElementById('apWalletLow').style.display = 'none';
+      fetch('/api/wallet/balance?username=' + encodeURIComponent(_apSess.username||'') + '&session_token=' + encodeURIComponent(_apSess.hash||''))
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var bal = d.balance !== undefined ? d.balance : 0;
+          document.getElementById('apWalletBal').textContent = '฿' + bal;
+          if (bal < data.amount) {
+            document.getElementById('apWalletLow').style.display = '';
+          } else {
+            document.getElementById('apWalletBtn').disabled = false;
+          }
+        }).catch(function(){});
+    } else if (isTM) {
       document.getElementById('apTmAmt').textContent = '฿' + data.amount;
       if (data.truemoney_fee && data.truemoney_fee > 0) {
         document.getElementById('apTmFeeBreakdown').style.display = '';
@@ -1124,6 +1151,25 @@ async function apVerify() {
       resp = await fetch(_apBackend + '/api/payment/verify/' + _apOrderId, {method:'POST', body: fd});
     }
     data = await resp.json();
+    if (data.insufficient) {
+      document.getElementById('apVoucherBlock').style.display = 'none';
+      document.getElementById('apVerifyBtn').style.display = 'none';
+      document.getElementById('apWalletBlock').style.display = '';
+      document.getElementById('apWalletAmt').textContent = window.bcT('wl_still_short','ยังขาดอีก ฿') + data.remaining;
+      var _apSessI = (function(){ try{ return JSON.parse(localStorage.getItem('bc_session'))||{}; }catch(e){ return {}; } })();
+      fetch('/api/wallet/balance?username=' + encodeURIComponent(_apSessI.username||'') + '&session_token=' + encodeURIComponent(_apSessI.hash||''))
+        .then(function(r){ return r.json(); }).then(function(d){
+          var bal = d.balance||0;
+          document.getElementById('apWalletBal').textContent = '฿' + bal;
+          var wlBtn = document.getElementById('apWalletBtn');
+          var lowEl = document.getElementById('apWalletLow');
+          if (bal < data.remaining) { lowEl.style.display=''; wlBtn.disabled=true; wlBtn.style.opacity='0.5'; }
+          else { lowEl.style.display='none'; wlBtn.disabled=false; wlBtn.style.opacity='1'; }
+        }).catch(function(){});
+      var _apErrEl = document.getElementById('apError');
+      _apErrEl.style.display = ''; _apErrEl.innerHTML = data.reason.replace(/\n/g, '<br>');
+      return;
+    }
     if (!resp.ok || !data.success) { apShowErr(data.detail || data.error || window.bcT('stg_verify_failed','ยืนยันการชำระเงินไม่ผ่าน')); return; }
     document.getElementById('apNewTC').textContent = data.new_transfer_code || '-';
     document.getElementById('apNewCC').textContent = data.new_confirmation_code || '-';
@@ -1141,9 +1187,40 @@ async function apVerify() {
     })();
     document.getElementById('apStep-qr').style.display   = 'none';
     document.getElementById('apStep-done').style.display = '';
+    if (data.wallet_credited) {
+      var _wcEl = document.getElementById('apWalletCreditedMsg');
+      _wcEl.textContent = (window.bcLang && window.bcLang() === 'en')
+        ? '💰 Surplus ฿' + data.wallet_credited + ' added to your wallet'
+        : '💰 เงินที่เกิน ฿' + data.wallet_credited + ' เข้ากระเป๋าเงินของคุณแล้ว';
+      _wcEl.style.display = '';
+    }
     apShowErr('');
   } catch(e) {
     apShowErr(window.bcT('stg_api_error','เชื่อมต่อ API ไม่ได้: ') + e.message);
+  } finally { apLoading(false); }
+}
+
+async function apPayWallet() {
+  if (!_apOrderId) return;
+  var _apSess = (function() { try { return JSON.parse(localStorage.getItem('bc_session')) || {}; } catch(e) { return {}; } })();
+  var btn = document.getElementById('apWalletBtn');
+  btn.disabled = true; btn.textContent = '⏳ กำลังดำเนินการ...';
+  apLoading(true);
+  try {
+    var resp = await fetch(_apBackend + '/api/payment/pay-wallet/' + _apOrderId, {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ username: _apSess.username || '', session_token: _apSess.hash || '' }),
+    });
+    var data = await resp.json();
+    if (!resp.ok || !data.success) { apShowErr(data.detail || data.error || 'เกิดข้อผิดพลาด'); btn.disabled=false; btn.textContent=window.bcT('wl_confirm_btn','✅ ยืนยันชำระด้วยกระเป๋าเงิน'); return; }
+    document.getElementById('apNewTC').textContent = data.new_transfer_code || '-';
+    document.getElementById('apNewCC').textContent = data.new_confirmation_code || '-';
+    document.getElementById('apStep-qr').style.display   = 'none';
+    document.getElementById('apStep-done').style.display = '';
+    apShowErr('');
+  } catch(e) {
+    apShowErr('เชื่อมต่อ API ไม่ได้: ' + e.message);
+    btn.disabled=false; btn.textContent=window.bcT('wl_confirm_btn','✅ ยืนยันชำระด้วยกระเป๋าเงิน');
   } finally { apLoading(false); }
 }
 
@@ -1180,7 +1257,7 @@ document.addEventListener('bc-lang-changed', function() {
 });
 </script>
 
-<script src="assets/auth.js?v=20260613"></script>
+<script src="assets/auth.js?v=20260717"></script>
 <script src="assets/animations.js"></script>
 <script src="assets/nav.js"></script>
 <script src="assets/i18n.js"></script>
