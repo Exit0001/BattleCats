@@ -1,0 +1,9 @@
+============================================================
+เวลา      : 2026-07-21 11:55:21
+Transfer  : asd
+Confirm   : asd
+Country   : en
+============================================================
+[OP] เพิ่มของ 3 รายการ
+[BCSFE] ⬇  Downloading save (transfer=asd... cc=en)
+[BCSFE] ❌ ❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง

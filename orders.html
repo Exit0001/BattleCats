@@ -1288,6 +1288,18 @@ async function renderHistory() {
         var _cc  = order.new_confirmation_code || '-';
         var _isCodeShop = order.order_type === 'code_shop';
         var _copyBtnStyle = 'flex-shrink:0;padding:4px 10px;background:rgba(99,102,241,0.25);color:#c4b5fd;border:1px solid rgba(99,102,241,0.4);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;';
+        var _histCliItems = (order.items || []).filter(function(i){ return i.key === 'rare_ticket' || i.key === 'lucky_ticket'; });
+        var _histRetryBtn = '';
+        if (!_isCodeShop && _histCliItems.length > 0 && (order.retry_count || 0) < 3) {
+          var _histOid = order.id || order.order_id || '';
+          var _btnId = 'hRetryBtn_' + _histOid.replace(/[^a-z0-9]/gi,'');
+          var _msgId = 'hRetryMsg_' + _histOid.replace(/[^a-z0-9]/gi,'');
+          _histRetryBtn = '<div style="margin-top:10px;">' +
+            '<div style="font-size:13px;color:#f87171;font-weight:700;margin-bottom:6px;line-height:1.4;">⚠️ ถ้ารหัสใช้ได้แล้ว ห้ามกดเด็ดขาด! จะทำให้รหัสหายถาวร</div>' +
+            '<button id="' + _btnId + '" onclick="doHistRetryTc(\'' + _histOid + '\',\'' + _btnId + '\',\'' + _msgId + '\')" ' +
+            'style="width:100%;padding:7px 14px;background:#dc2626;color:#fff;border:none;border-radius:8px;font-family:\'Chakra Petch\',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">🔄 รหัสใช้ไม่ได้? ขอรหัสใหม่</button>' +
+            '<div id="' + _msgId + '" style="display:none;margin-top:6px;font-size:11px;"></div></div>';
+        }
         codeBox =
           '<div style="margin-top:12px;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:12px 14px;">' +
           (_isCodeShop ? '<div style="font-size:10px;color:#4ade80;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">' + window.bcT('ord_codeshop_label','🎮 รหัสสำเร็จรูปของคุณ') + '</div>' : '') +
@@ -1301,6 +1313,7 @@ async function renderHistory() {
           '<div style="font-family:monospace;font-size:14px;color:#FFD84E;flex:1;">' + _cc + '</div>' +
           '<button onclick="copyText(\'' + _cc.replace(/'/g, "\\'") + '\',this)" style="' + _copyBtnStyle + '">' + window.bcT('copy_label','คัดลอก') + '</button>' +
           '</div>' +
+          _histRetryBtn +
           '</div>';
       }
 
@@ -1398,6 +1411,26 @@ function showSuccessModal(orderId, cart, result) {
   });
   document.getElementById('rare-ticket-howto').style.display = hasRareTicket ? 'block' : 'none';
 
+  // ปุ่ม retry TC — แสดงเฉพาะ CLI orders (rare/lucky ticket) ที่ success
+  var existingRetryTc = document.getElementById('modal-retry-tc-box');
+  if (existingRetryTc) existingRetryTc.remove();
+
+
+  var hasCliItem = isSuccess && cart && cart.some(function(i) {
+    return i.key === 'rare_ticket' || i.key === 'lucky_ticket';
+  });
+  if (hasCliItem) {
+    var retryBox = document.createElement('div');
+    retryBox.id = 'modal-retry-tc-box';
+    retryBox.style.cssText = 'margin-top:12px;padding:12px 14px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:10px;text-align:center;';
+    retryBox.innerHTML =
+      '<div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:6px;">รหัสใช้ไม่ได้? กดปุ่มด้านล่างเพื่อขอรหัสใหม่</div>' +
+      '<div style="font-size:11px;color:#f87171;font-weight:700;margin-bottom:8px;">⚠️ ถ้ารหัสใช้ได้แล้ว ห้ามกดเด็ดขาด! จะทำให้รหัสหายถาวร</div>' +
+      '<button id="retryTcBtn" onclick="doRetryTc(\'' + orderId + '\')" style="padding:8px 20px;background:#dc2626;color:#fff;border:none;border-radius:8px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;font-weight:700;cursor:pointer;width:100%;">🔄 ขอรหัสใหม่</button>' +
+      '<div id="retryTcMsg" style="display:none;margin-top:8px;font-size:12px;"></div>';
+    document.getElementById('modal-success-box').after(retryBox);
+  }
+
   document.getElementById('successModal').classList.add('active');
 
   // ปุ่มกลับ + beforeunload
@@ -1409,6 +1442,114 @@ function showSuccessModal(orderId, cart, result) {
     backBtn.textContent = 'กลับไปเลือกสินค้าเพิ่มเติม';
     window.onbeforeunload = null;
   }
+}
+
+function doHistRetryTc(orderId, btnId, msgId) {
+  var btn = document.getElementById(btnId);
+  var msg = document.getElementById(msgId);
+  if (!btn) return;
+  btn.disabled = true;
+  btn.textContent = 'กำลังขอรหัสใหม่...';
+  btn.style.background = '#374151';
+  btn.style.color = '#9ca3af';
+  if (msg) msg.style.display = 'none';
+
+  fetch('/api/payment/retry-tc/' + orderId, { method: 'POST' })
+    .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+    .then(function(res) {
+      if (res.ok && res.data.success) {
+        var d = res.data;
+        var newTc = d.new_transfer_code || '-';
+        var newCc = d.new_confirmation_code || '-';
+        btn.textContent = '✅ ได้รหัสใหม่แล้ว';
+        btn.style.background = '#16a34a';
+        btn.style.color = '#fff';
+        if (msg) {
+          msg.style.display = 'block';
+          msg.innerHTML =
+            '<div style="margin-top:6px;padding:10px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);border-radius:8px;text-align:left;">' +
+            '<div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:3px;">TRANSFER CODE ใหม่</div>' +
+            '<div style="font-family:monospace;font-size:15px;color:#FFD84E;font-weight:700;word-break:break-all;">' + newTc + '</div>' +
+            '<div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:7px;margin-bottom:3px;">CONFIRMATION CODE ใหม่</div>' +
+            '<div style="font-family:monospace;font-size:15px;color:#FFD84E;font-weight:700;">' + newCc + '</div>' +
+            '</div>';
+        }
+        setTimeout(function() { renderHistory(); }, 1500);
+      } else {
+        var errMsg = (res.data && res.data.detail) || 'retry ล้มเหลว';
+        if (msg) { msg.style.display = 'block'; msg.style.color = '#f87171'; msg.textContent = '❌ ' + errMsg; }
+        btn.disabled = false;
+        btn.textContent = '🔄 ลองอีกครั้ง';
+        btn.style.background = '#dc2626';
+        btn.style.color = '#fff';
+        btn.style.cursor = 'pointer';
+      }
+    })
+    .catch(function(e) {
+      if (msg) { msg.style.display = 'block'; msg.style.color = '#f87171'; msg.textContent = '❌ ' + e.message; }
+      btn.disabled = false;
+      btn.textContent = '🔄 ลองอีกครั้ง';
+      btn.style.background = '#dc2626';
+      btn.style.color = '#fff';
+      btn.style.cursor = 'pointer';
+    });
+}
+
+
+function doRetryTc(orderId) {
+  var btn = document.getElementById('retryTcBtn');
+  var msg = document.getElementById('retryTcMsg');
+  btn.disabled = true;
+  btn.textContent = 'กำลังขอรหัสใหม่...';
+  btn.style.background = '#374151';
+  btn.style.color = '#9ca3af';
+  msg.style.display = 'none';
+
+  fetch('/api/payment/retry-tc/' + orderId, { method: 'POST' })
+    .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+    .then(function(res) {
+      if (res.ok && res.data.success) {
+        var d = res.data;
+        var newTc = d.new_transfer_code || '-';
+        var newCc = d.new_confirmation_code || '-';
+        var tcEl = document.getElementById('newTransferCode');
+        var ccEl = document.getElementById('newConfirmCode');
+        if (tcEl) tcEl.textContent = newTc;
+        if (ccEl) ccEl.textContent = newCc;
+        btn.textContent = '✅ ได้รหัสใหม่แล้ว';
+        btn.style.background = '#16a34a';
+        btn.style.color = '#fff';
+        msg.style.display = 'block';
+        msg.style.color = '#4ade80';
+        msg.innerHTML =
+          '<div style="margin-top:6px;padding:10px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);border-radius:8px;text-align:left;">' +
+          '<div style="font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:4px;">TRANSFER CODE ใหม่</div>' +
+          '<div style="font-family:monospace;font-size:16px;color:#FFD84E;font-weight:700;letter-spacing:1px;">' + newTc + '</div>' +
+          '<div style="font-size:10px;color:rgba(255,255,255,0.5);margin-top:8px;margin-bottom:4px;">CONFIRMATION CODE ใหม่</div>' +
+          '<div style="font-family:monospace;font-size:16px;color:#FFD84E;font-weight:700;">' + newCc + '</div>' +
+          '</div>';
+      } else {
+        var errMsg = (res.data && res.data.detail) || 'retry ล้มเหลว';
+        msg.style.display = 'block';
+        msg.style.color = '#f87171';
+        msg.textContent = '❌ ' + errMsg;
+        btn.disabled = false;
+        btn.textContent = '🔄 ลองอีกครั้ง';
+        btn.style.background = '#dc2626';
+        btn.style.color = '#fff';
+        btn.style.cursor = 'pointer';
+      }
+    })
+    .catch(function(e) {
+      msg.style.display = 'block';
+      msg.style.color = '#f87171';
+      msg.textContent = '❌ เกิดข้อผิดพลาด: ' + e.message;
+      btn.disabled = false;
+      btn.textContent = '🔄 ลองอีกครั้ง';
+      btn.style.background = '#dc2626';
+      btn.style.color = '#fff';
+      btn.style.cursor = 'pointer';
+    });
 }
 
 function openRetryFromHistory(orderId) {

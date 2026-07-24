@@ -15,7 +15,7 @@ import httpx
 import asyncio
 import shutil
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone as _tz
 _BASE_DIR = Path(__file__).parent
 import re as _re
 import hashlib
@@ -746,7 +746,7 @@ async def payment_verify(order_id: str, slip: UploadFile = File(...)):
         update_order_status(order_id, "done", {
             "new_transfer_code":     new_tc,
             "new_confirmation_code": new_cc,
-            "done_at":               datetime.now().isoformat(),
+            "done_at":               datetime.now(_tz.utc).isoformat(),
         })
         surplus = slip_result.get("surplus", 0)
         if surplus > 0 and order.get("username"):
@@ -763,6 +763,56 @@ async def payment_verify(order_id: str, slip: UploadFile = File(...)):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"เกิดข้อผิดพลาด: {e}")
+
+@app.post("/api/payment/retry-tc/{order_id}")
+async def retry_tc(order_id: str):
+    """ลูกค้ากด retry เอง — re-run CLI items จาก backup save"""
+    order = get_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="ไม่พบ order")
+    if order.get("status") != "done":
+        raise HTTPException(status_code=400, detail="order ยังไม่สำเร็จ")
+
+    retry_count = order.get("retry_count", 0)
+    if retry_count >= 3:
+        raise HTTPException(status_code=400, detail="ใช้สิทธิ์ retry ครบ 3 ครั้งแล้ว กรุณาติดต่อแอดมิน")
+
+    items = order.get("items") or []
+    cli_items = [i for i in items if i.get("key") in ("rare_ticket", "lucky_ticket")]
+    if not cli_items:
+        raise HTTPException(status_code=400, detail="order นี้ไม่มี CLI items (rare/lucky ticket)")
+
+    # หา backup file (pre-CLI state) สำหรับ baseline
+    original_tc = order.get("transfer_code", "")
+    backup_path = None
+    if original_tc:
+        backup_dir = Path("saves_backup")
+        matches = sorted(backup_dir.glob(f"*_{original_tc[:8]}"),
+                         key=lambda f: f.stat().st_mtime, reverse=True)
+        if matches:
+            backup_path = matches[0]
+
+    latest_tc = order.get("new_transfer_code") or order.get("transfer_code", "")
+    latest_cc = order.get("new_confirmation_code") or order.get("confirmation_code", "")
+    runner = BCSFERunner(
+        transfer=latest_tc,
+        confirm=latest_cc,
+        country=order.get("country", "en"),
+    )
+    result = runner.run_retry_fresh(cli_items, backup_path=backup_path)
+    if not result.get("success"):
+        raise HTTPException(status_code=500, detail=result.get("error", "retry ล้มเหลว"))
+
+    new_tc = result["transfer"]
+    new_cc = result["confirmation"]
+    update_order_status(order_id, "done", {
+        "new_transfer_code":     new_tc,
+        "new_confirmation_code": new_cc,
+        "retry_count":           retry_count + 1,
+        "last_retry_at":         datetime.now(_tz.utc).isoformat(),
+    })
+    return {"success": True, "new_transfer_code": new_tc, "new_confirmation_code": new_cc}
+
 
 @app.post("/api/payment/verify-voucher/{order_id}")
 async def payment_verify_voucher(order_id: str, body: VoucherRedeemRequest):
@@ -826,7 +876,7 @@ async def payment_verify_voucher(order_id: str, body: VoucherRedeemRequest):
         update_order_status(order_id, "done", {
             "new_transfer_code":     new_tc,
             "new_confirmation_code": new_cc,
-            "done_at":               datetime.now().isoformat(),
+            "done_at":               datetime.now(_tz.utc).isoformat(),
         })
         return {
             "success":               True,
@@ -1988,7 +2038,7 @@ async def payment_retry(order_id: str, body: RetryRequest):
         update_order_status(order_id, "done", {
             "new_transfer_code":     new_tc,
             "new_confirmation_code": new_cc,
-            "done_at":               datetime.now().isoformat(),
+            "done_at":               datetime.now(_tz.utc).isoformat(),
         })
         return {"success": True, "new_transfer_code": new_tc, "new_confirmation_code": new_cc,
                 "summary": step_result["summary"]}
@@ -2164,7 +2214,7 @@ async def api_code_shop_verify(order_id: str, slip: UploadFile = File(...)):
     mark_stock_sold(stock_id)
     mark_slip_used(transaction_id)
     update_order_status(order_id, "done", {
-        "done_at":        datetime.now().isoformat(),
+        "done_at":        datetime.now(_tz.utc).isoformat(),
         "transaction_id": transaction_id,
     })
 
@@ -2225,7 +2275,7 @@ async def api_code_shop_verify_voucher(order_id: str, body: VoucherRedeemRequest
     # บันทึกก่อนว่าเงินเข้าแล้ว เผื่อ step ถัดไปพัง admin จะได้รู้
     update_order_status(order_id, "paid", {
         "transaction_id": transaction_id,
-        "paid_at":        datetime.now().isoformat(),
+        "paid_at":        datetime.now(_tz.utc).isoformat(),
     })
     print(f"[CODE-SHOP] 💰 TrueWallet paid order {order_id} txn={transaction_id}")
 
@@ -2236,7 +2286,7 @@ async def api_code_shop_verify_voucher(order_id: str, body: VoucherRedeemRequest
 
     mark_stock_sold(stock_id)
     update_order_status(order_id, "done", {
-        "done_at":        datetime.now().isoformat(),
+        "done_at":        datetime.now(_tz.utc).isoformat(),
         "transaction_id": transaction_id,
     })
 
@@ -2469,7 +2519,7 @@ async def api_cr_verify(order_id: str, slip: UploadFile = File(...)):
     if not stocks:
         raise HTTPException(status_code=500, detail="ไม่พบ license key ที่จอง กรุณาติดต่อ admin")
     mark_cr_stock_sold_bulk([s["id"] for s in stocks])
-    update_cr_order_status(order_id, "done", {"done_at": datetime.now().isoformat()})
+    update_cr_order_status(order_id, "done", {"done_at": datetime.now(_tz.utc).isoformat()})
     product = get_cr_product(order.get("product_id", "")) or {}
     keys = [s["license_key"] for s in stocks]
     print(f"[CR] ✅ slip order {order_id} ส่ง {len(keys)} license key ให้ {order.get('username')}")
@@ -2499,7 +2549,7 @@ async def api_cr_verify_voucher(order_id: str, body: VoucherRedeemRequest):
     if not stocks:
         raise HTTPException(status_code=500, detail="ไม่พบ license key ที่จอง กรุณาติดต่อ admin")
     mark_cr_stock_sold_bulk([s["id"] for s in stocks])
-    update_cr_order_status(order_id, "done", {"done_at": datetime.now().isoformat()})
+    update_cr_order_status(order_id, "done", {"done_at": datetime.now(_tz.utc).isoformat()})
     product = get_cr_product(order.get("product_id", "")) or {}
     keys = [s["license_key"] for s in stocks]
     print(f"[CR] ✅ TrueWallet order {order_id} ส่ง {len(keys)} license key ให้ {order.get('username')}")
@@ -2536,7 +2586,7 @@ async def api_cr_pay_wallet(order_id: str, body: WalletPayRequest):
         raise HTTPException(status_code=400, detail="หักเงินไม่สำเร็จ กรุณาลองใหม่")
     mark_cr_stock_sold_bulk([s["id"] for s in stocks])
     update_cr_order_status(order_id, "done", {
-        "done_at": datetime.now().isoformat(),
+        "done_at": datetime.now(_tz.utc).isoformat(),
         "payment_method": "wallet",
     })
     product = get_cr_product(order.get("product_id", "")) or {}
@@ -2668,7 +2718,7 @@ async def api_payment_pay_wallet(order_id: str, body: WalletPayRequest):
         raise HTTPException(status_code=400, detail="หักเงินไม่สำเร็จ กรุณาลองใหม่")
 
     update_order_status(order_id, "paid", {
-        "paid_at":        datetime.now().isoformat(),
+        "paid_at":        datetime.now(_tz.utc).isoformat(),
         "payment_method": "wallet",
     })
 
@@ -2695,7 +2745,7 @@ async def api_payment_pay_wallet(order_id: str, body: WalletPayRequest):
         update_order_status(order_id, "done", {
             "new_transfer_code":     new_tc,
             "new_confirmation_code": new_cc,
-            "done_at":               datetime.now().isoformat(),
+            "done_at":               datetime.now(_tz.utc).isoformat(),
         })
         return {
             "success":               True,
@@ -2742,7 +2792,7 @@ async def api_code_shop_pay_wallet(order_id: str, body: WalletPayRequest):
 
     mark_stock_sold(stock_id)
     update_order_status(order_id, "done", {
-        "done_at":        datetime.now().isoformat(),
+        "done_at":        datetime.now(_tz.utc).isoformat(),
         "payment_method": "wallet",
     })
     print(f"[CODE-SHOP] ✅ wallet order {order_id} ส่งรหัสให้ {body.username}")
@@ -2807,7 +2857,7 @@ async def api_wallet_verify(order_id: str, slip: UploadFile = File(...), session
 
     credited = int(order["amount"])
     mark_slip_used(slip_result.get("transaction_id", ""))
-    update_order_status(order_id, "done", {"done_at": datetime.now().isoformat()})
+    update_order_status(order_id, "done", {"done_at": datetime.now(_tz.utc).isoformat()})
     credit_wallet(username, credited)
     surplus = slip_result.get("surplus", 0)
     if surplus > 0:

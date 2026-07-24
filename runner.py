@@ -140,7 +140,7 @@ class BCSFERunner:
                 _backup_path = None
 
             self._log(f"[CLI] โหลดจาก {cli_path_str} (--input-path)")
-            inputs = "\n".join(nav + ["2", "2", "2", "3"]) + "\n"
+            inputs = "\n".join(nav + ["2", "", "2", "2", "3", "13", "n"]) + "\n"
             result = self._cli_communicate(inputs, env, cli_args=["--input-path", cli_path_str])
 
             # ถ้า upload ล้มเหลว → retry ด้วย backup (clean file) + full nav (re-add tickets)
@@ -175,7 +175,7 @@ class BCSFERunner:
                 if correct_add != value_to_send:
                     self._log(f"[CLI] Lucky Ticket current จริง={actual_current} ≠ assumed={current} → re-run ด้วย {actual_current}+{amount}={correct_add}")
                     nav2 = ["3", "21", "1", str(correct_add)]
-                    inputs2 = "\n".join(nav2 + ["2", "2", "2", "3"]) + "\n"
+                    inputs2 = "\n".join(nav2 + ["2", "", "2", "2", "3", "13", "n"]) + "\n"
                     self._log("[CLI] รอ 15 วินาที (rate limit cooldown หลัง first run upload)...")
                     time.sleep(15)
                     rerun_result = self._cli_communicate(inputs2, env,
@@ -192,7 +192,7 @@ class BCSFERunner:
                         if _backup_path and _backup_path.exists():
                             try:
                                 time.sleep(15)
-                                inputs_restore = "\n".join(["2", "3"]) + "\n"
+                                inputs_restore = "\n".join(["2", "3", "13", "n"]) + "\n"
                                 restore_result = self._cli_communicate(inputs_restore, env,
                                                                       cli_args=["--input-path", str(_backup_path)])
                                 if restore_result.get("success"):
@@ -216,7 +216,7 @@ class BCSFERunner:
                 if correct_add != to_add:
                     self._log(f"[CLI] Rare Ticket current จริง={actual_current} ≠ assumed={current} → re-run ด้วย to_add={correct_add}")
                     nav2 = ["3", "6", str(correct_add)]
-                    inputs2 = "\n".join(nav2 + ["2", "2", "3"]) + "\n"
+                    inputs2 = "\n".join(nav2 + ["2", "", "2", "2", "3", "13", "n"]) + "\n"
                     result = self._cli_communicate(inputs2, env,
                                                    cli_args=["--input-path", str(self._cli_save_path)])
                 else:
@@ -546,6 +546,52 @@ class BCSFERunner:
             self._log(f"[BCSFE] ❌ {e}")
             self._close_log()
             return self._error_result(e)
+
+    def run_retry_fresh(self, cli_items: list, backup_path: "Path | None" = None) -> dict:
+        """Retry: โหลด backup จากรอบแรกโดยตรง → CLI รันเหมือน purchase ปกติ (ไม่ download จาก PONOS)"""
+        try:
+            core.core_data.init_data()
+
+            if not backup_path or not backup_path.exists():
+                raise RuntimeError("ไม่พบ backup save — กรุณาติดต่อแอดมิน")
+
+            # Copy backup → cli_save_path (ไม่ต้อง load ด้วย Python API)
+            shutil.copy2(str(backup_path), str(self._cli_save_path))
+            self._log(f"[RETRY] โหลด backup → {self._cli_save_path}")
+
+            self._log("[RETRY] รอ 15 วินาที (PONOS rate limit cooldown)...")
+            time.sleep(15)
+
+            current_tc = self._latest_tc
+            current_cc = self._latest_cc
+
+            for item in cli_items:
+                key    = item["key"]
+                amount = item["amount"]
+
+                # รันเหมือน purchase ปกติทุกอย่าง (re-run check อยู่ใน _run_cli_item แล้ว)
+                r = self._run_cli_item(current_tc, current_cc, key, amount,
+                                      current=0, use_local=True)
+                if r.get("success"):
+                    current_tc = r["transfer"]
+                    current_cc = r["confirmation"]
+                    self._latest_tc = current_tc
+                    self._latest_cc = current_cc
+                else:
+                    self._log(f"[RETRY] ⚠ {key} CLI ล้มเหลว — TC: {current_tc}")
+
+            try:
+                self._cli_save_path.unlink(missing_ok=True)
+            except Exception:
+                pass
+
+            self._close_log()
+            return {"success": True, "transfer": current_tc, "confirmation": current_cc}
+
+        except Exception as e:
+            self._log(f"[RETRY] ❌ {e}")
+            self._close_log()
+            return {"success": False, "error": str(e)}
 
     def _find_cats(self, save_file, cat_ids: list):
         """หา Cat objects จาก IDs (ทุกตัว รวม locked) — ใช้สำหรับ unlock"""

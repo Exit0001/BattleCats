@@ -124,11 +124,21 @@ ITEM_PRICE = {
 
 def _load_orders() -> dict:
     if ORDER_DB.exists():
-        return json.loads(ORDER_DB.read_text(encoding="utf-8"))
+        try:
+            return json.loads(ORDER_DB.read_text(encoding="utf-8"))
+        except Exception:
+            # corrupted — backup and start fresh
+            try:
+                ORDER_DB.rename(str(ORDER_DB) + ".corrupt")
+            except Exception:
+                pass
+            return {}
     return {}
 
 def _save_orders(data: dict):
-    ORDER_DB.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp = ORDER_DB.with_suffix(".tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.replace(ORDER_DB)
 
 def _add_user_order(username: str, order_id: str):
     if not username:

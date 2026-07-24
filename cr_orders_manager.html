@@ -163,13 +163,24 @@ function renderRevenue(data, el) {
   const byMethod = data.by_method || {};
   const methodStr = Object.entries(byMethod).map(([k,v]) =>
     `<span>${k}: <strong>฿${v.toLocaleString()}</strong></span>`).join('');
+  const orders = data.orders || [];
+  const ppCount = orders.filter(o => o.payment_method === 'promptpay').length;
+  const twCount = orders.filter(o => o.payment_method === 'truemoney').length;
+  const wCount  = orders.filter(o => o.payment_method === 'wallet').length;
+  const methodBills = [
+    ppCount ? `<span>📱 PromptPay: <strong>${ppCount} บิล</strong></span>` : '',
+    twCount ? `<span>🧧 TrueWallet: <strong>${twCount} บิล</strong></span>` : '',
+    wCount  ? `<span>💰 Wallet: <strong>${wCount} บิล</strong></span>` : '',
+  ].filter(Boolean).join('');
   el.innerHTML = `
     <div class="stat-box">
       <div class="stat-card"><div class="stat-num">฿${(data.total_revenue||0).toLocaleString()}</div><div class="stat-label">รายได้รวม</div></div>
       <div class="stat-card"><div class="stat-num">${data.total_orders||0}</div><div class="stat-label">จำนวน Order</div></div>
+      ${ppCount ? `<div class="stat-card"><div class="stat-num">${ppCount}</div><div class="stat-label">📱 PromptPay บิล</div></div>` : ''}
     </div>
     ${methodStr ? `<div class="by-method" style="margin-top:12px">${methodStr}</div>` : ''}
-    ${(data.orders||[]).length ? renderOrdersTable(data.orders) : ''}
+    ${methodBills ? `<div class="by-method" style="margin-top:6px">${methodBills}</div>` : ''}
+    ${orders.length ? renderOrdersTable(orders) : ''}
   `;
 }
 
