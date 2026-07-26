@@ -1,0 +1,1568 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ปลดล็อคด่าน - Battle Cats Shop</title>
+  <meta name="description" content="ปลดล็อคด่าน The Battle Cats EoC, ItF, CoTC, Legend Stages และอื่นๆ ส่งผ่าน Transfer Code ภายใน 5 นาที ปลอดภัย 100%">
+  <link rel="canonical" href="https://battlecatpromax.cloud/stages.html">
+  <meta property="og:title" content="ปลดล็อคด่าน - Battle Cats Shop">
+  <meta property="og:description" content="ปลดล็อคด่าน The Battle Cats EoC, ItF, CoTC, Legend Stages และอื่นๆ ส่งผ่าน Transfer Code ภายใน 5 นาที">
+  <meta property="og:url" content="https://battlecatpromax.cloud/stages.html">
+  <meta property="og:image" content="https://battlecatpromax.cloud/pictures/logo.png">
+  <link rel="stylesheet" href="assets/styles.css">
+  <style>
+    /* ── Stage card grid ───────────────────────────────────── */
+    .stage-section { margin-bottom: 36px; }
+    .stage-section-title {
+      font-family: 'Russo One', sans-serif;
+      font-size: 22px; color: #EDE6FF;
+      margin: 0 0 4px; letter-spacing: 0.4px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .stage-section-desc {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px; color: rgba(210,190,255,0.5);
+      margin: 0 0 14px;
+    }
+
+    .stage-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .stage-card-grid-1 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stage-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(14,6,32,0.85);
+      border: 1.5px solid rgba(124,58,237,0.18);
+      border-radius: 14px;
+      overflow: hidden;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+    }
+    .stage-card:hover {
+      border-color: rgba(124,58,237,0.52);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(124,58,237,0.20);
+    }
+    .stage-card.card-active {
+      border-color: rgba(74,222,128,0.65);
+      box-shadow: 0 0 0 1px rgba(74,222,128,0.2), 0 8px 24px rgba(74,222,128,0.12);
+    }
+    .stage-card.card-active-legend {
+      border-color: rgba(251,191,36,0.65);
+      box-shadow: 0 0 0 1px rgba(251,191,36,0.2), 0 8px 24px rgba(251,191,36,0.12);
+    }
+    .stage-card.card-active-aku {
+      border-color: rgba(124,58,237,0.75);
+      box-shadow: 0 0 0 1px rgba(124,58,237,0.25), 0 8px 24px rgba(124,58,237,0.18);
+    }
+
+    .stage-card-img-wrap {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: rgba(124,58,237,0.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px; flex-shrink: 0; overflow: hidden;
+    }
+    .stage-card-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+
+    .stage-card-body {
+      padding: 10px 8px 12px;
+      display: flex; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box;
+    }
+    .stage-card-name {
+      font-family: 'Russo One', sans-serif;
+      font-size: 27px; color: #EDE6FF;
+      margin-bottom: 2px; line-height: 1.3;
+    }
+    .stage-card-sub {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 23px; color: rgba(210,190,255,0.4);
+      margin-bottom: 6px;
+    }
+
+    .stage-card-badges {
+      display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;
+      min-height: 20px; margin-bottom: 6px;
+    }
+    .stage-badge {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 9px; font-weight: 700;
+      padding: 2px 7px; border-radius: 999px;
+      background: rgba(74,222,128,0.15);
+      border: 1px solid rgba(74,222,128,0.45);
+      color: #4ADE80;
+    }
+    .stage-badge-legend {
+      background: rgba(251,191,36,0.15);
+      border-color: rgba(251,191,36,0.45);
+      color: #FDE047;
+    }
+    .stage-badge-aku {
+      background: rgba(124,58,237,0.15);
+      border-color: rgba(124,58,237,0.45);
+      color: #C4B5FD;
+    }
+    .stage-card-cta {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px; color: rgba(210,190,255,0.7);
+      border: 1.5px solid rgba(124,58,237,0.35);
+      background: rgba(124,58,237,0.1);
+      border-radius: 8px;
+      padding: 8px 0;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+      width: 100%;
+      text-align: center;
+      transition: background 0.18s, border-color 0.18s;
+    }
+    .stage-card:hover .stage-card-cta {
+      background: rgba(124,58,237,0.22);
+      border-color: rgba(124,58,237,0.6);
+    }
+    .stage-card.card-active      .stage-card-cta { color: rgba(74,222,128,0.9);  border-color: rgba(74,222,128,0.45);  background: rgba(74,222,128,0.08); }
+    .stage-card.card-active-legend .stage-card-cta { color: rgba(253,224,71,0.9); border-color: rgba(253,224,71,0.45);  background: rgba(253,224,71,0.08); }
+    .stage-card.card-active-aku  .stage-card-cta { color: rgba(196,181,253,0.9); border-color: rgba(196,181,253,0.45); background: rgba(196,181,253,0.08); }
+
+    .crown-btn {
+      flex: 1; min-width: 55px; padding: 7px 4px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(251,191,36,0.22);
+      background: rgba(255,255,255,0.02);
+      cursor: pointer; text-align: center; user-select: none;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px; color: rgba(210,190,255,0.55);
+      font-weight: 700; transition: all 0.18s;
+    }
+    .crown-btn:hover { border-color: rgba(251,191,36,0.5); color: #EDE6FF; }
+    .crown-btn.crown-on {
+      border-color: rgba(251,191,36,0.75);
+      background: rgba(251,191,36,0.1); color: #FDE047;
+    }
+
+    /* ── Stage Service Modal ───────────────────────────────── */
+    #stgModal {
+      display: none; position: fixed; inset: 0;
+      z-index: 9100; background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(5px); overflow-y: auto;
+      align-items: center; justify-content: center;
+      padding: 20px; box-sizing: border-box;
+    }
+    .stg-box {
+      max-width: 460px; width: 100%; margin: 0 auto;
+      background: linear-gradient(145deg,#100827 0%,#0b051a 100%);
+      border: 1px solid rgba(124,58,237,0.38);
+      border-radius: 20px; padding: 28px;
+      position: relative;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+    }
+    .stg-close {
+      position: absolute; top: 14px; right: 16px;
+      background: none; border: none;
+      color: rgba(210,190,255,0.45); font-size: 20px;
+      cursor: pointer; line-height: 1; transition: color 0.18s;
+    }
+    .stg-close:hover { color: #EDE6FF; }
+    .stg-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 20px; padding-bottom: 18px;
+      border-bottom: 1px solid rgba(124,58,237,0.3);
+    }
+    .stg-thumb {
+      width: 76px; height: 56px; flex-shrink: 0;
+      background: rgba(124,58,237,0.08); border-radius: 10px;
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+    }
+    .stg-thumb img { width:100%; height:100%; object-fit:cover; }
+    .stg-hd-title {
+      font-family: 'Russo One', sans-serif; font-size: 15px;
+      color: #EDE6FF; margin-bottom: 3px;
+    }
+    .stg-hd-sub {
+      font-family: 'Chakra Petch', sans-serif; font-size: 12px;
+      color: rgba(210,190,255,0.5);
+    }
+
+    .stg-item {
+      display: flex; align-items: center; gap: 11px;
+      padding: 12px 14px; border-radius: 12px;
+      border: 1px solid rgba(124,58,237,0.18);
+      background: rgba(255,255,255,0.02);
+      cursor: pointer; margin-bottom: 8px; user-select: none;
+      transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+    }
+    .stg-item:hover {
+      border-color: rgba(236,72,153,0.35); background: rgba(236,72,153,0.05);
+    }
+    .stg-item.stg-checked {
+      border-color: rgba(236,72,153,0.6);
+      background: rgba(236,72,153,0.08);
+      box-shadow: 0 0 0 1px rgba(236,72,153,0.18);
+    }
+    .stg-cb {
+      width: 20px; height: 20px; flex-shrink: 0; border-radius: 6px;
+      border: 2px solid rgba(124,58,237,0.45);
+      background: rgba(255,255,255,0.04);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.18s; position: relative;
+    }
+    .stg-item.stg-checked .stg-cb {
+      background: linear-gradient(135deg,#7C3AED,#EC4899);
+      border-color: transparent;
+    }
+    .stg-cb::after {
+      content: ''; display: none;
+      width: 5px; height: 9px;
+      border: 2px solid #fff; border-top: none; border-left: none;
+      transform: rotate(45deg) translate(-1px,-1px);
+    }
+    .stg-item.stg-checked .stg-cb::after { display: block; }
+    .stg-lbl { font-family: 'Chakra Petch',sans-serif; font-size: 13px; color: #EDE6FF; font-weight: 600; }
+    .stg-desc { font-family: 'Chakra Petch',sans-serif; font-size: 11px; color: rgba(210,190,255,0.45); display: block; margin-top: 2px; }
+    .stg-price {
+      font-family: 'Russo One',sans-serif; font-size: 14px;
+      color: #FF4D92; white-space: nowrap; flex-shrink: 0; margin-left: auto;
+    }
+
+    /* ── Chapter selector in modal ──────────────────── */
+    .stg-ch-row { display: flex; gap: 8px; margin: 6px 0 14px; }
+    .stg-ch-btn {
+      flex: 1; padding: 8px 4px; border-radius: 8px;
+      border: 1.5px solid rgba(124,58,237,0.22);
+      background: rgba(255,255,255,0.02);
+      cursor: pointer; text-align: center; user-select: none;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px; color: rgba(210,190,255,0.5);
+      font-weight: 700; transition: all 0.18s;
+    }
+    .stg-ch-btn:hover { border-color: rgba(124,58,237,0.5); color: #EDE6FF; }
+    .stg-ch-btn.stg-ch-on {
+      border-color: rgba(124,58,237,0.75);
+      background: rgba(124,58,237,0.18); color: #C4B5FD;
+    }
+    .stg-item.stg-disabled { opacity: 0.38; cursor: not-allowed; pointer-events: none; }
+
+    .stg-crown-section {
+      margin: 10px 0 6px;
+      font-family: 'Chakra Petch',sans-serif;
+      font-size: 11px; color: rgba(210,190,255,0.45);
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .stg-crown-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .stg-crown-btn {
+      flex: 1; min-width: 50px; padding: 7px 4px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(251,191,36,0.22);
+      background: rgba(255,255,255,0.02);
+      cursor: pointer; text-align: center; user-select: none;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px; color: rgba(210,190,255,0.55);
+      font-weight: 700; transition: all 0.18s;
+    }
+    .stg-crown-btn:hover { border-color: rgba(251,191,36,0.5); color: #EDE6FF; }
+    .stg-crown-btn.stg-crown-on {
+      border-color: rgba(251,191,36,0.75);
+      background: rgba(251,191,36,0.1); color: #FDE047;
+    }
+
+    .stg-total-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0 16px; border-top: 1px solid rgba(124,58,237,0.20); margin-top: 8px;
+    }
+    .stg-total-lbl { font-family: 'Chakra Petch',sans-serif; font-size: 12px; color: rgba(210,190,255,0.55); text-transform: uppercase; letter-spacing: 0.8px; }
+    .stg-total-val { font-family: 'Russo One',sans-serif; font-size: 24px; color: rgba(210,190,255,0.3); transition: color 0.22s; }
+    .stg-total-val.has-total { color: #FF4D92; }
+
+    /* ── Order summary (sticky) ────────────────────────── */
+    #orderSummary {
+      position: sticky; bottom: 0;
+      background: linear-gradient(0deg,rgba(8,3,18,0.99) 0%,rgba(8,3,18,0.94) 100%);
+      border-top: 1px solid rgba(124,58,237,0.28);
+      padding: 14px 16px; margin: 0 -16px;
+      display: none; z-index: 100;
+    }
+    #orderSummary.sum-visible { display: none; }
+    .sum-items { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .sum-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 999px;
+      border: 1px solid rgba(124,58,237,0.35);
+      background: rgba(124,58,237,0.12);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px; color: #C4B5FD; font-weight: 600;
+    }
+    .sum-footer { display: flex; align-items: center; gap: 12px; }
+    .sum-total-label {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px; color: rgba(210,190,255,0.5);
+      text-transform: uppercase; letter-spacing: 0.8px;
+    }
+    .sum-total-val { font-family: 'Russo One', sans-serif; font-size: 22px; color: #FF4D92; }
+    #payBtn { margin-left: auto; padding: 11px 28px !important; font-size: 14px !important; }
+
+    /* ── Payment Modal ─────────────────────────────────── */
+    #payModal {
+      display: none; position: fixed; inset: 0;
+      z-index: 9000; background: rgba(0,0,0,0.78);
+      backdrop-filter: blur(5px); overflow-y: auto;
+    }
+    .pay-box {
+      max-width: 460px; margin: 40px auto;
+      background: #0e0620;
+      border: 1px solid rgba(124,58,237,0.4);
+      border-radius: 20px; padding: 28px;
+      position: relative;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+    }
+    .pay-close {
+      position: absolute; top: 14px; right: 16px;
+      background: none; border: none;
+      color: rgba(210,190,255,0.5); font-size: 20px;
+      cursor: pointer; line-height: 1;
+    }
+    .pay-close:hover { color: #EDE6FF; }
+    .pay-field-label {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px; color: rgba(210,190,255,0.45);
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
+    }
+    .pay-input {
+      width: 100%; box-sizing: border-box;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(124,58,237,0.28);
+      border-radius: 10px; color: #EDE6FF;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px; margin-bottom: 12px;
+    }
+    .pay-input:focus { outline: none; border-color: rgba(124,58,237,0.6); box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
+    .pay-select {
+      width: 100%; box-sizing: border-box;
+      padding: 10px 14px; background: #0e0620;
+      border: 1px solid rgba(124,58,237,0.28);
+      border-radius: 10px; color: #EDE6FF;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px; margin-bottom: 18px;
+    }
+    .pay-method-row { display: flex; gap: 10px; margin-bottom: 18px; }
+    .pay-method-btn {
+      flex: 1; padding: 9px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: transparent; color: rgba(210,190,255,0.55);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px; cursor: pointer; transition: all 0.18s;
+    }
+    .pay-method-btn.pm-active { background: rgba(124,58,237,0.25); border-color: rgba(124,58,237,0.6); color: #EDE6FF; }
+    .pay-slip-label {
+      display: block; width: 100%; box-sizing: border-box;
+      padding: 12px; margin-bottom: 12px;
+      background: rgba(124,58,237,0.12);
+      border: 2px dashed rgba(124,58,237,0.4);
+      border-radius: 12px; cursor: pointer;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px; color: #C4B5FD; text-align: center;
+    }
+    .pay-error {
+      display: none; margin-top: 12px;
+      background: rgba(248,113,113,0.1);
+      border: 1px solid rgba(248,113,113,0.3);
+      border-radius: 10px; padding: 12px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px; color: #F87171;
+    }
+    .pay-loading { display: none; text-align: center; padding: 20px; color: #FBBF24; font-family: 'Chakra Petch', sans-serif; font-size: 13px; }
+    .new-code-box {
+      font-family: monospace; font-size: 16px; color: #FFD84E;
+      background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px;
+      word-break: break-all; margin-bottom: 8px; cursor: pointer;
+    }
+
+    /* ── Toast ─────────────────────────────────────────── */
+    #toast {
+      position: fixed; bottom: 80px; left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: rgba(10,4,26,0.96);
+      border: 1px solid rgba(124,58,237,0.55);
+      border-radius: 12px; padding: 12px 22px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px; color: #EDE6FF;
+      z-index: 9999; opacity: 0;
+      transition: opacity 0.28s, transform 0.28s;
+      pointer-events: none; max-width: 90vw; text-align: center;
+    }
+    #toast.t-show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── Mobile ─────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .stage-card-grid { grid-template-columns: repeat(2, 1fr); }
+      .stage-card-grid-1 { grid-template-columns: repeat(2, 1fr); }
+      .stg-box { margin: 24px 16px; }
+      .pay-box { margin: 20px 12px; padding: 20px 16px; }
+      #orderSummary { margin: 0 -12px; }
+    }
+    @media (max-width: 480px) {
+      .stage-card-grid { grid-template-columns: 1fr; }
+      .stage-card-grid-1 { grid-template-columns: 1fr; }
+      .stg-box { margin: 12px 10px; padding: 20px 14px; }
+    }
+
+    select option { background-color: #0e0620; color: #EDE6FF; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-container">
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="เมนู">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="index.html" class="nav-logo">BATTLE CAT PRO MAX</a>
+    <ul class="nav-links">
+      <li><a href="index.html"><span data-i18n="nav_home">หน้าแรก</span></a></li>
+      <li><a href="shop.html"><span data-i18n="nav_shop">ร้านค้าไอเทม</span></a></li>
+      <li><a href="shop-codes.html"><span data-i18n="nav_shop_codes">รหัสสำเร็จรูป</span></a></li>
+      <li><a href="characters.html"><span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></a></li>
+      <li><a href="stages.html" class="active"><span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
+      <li><a href="orders.html"><span data-i18n="nav_orders">ออเดอร์</span></a></li>
+      <li><a href="loyalty.html">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
+      <li><a href="wallet.html">💰 <span data-i18n="nav_wallet">เติมเงิน</span></a></li>
+    </ul>
+    <div class="nav-cart" onclick="openCartPayModal()" style="cursor:pointer;">🛒<span class="cart-badge" id="cartCount">0</span></div>
+  </div>
+  <div class="mobile-nav" id="mobileNav" style="display:none" onclick="if(event.target===this)closeMobileMenu()">
+    <ul>
+      <li><a href="index.html" onclick="closeMobileMenu()">🏠 <span data-i18n="nav_home">หน้าแรก</span></a></li>
+      <li><a href="shop.html" onclick="closeMobileMenu()">🛍️ <span data-i18n="nav_shop">ร้านค้าไอเทม</span></a></li>
+      <li><a href="shop-codes.html" onclick="closeMobileMenu()">🎮 <span data-i18n="nav_shop_codes">รหัสสำเร็จรูป</span></a></li>
+      <li><a href="characters.html" onclick="closeMobileMenu()">🐱 <span data-i18n="nav_unlock_cat">ปลดล็อคแมว</span></a></li>
+      <li><a href="stages.html" class="active" onclick="closeMobileMenu()">📍 <span data-i18n="nav_unlock_stage">ปลดล็อคด่าน</span></a></li>
+      <li><a href="orders.html" onclick="closeMobileMenu()">📋 <span data-i18n="nav_orders">ออเดอร์</span></a></li>
+      <li><a href="loyalty.html" onclick="closeMobileMenu()">🎁 <span data-i18n="nav_loyalty">สะสมยอดซื้อ</span></a></li>
+      <li><a href="wallet.html" onclick="closeMobileMenu()">💰 <span data-i18n="nav_wallet">เติมเงิน</span></a></li>
+      <li><a href="cookie-run.html" onclick="closeMobileMenu()" style="color:#f97316">🍪 Cookie Run</a></li>
+    </ul>
+    <div id="mobileAuthSlot" class="mobile-nav-auth"></div>
+  </div>
+</nav>
+
+<div class="container" style="padding-bottom: 120px;">
+
+  <h1 class="section-title" data-i18n="stg_title">📍 ปลดล็อคด่าน</h1>
+  <p style="color:rgba(210,190,255,0.65);margin-bottom:28px;font-size:14px;" data-i18n="stg_subtitle">กดที่การ์ดเพื่อเลือกบริการ — ราคาเริ่มต้น ฿1 สำหรับทดสอบ</p>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 1 — MAIN STORY
+       ═══════════════════════════════════════════════════════ -->
+  <div class="stage-section">
+    <div class="stage-section-title">📖 Main Story</div>
+    <div class="stage-section-desc">Empire of Cats · Into the Future · Cats of the Cosmos</div>
+    <div class="stage-card-grid">
+
+      <!-- EoC -->
+      <div class="stage-card" data-card="eoc" onclick="openStgModal('story','eoc')">
+        <div class="stage-card-img-wrap">
+          <img src="pictures/EOC.png" alt="EoC" onerror="this.parentNode.innerHTML='📖'">
+        </div>
+        <div class="stage-card-body">
+          <div class="stage-card-name">Empire of Cats</div>
+          <div class="stage-card-sub">Ch.1 – 3</div>
+          <div class="stage-card-badges" id="badges-eoc"></div>
+          <div class="stage-card-cta" data-i18n="stg_choose_service">เลือกบริการ</div>
+        </div>
+      </div>
+
+      <!-- ItF -->
+      <div class="stage-card" data-card="itf" onclick="openStgModal('story','itf')">
+        <div class="stage-card-img-wrap">
+          <img src="pictures/ITF.png" alt="ItF" onerror="this.parentNode.innerHTML='🌙'">
+        </div>
+        <div class="stage-card-body">
+          <div class="stage-card-name">Into the Future</div>
+          <div class="stage-card-sub">Ch.4 – 6</div>
+          <div class="stage-card-badges" id="badges-itf"></div>
+          <div class="stage-card-cta" data-i18n="stg_choose_service">เลือกบริการ</div>
+        </div>
+      </div>
+
+      <!-- CotC -->
+      <div class="stage-card" data-card="cotc" onclick="openStgModal('story','cotc')">
+        <div class="stage-card-img-wrap">
+          <img src="pictures/COC.png" alt="CotC" onerror="this.parentNode.innerHTML='🌌'">
+        </div>
+        <div class="stage-card-body">
+          <div class="stage-card-name">Cats of the Cosmos</div>
+          <div class="stage-card-sub">Ch.7 – 9</div>
+          <div class="stage-card-badges" id="badges-cotc"></div>
+          <div class="stage-card-cta" data-i18n="stg_choose_service">เลือกบริการ</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 2 — LEGEND STAGES
+       ═══════════════════════════════════════════════════════ -->
+  <div class="stage-section">
+    <div class="stage-section-title">⚔️ Legend Stages</div>
+    <div class="stage-section-desc">Stories of Legend · Uncanny Legends · Zero Legends</div>
+    <div class="stage-card-grid">
+
+      <!-- SoL -->
+      <div class="stage-card" data-card="sol" onclick="openStgModal('legend','sol')">
+        <div class="stage-card-img-wrap">
+          <img src="pictures/SOL.png" alt="SoL" onerror="this.parentNode.innerHTML='⚔️'">
+        </div>
+        <div class="stage-card-body">
+          <div class="stage-card-name">Stories of Legend</div>
+          <div class="stage-card-sub">SoL</div>
+          <div class="stage-card-badges" id="badges-sol"></div>
+          <div class="stage-card-cta" data-i18n="stg_choose_service">เลือกบริการ</div>
+        </div>
+      </div>
+
+      <!-- UL -->
+      <div class="stage-card" data-card="ul" onclick="openStgModal('legend','ul')">
+        <div class="stage-card-img-wrap">
+          <img src="pictures/UL.png" alt="UL" onerror="this.parentNode.innerHTML='🌀'">
+        </div>
+        <div class="stage-card-body">
+          <div class="stage-card-name">Uncanny Legends</div>
+          <div class="stage-card-sub">UL</div>
+          <div class="stage-card-badges" id="badges-ul"></div>
+          <div class="stage-card-cta" data-i18n="stg_choose_service">เลือกบริการ</div>
+        </div>
+      </div>
+
+      <!-- ZL -->
+      <div class="stage-card" data-card="zl" onclick="openStgModal('legend','zl')">
+        <div class="stage-card-img-wrap">
+          <img src="pictures/ZL.png" alt="ZL" onerror="this.parentNode.innerHTML='🔮'">
+        </div>
+        <div class="stage-card-body">
+          <div class="stage-card-name">Zero Legends</div>
+          <div class="stage-card-sub">ZL</div>
+          <div class="stage-card-badges" id="badges-zl"></div>
+          <div class="stage-card-cta" data-i18n="stg_choose_service">เลือกบริการ</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 3 — AKU REALM
+       ═══════════════════════════════════════════════════════ -->
+  <div class="stage-section">
+    <div class="stage-section-title">🌑 Aku Realm</div>
+    <div class="stage-section-desc" data-i18n="stg_aku_desc">ปลดล็อคโลกดำ และ/หรือ เคลียร์ด่าน Aku Chapters</div>
+    <div class="stage-card-grid-1">
+      <div class="stage-card" data-card="aku" onclick="openStgModal('aku','aku')">
+        <div class="stage-card-img-wrap">
+          <img src="pictures/TAK.png" alt="Aku" onerror="this.parentNode.innerHTML='🌑'">
+        </div>
+        <div class="stage-card-body">
+          <div class="stage-card-name">Aku Realm</div>
+          <div class="stage-card-sub" data-i18n="stg_aku_land">ดินแดนแห่ง Aku</div>
+          <div class="stage-card-badges" id="badges-aku"></div>
+          <div class="stage-card-cta" data-i18n="stg_choose_service">เลือกบริการ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trust signals -->
+  <div class="trust-row" style="margin-top:12px;">
+    <div class="trust-card">
+      <div class="trust-icon">✅</div>
+      <div class="trust-title" data-i18n="trust_safe_title">ปลอดภัย</div>
+      <div class="trust-sub" data-i18n="stg_trust_safe_sub">ไม่เสี่ยงโดน Ban</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">⚡</div>
+      <div class="trust-title" data-i18n="stg_trust_fast">รวดเร็ว</div>
+      <div class="trust-sub" data-i18n="stg_trust_fast_sub">ภายใน 5 นาที</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">🏆</div>
+      <div class="trust-title" data-i18n="stg_trust_perm">ถาวร</div>
+      <div class="trust-sub" data-i18n="stg_trust_perm_sub">ผ่านด่านถาวร</div>
+    </div>
+  </div>
+
+  <!-- ORDER SUMMARY (sticky bottom) -->
+  <div id="orderSummary">
+    <div class="sum-items" id="sumItems"></div>
+    <div class="sum-footer">
+      <span class="sum-total-label" data-i18n="stg_total_label">รวม</span>
+      <span class="sum-total-val" id="sumTotal">฿0</span>
+      <button class="btn btn-primary" id="payBtn" onclick="addStagesToCart()">🛒 <span data-i18n="stg_add_cart">ใส่ตะกร้า</span></button>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Battle Cat Pro Max</h4>
+        <p style="font-size:13px;line-height:1.6;" data-i18n="footer_brand_desc">บริการร้านค้าไอเทม Battle Cats แบบมืออาชีพ ปลอดภัย รวดเร็ว และไม่โดน Ban</p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_services">บริการ</h4>
+        <ul>
+          <li><a href="shop.html" data-i18n="nav_shop">ร้านค้าไอเทม</a></li>
+          <li><a href="characters.html" data-i18n="nav_unlock_cat">ปลดล็อคแมว</a></li>
+          <li><a href="stages.html" data-i18n="nav_unlock_stage">ปลดล็อคด่าน</a></li>
+          <li><a href="orders.html" data-i18n="nav_orders_mine">ออเดอร์ของฉัน</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer_contact">ติดต่อเรา</h4>
+        <ul>
+          <li><a href="https://www.facebook.com/pronajaa.gamedee.1/" target="_blank" rel="noopener">📘 <span data-i18n="fb_user">Facebook (ผู้ใช้)</span></a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61572054218886" target="_blank" rel="noopener">📘 <span data-i18n="fb_page">Facebook (เพจร้าน)</span></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="social-row">
+      <div class="social-pill">🌍 <span data-i18n="lang_pill">ภาษาไทย</span></div>
+      <div class="social-pill">✅ <span data-i18n="verified_pill">ได้รับการตรวจสอบ</span></div>
+      <div class="social-pill">⭐ 2,000+ <span data-i18n="users_pill">ผู้ใช้</span></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Battle Cat Pro Max · <span data-i18n="footer_bottom">บริการนี้ไม่ใช่ผลิตภัณฑ์อย่างเป็นทางการของ PONOS</span></p>
+    </div>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     STAGE SERVICE MODAL
+     ═══════════════════════════════════════════════════════ -->
+<div id="stgModal" onclick="if(event.target===this)closeStgModal()">
+  <div class="stg-box">
+    <button class="stg-close" onclick="closeStgModal()">✕</button>
+    <div class="stg-header">
+      <div class="stg-thumb" id="stgThumb"></div>
+      <div>
+        <div class="stg-hd-title" id="stgTitle"></div>
+        <div class="stg-hd-sub" id="stgSubtitle"></div>
+      </div>
+    </div>
+    <div id="stgItems"></div>
+    <div class="stg-total-row">
+      <span class="stg-total-lbl" data-i18n="stg_modal_total">รวมการ์ดนี้</span>
+      <span class="stg-total-val" id="stgTotalVal">฿0</span>
+    </div>
+    <button class="btn btn-primary" style="width:100%;" onclick="saveToCartAndClose()">🛒 <span data-i18n="stg_save_cart">บันทึกใส่ตะกร้า</span></button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAYMENT MODAL
+     ═══════════════════════════════════════════════════════ -->
+<div id="payModal" onclick="if(event.target===this)closePayModal()">
+  <div class="pay-box">
+    <button class="pay-close" onclick="closePayModal()">✕</button>
+
+    <div id="payStep-order">
+      <div style="font-family:'Russo One',sans-serif;font-size:16px;color:#EDE6FF;margin-bottom:4px;" data-i18n="stg_pay_for">ชำระเงินสำหรับ</div>
+      <div id="payOrderDesc" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:6px;line-height:1.6;"></div>
+      <div style="font-family:'Russo One',sans-serif;font-size:26px;color:#FF4D92;margin-bottom:18px;" id="payAmount"></div>
+
+      <div class="pay-field-label">Transfer Code</div>
+      <input type="text" id="payTC" class="pay-input" placeholder="ABCD1234...">
+
+      <div class="pay-field-label">Confirmation Code</div>
+      <input type="text" id="payCC" class="pay-input" placeholder="1234">
+
+      <div class="pay-field-label">Server</div>
+      <select id="paySrv" class="pay-select">
+        <option value="1">EN (Global / TH / EU)</option>
+        <option value="2" data-i18n="stg_server_jp">JP (ญี่ปุ่น)</option>
+        <option value="3" data-i18n="stg_server_kr">KR (เกาหลี)</option>
+        <option value="4" data-i18n="stg_server_tw">TW (ไต้หวัน)</option>
+      </select>
+
+      <div class="pay-field-label" style="margin-bottom:8px;" data-i18n="sc_pd_payment_method">วิธีชำระเงิน</div>
+      <div class="pay-method-row">
+        <button id="pmBtnPP" class="pay-method-btn" onclick="setPayMethod('promptpay')" style="display:none;">📱 PromptPay</button>
+        <button id="pmBtnTM" class="pay-method-btn" onclick="setPayMethod('truemoney')" style="display:none;">💳 TrueWallet</button>
+        <button id="pmBtnWL" class="pay-method-btn pm-active" onclick="setPayMethod('wallet')" style="background:rgba(52,211,153,0.18);border-color:rgba(52,211,153,0.6);color:#34d399;">💰 Wallet</button>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;" onclick="createStageOrder()"><span data-i18n="stg_pay_now">ชำระเงิน</span> →</button>
+    </div>
+
+    <div id="payStep-qr" style="display:none;text-align:center;">
+      <div id="payQrBlock">
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.65);margin-bottom:12px;"><span data-i18n="stg_scan_qr">สแกน QR PromptPay ชำระ</span> <span id="payQrAmt" style="color:#FF4D92;font-family:'Russo One',sans-serif;"></span></div>
+        <img id="payQrImg" src="" style="width:200px;height:200px;border-radius:12px;background:#fff;padding:8px;margin-bottom:16px;">
+      </div>
+      <div id="payTmBlock" style="display:none;background:rgba(255,120,0,0.08);border:1px solid rgba(255,120,0,0.35);border-radius:14px;padding:20px;margin-bottom:16px;">
+        <div style="font-size:28px;margin-bottom:8px;">🧧</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.7);margin-bottom:8px;" data-i18n="sc_tw_info_short">ส่งซองอั่งเป่า (Angpao) มูลค่าตามยอดด้านล่าง</div>
+        <div id="payTmFeeBreakdown" style="display:none;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-bottom:4px;line-height:1.8;">
+          <span data-i18n="sc_tw_base_label">ราคาสินค้า:</span> <span id="payBaseAmt" style="color:#EDE6FF;"></span><br>
+          <span data-i18n="sc_tw_fee_label">ค่าธรรมเนียม TrueWallet 2.9% (สูงสุด 20 บาท):</span> <span id="payFeeAmt" style="color:#FBBF24;"></span>
+        </div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);"><span data-i18n="sc_tw_total_label">ยอดที่ต้องชำระ:</span> <span id="payTmAmt" style="color:#FF4D92;font-family:'Russo One',sans-serif;"></span></div>
+      </div>
+      <div id="paySlipBlock">
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;margin-bottom:16px;" data-i18n="stg_upload_slip_after">หลังโอนแล้ว อัปโหลดสลิปด้านล่าง</div>
+        <label class="pay-slip-label" for="paySlip">📎 <span data-i18n="stg_choose_slip_file">เลือกไฟล์สลิป</span></label>
+        <input type="file" id="paySlip" accept="image/*" style="display:none;" onchange="slipSelected(this)">
+        <div id="paySlipName" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-bottom:12px;"></div>
+      </div>
+      <div id="payVoucherBlock" style="display:none;">
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;margin-bottom:10px;" data-i18n="sc_tw_paste_label">วางโค้ด/ลิงก์ซองอั่งเป่าด้านล่าง</div>
+        <input type="text" id="payVoucherInput" class="pay-input" placeholder="https://gift.truemoney.com/campaign/?v=..." oninput="voucherChanged(this)">
+      </div>
+      <!-- Wallet confirm -->
+      <div id="payWalletBlock" style="display:none;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.3);border-radius:14px;padding:20px;text-align:center;margin-bottom:12px;">
+        <div style="font-size:28px;margin-bottom:6px;">💰</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:4px;">ยอดคงเหลือ</div>
+        <div id="payWalletBal" style="font-family:'Russo One',sans-serif;font-size:26px;color:#34d399;margin-bottom:4px;">฿—</div>
+        <div id="payWalletAmt" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);margin-bottom:12px;"></div>
+        <div id="payWalletLow" data-i18n="wl_low_balance" style="display:none;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#f87171;margin-bottom:10px;">ยอดเงินไม่พอ — <a href="wallet.html" style="color:#34d399;">เติมเงิน</a></div>
+        <button id="payWalletBtn" data-i18n="wl_confirm_btn" onclick="stagePayWallet()" style="width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#059669,#10b981);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">✅ ยืนยันชำระด้วยกระเป๋าเงิน</button>
+      </div>
+      <button class="btn btn-primary" style="width:100%;" id="payVerifyBtn" onclick="verifyPayment()" disabled data-i18n="stg_verify_payment">ยืนยันการชำระเงิน</button>
+    </div>
+
+    <div id="payStep-done" style="display:none;text-align:center;">
+      <div style="font-size:48px;margin-bottom:12px;">✅</div>
+      <div style="font-family:'Russo One',sans-serif;font-size:16px;color:#4ADE80;margin-bottom:16px;" data-i18n="stg_success">สำเร็จ!</div>
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;" data-i18n="stg_new_tc">Transfer Code ใหม่ (กดเพื่อ Copy)</div>
+      <div id="payNewTC" class="new-code-box" onclick="copyCode('payNewTC')"></div>
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;" data-i18n="stg_new_cc">Confirmation Code ใหม่</div>
+      <div id="payNewCC" class="new-code-box" onclick="copyCode('payNewCC')"></div>
+      <div id="payWalletCreditedMsg" style="display:none;margin-top:8px;padding:8px 12px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#34d399;text-align:center;"></div>
+      <button class="btn btn-outline" style="width:100%;margin-top:8px;" onclick="closePayModal()" data-i18n="close_btn">ปิด</button>
+    </div>
+
+    <div id="payError" class="pay-error"></div>
+    <div id="payLoading" class="pay-loading">⏳ <span data-i18n="stg_processing">กำลังประมวลผล...</span></div>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────
+var PRICE_CLEAR    = 30;
+var PRICE_TREASURE = 40;
+var PRICE_ZOMBIE   = 40;
+var PRICE_AKU_UNLOCK   = 40;
+var PRICE_AKU_CHAPTERS = 100;
+var PRICE = 1; // fallback
+var LEGEND_PRICE = {
+  sol: { 1: 30, 2: 50, 3: 70,  4: 100 },
+  ul:  { 1: 30, 2: 50, 3: 70,  4: 100 },
+  zl:  { 1: 40, 2: 80 },
+};
+function getLegendPrice(key, crown) {
+  return (LEGEND_PRICE[key] && LEGEND_PRICE[key][crown]) || PRICE;
+}
+
+var CARD_CHAPTERS = { eoc: [1,2,3], itf: [4,5,6], cotc: [7,8,9] };
+
+var storyState = {
+  eoc:  { clear: false, treasure: false, zombie: false, selCh: [1,2,3] },
+  itf:  { clear: false, treasure: false, zombie: false, selCh: [4,5,6] },
+  cotc: { clear: false, treasure: false, zombie: false, selCh: [7,8,9] },
+};
+var LEGEND_MAX_CROWN = { sol: 4, ul: 4, zl: 2 };
+var legendState = {
+  sol: { clear: false, crown: 1 },
+  ul:  { clear: false, crown: 1 },
+  zl:  { clear: false, crown: 1 },
+};
+var akuState = { unlock: false, chapters: false };
+
+var _currentSection = '';
+var _currentCard    = '';
+var _payMethod  = 'wallet';
+var _orderId    = '';
+var _slipFile   = null;
+var _checkoutFromCart = false;
+var _cartStagesConfig = null;
+var _cartStagesTotal  = 0;
+
+// ── Stage Service Modal ────────────────────────────────────────
+var CARD_INFO = {
+  eoc:  { title: 'Empire of Cats',    sub: 'Ch.1 – 3',         emoji: '📖' },
+  itf:  { title: 'Into the Future',   sub: 'Ch.4 – 6',         emoji: '🌙' },
+  cotc: { title: 'Cats of the Cosmos',sub: 'Ch.7 – 9',         emoji: '🌌' },
+  sol:  { title: 'Stories of Legend', sub: 'Legend Stages',    emoji: '⚔️' },
+  ul:   { title: 'Uncanny Legends',   sub: 'Legend Stages',    emoji: '🌀' },
+  zl:   { title: 'Zero Legends',      sub: 'Legend Stages',    emoji: '🔮' },
+  aku:  { title: 'Aku Realm',         get sub() { return window.bcT('stg_aku_land', 'ดินแดนแห่ง Aku'); },   emoji: '🌑' },
+};
+var CARD_IMG = {
+  eoc: 'pictures/EOC.png', itf: 'pictures/ITF.png',
+  cotc: 'pictures/COC.png', sol: 'pictures/SOL.png',
+  ul: 'pictures/UL.png', zl: 'pictures/ZL.png',
+  aku: 'pictures/TAK.png',
+};
+
+function buildStgItemsHtml(section, key) {
+  var html = '';
+  var info = CARD_INFO[key];
+  if (section === 'story') {
+    var s = storyState[key];
+    var allCh = CARD_CHAPTERS[key];
+    var hasCh = s.selCh.length > 0;
+    // Chapter selector
+    html += '<div class="stg-crown-section">' + window.bcT('stg_choose_chapter', 'เลือก Chapter') + '</div>';
+    html += '<div class="stg-ch-row">';
+    allCh.forEach(function(ch) {
+      var isOn = s.selCh.indexOf(ch) >= 0;
+      var dispNum = ch - allCh[0] + 1;
+      html += '<div class="stg-ch-btn' + (isOn ? ' stg-ch-on' : '') + '" onclick="toggleStgChapter(' + ch + ')">Ch.' + dispNum + '</div>';
+    });
+    html += '</div>';
+    // Services
+    html += stgItemHtml('clear',    s.clear,    window.bcT('stg_clear_label','📖 Clear Story'),   window.bcT('stg_clear_desc','ผ่านด่านหลักทุกด่านใน {title}').replace('{title}', info.title), !hasCh, PRICE_CLEAR);
+    html += stgItemHtml('treasure', s.treasure, window.bcT('stg_treasure_label','🏆 Gold Treasure'), window.bcT('stg_treasure_desc','เติมสมบัติ (Treasure) ระดับ Gold ทุกด่านใน chapter'), !hasCh, PRICE_TREASURE);
+    html += stgItemHtml('zombie',   s.zombie,   window.bcT('stg_zombie_label','🧟 Zombie Clear'),  window.bcT('stg_zombie_desc','เคลียร์ Outbreak (Zombie) chapters'), !hasCh, PRICE_ZOMBIE);
+  } else if (section === 'legend') {
+    var maxCrown = LEGEND_MAX_CROWN[key] || 4;
+    var curCrown = legendState[key].crown;
+    html += stgItemHtml('clear', legendState[key].clear, '⚔️ Clear ' + info.title, window.bcT('stg_legend_clear_desc','เคลียร์ทุกด่านพร้อม crown ที่เลือก'), false, getLegendPrice(key, legendState[key].crown));
+    html += '<div class="stg-crown-section">' + window.bcT('stg_crown_count','จำนวน Crown') + '</div>';
+    html += '<div class="stg-crown-row">';
+    for (var n = 1; n <= maxCrown; n++) {
+      html += '<div class="stg-crown-btn' + (curCrown === n ? ' stg-crown-on' : '') + '" onclick="setLegendCrown(' + n + ')">' + '👑'.repeat(n) + '</div>';
+    }
+    html += '</div>';
+  } else if (section === 'aku') {
+    html += stgItemHtml('unlock',   akuState.unlock,   window.bcT('stg_aku_unlock_label','🔓 Unlock Aku Realm'),   window.bcT('stg_aku_unlock_desc','ปลดล็อคโลกดำ Aku'), false, PRICE_AKU_UNLOCK);
+    html += stgItemHtml('chapters', akuState.chapters, window.bcT('stg_aku_chapters_label','⚔️ Clear Aku Chapters'), window.bcT('stg_aku_chapters_desc','เคลียร์ด่าน Aku Chapters'), false, PRICE_AKU_CHAPTERS);
+  }
+  return html;
+}
+
+function openStgModal(section, key) {
+  _currentSection = section;
+  _currentCard    = key;
+  var info = CARD_INFO[key];
+
+  // การ์ด Legend ที่ยังไม่เคยเลือกอะไรเลย (ไม่อยู่ในตะกร้า) — ติ๊ก Clear + crown 1 ไว้ก่อน
+  // ให้เห็นราคาทันทีตอนเปิด แต่ถ้ามีของอยู่ในตะกร้าแล้วจะไม่ไปรีเซ็ตทับของเดิม
+  if (section === 'legend' && !legendState[key].clear) {
+    legendState[key].clear = true;
+    legendState[key].crown = legendState[key].crown || 1;
+  }
+
+  document.getElementById('stgTitle').textContent    = info.title;
+  document.getElementById('stgSubtitle').textContent = info.sub;
+  document.getElementById('stgThumb').innerHTML =
+    '<img src="' + CARD_IMG[key] + '" alt="' + info.title + '" onerror="this.parentNode.innerHTML=\'' + info.emoji + '\'">';
+
+  document.getElementById('stgItems').innerHTML = buildStgItemsHtml(section, key);
+  updateStgTotal();
+
+  document.getElementById('stgModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function stgItemHtml(field, checked, label, desc, disabled, price) {
+  var cls = 'stg-item' + (checked ? ' stg-checked' : '') + (disabled ? ' stg-disabled' : '');
+  var onclick = disabled ? '' : 'onclick="toggleStgItem(\'' + field + '\')"';
+  var p = (price !== undefined) ? price : PRICE;
+  return '<div class="' + cls + '" data-field="' + field + '" ' + onclick + '>' +
+    '<span class="stg-cb"></span>' +
+    '<span style="flex:1"><span class="stg-lbl">' + label + '</span><span class="stg-desc">' + desc + '</span></span>' +
+    '<span class="stg-price">฿' + p + '</span>' +
+    '</div>';
+}
+
+function toggleStgItem(field) {
+  if (_currentSection === 'story') {
+    storyState[_currentCard][field] = !storyState[_currentCard][field];
+  } else if (_currentSection === 'legend') {
+    legendState[_currentCard][field] = !legendState[_currentCard][field];
+  } else if (_currentSection === 'aku') {
+    akuState[field] = !akuState[field];
+  }
+  document.getElementById('stgItems').innerHTML = buildStgItemsHtml(_currentSection, _currentCard);
+  updateStgTotal();
+  updateCardVisual(_currentCard, _currentSection);
+  recalc();
+}
+
+function toggleStgChapter(ch) {
+  var s = storyState[_currentCard];
+  var idx = s.selCh.indexOf(ch);
+  if (idx >= 0) {
+    s.selCh.splice(idx, 1);
+    if (s.selCh.length === 0) { s.clear = false; s.treasure = false; s.zombie = false; }
+  } else {
+    s.selCh.push(ch);
+    s.selCh.sort(function(a,b){return a-b;});
+  }
+  document.getElementById('stgItems').innerHTML = buildStgItemsHtml(_currentSection, _currentCard);
+  updateStgTotal();
+  updateCardVisual(_currentCard, _currentSection);
+  recalc();
+}
+
+function setLegendCrown(n) {
+  legendState[_currentCard].crown = n;
+  document.getElementById('stgItems').innerHTML = buildStgItemsHtml(_currentSection, _currentCard);
+  updateStgTotal();
+  updateCardVisual(_currentCard, _currentSection);
+  recalc();
+}
+
+function updateStgTotal() {
+  var total = 0;
+  if (_currentSection === 'story') {
+    var s = storyState[_currentCard];
+    if (s.clear)    total += PRICE_CLEAR;
+    if (s.treasure) total += PRICE_TREASURE;
+    if (s.zombie)   total += PRICE_ZOMBIE;
+  } else if (_currentSection === 'legend') {
+    if (legendState[_currentCard].clear) total += getLegendPrice(_currentCard, legendState[_currentCard].crown);
+  } else if (_currentSection === 'aku') {
+    if (akuState.unlock)   total += PRICE_AKU_UNLOCK;
+    if (akuState.chapters) total += PRICE_AKU_CHAPTERS;
+  }
+  var el = document.getElementById('stgTotalVal');
+  el.textContent = '฿' + total;
+  el.classList.toggle('has-total', total > 0);
+}
+
+function updateCardVisual(key, section) {
+  var cardEl = document.querySelector('[data-card="' + key + '"]');
+  if (!cardEl) return;
+  var badges = [], hasAny = false;
+
+  if (section === 'story') {
+    var s = storyState[key];
+    var allCh = CARD_CHAPTERS[key];
+    var hasCh = s.selCh.length > 0;
+    var chLabel = '';
+    if (hasCh && s.selCh.length < allCh.length) {
+      chLabel = 'Ch.' + s.selCh.map(function(c){ return c - allCh[0] + 1; }).join('+');
+    }
+    if (s.clear    && hasCh) { badges.push({ text: (chLabel ? chLabel + ' ' : '') + 'Clear',    cls: 'stage-badge' }); hasAny = true; }
+    if (s.treasure && hasCh) { badges.push({ text: (chLabel ? chLabel + ' ' : '') + 'Treasure', cls: 'stage-badge' }); hasAny = true; }
+    if (s.zombie   && hasCh) { badges.push({ text: (chLabel ? chLabel + ' ' : '') + 'Zombie',   cls: 'stage-badge' }); hasAny = true; }
+    cardEl.className = 'stage-card' + (hasAny ? ' card-active' : '');
+  } else if (section === 'legend') {
+    if (legendState[key].clear) {
+      var crownEmoji = '👑'.repeat(legendState[key].crown);
+      badges.push({ text: crownEmoji, cls: 'stage-badge stage-badge-legend' });
+      hasAny = true;
+    }
+    cardEl.className = 'stage-card' + (hasAny ? ' card-active-legend' : '');
+  } else if (section === 'aku') {
+    if (akuState.unlock)   { badges.push({ text: 'Unlock',   cls: 'stage-badge stage-badge-aku' }); hasAny = true; }
+    if (akuState.chapters) { badges.push({ text: 'Chapters', cls: 'stage-badge stage-badge-aku' }); hasAny = true; }
+    cardEl.className = 'stage-card' + (hasAny ? ' card-active-aku' : '');
+  }
+
+  var badgesEl = document.getElementById('badges-' + key);
+  if (badgesEl) badgesEl.innerHTML = badges.map(function(b) { return '<span class="' + b.cls + '">' + b.text + '</span>'; }).join('');
+
+  var ctaEl = cardEl.querySelector('.stage-card-cta');
+  if (ctaEl) ctaEl.textContent = hasAny ? window.bcT('stg_edit_service','แก้ไขบริการ') : window.bcT('stg_choose_service','เลือกบริการ');
+}
+
+function closeStgModal() {
+  document.getElementById('stgModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function saveToCartAndClose() {
+  // จำการ์ดที่กำลัง edit ก่อน close
+  var editSection = _currentSection;
+  var editKey     = _currentCard;
+  closeStgModal();
+
+  // keys ของการ์ดนี้เท่านั้นที่จะถูกแทนที่
+  var removeKeys = _cardKeys(editSection, editKey);
+  var newItems   = _buildItemsForCard(editSection, editKey);
+
+  var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  // ลบแค่ items ของการ์ดนี้ ไม่แตะการ์ดอื่น
+  cart = cart.filter(function(i) { return removeKeys.indexOf(i.key) < 0; });
+  newItems.forEach(function(item) { cart.push(item); });
+  localStorage.setItem('cart', JSON.stringify(cart));
+  document.getElementById('cartCount').textContent = cart.length;
+  if (newItems.length) showToast(window.bcT('stg_toast_updated','อัปเดตตะกร้าแล้ว ✅ ({n} บริการ)').replace('{n}', newItems.length));
+  else showToast(window.bcT('stg_toast_removed','ลบบริการการ์ดนี้ออกจากตะกร้าแล้ว'));
+}
+
+function _cardKeys(section, key) {
+  if (section === 'story')  return ['stage_'+key+'_clear', 'stage_'+key+'_treasure', 'stage_'+key+'_zombie'];
+  if (section === 'legend') return ['stage_'+key+'_clear'];
+  return ['stage_aku_unlock', 'stage_aku_chapters'];
+}
+
+function _buildItemsForCard(section, key) {
+  var items = [];
+  var storyNames = { eoc:'EoC', itf:'ItF', cotc:'CotC' };
+  var legNames   = { sol:'SoL', ul:'UL', zl:'ZL' };
+  if (section === 'story') {
+    var s = storyState[key]; if (!s.selCh.length) return items;
+    var allCh = CARD_CHAPTERS[key];
+    var chLabel = s.selCh.map(function(c){ return 'Ch.'+(c-allCh[0]+1); }).join('+');
+    if (s.clear)    items.push({ key:'stage_'+key+'_clear',    type:'stage_service', name:'📖 Clear Story '+storyNames[key]+' ('+chLabel+')',    price:PRICE_CLEAR,    amount:1, stage_cat:'story', stage_field:'clear',    stage_target:key, stage_chapters:s.selCh.slice() });
+    if (s.treasure) items.push({ key:'stage_'+key+'_treasure', type:'stage_service', name:'🏆 Gold Treasure '+storyNames[key]+' ('+chLabel+')', price:PRICE_TREASURE, amount:1, stage_cat:'story', stage_field:'treasure', stage_target:key, stage_chapters:s.selCh.slice() });
+    if (s.zombie)   items.push({ key:'stage_'+key+'_zombie',   type:'stage_service', name:'🧟 Zombie Clear '+storyNames[key]+' ('+chLabel+')',   price:PRICE_ZOMBIE,   amount:1, stage_cat:'story', stage_field:'zombie',   stage_target:key, stage_chapters:s.selCh.slice() });
+  } else if (section === 'legend') {
+    if (legendState[key].clear) items.push({ key:'stage_'+key+'_clear', type:'stage_service', name:'⚔️ Clear '+legNames[key]+' '+'👑'.repeat(legendState[key].crown), price:getLegendPrice(key, legendState[key].crown), amount:1, stage_cat:'legend', stage_field:'clear', stage_target:key, stage_crown:legendState[key].crown });
+  } else {
+    if (akuState.unlock)   items.push({ key:'stage_aku_unlock',   type:'stage_service', name:'🔓 Aku Realm Unlock',   price:PRICE_AKU_UNLOCK,   amount:1, stage_cat:'aku', stage_field:'unlock'   });
+    if (akuState.chapters) items.push({ key:'stage_aku_chapters', type:'stage_service', name:'⚔️ Aku Chapters Clear', price:PRICE_AKU_CHAPTERS, amount:1, stage_cat:'aku', stage_field:'chapters' });
+  }
+  return items;
+}
+
+// ── Recalculate total (sticky bar) ────────────────────────────
+function calcTotal() {
+  var total = 0;
+  ['eoc','itf','cotc'].forEach(function(k) {
+    var s = storyState[k];
+    if (s.clear)    total += PRICE_CLEAR;
+    if (s.treasure) total += PRICE_TREASURE;
+    if (s.zombie)   total += PRICE_ZOMBIE;
+  });
+  ['sol','ul','zl'].forEach(function(k) { if (legendState[k].clear) total += getLegendPrice(k, legendState[k].crown); });
+  if (akuState.unlock)   total += PRICE_AKU_UNLOCK;
+  if (akuState.chapters) total += PRICE_AKU_CHAPTERS;
+  return total;
+}
+
+function recalc() {
+  var total = calcTotal();
+  var tags  = [];
+  var storyNames = { eoc:'EoC', itf:'ItF', cotc:'CotC' };
+  ['eoc','itf','cotc'].forEach(function(k) {
+    var s = storyState[k];
+    var parts = [];
+    if (s.clear)    parts.push('Clear');
+    if (s.treasure) parts.push('Treasure');
+    if (s.zombie)   parts.push('Zombie');
+    var storySum = (s.clear ? PRICE_CLEAR : 0) + (s.treasure ? PRICE_TREASURE : 0) + (s.zombie ? PRICE_ZOMBIE : 0);
+    if (parts.length) tags.push({ label: storyNames[k] + ': ' + parts.join('+'), price: storySum });
+  });
+  var legNames = { sol:'SoL', ul:'UL', zl:'ZL' };
+  ['sol','ul','zl'].forEach(function(k) {
+    if (legendState[k].clear) tags.push({ label: legNames[k] + ' ' + '👑'.repeat(legendState[k].crown), price: getLegendPrice(k, legendState[k].crown) });
+  });
+  if (akuState.unlock)   tags.push({ label: 'Aku Unlock',   price: PRICE_AKU_UNLOCK });
+  if (akuState.chapters) tags.push({ label: 'Aku Chapters', price: PRICE_AKU_CHAPTERS });
+
+  var sumEl = document.getElementById('orderSummary');
+  if (total > 0) {
+    sumEl.classList.add('sum-visible');
+    document.getElementById('sumTotal').textContent = '฿' + total;
+    document.getElementById('sumItems').innerHTML = tags.map(function(t) {
+      return '<span class="sum-tag">' + t.label + '<span style="color:#FF4D92;margin-left:2px;">฿' + t.price + '</span></span>';
+    }).join('');
+  } else {
+    sumEl.classList.remove('sum-visible');
+  }
+}
+
+// ── Payment modal helpers ──────────────────────────────────────
+function buildOrderDesc() {
+  var lines = [];
+  var storyNames = { eoc:'EoC', itf:'ItF', cotc:'CotC' };
+  ['eoc','itf','cotc'].forEach(function(k) {
+    var s = storyState[k];
+    var parts = [];
+    if (s.clear)    parts.push('Clear');
+    if (s.treasure) parts.push('Treasure');
+    if (s.zombie)   parts.push('Zombie');
+    if (parts.length) lines.push(storyNames[k] + '(' + parts.join('+') + ')');
+  });
+  var legNames = { sol:'SoL', ul:'UL', zl:'ZL' };
+  ['sol','ul','zl'].forEach(function(k) {
+    if (legendState[k].clear) lines.push(legNames[k] + ' ' + '👑'.repeat(legendState[k].crown));
+  });
+  if (akuState.unlock)   lines.push('Aku Unlock');
+  if (akuState.chapters) lines.push('Aku Chapters');
+  return lines.join(' · ');
+}
+
+function buildStagesConfig() {
+  var storyCh = [], treasureCh = [], zombieCh = [];
+  ['eoc','itf','cotc'].forEach(function(k) {
+    var s = storyState[k];
+    if (s.clear    && s.selCh.length) storyCh    = storyCh.concat(s.selCh);
+    if (s.treasure && s.selCh.length) treasureCh = treasureCh.concat(s.selCh);
+    if (s.zombie   && s.selCh.length) zombieCh   = zombieCh.concat(s.selCh);
+  });
+  var legendTypes = ['sol','ul','zl'].filter(function(k) { return legendState[k].clear; });
+  return {
+    story_chapters:    storyCh,
+    treasure_chapters: treasureCh,
+    zombie_chapters:   zombieCh,
+    legend_types:      legendTypes,
+    max_crown:         4,
+    legend_crowns:     (function() {
+      var lc = {};
+      legendTypes.forEach(function(k) { lc[k] = legendState[k].crown; });
+      return lc;
+    })(),
+    aku_unlock:        akuState.unlock,
+    aku_chapters:      akuState.chapters,
+  };
+}
+
+// ── Cart Integration ───────────────────────────────────────────
+// แต่ละบริการเป็น cart item แยกกัน เพื่อให้ลบได้ทีละรายการ
+
+function buildStageCartItems() {
+  var items = [];
+  var storyNames = { eoc:'EoC', itf:'ItF', cotc:'CotC' };
+  ['eoc','itf','cotc'].forEach(function(k) {
+    var s = storyState[k]; if (!s.selCh.length) return;
+    var allCh = CARD_CHAPTERS[k];
+    var chLabel = s.selCh.map(function(c){ return 'Ch.'+(c-allCh[0]+1); }).join('+');
+    if (s.clear)    items.push({ key:'stage_'+k+'_clear',    type:'stage_service', name:'📖 Clear Story '+storyNames[k]+' ('+chLabel+')',    price:PRICE_CLEAR,    amount:1, stage_cat:'story', stage_field:'clear',    stage_target:k, stage_chapters:s.selCh.slice() });
+    if (s.treasure) items.push({ key:'stage_'+k+'_treasure', type:'stage_service', name:'🏆 Gold Treasure '+storyNames[k]+' ('+chLabel+')', price:PRICE_TREASURE, amount:1, stage_cat:'story', stage_field:'treasure', stage_target:k, stage_chapters:s.selCh.slice() });
+    if (s.zombie)   items.push({ key:'stage_'+k+'_zombie',   type:'stage_service', name:'🧟 Zombie Clear '+storyNames[k]+' ('+chLabel+')',   price:PRICE_ZOMBIE,   amount:1, stage_cat:'story', stage_field:'zombie',   stage_target:k, stage_chapters:s.selCh.slice() });
+  });
+  var legNames = { sol:'SoL', ul:'UL', zl:'ZL' };
+  ['sol','ul','zl'].forEach(function(k) {
+    if (legendState[k].clear) {
+      var crownStr = '👑'.repeat(legendState[k].crown);
+      items.push({ key:'stage_'+k+'_clear', type:'stage_service', name:'⚔️ Clear '+legNames[k]+' '+crownStr, price:getLegendPrice(k, legendState[k].crown), amount:1, stage_cat:'legend', stage_field:'clear', stage_target:k, stage_crown:legendState[k].crown });
+    }
+  });
+  if (akuState.unlock)   items.push({ key:'stage_aku_unlock',   type:'stage_service', name:'🔓 Aku Realm Unlock',   price:PRICE_AKU_UNLOCK,   amount:1, stage_cat:'aku', stage_field:'unlock'   });
+  if (akuState.chapters) items.push({ key:'stage_aku_chapters', type:'stage_service', name:'⚔️ Aku Chapters Clear', price:PRICE_AKU_CHAPTERS, amount:1, stage_cat:'aku', stage_field:'chapters' });
+  return items;
+}
+
+function stageItemsToConfig(items) {
+  var storyCh=[], treasureCh=[], zombieCh=[], legendTypes=[], legendCrowns={};
+  var akuUnlock=false, akuChaps=false;
+  items.forEach(function(i) {
+    if (i.stage_cat === 'story') {
+      if (i.stage_field === 'clear')    storyCh    = storyCh.concat(i.stage_chapters||[]);
+      if (i.stage_field === 'treasure') treasureCh = treasureCh.concat(i.stage_chapters||[]);
+      if (i.stage_field === 'zombie')   zombieCh   = zombieCh.concat(i.stage_chapters||[]);
+    } else if (i.stage_cat === 'legend') {
+      legendTypes.push(i.stage_target);
+      legendCrowns[i.stage_target] = i.stage_crown || 4;
+    } else if (i.stage_cat === 'aku') {
+      if (i.stage_field === 'unlock')   akuUnlock = true;
+      if (i.stage_field === 'chapters') akuChaps  = true;
+    }
+  });
+  return { story_chapters:storyCh, treasure_chapters:treasureCh, zombie_chapters:zombieCh,
+           legend_types:legendTypes, max_crown:4, legend_crowns:legendCrowns,
+           aku_unlock:akuUnlock, aku_chapters:akuChaps };
+}
+
+function addStagesToCart() {
+  var newItems = buildStageCartItems();
+  if (!newItems.length) { showToast(window.bcT('stg_choose_service_first','กรุณาเลือกบริการก่อน')); return; }
+  var newKeys = newItems.map(function(i){ return i.key; });
+  var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  // ลบเฉพาะ keys ที่ซ้ำกับที่กำลังจะเพิ่ม ไม่แตะ items อื่น
+  cart = cart.filter(function(i) {
+    return i.key !== 'stages' && !(i.type === 'stage_service' && newKeys.indexOf(i.key) >= 0);
+  });
+  newItems.forEach(function(item) { cart.push(item); });
+  localStorage.setItem('cart', JSON.stringify(cart));
+  document.getElementById('cartCount').textContent = cart.length;
+  showToast(window.bcT('stg_toast_added','เพิ่ม {n} บริการลงตะกร้าแล้ว ✅').replace('{n}', newItems.length));
+}
+
+function openCartPayModal() {
+  var cart       = JSON.parse(localStorage.getItem('cart') || '[]');
+  var stageItems = cart.filter(function(i) { return i.type === 'stage_service'; });
+  // backward compat: old bundle key
+  if (!stageItems.length) {
+    var old = cart.find(function(i) { return i.key === 'stages'; });
+    if (old) { _checkoutFromCart=true; _cartStagesConfig=old.stages_config; _cartStagesTotal=old.price; _openPayWithStages(old.name, old.price); return; }
+    showToast(window.bcT('stg_cart_empty','ตะกร้าว่างอยู่ — เลือกบริการก่อน')); return;
+  }
+  _checkoutFromCart = true;
+  _cartStagesConfig = stageItemsToConfig(stageItems);
+  _cartStagesTotal  = stageItems.reduce(function(s,i){ return s+i.price; }, 0);
+  var desc = stageItems.map(function(i){ return i.name; }).join(' · ');
+  _openPayWithStages(desc, _cartStagesTotal);
+}
+
+function _openPayWithStages(desc, total) {
+  _orderId  = '';
+  _slipFile = null;
+  setPayMethod('promptpay');
+  document.getElementById('payOrderDesc').textContent  = desc;
+  document.getElementById('payAmount').textContent     = '฿' + total;
+  document.getElementById('payTC').value               = '';
+  document.getElementById('payCC').value               = '';
+  document.getElementById('paySlipName').textContent   = '';
+  document.getElementById('payVoucherInput').value     = '';
+  document.getElementById('payVerifyBtn').disabled     = true;
+  document.getElementById('payError').style.display    = 'none';
+  document.getElementById('payLoading').style.display  = 'none';
+  document.getElementById('payStep-order').style.display = '';
+  document.getElementById('payStep-qr').style.display    = 'none';
+  document.getElementById('payStep-done').style.display  = 'none';
+  document.getElementById('payModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+// ── Payment Modal ──────────────────────────────────────────────
+function openPayModal() {
+  var total = calcTotal();
+  if (total === 0) { showToast(window.bcT('stg_choose_service_first','กรุณาเลือกบริการก่อน')); return; }
+  _checkoutFromCart = false;
+  _orderId   = '';
+  _slipFile  = null;
+  _payMethod = 'promptpay';
+  setPayMethod('promptpay');
+
+  document.getElementById('payOrderDesc').textContent = buildOrderDesc();
+  document.getElementById('payAmount').textContent    = '฿' + total;
+  document.getElementById('payTC').value    = '';
+  document.getElementById('payCC').value    = '';
+  document.getElementById('paySlipName').textContent  = '';
+  document.getElementById('payVoucherInput').value    = '';
+  document.getElementById('payVerifyBtn').disabled    = true;
+  document.getElementById('payError').style.display   = 'none';
+  document.getElementById('payLoading').style.display = 'none';
+  document.getElementById('payStep-order').style.display = '';
+  document.getElementById('payStep-qr').style.display    = 'none';
+  document.getElementById('payStep-done').style.display  = 'none';
+  document.getElementById('payModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closePayModal() {
+  document.getElementById('payModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function setPayMethod(m) {
+  _payMethod = m;
+  var pp = document.getElementById('pmBtnPP');
+  var tm = document.getElementById('pmBtnTM');
+  var wl = document.getElementById('pmBtnWL');
+  [pp, tm, wl].forEach(function(b) { if(b) { b.className='pay-method-btn'; b.style.background=''; b.style.borderColor=''; b.style.color=''; } });
+  if (m === 'promptpay') {
+    pp.className = 'pay-method-btn pm-active';
+  } else if (m === 'truemoney') {
+    tm.className = 'pay-method-btn pm-active';
+    tm.style.background = 'rgba(255,120,0,0.18)'; tm.style.borderColor = 'rgba(255,120,0,0.6)'; tm.style.color = '#FF6B00';
+  } else if (m === 'wallet') {
+    wl.className = 'pay-method-btn pm-active';
+    wl.style.background = 'rgba(52,211,153,0.18)'; wl.style.borderColor = 'rgba(52,211,153,0.6)'; wl.style.color = '#34d399';
+  }
+}
+
+async function createStageOrder() {
+  var tc  = document.getElementById('payTC').value.trim();
+  var cc  = document.getElementById('payCC').value.trim();
+  var srv = document.getElementById('paySrv').value;
+  if (!tc || !cc) { payShowErr(window.bcT('stg_enter_codes','กรุณากรอก Transfer Code และ Confirmation Code')); return; }
+
+  payLoading(true);
+  try {
+    var _cfg   = _checkoutFromCart ? _cartStagesConfig : buildStagesConfig();
+    var _total = _checkoutFromCart ? _cartStagesTotal  : calcTotal();
+    var _desc  = document.getElementById('payOrderDesc').textContent || buildOrderDesc();
+    var resp = await fetch('/api/payment/create-stages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        transfer_code:     tc,
+        confirmation_code: cc,
+        country:           srv,
+        payment_method:    _payMethod,
+        stages_config:     _cfg,
+        amount:            _total,
+        username:          (typeof AUTH !== 'undefined' && AUTH.getCurrentUser()) || '',
+      }),
+    });
+    var data = await resp.json();
+    if (!resp.ok) { payShowErr(data.detail || window.bcT('stg_error_generic','เกิดข้อผิดพลาด')); return; }
+    _orderId = data.order_id;
+    (function() {
+      var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+      hist.unshift({ id: _orderId, total: data.amount,
+        items: [{ name: '📍 ' + _desc }],
+        created_at: new Date().toISOString() });
+      localStorage.setItem('bc_order_history', JSON.stringify(hist.slice(0, 30)));
+    })();
+    var isTM = (data.payment_method === 'truemoney');
+    var isWL = (data.payment_method === 'wallet');
+    document.getElementById('payQrBlock').style.display      = (!isTM && !isWL) ? '' : 'none';
+    document.getElementById('payTmBlock').style.display      = isTM ? '' : 'none';
+    document.getElementById('paySlipBlock').style.display    = (!isTM && !isWL) ? '' : 'none';
+    document.getElementById('payVoucherBlock').style.display = isTM ? '' : 'none';
+    document.getElementById('payWalletBlock').style.display  = isWL ? '' : 'none';
+    document.getElementById('payVerifyBtn').style.display    = isWL ? 'none' : '';
+    if (isTM) {
+      document.getElementById('payTmAmt').textContent = '฿' + data.amount;
+      if (data.truemoney_fee && data.truemoney_fee > 0) {
+        document.getElementById('payTmFeeBreakdown').style.display = '';
+        document.getElementById('payBaseAmt').textContent = '฿' + (data.base_amount || data.amount);
+        document.getElementById('payFeeAmt').textContent  = '+฿' + data.truemoney_fee;
+      } else {
+        document.getElementById('payTmFeeBreakdown').style.display = 'none';
+      }
+    } else if (isWL) {
+      document.getElementById('payWalletAmt').textContent = 'ยอดที่ต้องชำระ ฿' + data.amount;
+      var _wlSess = (function(){ try { return JSON.parse(localStorage.getItem('bc_session')) || {}; } catch(e) { return {}; } })();
+      var _wlUser = _wlSess.username || ''; var _wlTok = _wlSess.hash || '';
+      if (_wlUser && _wlTok) {
+        fetch('/api/wallet/balance?username=' + encodeURIComponent(_wlUser) + '&session_token=' + encodeURIComponent(_wlTok))
+          .then(function(r){ return r.json(); }).then(function(wb){
+            var bal = wb.balance || 0;
+            document.getElementById('payWalletBal').textContent = '฿' + bal;
+            var lowMsg = document.getElementById('payWalletLow');
+            var wlBtn  = document.getElementById('payWalletBtn');
+            if (bal < data.amount) { lowMsg.style.display = ''; wlBtn.disabled = true; wlBtn.style.opacity = '0.5'; }
+            else { lowMsg.style.display = 'none'; wlBtn.disabled = false; wlBtn.style.opacity = '1'; }
+          }).catch(function(){});
+      }
+    } else {
+      document.getElementById('payQrAmt').textContent = '฿' + data.amount;
+      document.getElementById('payQrImg').src = 'data:image/png;base64,' + data.qr_base64;
+    }
+    document.getElementById('payStep-order').style.display = 'none';
+    document.getElementById('payStep-qr').style.display    = '';
+    payShowErr('');
+  } catch(e) {
+    payShowErr(window.bcT('stg_api_error','เชื่อมต่อ API ไม่ได้: ') + e.message);
+  } finally { payLoading(false); }
+}
+
+function slipSelected(inp) {
+  _slipFile = inp.files[0] || null;
+  document.getElementById('paySlipName').textContent = _slipFile ? _slipFile.name : '';
+  document.getElementById('payVerifyBtn').disabled = !_slipFile;
+}
+
+function voucherChanged(inp) {
+  document.getElementById('payVerifyBtn').disabled = !inp.value.trim();
+}
+
+async function verifyPayment() {
+  if (!_orderId) return;
+  var isTM = (_payMethod === 'truemoney');
+  if (isTM) {
+    var code = document.getElementById('payVoucherInput').value.trim();
+    if (!code) return;
+  } else {
+    if (!_slipFile) return;
+  }
+  payLoading(true);
+  try {
+    var resp, data;
+    if (isTM) {
+      resp = await fetch('/api/payment/verify-voucher/' + _orderId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ voucher_code: document.getElementById('payVoucherInput').value.trim() }),
+      });
+    } else {
+      var fd = new FormData();
+      fd.append('slip', _slipFile);
+      resp = await fetch('/api/payment/verify/' + _orderId, { method: 'POST', body: fd });
+    }
+    data = await resp.json();
+    if (data.insufficient) {
+      document.getElementById('payVoucherBlock').style.display = 'none';
+      document.getElementById('payVerifyBtn').style.display = 'none';
+      document.getElementById('payWalletBlock').style.display = '';
+      document.getElementById('payWalletAmt').textContent = window.bcT('wl_still_short','ยังขาดอีก ฿') + data.remaining;
+      var _stgSessI = (function(){ try{ return JSON.parse(localStorage.getItem('bc_session'))||{}; }catch(e){ return {}; } })();
+      fetch('/api/wallet/balance?username=' + encodeURIComponent(_stgSessI.username||'') + '&session_token=' + encodeURIComponent(_stgSessI.hash||''))
+        .then(function(r){ return r.json(); }).then(function(d){
+          var bal = d.balance||0;
+          document.getElementById('payWalletBal').textContent = '฿' + bal;
+          var wlBtn = document.getElementById('payWalletBtn');
+          var lowEl = document.getElementById('payWalletLow');
+          if (bal < data.remaining) { lowEl.style.display=''; wlBtn.disabled=true; wlBtn.style.opacity='0.5'; }
+          else { lowEl.style.display='none'; wlBtn.disabled=false; wlBtn.style.opacity='1'; }
+        }).catch(function(){});
+      var _stgErrEl = document.getElementById('payError');
+      _stgErrEl.style.display = ''; _stgErrEl.innerHTML = data.reason.replace(/\n/g, '<br>');
+      return;
+    }
+    if (!resp.ok || !data.success) {
+      payShowErr(data.detail || data.error || window.bcT('stg_verify_failed','ยืนยันการชำระเงินไม่ผ่าน'));
+      return;
+    }
+    document.getElementById('payNewTC').textContent = data.new_transfer_code || '-';
+    document.getElementById('payNewCC').textContent = data.new_confirmation_code || '-';
+    (function() {
+      var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+      hist = hist.map(function(o) {
+        if ((o.id || o.order_id) !== _orderId) return o;
+        return Object.assign({}, o, {
+          new_transfer_code:     data.new_transfer_code,
+          new_confirmation_code: data.new_confirmation_code,
+        });
+      });
+      localStorage.setItem('bc_order_history', JSON.stringify(hist));
+    })();
+    if (_checkoutFromCart) {
+      var c = JSON.parse(localStorage.getItem('cart') || '[]');
+      c = c.filter(function(i) { return i.type !== 'stage_service' && i.key !== 'stages'; });
+      localStorage.setItem('cart', JSON.stringify(c));
+      document.getElementById('cartCount').textContent = c.length;
+      _checkoutFromCart = false;
+    }
+    document.getElementById('payStep-qr').style.display   = 'none';
+    document.getElementById('payStep-done').style.display = '';
+    if (data.wallet_credited) {
+      var _wcEl = document.getElementById('payWalletCreditedMsg');
+      _wcEl.textContent = (window.bcLang && window.bcLang() === 'en')
+        ? '💰 Surplus ฿' + data.wallet_credited + ' added to your wallet'
+        : '💰 เงินที่เกิน ฿' + data.wallet_credited + ' เข้ากระเป๋าเงินของคุณแล้ว';
+      _wcEl.style.display = '';
+    }
+    payShowErr('');
+  } catch(e) {
+    payShowErr(window.bcT('stg_api_error','เชื่อมต่อ API ไม่ได้: ') + e.message);
+  } finally { payLoading(false); }
+}
+
+async function stagePayWallet() {
+  if (!_orderId) return;
+  var _wlSess = (function(){ try { return JSON.parse(localStorage.getItem('bc_session')) || {}; } catch(e) { return {}; } })();
+  var _wlUser = _wlSess.username || ''; var _wlTok = _wlSess.hash || '';
+  if (!_wlUser || !_wlTok) { payShowErr('กรุณาเข้าสู่ระบบก่อน'); return; }
+  payLoading(true);
+  try {
+    var resp = await fetch('/api/payment/pay-wallet/' + _orderId, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: _wlUser, session_token: _wlTok }),
+    });
+    var data = await resp.json();
+    if (!resp.ok || !data.success) { payShowErr(data.detail || data.error || 'ชำระเงินไม่สำเร็จ'); return; }
+    document.getElementById('payNewTC').textContent = data.new_transfer_code || '-';
+    document.getElementById('payNewCC').textContent = data.new_confirmation_code || '-';
+    (function() {
+      var hist = JSON.parse(localStorage.getItem('bc_order_history') || '[]');
+      hist = hist.map(function(o) {
+        if ((o.id || o.order_id) !== _orderId) return o;
+        return Object.assign({}, o, { new_transfer_code: data.new_transfer_code, new_confirmation_code: data.new_confirmation_code });
+      });
+      localStorage.setItem('bc_order_history', JSON.stringify(hist));
+    })();
+    if (_checkoutFromCart) {
+      var c = JSON.parse(localStorage.getItem('cart') || '[]');
+      c = c.filter(function(i) { return i.type !== 'stage_service' && i.key !== 'stages'; });
+      localStorage.setItem('cart', JSON.stringify(c));
+      document.getElementById('cartCount').textContent = c.length;
+      _checkoutFromCart = false;
+    }
+    document.getElementById('payStep-qr').style.display   = 'none';
+    document.getElementById('payStep-done').style.display = '';
+    payShowErr('');
+  } catch(e) {
+    payShowErr('เชื่อมต่อ API ไม่ได้: ' + e.message);
+  } finally { payLoading(false); }
+}
+
+function payShowErr(msg) {
+  var el = document.getElementById('payError');
+  if (msg) { el.style.display = ''; el.textContent = msg; }
+  else { el.style.display = 'none'; }
+}
+
+function payLoading(on) {
+  document.getElementById('payLoading').style.display = on ? '' : 'none';
+  var step = document.getElementById('payStep-order');
+  if (step) step.style.pointerEvents = on ? 'none' : '';
+}
+
+function copyCode(id) {
+  var t = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(t).then(function(){ showToast(window.bcT('stg_copied','✅ Copy แล้ว!')); });
+}
+
+// ── Toast ──────────────────────────────────────────────────────
+var _toastTimer = null;
+function showToast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('t-show');
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function(){ el.classList.remove('t-show'); }, 3200);
+}
+
+// ── Cart badge ─────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  document.getElementById('cartCount').textContent = cart.length;
+  _restoreStateFromCart(cart);
+});
+
+// ── Restore card state (Choose/Edit Service + badges) จากตะกร้าเดิม ──
+function _restoreStateFromCart(cart) {
+  var stageItems = cart.filter(function(i) { return i.type === 'stage_service'; });
+  stageItems.forEach(function(item) {
+    if (item.stage_cat === 'story') {
+      var s = storyState[item.stage_target];
+      if (!s) return;
+      s[item.stage_field] = true;
+      (item.stage_chapters || []).forEach(function(ch) {
+        if (s.selCh.indexOf(ch) < 0) s.selCh.push(ch);
+      });
+      s.selCh.sort(function(a, b) { return a - b; });
+    } else if (item.stage_cat === 'legend') {
+      var l = legendState[item.stage_target];
+      if (!l) return;
+      l.clear = true;
+      if (item.stage_crown) l.crown = item.stage_crown;
+    } else if (item.stage_cat === 'aku') {
+      akuState[item.stage_field] = true;
+    }
+  });
+  ['eoc', 'itf', 'cotc'].forEach(function(k) { updateCardVisual(k, 'story'); });
+  ['sol', 'ul', 'zl'].forEach(function(k) { updateCardVisual(k, 'legend'); });
+  updateCardVisual('aku', 'aku');
+  recalc();
+}
+
+// ── Re-render dynamic parts when language toggles ───────────────
+document.addEventListener('bc-lang-changed', function() {
+  ['eoc','itf','cotc','sol','ul','zl','aku'].forEach(function(k) {
+    var sec = (k === 'aku') ? 'aku' : (['sol','ul','zl'].indexOf(k) >= 0 ? 'legend' : 'story');
+    updateCardVisual(k, sec);
+  });
+  if (document.getElementById('stgModal').style.display === 'flex') {
+    document.getElementById('stgItems').innerHTML = buildStgItemsHtml(_currentSection, _currentCard);
+  }
+});
+</script>
+
+<script src="assets/auth.js?v=20260717"></script>
+<script src="assets/animations.js"></script>
+<script src="assets/nav.js"></script>
+<script src="assets/i18n.js"></script>
+</body>
+</html>

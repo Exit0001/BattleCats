@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Battle Cats Shop</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    .order-card {
+      background: rgba(14,6,32,0.88);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 20px 22px;
+      margin-bottom: 12px;
+      transition: border-color 0.18s;
+    }
+    .order-card:hover { border-color: rgba(124,58,237,0.38); }
+
+    .order-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .order-id {
+      font-family: 'Russo One', sans-serif;
+      font-size: 14px;
+      color: var(--yellow);
+    }
+    .order-meta {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(210,190,255,0.5);
+      margin-top: 4px;
+    }
+    .order-total {
+      font-family: 'Russo One', sans-serif;
+      font-size: 22px;
+      color: var(--red);
+    }
+
+    .order-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      padding: 14px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      margin-bottom: 14px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+    }
+    .detail-label { color: rgba(210,190,255,0.45); margin-bottom: 3px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; }
+    .detail-value { color: #EDE6FF; font-weight: 600; word-break: break-all; }
+
+    .item-pill {
+      background: rgba(124,58,237,0.12);
+      border: 1px solid rgba(124,58,237,0.25);
+      color: #C4B5FD;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      display: inline-block;
+      margin: 2px;
+    }
+
+    .status-select {
+      padding: 7px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(124,58,237,0.35);
+      background: rgba(124,58,237,0.12);
+      color: #EDE6FF;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .status-select:focus { outline: none; border-color: rgba(124,58,237,0.65); }
+
+    .save-btn {
+      padding: 7px 18px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #7C3AED, #F43F5E);
+      color: #fff;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: filter 0.18s, transform 0.18s;
+    }
+    .save-btn:hover    { filter: brightness(1.1); transform: translateY(-1px); }
+    .save-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .stat-mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(124,58,237,0.10);
+      border: 1px solid rgba(124,58,237,0.22);
+      border-radius: 10px;
+      padding: 7px 16px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      color: rgba(210,190,255,0.75);
+    }
+    .stat-mini b { color: var(--yellow); font-family: 'Russo One', sans-serif; font-size: 16px; }
+
+    .s-tab {
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: transparent;
+      color: rgba(210,190,255,0.6);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .s-tab:hover  { background: rgba(124,58,237,0.15); color: #fff; }
+    .s-tab.active { background: rgba(124,58,237,0.40); color: #fff;
+                    border-color: rgba(124,58,237,0.55); }
+
+    /* Slip thumbnail */
+    .slip-thumb {
+      width: 80px; height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid rgba(124,58,237,0.3);
+      transition: transform 0.2s;
+    }
+    .slip-thumb:hover { transform: scale(1.08); }
+
+    /* Slip lightbox */
+    #slipLightbox {
+      display: none;
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.88);
+      align-items: center; justify-content: center;
+    }
+    #slipLightbox.open { display: flex; }
+    #slipLightbox img  { max-width: 90vw; max-height: 90vh; border-radius: 12px; }
+  </style>
+</head>
+<body>
+
+<!-- Slip lightbox -->
+<div id="slipLightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" src="" alt="slip">
+</div>
+
+<!-- Main Admin Panel -->
+<div id="adminMain">
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">BATTLE CAT PRO MAX</a>
+    <ul class="nav-links">
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="admin.html" class="active" style="color:#FDA4AF;">🛡️ Admin</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <a href="index.html" style="padding:6px 14px;border-radius:10px;border:1px solid rgba(124,58,237,0.3);background:rgba(124,58,237,0.10);color:#C4B5FD;font-family:'Chakra Petch',sans-serif;font-size:12px;text-decoration:none;">← หน้าแรก</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:24px;">
+    <h1 class="section-title" style="margin-bottom:0;">🛡️ จัดการออเดอร์</h1>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;" id="statsRow">
+      <span class="stat-mini">⏳ โหลด...</span>
+    </div>
+  </div>
+
+  <!-- Status filter -->
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;" id="tabsRow">
+    <button class="s-tab active" onclick="filterOrders('all',this)">ทั้งหมด</button>
+    <button class="s-tab" style="color:#FBBF24;" onclick="filterOrders('pending_payment',this)">💳 รอชำระ</button>
+    <button class="s-tab" style="color:#A78BFA;" onclick="filterOrders('pending_confirm',this)">📋 รอยืนยัน</button>
+    <button class="s-tab" style="color:#60A5FA;" onclick="filterOrders('processing',this)">🔧 กำลังทำ</button>
+    <button class="s-tab" style="color:#4ADE80;" onclick="filterOrders('done',this)">✅ Done</button>
+    <button class="s-tab" style="color:#F87171;" onclick="filterOrders('cancelled',this)">❌ ยกเลิก</button>
+    <button class="s-tab" style="color:#94A3B8;" onclick="filterOrders('test',this)">🧪 Test</button>
+  </div>
+
+  <!-- Search -->
+  <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+    <input id="searchInput" type="text" placeholder="ค้นหา username, transfer code, contact..."
+      style="flex:1;min-width:200px;padding:10px 14px;border-radius:12px;border:1px solid rgba(124,58,237,0.28);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;"
+      oninput="renderOrders()">
+    <button class="save-btn" onclick="loadOrders()" style="padding:10px 20px;">🔄 รีเฟรช</button>
+  </div>
+
+  <div id="orderCount" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.45);margin-bottom:14px;"></div>
+  <div id="orderList"><div style="text-align:center;padding:60px;color:rgba(210,190,255,0.4);">⏳ กำลังโหลด...</div></div>
+
+  <!-- ── Loyalty Manager ── -->
+  <div style="margin-top:36px;border-top:1px solid rgba(255,255,255,0.06);padding-top:28px;">
+    <h2 class="section-title" style="font-size:18px;margin-bottom:18px;">🎁 จัดการแต้มสะสม (Loyalty)</h2>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px;">
+      <div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(196,181,253,0.6);margin-bottom:4px;">USERNAME</div>
+        <input id="loyaltyUsername" type="text" placeholder="username ของลูกค้า"
+          style="padding:9px 14px;border-radius:10px;border:1px solid rgba(124,58,237,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:13px;width:200px;"
+          oninput="loyaltyClearResult()">
+      </div>
+      <button onclick="loyaltyLookup()"
+        style="padding:9px 18px;border-radius:10px;background:rgba(124,58,237,0.25);border:1px solid rgba(124,58,237,0.4);color:#C4B5FD;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">
+        🔍 ดูข้อมูล
+      </button>
+    </div>
+
+    <div id="loyaltyInfo" style="display:none;background:rgba(14,6,32,0.88);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px 20px;margin-bottom:14px;">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:16px;">
+        <div>
+          <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(196,181,253,0.5);margin-bottom:3px;">ยอดสะสม</div>
+          <div id="loyaltyCurrentSpent" style="font-family:'Russo One',sans-serif;font-size:22px;color:#fbbf24;"></div>
+        </div>
+        <div>
+          <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(196,181,253,0.5);margin-bottom:3px;">แลกแล้ว</div>
+          <div id="loyaltyRedeemed" style="font-family:'Russo One',sans-serif;font-size:22px;color:#a78bfa;"></div>
+        </div>
+        <div>
+          <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(196,181,253,0.5);margin-bottom:3px;">รอบพร้อมแลก</div>
+          <div id="loyaltyAvailable" style="font-family:'Russo One',sans-serif;font-size:22px;color:#4ade80;"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+        <button onclick="loyaltyResetCycles()"
+          style="padding:9px 18px;border-radius:10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">
+          🔄 Reset รอบ
+        </button>
+      </div>
+    </div>
+
+    <div id="loyaltyMsg" style="font-family:'Chakra Petch',sans-serif;font-size:13px;margin-top:6px;"></div>
+  </div>
+
+  <!-- ── CR Admin ── -->
+  <div style="margin-top:36px;border-top:1px solid rgba(249,115,22,0.2);padding-top:28px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+      <h2 class="section-title" style="font-size:18px;margin-bottom:0;">🍪 Cookie Run Pro Max — License Keys</h2>
+      <div style="display:flex;gap:8px;">
+        <button onclick="toggleAddCRForm()" class="save-btn" style="background:rgba(249,115,22,0.25);border:1px solid rgba(249,115,22,0.45);color:#fb923c;">➕ เพิ่มสินค้า</button>
+        <button onclick="loadCRProducts()" class="save-btn" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#EDE6FF;">🔄</button>
+      </div>
+    </div>
+
+    <!-- Add product form -->
+    <div id="crAddForm" style="display:none;background:rgba(249,115,22,0.04);border:1px solid rgba(249,115,22,0.2);border-radius:14px;padding:20px;margin-bottom:20px;">
+      <div style="font-family:'Russo One',sans-serif;font-size:14px;color:#fb923c;margin-bottom:14px;">➕ เพิ่มสินค้าใหม่</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px;">
+        <div>
+          <div class="detail-label">ชื่อ (TH) *</div>
+          <input id="crNewName" type="text" placeholder="จอเดียว 1 วัน" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">ชื่อ (EN)</div>
+          <input id="crNewNameEn" type="text" placeholder="Single 1 Day" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">ประเภท *</div>
+          <select id="crNewType" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:#1a0a35;color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+            <option value="single">🖥️ จอเดียว (Single)</option>
+            <option value="multi">🖥️🖥️ หลายจอ (Multi)</option>
+          </select>
+        </div>
+        <div>
+          <div class="detail-label">ระยะเวลา *</div>
+          <select id="crNewDuration" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:#1a0a35;color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+            <option value="1d">1 วัน</option>
+            <option value="7d">7 วัน</option>
+            <option value="30d">30 วัน</option>
+            <option value="permanent">ถาวร</option>
+          </select>
+        </div>
+        <div>
+          <div class="detail-label">ราคา (฿) *</div>
+          <input id="crNewPrice" type="number" placeholder="199" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+      </div>
+      <div style="margin-bottom:10px;">
+        <div class="detail-label">Download URL</div>
+        <input id="crNewDownloadUrl" type="text" placeholder="https://drive.google.com/..." style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+      </div>
+      <div style="margin-bottom:14px;">
+        <div class="detail-label">คำอธิบาย</div>
+        <input id="crNewDesc" type="text" placeholder="รายละเอียดสินค้า (ไม่บังคับ)" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <button onclick="addCRProduct()" class="save-btn" style="background:linear-gradient(135deg,#f97316,#dc2626);">💾 บันทึกสินค้า</button>
+        <button onclick="toggleAddCRForm()" style="padding:7px 16px;border-radius:9px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:rgba(210,190,255,0.6);font-family:'Chakra Petch',sans-serif;font-size:12px;cursor:pointer;">ยกเลิก</button>
+      </div>
+      <div id="crAddMsg" style="font-family:'Chakra Petch',sans-serif;font-size:12px;margin-top:8px;"></div>
+    </div>
+
+    <!-- Product list -->
+    <div id="crProductList" style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.4);">⏳ กำลังโหลด...</div>
+  </div>
+
+</div>
+</div><!-- /adminMain -->
+
+<script src="assets/supabase-client.js"></script>
+<script>
+var _allOrders   = [];
+var _filterStatus = 'all';
+var _adminUser   = null;
+
+var STATUS_COLOR = {
+  pending_payment:'#FBBF24', pending_confirm:'#A78BFA',
+  processing:'#60A5FA', done:'#4ADE80', cancelled:'#F87171',
+  pending:'#FBBF24', test:'#94A3B8'
+};
+var STATUS_LABEL = {
+  pending_payment:'💳 รอชำระ', pending_confirm:'📋 รอยืนยัน',
+  processing:'🔧 กำลังทำ', done:'✅ Done', cancelled:'❌ ยกเลิก',
+  pending:'⏳ Pending', test:'🧪 Test'
+};
+
+// ── Admin Login ───────────────────────────────────────────────
+async function adminLogin() {
+  var user = document.getElementById('adminUser').value.trim();
+  var pass = document.getElementById('adminPass').value;
+  var btn  = document.getElementById('loginBtn');
+  if (!user || !pass) { showErr('กรอก username และ password'); return; }
+
+  btn.disabled = true; btn.textContent = '⏳ กำลังตรวจสอบ...';
+
+  try {
+    // รอ DB พร้อม (กรณีโหลดช้า)
+    var waited = 0;
+    while (!window.DB && waited < 3000) {
+      await new Promise(function(r){ setTimeout(r, 100); });
+      waited += 100;
+    }
+    if (!window.DB) { showErr('เชื่อมต่อ Supabase ไม่ได้ — รีเฟรชแล้วลองใหม่'); return; }
+
+    var hash = btoa(unescape(encodeURIComponent(pass)));
+
+    // 1) ตรวจ username + password ก่อน
+    var credRes = await DB.from('profiles_goble')
+      .select('username, is_admin, password_hash')
+      .eq('username', user)
+      .maybeSingle();
+
+    if (credRes.error) throw new Error('DB error: ' + credRes.error.message);
+    if (!credRes.data)  { showErr('ไม่พบ username "' + user + '"'); return; }
+    if (credRes.data.password_hash !== hash) { showErr('password ไม่ถูกต้อง'); return; }
+    if (!credRes.data.is_admin) { showErr('บัญชีนี้ไม่มีสิทธิ์ Admin — รัน sql/payment_and_admin.sql ก่อน'); return; }
+
+    _adminUser = credRes.data.username;
+    sessionStorage.setItem('bc_admin', _adminUser);
+    showAdminPanel();
+
+  } catch (e) {
+    showErr('❌ ' + (e.message || e));
+  } finally {
+    btn.disabled = false; btn.textContent = 'เข้าสู่ระบบ Admin';
+  }
+}
+
+function showErr(msg) {
+  var el = document.getElementById('authErr');
+  el.textContent = '❌ ' + msg;
+  el.style.display = 'block';
+}
+
+function showAdminPanel() {
+  document.getElementById('authGate').style.display  = 'none';
+  document.getElementById('adminMain').style.display = 'block';
+  document.getElementById('adminUserLabel').textContent = '👤 ' + _adminUser;
+  loadOrders();
+}
+
+function adminLogout() {
+  sessionStorage.removeItem('bc_admin');
+  window.location.reload();
+}
+
+// Enter key on password
+document.getElementById('adminPass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') adminLogin();
+});
+
+// ── Load Orders ───────────────────────────────────────────────
+async function loadOrders() {
+  document.getElementById('orderList').innerHTML =
+    '<div style="text-align:center;padding:60px;color:rgba(210,190,255,0.4);">⏳ กำลังโหลด...</div>';
+  try {
+    var res = await DB.from('orders_goble').select('*').order('created_at', { ascending: false });
+    if (res.error) throw res.error;
+    _allOrders = res.data || [];
+    updateStats();
+    renderOrders();
+  } catch (e) {
+    document.getElementById('orderList').innerHTML =
+      '<div style="text-align:center;padding:60px;color:#F87171;">❌ ' + e.message + '</div>';
+  }
+}
+
+function filterOrders(status, btn) {
+  _filterStatus = status;
+  document.querySelectorAll('.s-tab').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderOrders();
+}
+
+function renderOrders() {
+  var q = (document.getElementById('searchInput').value || '').toLowerCase();
+  var list = _allOrders.filter(function(o) {
+    var matchS = _filterStatus === 'all' || o.status === _filterStatus;
+    var matchQ = !q ||
+      (o.username||'').toLowerCase().includes(q) ||
+      (o.country||'').toLowerCase().includes(q)  ||
+      (o.id||'').toLowerCase().includes(q)        ||
+      (o.transfer_code||'').toLowerCase().includes(q);
+    return matchS && matchQ;
+  });
+
+  document.getElementById('orderCount').textContent =
+    'แสดง ' + list.length + ' / ' + _allOrders.length + ' ออเดอร์';
+
+  if (!list.length) {
+    document.getElementById('orderList').innerHTML =
+      '<div style="text-align:center;padding:60px;color:rgba(210,190,255,0.35);">ไม่พบออเดอร์</div>';
+    return;
+  }
+
+  document.getElementById('orderList').innerHTML = list.map(function(o) {
+    var shortId = (o.id||'').substring(0,8).toUpperCase();
+    var date    = o.created_at ? new Date(o.created_at).toLocaleString('th-TH') : '-';
+    var items   = (o.items||[]).map(function(i) {
+      return '<span class="item-pill">' + (i.name||'-') + '</span>';
+    }).join('') || '<span class="item-pill" style="opacity:0.4;">-</span>';
+
+    var col = STATUS_COLOR[o.status] || '#fff';
+    var lbl = STATUS_LABEL[o.status] || o.status;
+
+    var slipHtml = o.slip_data
+      ? '<div style="margin-top:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.45);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">สลิปการโอน</div>' +
+        '<img class="slip-thumb" src="' + o.slip_data + '" onclick="openLightbox(\'' + o.id + '\')" alt="slip"></div>'
+      : '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.3);margin-top:8px;">ยังไม่มีสลิป</div>';
+
+    return '<div class="order-card" id="card-' + o.id + '">' +
+      '<div class="order-top">' +
+        '<div>' +
+          '<div class="order-id">#' + shortId + '</div>' +
+          '<div class="order-meta">📅 ' + date + ' &nbsp;|&nbsp; 👤 ' + (o.username||'-') + '</div>' +
+        '</div>' +
+        '<div style="text-align:right;">' +
+          '<div class="order-total">฿' + (o.amount||0).toLocaleString() + '</div>' +
+          '<div style="font-size:12px;color:' + col + ';margin-top:4px;">' + lbl + '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="order-details">' +
+        '<div><div class="detail-label">Transfer Code</div><div class="detail-value" style="font-family:monospace;">' + (o.transfer_code||'-') + '</div></div>' +
+        '<div><div class="detail-label">Confirm Code</div><div class="detail-value" style="font-family:monospace;">'  + (o.confirmation_code||'-') + '</div></div>' +
+        '<div><div class="detail-label">Payment Method</div><div class="detail-value">' + (o.payment_method||'-') + '</div></div>' +
+        '<div><div class="detail-label">Country</div><div class="detail-value">'  + (o.country||'-') + '</div></div>' +
+      '</div>' +
+
+      '<div style="margin-bottom:12px;">' + items + '</div>' +
+      slipHtml +
+
+      '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;">' +
+        '<select class="status-select" id="sel-' + o.id + '">' +
+          ['pending_payment','pending_confirm','processing','done','cancelled','test'].map(function(s) {
+            return '<option value="' + s + '"' + (o.status===s?' selected':'') + '>' + (STATUS_LABEL[s]||s) + '</option>';
+          }).join('') +
+        '</select>' +
+        '<button class="save-btn" onclick="updateStatus(\'' + o.id + '\')" id="btn-' + o.id + '">บันทึก</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── Update status ─────────────────────────────────────────────
+async function updateStatus(orderId) {
+  var sel = document.getElementById('sel-' + orderId);
+  var btn = document.getElementById('btn-' + orderId);
+  btn.disabled = true; btn.textContent = '⏳';
+  try {
+    var res = await DB.from('orders_goble').update({ status: sel.value }).eq('id', orderId);
+    if (res.error) throw res.error;
+    var idx = _allOrders.findIndex(function(o){ return o.id === orderId; });
+    if (idx !== -1) _allOrders[idx].status = sel.value;
+    btn.textContent = '✅'; btn.style.background = '#4ADE80';
+    updateStats();
+    setTimeout(function() { btn.textContent='บันทึก'; btn.style.background=''; btn.disabled=false; }, 1500);
+  } catch(e) {
+    btn.textContent = '❌'; btn.style.background = '#F87171';
+    setTimeout(function() { btn.textContent='บันทึก'; btn.style.background=''; btn.disabled=false; }, 2000);
+  }
+}
+
+// ── Stats + Revenue ───────────────────────────────────────────
+function updateStats() {
+  var counts = {};
+  var revenue = 0;
+  _allOrders.forEach(function(o) {
+    counts[o.status] = (counts[o.status]||0) + 1;
+    if (o.status === 'done') revenue += (o.amount||0);
+  });
+
+  document.getElementById('statsRow').innerHTML =
+    '<span class="stat-mini"><b>' + _allOrders.length + '</b> ทั้งหมด</span>' +
+    '<span class="stat-mini" style="border-color:rgba(251,191,36,0.3);color:#FBBF24;"><b>' + (counts['pending_payment']||0) + '</b> รอชำระ</span>' +
+    '<span class="stat-mini" style="border-color:rgba(167,139,250,0.3);color:#A78BFA;"><b>' + (counts['pending_confirm']||0) + '</b> รอยืนยัน</span>' +
+    '<span class="stat-mini" style="border-color:rgba(74,222,128,0.3);color:#4ADE80;"><b>' + (counts['done']||0) + '</b> Done</span>' +
+    '<span class="stat-mini" style="border-color:rgba(255,77,146,0.3);color:var(--red);font-size:14px;"><b>฿' + revenue.toLocaleString() + '</b> รายได้</span>';
+}
+
+// ── Slip lightbox ─────────────────────────────────────────────
+function openLightbox(orderId) {
+  var order = _allOrders.find(function(o){ return o.id === orderId; });
+  if (!order || !order.slip_data) return;
+  document.getElementById('lightboxImg').src = order.slip_data;
+  document.getElementById('slipLightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('slipLightbox').classList.remove('open');
+}
+
+// ── Loyalty Manager ───────────────────────────────────────────
+var _loyaltyData = null;
+
+function loyaltyClearResult() {
+  document.getElementById('loyaltyInfo').style.display = 'none';
+  document.getElementById('loyaltyMsg').textContent = '';
+  _loyaltyData = null;
+}
+
+async function loyaltyLookup() {
+  var username = document.getElementById('loyaltyUsername').value.trim();
+  var msg = document.getElementById('loyaltyMsg');
+  if (!username) { msg.innerHTML = '<span style="color:#f87171;">กรอก username ก่อน</span>'; return; }
+
+  msg.innerHTML = '<span style="color:rgba(196,181,253,0.5);">⏳ กำลังโหลด...</span>';
+  document.getElementById('loyaltyInfo').style.display = 'none';
+
+  try {
+    var res = await fetch('/api/loyalty/status?username=' + encodeURIComponent(username));
+    var d = await res.json();
+    if (!res.ok) { msg.innerHTML = '<span style="color:#f87171;">❌ ไม่พบ user นี้</span>'; return; }
+
+    _loyaltyData = d;
+
+    document.getElementById('loyaltyCurrentSpent').textContent = '฿' + (d.total_spent||0);
+    document.getElementById('loyaltyRedeemed').textContent = (d.loyalty_redeemed_cycles||0) + ' ครั้ง';
+    document.getElementById('loyaltyAvailable').textContent = (d.available_cycles||0) + ' รอบ';
+    document.getElementById('loyaltyInfo').style.display = 'block';
+    msg.textContent = '';
+  } catch(e) {
+    msg.innerHTML = '<span style="color:#f87171;">❌ ' + e.message + '</span>';
+  }
+}
+
+async function loyaltyResetCycles() {
+  if (!_loyaltyData) return;
+  var msg = document.getElementById('loyaltyMsg');
+  if (!confirm('Reset loyalty_redeemed_cycles → 0 สำหรับ ' + _loyaltyData.username + '?\n(รอบพร้อมแลกจะคำนวณใหม่จาก total_spent)')) return;
+
+  try {
+    var res = await DB.from('profiles_goble')
+      .update({ loyalty_redeemed_cycles: 0 })
+      .eq('username', _loyaltyData.username);
+    if (res.error) throw res.error;
+    msg.innerHTML = '<span style="color:#4ade80;">✅ Reset รอบแล้ว</span>';
+    loyaltyLookup();
+  } catch(e) {
+    msg.innerHTML = '<span style="color:#f87171;">❌ ' + e.message + '</span>';
+  }
+}
+
+// ── CR Admin ──────────────────────────────────────────────────
+var _crProducts = [];
+
+function escH(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toggleAddCRForm() {
+  var f = document.getElementById('crAddForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  document.getElementById('crAddMsg').textContent = '';
+}
+
+async function loadCRProducts() {
+  document.getElementById('crProductList').innerHTML =
+    '<div style="color:rgba(210,190,255,0.4);padding:20px 0;">⏳ กำลังโหลด...</div>';
+  try {
+    var res = await DB.from('cr_products')
+      .select('*, cr_stock(id, status)')
+      .order('license_type', {ascending:true})
+      .order('created_at', {ascending:true});
+    if (res.error) throw res.error;
+    _crProducts = res.data || [];
+    renderCRProducts();
+  } catch(e) {
+    document.getElementById('crProductList').innerHTML =
+      '<div style="color:#f87171;">❌ ' + e.message + '</div>';
+  }
+}
+
+function renderCRProducts() {
+  if (!_crProducts.length) {
+    document.getElementById('crProductList').innerHTML =
+      '<div style="color:rgba(210,190,255,0.35);padding:20px 0;">ยังไม่มีสินค้า — กด "เพิ่มสินค้า" เพื่อเริ่ม</div>';
+    return;
+  }
+  var TYPE_LABEL = { single: '🖥️ จอเดียว', multi: '🖥️🖥️ หลายจอ' };
+  var DUR_LABEL  = { '1d': '1 วัน', '7d': '7 วัน', '30d': '30 วัน', permanent: 'ถาวร' };
+
+  document.getElementById('crProductList').innerHTML = _crProducts.map(function(p) {
+    var stock = p.cr_stock || [];
+    var avail = stock.filter(function(s){ return s.status === 'available'; }).length;
+    var total = stock.length;
+    return '<div id="crp-' + p.id + '" style="background:rgba(14,6,32,0.88);border:1px solid rgba(249,115,22,' + (p.is_active ? '0.22' : '0.08') + ');border-radius:14px;padding:16px 18px;margin-bottom:10px;">' +
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;">' +
+        '<div>' +
+          '<div style="font-family:\'Russo One\',sans-serif;font-size:14px;color:#fb923c;">' + escH(p.name) + '</div>' +
+          '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);margin-top:3px;">' +
+            (TYPE_LABEL[p.license_type]||p.license_type) + ' &nbsp;|&nbsp; ' + (DUR_LABEL[p.duration]||p.duration) +
+            (p.name_en ? ' &nbsp;|&nbsp; ' + escH(p.name_en) : '') +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">' +
+          '<div style="font-family:\'Russo One\',sans-serif;font-size:18px;color:var(--red);">฿' + (p.price||0).toLocaleString() + '</div>' +
+          '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:' + (p.is_active ? '#4ade80' : '#f87171') + ';">' + (p.is_active ? '✅ Active' : '❌ Inactive') + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">' +
+        '<span style="background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.25);color:#fb923c;font-family:\'Chakra Petch\',sans-serif;font-size:11px;padding:3px 10px;border-radius:999px;">🗝️ ' + avail + '/' + total + ' keys</span>' +
+        (p.download_url ? '<span style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);">📥 มี download URL</span>' : '') +
+      '</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+        '<button onclick="toggleCRStock(\'' + p.id + '\')" style="padding:6px 14px;border-radius:9px;border:1px solid rgba(249,115,22,0.3);background:rgba(249,115,22,0.08);color:#fb923c;font-family:\'Chakra Petch\',sans-serif;font-size:11px;cursor:pointer;">🗂️ จัดการ Keys</button>' +
+        '<button onclick="toggleCRActive(\'' + p.id + '\',' + p.is_active + ')" style="padding:6px 14px;border-radius:9px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:rgba(210,190,255,0.7);font-family:\'Chakra Petch\',sans-serif;font-size:11px;cursor:pointer;">' + (p.is_active ? '⏸️ ปิดขาย' : '▶️ เปิดขาย') + '</button>' +
+        '<button onclick="deleteCRProduct(\'' + p.id + '\')" style="padding:6px 14px;border-radius:9px;border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.07);color:#f87171;font-family:\'Chakra Petch\',sans-serif;font-size:11px;cursor:pointer;">🗑️ ลบ</button>' +
+      '</div>' +
+      '<div id="crstock-' + p.id + '" style="display:none;margin-top:14px;border-top:1px solid rgba(249,115,22,0.12);padding-top:14px;"></div>' +
+    '</div>';
+  }).join('');
+}
+
+async function addCRProduct() {
+  var name = document.getElementById('crNewName').value.trim();
+  var name_en = document.getElementById('crNewNameEn').value.trim();
+  var license_type = document.getElementById('crNewType').value;
+  var duration = document.getElementById('crNewDuration').value;
+  var price = parseInt(document.getElementById('crNewPrice').value || '0', 10);
+  var download_url = document.getElementById('crNewDownloadUrl').value.trim();
+  var description = document.getElementById('crNewDesc').value.trim();
+  var msg = document.getElementById('crAddMsg');
+  if (!name || !price) { msg.innerHTML = '<span style="color:#f87171;">กรอกชื่อและราคาก่อน</span>'; return; }
+  try {
+    var res = await DB.from('cr_products').insert({ name: name, name_en: name_en, license_type: license_type, duration: duration, price: price, download_url: download_url, description: description }).select().single();
+    if (res.error) throw res.error;
+    msg.innerHTML = '<span style="color:#4ade80;">✅ เพิ่มสินค้าแล้ว</span>';
+    ['crNewName','crNewNameEn','crNewPrice','crNewDownloadUrl','crNewDesc'].forEach(function(id){ document.getElementById(id).value = ''; });
+    await loadCRProducts();
+  } catch(e) {
+    msg.innerHTML = '<span style="color:#f87171;">❌ ' + e.message + '</span>';
+  }
+}
+
+async function toggleCRActive(productId, currentActive) {
+  try {
+    var res = await DB.from('cr_products').update({ is_active: !currentActive }).eq('id', productId);
+    if (res.error) throw res.error;
+    await loadCRProducts();
+  } catch(e) { alert('❌ ' + e.message); }
+}
+
+async function deleteCRProduct(productId) {
+  var p = _crProducts.find(function(x){ return x.id === productId; });
+  var stock = p ? (p.cr_stock||[]) : [];
+  var soldCount = stock.filter(function(s){ return s.status === 'sold'; }).length;
+  if (!confirm('ลบสินค้า "' + escH(p ? p.name : productId) + '"?\n' + (soldCount ? '⚠️ มี ' + soldCount + ' keys ที่ขายแล้วด้วย!\n' : '') + 'การลบจะลบ stock ทั้งหมดพร้อมกัน')) return;
+  try {
+    await DB.from('cr_stock').delete().eq('product_id', productId);
+    var res = await DB.from('cr_products').delete().eq('id', productId);
+    if (res.error) throw res.error;
+    await loadCRProducts();
+  } catch(e) { alert('❌ ' + e.message); }
+}
+
+async function toggleCRStock(productId) {
+  var el = document.getElementById('crstock-' + productId);
+  if (el.style.display !== 'none') { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = '<div style="color:rgba(210,190,255,0.4);">⏳ โหลด keys...</div>';
+  try {
+    var res = await DB.from('cr_stock').select('*').eq('product_id', productId).order('created_at', { ascending: false });
+    if (res.error) throw res.error;
+    renderCRStock(productId, res.data || []);
+  } catch(e) { el.innerHTML = '<div style="color:#f87171;">❌ ' + e.message + '</div>'; }
+}
+
+function renderCRStock(productId, stocks) {
+  var el = document.getElementById('crstock-' + productId);
+  if (!el) return;
+  var SC = { available: '#4ade80', reserved: '#fbbf24', sold: '#a78bfa' };
+  var counts = { available: 0, reserved: 0, sold: 0 };
+  stocks.forEach(function(s) { if (counts[s.status] !== undefined) counts[s.status]++; });
+
+  var statsHtml = '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">' +
+    ['available','reserved','sold'].map(function(s) {
+      var rgb = s === 'available' ? '74,222,128' : s === 'reserved' ? '251,191,36' : '167,139,250';
+      return '<span style="background:rgba(' + rgb + ',0.1);border:1px solid rgba(' + rgb + ',0.28);color:' + SC[s] + ';font-family:\'Chakra Petch\',sans-serif;font-size:11px;padding:3px 10px;border-radius:999px;">' + counts[s] + ' ' + s + '</span>';
+    }).join('') + '</div>';
+
+  var listHtml = stocks.length ? stocks.map(function(s) {
+    var masked = s.status === 'sold' ? '••••-••••-••••' : escH(s.license_key);
+    return '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,0.03);margin-bottom:6px;flex-wrap:wrap;">' +
+      '<div>' +
+        '<span style="font-family:monospace;font-size:12px;color:#EDE6FF;">' + masked + '</span>' +
+        '<span style="margin-left:8px;font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:' + (SC[s.status]||'#fff') + ';">' + s.status + '</span>' +
+        (s.buyer_username ? '<span style="margin-left:6px;font-size:10px;color:rgba(210,190,255,0.4);">→ ' + escH(s.buyer_username) + '</span>' : '') +
+      '</div>' +
+      (s.status === 'available' ? '<button onclick="deleteCRStock(\'' + s.id + '\',\'' + productId + '\')" style="padding:3px 10px;border-radius:7px;border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.07);color:#f87171;font-family:\'Chakra Petch\',sans-serif;font-size:10px;cursor:pointer;">🗑️</button>' : '') +
+    '</div>';
+  }).join('') : '<div style="color:rgba(210,190,255,0.3);font-family:\'Chakra Petch\',sans-serif;font-size:12px;margin-bottom:10px;">ยังไม่มี keys</div>';
+
+  var addHtml = '<div style="margin-top:12px;">' +
+    '<div class="detail-label" style="margin-bottom:6px;">เพิ่ม License Keys (วางได้หลายบรรทัด)</div>' +
+    '<textarea id="crStockInput-' + productId + '" rows="4" placeholder="KEY1-XXXX-XXXX\nKEY2-YYYY-YYYY\n..." style="width:100%;padding:9px 12px;border-radius:9px;border:1px solid rgba(249,115,22,0.3);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:monospace;font-size:12px;resize:vertical;box-sizing:border-box;"></textarea>' +
+    '<div style="display:flex;gap:8px;margin-top:8px;align-items:center;">' +
+      '<button onclick="addCRStockBulk(\'' + productId + '\')" class="save-btn" style="background:linear-gradient(135deg,#f97316,#dc2626);font-size:12px;">➕ เพิ่ม Keys</button>' +
+      '<div id="crStockMsg-' + productId + '" style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;"></div>' +
+    '</div>' +
+  '</div>';
+
+  el.innerHTML = statsHtml + listHtml + addHtml;
+}
+
+async function addCRStockBulk(productId) {
+  var ta = document.getElementById('crStockInput-' + productId);
+  var msg = document.getElementById('crStockMsg-' + productId);
+  var keys = (ta.value || '').split('\n').map(function(k){ return k.trim(); }).filter(function(k){ return k; });
+  if (!keys.length) { msg.innerHTML = '<span style="color:#f87171;">วาง key ก่อน</span>'; return; }
+  msg.innerHTML = '<span style="color:rgba(210,190,255,0.5);">⏳ กำลังเพิ่ม ' + keys.length + ' keys...</span>';
+  try {
+    var rows = keys.map(function(k){ return { product_id: productId, license_key: k }; });
+    var res = await DB.from('cr_stock').insert(rows);
+    if (res.error) throw res.error;
+    var stockRes = await DB.from('cr_stock').select('*').eq('product_id', productId).order('created_at', { ascending: false });
+    if (!stockRes.error) {
+      var p = _crProducts.find(function(x){ return x.id === productId; });
+      if (p) p.cr_stock = stockRes.data || [];
+      renderCRProducts();
+      document.getElementById('crstock-' + productId).style.display = 'block';
+      renderCRStock(productId, stockRes.data || []);
+    }
+  } catch(e) {
+    if (msg) msg.innerHTML = '<span style="color:#f87171;">❌ ' + e.message + '</span>';
+  }
+}
+
+async function deleteCRStock(stockId, productId) {
+  if (!confirm('ลบ key นี้?')) return;
+  try {
+    var res = await DB.from('cr_stock').delete().eq('id', stockId);
+    if (res.error) throw res.error;
+    var stockRes = await DB.from('cr_stock').select('*').eq('product_id', productId).order('created_at', { ascending: false });
+    if (!stockRes.error) {
+      var p = _crProducts.find(function(x){ return x.id === productId; });
+      if (p) p.cr_stock = stockRes.data || [];
+      renderCRProducts();
+      document.getElementById('crstock-' + productId).style.display = 'block';
+      renderCRStock(productId, stockRes.data || []);
+    }
+  } catch(e) { alert('❌ ' + e.message); }
+}
+
+// ── Init ──────────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  var saved = sessionStorage.getItem('bc_admin');
+  if (saved) {
+    _adminUser = saved;
+    showAdminPanel();
+  }
+  loadCRProducts();
+});
+</script>
+</body>
+</html>

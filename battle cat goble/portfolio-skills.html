@@ -1,0 +1,569 @@
+<title>Battle Cats Shop — Skills & Stack</title>
+<style>
+  /* ── Tokens ── */
+  :root {
+    --bg:            #F0F3FA;
+    --surface:       #FFFFFF;
+    --surface-alt:   #E8EDF7;
+    --border:        #C8D0E4;
+    --rail:          #E8642A;
+    --text-hi:       #151A2C;
+    --text-mid:      #424A6A;
+    --text-lo:       #7E879E;
+    --accent:        #C94E18;
+    --accent-sub:    rgba(201,78,24,.09);
+    --blue:          #2B7DBF;
+    --blue-sub:      rgba(43,125,191,.08);
+    --tag-bg:        #E2E7F4;
+    --tag-fg:        #344070;
+    --hl-bg:         #FDF3EE;
+    --hl-border:     rgba(201,78,24,.25);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:          #090D18;
+      --surface:     #101626;
+      --surface-alt: #141C30;
+      --border:      #1C2440;
+      --rail:        #E8642A;
+      --text-hi:     #D4CFEA;
+      --text-mid:    #8C90B0;
+      --text-lo:     #505570;
+      --accent:      #F07640;
+      --accent-sub:  rgba(240,118,64,.10);
+      --blue:        #4AA8E0;
+      --blue-sub:    rgba(74,168,224,.08);
+      --tag-bg:      #1A2240;
+      --tag-fg:      #7A88C0;
+      --hl-bg:       #130F0A;
+      --hl-border:   rgba(240,118,64,.20);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg:#F0F3FA;--surface:#FFFFFF;--surface-alt:#E8EDF7;--border:#C8D0E4;
+    --text-hi:#151A2C;--text-mid:#424A6A;--text-lo:#7E879E;
+    --accent:#C94E18;--accent-sub:rgba(201,78,24,.09);
+    --blue:#2B7DBF;--blue-sub:rgba(43,125,191,.08);
+    --tag-bg:#E2E7F4;--tag-fg:#344070;
+    --hl-bg:#FDF3EE;--hl-border:rgba(201,78,24,.25);
+  }
+  :root[data-theme="dark"] {
+    --bg:#090D18;--surface:#101626;--surface-alt:#141C30;--border:#1C2440;
+    --text-hi:#D4CFEA;--text-mid:#8C90B0;--text-lo:#505570;
+    --accent:#F07640;--accent-sub:rgba(240,118,64,.10);
+    --blue:#4AA8E0;--blue-sub:rgba(74,168,224,.08);
+    --tag-bg:#1A2240;--tag-fg:#7A88C0;
+    --hl-bg:#130F0A;--hl-border:rgba(240,118,64,.20);
+  }
+
+  /* ── Reset ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text-hi);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+  /* ── Layout ── */
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+  }
+
+  /* ── Header ── */
+  .header { margin-bottom: 3rem; }
+  .eyebrow {
+    font-family: ui-monospace, 'Cascadia Code', 'Roboto Mono', Menlo, monospace;
+    font-size: 0.6875rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: .75rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 2px;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  h1 {
+    font-family: ui-monospace, 'Cascadia Code', 'Roboto Mono', Menlo, monospace;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text-hi);
+    letter-spacing: -.02em;
+    text-wrap: balance;
+    margin-bottom: .4rem;
+  }
+  .subtitle {
+    font-size: 1rem;
+    color: var(--text-mid);
+    margin-bottom: 1.5rem;
+    text-wrap: balance;
+  }
+  .summary {
+    font-size: 0.9375rem;
+    color: var(--text-mid);
+    line-height: 1.7;
+    max-width: 64ch;
+    margin-bottom: 1.75rem;
+    border-left: 2px solid var(--border);
+    padding-left: 1rem;
+  }
+  .stack-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+  }
+  .tag {
+    font-family: ui-monospace, 'Cascadia Code', Menlo, monospace;
+    font-size: 0.6875rem;
+    letter-spacing: .04em;
+    background: var(--tag-bg);
+    color: var(--tag-fg);
+    padding: .25rem .6rem;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .tag.accent { background: var(--accent-sub); color: var(--accent); }
+  .tag.blue   { background: var(--blue-sub);   color: var(--blue); }
+
+  /* ── Theme toggle ── */
+  .controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 2rem;
+  }
+  .theme-btn {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: .75rem;
+    background: var(--surface);
+    color: var(--text-lo);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .3rem .75rem;
+    cursor: pointer;
+    letter-spacing: .04em;
+    transition: color .15s, border-color .15s;
+  }
+  .theme-btn:hover { color: var(--text-mid); border-color: var(--text-lo); }
+  .theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ── Skill section ── */
+  .skill-section { margin-bottom: 2.5rem; }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: .75rem;
+    margin-bottom: 1.1rem;
+    padding-left: .875rem;
+    border-left: 2px solid var(--rail);
+  }
+  .section-title {
+    font-family: ui-monospace, 'Cascadia Code', Menlo, monospace;
+    font-size: .6875rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-hi);
+  }
+  .section-count {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: .6rem;
+    color: var(--text-lo);
+    letter-spacing: .06em;
+  }
+
+  /* ── Skill items ── */
+  .skill-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .skill-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: start;
+    padding: .75rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .skill-item:last-child { border-bottom: none; }
+  .skill-item:hover { background: var(--surface-alt); }
+  .skill-name {
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--text-hi);
+    margin-bottom: .2rem;
+  }
+  .skill-desc {
+    font-size: .8125rem;
+    color: var(--text-mid);
+    line-height: 1.5;
+  }
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+    justify-content: flex-end;
+    min-width: 0;
+    padding-top: .15rem;
+  }
+
+  /* ── Highlight box ── */
+  .highlights {
+    background: var(--hl-bg);
+    border: 1px solid var(--hl-border);
+    border-radius: 6px;
+    padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+    margin-top: 2.5rem;
+  }
+  .highlights-title {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: .6875rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .highlight-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+  }
+  .highlight-list li {
+    font-size: .875rem;
+    color: var(--text-mid);
+    line-height: 1.55;
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .highlight-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .highlight-list li strong {
+    color: var(--text-hi);
+    font-weight: 600;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+  .footer-label {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: .6875rem;
+    color: var(--text-lo);
+    letter-spacing: .06em;
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #34C780;
+    display: inline-block;
+    margin-right: .4rem;
+    vertical-align: middle;
+  }
+
+  @media (max-width: 520px) {
+    .skill-item { grid-template-columns: 1fr; }
+    .skill-tags { justify-content: flex-start; margin-top: .25rem; }
+  }
+</style>
+
+<div class="page">
+  <div class="controls">
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">◐ theme</button>
+  </div>
+
+  <header class="header">
+    <div class="eyebrow">Portfolio Project</div>
+    <h1>Battle Cats Shop</h1>
+    <p class="subtitle">Full-Stack E-Commerce + Game Automation Platform</p>
+    <p class="summary">
+      ระบบร้านค้าออนไลน์ที่ทำงานอัตโนมัติตั้งแต่รับออเดอร์ ตรวจสลิป ไปจนถึงแก้ไขไฟล์ save เกมแล้วส่งโค้ดใหม่คืนลูกค้า
+      โดยไม่ต้องมีคนดูแลตลอดเวลา — built solo, running in production.
+    </p>
+    <div class="stack-row">
+      <span class="tag accent">Python / FastAPI</span>
+      <span class="tag accent">Supabase</span>
+      <span class="tag blue">Vanilla JS</span>
+      <span class="tag blue">HTML / CSS</span>
+      <span class="tag">PromptPay EMVCo</span>
+      <span class="tag">EasySlip API</span>
+      <span class="tag">TrueMoney Wallet</span>
+      <span class="tag">BCSFE</span>
+      <span class="tag">Cloudflare</span>
+      <span class="tag">VPS</span>
+    </div>
+  </header>
+
+  <!-- Backend -->
+  <div class="skill-section">
+    <div class="section-header">
+      <span class="section-title">API & Backend</span>
+      <span class="section-count">5 areas</span>
+    </div>
+    <div class="skill-list">
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">REST API Design</div>
+          <div class="skill-desc">ออกแบบ API ครอบคลุม order lifecycle ทั้งหมด — create, verify payment, run automation, deliver result — พร้อม Pydantic models และ HTTP error handling</div>
+        </div>
+        <div class="skill-tags"><span class="tag">FastAPI</span><span class="tag">Pydantic</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Order Lifecycle Management</div>
+          <div class="skill-desc">ออกแบบ state machine: pending → paid → done / cancelled / expired พร้อม timeout, idempotency check, และ retry pattern สำหรับ failure cases</div>
+        </div>
+        <div class="skill-tags"><span class="tag">async Python</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Concurrency & Race Condition Prevention</div>
+          <div class="skill-desc">ออกแบบ atomic stock reservation ด้วย Supabase <code style="font-size:.75rem;background:var(--surface-alt);padding:.1rem .3rem;border-radius:2px">PATCH + count=exact</code> — ป้องกัน double-sell เมื่อลูกค้าหลายคนซื้อพร้อมกัน</div>
+        </div>
+        <div class="skill-tags"><span class="tag accent">atomic ops</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Revenue Analytics Engine</div>
+          <div class="skill-desc">คำนวณยอดรายได้รายวัน/รายเดือน โดย exclude admin accounts, filter status=done, และใช้ base_amount แทน amount เพื่อไม่นับค่าธรรมเนียม TrueMoney</div>
+        </div>
+        <div class="skill-tags"><span class="tag">Supabase</span><span class="tag">analytics</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Admin Authentication & Session</div>
+          <div class="skill-desc">ระบบ verify admin session โดยตรวจสอบ is_admin flag ใน profiles table พร้อม base64-hashed password — แยก route สิทธิ์ admin/user ชัดเจน</div>
+        </div>
+        <div class="skill-tags"><span class="tag">auth</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment -->
+  <div class="skill-section">
+    <div class="section-header">
+      <span class="section-title">Payment Systems</span>
+      <span class="section-count">4 areas</span>
+    </div>
+    <div class="skill-list">
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">PromptPay QR Generation (จากศูนย์)</div>
+          <div class="skill-desc">เขียน EMVCo payload ด้วยมือทั้งหมด — TLV encoding, รองรับ 3 ID types (mobile subtag 01 / national ID subtag 02 / e-Wallet ID subtag 03), CRC-16 CCITT checksum — ไม่ใช้ library</div>
+        </div>
+        <div class="skill-tags"><span class="tag accent">EMVCo standard</span><span class="tag accent">CRC-16</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Slip Verification via OCR API</div>
+          <div class="skill-desc">Integrate EasySlip API — ส่งรูปสลิป, ตรวจยอดเงิน, ป้องกัน slip ซ้ำด้วย transaction_id blacklist, handle edge cases ของธนาคารต่างๆ</div>
+        </div>
+        <div class="skill-tags"><span class="tag">EasySlip</span><span class="tag">OCR</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">TrueMoney Wallet Angpao API</div>
+          <div class="skill-desc">Redeem ซองอั่งเป่าผ่าน API โดยอัตโนมัติ พร้อมคำนวณ fee 2.9% (cap 20 บาท) และติดตามด้วย base_amount vs amount fields แยกกัน</div>
+        </div>
+        <div class="skill-tags"><span class="tag">TrueMoney</span><span class="tag">fee calc</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">QR Code Rendering</div>
+          <div class="skill-desc">Generate QR image จาก payload แล้ว encode เป็น base64 PNG ส่งกลับ inline — ไม่ต้องเซฟไฟล์ ไม่ต้องใช้ static storage</div>
+        </div>
+        <div class="skill-tags"><span class="tag">qrcode lib</span><span class="tag">base64</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Database -->
+  <div class="skill-section">
+    <div class="section-header">
+      <span class="section-title">Database & Storage</span>
+      <span class="section-count">3 areas</span>
+    </div>
+    <div class="skill-list">
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Supabase (PostgreSQL) Integration</div>
+          <div class="skill-desc">ออกแบบ schema สำหรับ orders, profiles, code_products, code_stock — ใช้ REST API โดยตรง (ไม่ผ่าน ORM) พร้อม ON DELETE CASCADE, upsert, และ compound filter</div>
+        </div>
+        <div class="skill-tags"><span class="tag">Supabase</span><span class="tag">PostgreSQL</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Hybrid Storage Strategy</div>
+          <div class="skill-desc">ใช้ local JSON เป็น source of truth สำหรับ orders (รองรับ offline) แล้ว sync ขึ้น Supabase ด้วย upsert อัตโนมัติ — fallback gracefully ถ้า cloud unavailable</div>
+        </div>
+        <div class="skill-tags"><span class="tag">JSON</span><span class="tag">cloud sync</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Inventory & Loyalty Tracking</div>
+          <div class="skill-desc">ระบบนับ total_spent แบบ live query (ไม่เก็บสะสม) เพื่อป้องกัน drift, จัดการ loyalty cycles, และ track stock availability แบบ real-time</div>
+        </div>
+        <div class="skill-tags"><span class="tag">inventory</span><span class="tag">loyalty</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frontend -->
+  <div class="skill-section">
+    <div class="section-header">
+      <span class="section-title">Frontend (No Framework)</span>
+      <span class="section-count">4 areas</span>
+    </div>
+    <div class="skill-list">
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Dark-Theme Responsive UI</div>
+          <div class="skill-desc">ออกแบบและ implement UI ตั้งแต่ต้นด้วย Vanilla HTML/CSS/JS — dark theme, Chakra Petch + Russo One typefaces, fully responsive, ไม่ใช้ CSS framework</div>
+        </div>
+        <div class="skill-tags"><span class="tag blue">HTML/CSS</span><span class="tag blue">responsive</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Admin Dashboard</div>
+          <div class="skill-desc">หน้า admin จัดการออเดอร์, ดูยอดรายวัน/รายเดือน, จัดการสต๊อก pre-made codes — พร้อม auth gate ตรวจสิทธิ์ก่อนโหลด UI จริง</div>
+        </div>
+        <div class="skill-tags"><span class="tag blue">dashboard</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Multi-language Toggle (TH/EN)</div>
+          <div class="skill-desc">ระบบ i18n แบบ vanilla — สลับภาษาไทย/อังกฤษด้วย data-i18n attribute + JS dictionary โดยไม่ต้อง reload หน้า</div>
+        </div>
+        <div class="skill-tags"><span class="tag blue">i18n</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Supabase JS Client Integration</div>
+          <div class="skill-desc">ใช้ Supabase JS SDK ฝั่ง client สำหรับ auth, query profiles, ตรวจ is_admin — จัดการ session ด้วย localStorage + origin-scoped access</div>
+        </div>
+        <div class="skill-tags"><span class="tag blue">Supabase JS</span><span class="tag blue">auth</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game / Automation -->
+  <div class="skill-section">
+    <div class="section-header">
+      <span class="section-title">Game Automation</span>
+      <span class="section-count">2 areas</span>
+    </div>
+    <div class="skill-list">
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">BCSFE Save File Editing</div>
+          <div class="skill-desc">Integrate BCSFE Python library เพื่อดาวน์โหลด save file ผ่าน Transfer Code, แก้ไข (unlock/upgrade/true form/ultra form/max talents), แล้วอัปโหลดคืนและรับ Transfer Code ใหม่</div>
+        </div>
+        <div class="skill-tags"><span class="tag accent">BCSFE</span><span class="tag accent">automation</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Game Data Logic</div>
+          <div class="skill-desc">เข้าใจระบบ catseye upgrade ของเกม (max level ต่าง rarity ต่างกัน), อ่าน talent_data จาก game assets, handle edge cases เช่น cats ที่ไม่มี talent / locked forms</div>
+        </div>
+        <div class="skill-tags"><span class="tag accent">game logic</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Infrastructure -->
+  <div class="skill-section">
+    <div class="section-header">
+      <span class="section-title">Infrastructure & SEO</span>
+      <span class="section-count">3 areas</span>
+    </div>
+    <div class="skill-list">
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">Cloudflare WAF & Rate Limiting</div>
+          <div class="skill-desc">จัดการ WAF rules, วิเคราะห์และแก้ปัญหา rate-limiting rule ที่ block รูปภาพผิดพลาด, เข้าใจ edge-served robots.txt และ Cloudflare cache behavior</div>
+        </div>
+        <div class="skill-tags"><span class="tag">Cloudflare</span><span class="tag">WAF</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">SEO & Google Search Console</div>
+          <div class="skill-desc">สร้าง dynamic sitemap.xml ผ่าน FastAPI route, เพิ่ม meta tags, ส่ง sitemap ใน Search Console, วิเคราะห์ URL Inspection report และ request indexing</div>
+        </div>
+        <div class="skill-tags"><span class="tag">SEO</span><span class="tag">sitemap</span></div>
+      </div>
+      <div class="skill-item">
+        <div>
+          <div class="skill-name">VPS Deployment</div>
+          <div class="skill-desc">Deploy และจัดการ production server บน VPS — process management (systemd/pm2), file transfer (FileZilla), port configuration, กระบวนการ restart service อย่างปลอดภัย</div>
+        </div>
+        <div class="skill-tags"><span class="tag">VPS</span><span class="tag">Linux</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Highlights -->
+  <div class="highlights">
+    <div class="highlights-title">Technical Highlights</div>
+    <ul class="highlight-list">
+      <li><strong>EMVCo QR payload จากศูนย์</strong> — เขียน TLV encoder + CRC-16 CCITT ด้วยมือทั้งหมดโดยไม่ใช้ library ใดๆ รองรับทั้ง 3 ประเภท PromptPay ID ตามมาตรฐาน</li>
+      <li><strong>Atomic stock reservation</strong> — ใช้ Supabase PATCH + <code style="font-size:.75rem;background:var(--surface-alt);padding:.1rem .3rem;border-radius:2px">Prefer: count=exact</code> เพื่อ update เฉพาะ row ที่ยัง available อยู่เท่านั้น ป้องกัน double-sell โดยไม่ต้อง lock table</li>
+      <li><strong>Auto-release expired reservations</strong> — reactive cleanup pattern ที่ตรวจ expired order ตอน admin เปิดดู stock หรือมีลูกค้าใหม่มาซื้อ ไม่ต้องใช้ cron job</li>
+      <li><strong>Revenue calculation ที่แม่นยำ</strong> — filter เฉพาะ status=done, exclude admin accounts, ใช้ base_amount แยกค่าธรรมเนียม TrueMoney ออก — คำนวณถูกทั้งรายวันและรายเดือนจาก shared helper เดียว</li>
+      <li><strong>Built and shipped solo</strong> — ออกแบบ, develop, deploy, และดูแล production system คนเดียว ตั้งแต่ database schema จนถึง Cloudflare configuration</li>
+    </ul>
+  </div>
+
+  <footer class="footer">
+    <span class="footer-label"><span class="status-dot"></span>Production — Live</span>
+    <span class="footer-label">Python · FastAPI · Supabase · Vanilla JS</span>
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var stored = localStorage.getItem('theme');
+    if (stored) document.documentElement.setAttribute('data-theme', stored);
+  })();
+
+  function toggleTheme() {
+    var html = document.documentElement;
+    var current = html.getAttribute('data-theme');
+    var isDark = current === 'dark' || (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    var next = isDark ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  }
+</script>

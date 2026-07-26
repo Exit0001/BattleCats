@@ -1,0 +1,2815 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧪 ทดสอบระบบ - Battle Cats Shop</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    /* ── Test-specific styles (dark theme) ── */
+    .test-warn-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(251,191,36,0.10);
+      border: 1px solid rgba(251,191,36,0.35);
+      border-radius: 14px;
+      padding: 14px 20px;
+      margin-bottom: 28px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      color: #FCD34D;
+    }
+
+    .test-section {
+      background: rgba(14,6,32,0.85);
+      border: 1px dashed rgba(244,63,94,0.40);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .test-section-title {
+      font-family: 'Russo One', sans-serif;
+      font-size: 16px;
+      color: #FDA4AF;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .test-product-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: border-color 0.18s, background 0.18s;
+    }
+    .test-product-card:hover {
+      border-color: rgba(124,58,237,0.45);
+      background: rgba(124,58,237,0.08);
+    }
+    .test-product-name {
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #EDE6FF;
+      margin-bottom: 3px;
+    }
+    .test-product-desc {
+      font-size: 12px;
+      color: rgba(210,190,255,0.55);
+    }
+    .test-product-price {
+      font-family: 'Russo One', sans-serif;
+      font-size: 16px;
+      color: #FF4D92;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-box {
+      background: rgba(124,58,237,0.10);
+      border: 1px solid rgba(124,58,237,0.25);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-number {
+      font-family: 'Russo One', sans-serif;
+      font-size: 28px;
+      color: #FFD84E;
+      text-shadow: 0 0 16px rgba(255,216,78,0.35);
+    }
+    .stat-label {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      color: rgba(210,190,255,0.55);
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .cart-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .cart-item-row:last-child { border-bottom: none; }
+
+    .debug-box {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: 'Chakra Petch', monospace;
+      font-size: 12px;
+      color: #86EFAC;
+      max-height: 280px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.7;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .form-label {
+      display: block;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(210,190,255,0.55);
+      margin-bottom: 7px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(124,58,237,0.25);
+      border-radius: 10px;
+      color: #EDE6FF;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: rgba(124,58,237,0.65);
+      box-shadow: 0 0 0 3px rgba(124,58,237,0.14);
+    }
+    .form-input::placeholder { color: rgba(210,190,255,0.30); }
+    .form-input option { background: #1a0a3a; color: #EDE6FF; }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    .status-dot.ok  { background: #4ADE80; box-shadow: 0 0 6px rgba(74,222,128,0.6); }
+    .status-dot.err { background: #F87171; box-shadow: 0 0 6px rgba(248,113,113,0.6); }
+    .status-dot.loading { background: #FBBF24; animation: bc-paw-pulse 1s ease-in-out infinite; }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">BATTLE CAT PRO MAX</a>
+    <ul class="nav-links">
+      <li><a href="index.html">หน้าแรก</a></li>
+      <li><a href="shop.html">ร้านค้าไอเทม</a></li>
+      <li><a href="shop-codes.html">รหัสสำเร็จรูป</a></li>
+      <li><a href="characters.html">ปลดล็อคแมว</a></li>
+      <li><a href="stages.html">ปลดล็อคด่าน</a></li>
+      <li><a href="orders.html">ออเดอร์</a></li>
+      <li><a href="test_no_payment.html" class="active" style="color:#FDA4AF;">🧪 ทดสอบ</a></li>
+    </ul>
+    <div class="nav-cart" onclick="window.location.href='orders.html'" style="cursor:pointer;">
+      🛒
+      <span class="cart-badge" id="cartCount">0</span>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- Header -->
+  <h1 class="section-title">🧪 ห้องทดสอบระบบ</h1>
+  <div class="test-warn-banner">
+    ⚠️ หน้านี้ใช้สำหรับทดสอบระบบเท่านั้น — ออเดอร์จะถูกบันทึกลง Supabase ด้วย <code style="background:rgba(0,0,0,0.3);padding:1px 6px;border-radius:4px;">status: "test"</code>
+  </div>
+
+  <!-- Supabase status -->
+  <div id="dbStatus" style="display:flex;align-items:center;gap:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.65);margin-bottom:20px;">
+    <span class="status-dot loading" id="dbDot"></span>
+    <span id="dbStatusText">กำลังเชื่อมต่อ Supabase...</span>
+  </div>
+
+  <!-- STATS -->
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-number" id="orderCount">0</div>
+      <div class="stat-label">ออเดอร์ session นี้</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" id="cartItemCount">0</div>
+      <div class="stat-label">ของในตะกร้า</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" id="totalPrice">฿0</div>
+      <div class="stat-label">ราคารวม</div>
+    </div>
+  </div>
+
+  <!-- TEST PRODUCTS -->
+  <div class="test-section">
+    <div class="test-section-title">📦 สินค้าทดสอบ (ตรงกับหน้าร้านจริง)</div>
+
+    <!-- Cat Food -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:10px 0 6px;">🐱 Cat Food</div>
+    <div class="test-product-card"><div><div class="test-product-name">Cat Food x10,000</div><div class="test-product-desc">max: 45,000</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿10</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Cat Food x10,000',10,'cat_food',10000)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Cat Food x20,000</div><div class="test-product-desc">max: 45,000</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿19</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Cat Food x20,000',19,'cat_food',20000)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Cat Food x30,000</div><div class="test-product-desc">max: 45,000</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿25</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Cat Food x30,000',25,'cat_food',30000)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Cat Food x45,000</div><div class="test-product-desc">max: 45,000</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿35</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Cat Food x45,000',35,'cat_food',45000)">+ เพิ่ม</button></div></div>
+
+    <!-- XP -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">⚡ XP</div>
+    <div class="test-product-card"><div><div class="test-product-name">XP x99,999,999</div><div class="test-product-desc">max: 99,999,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿25</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('XP x99,999,999',25,'xp',99999999)">+ เพิ่ม</button></div></div>
+
+    <!-- Normal Ticket -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">🎫 Normal Ticket</div>
+    <div class="test-product-card"><div><div class="test-product-name">Normal Ticket x100</div><div class="test-product-desc">max: 2,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿10</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Normal Ticket x100',10,'normal_ticket',100)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Normal Ticket x500</div><div class="test-product-desc">max: 2,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿45</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Normal Ticket x500',45,'normal_ticket',500)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Normal Ticket x1000</div><div class="test-product-desc">max: 2,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿85</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Normal Ticket x1000',85,'normal_ticket',1000)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Normal Ticket x2999</div><div class="test-product-desc">max: 2,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿239</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Normal Ticket x2999',239,'normal_ticket',2999)">+ เพิ่ม</button></div></div>
+
+    <!-- Rare Ticket -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">🎫 Rare Ticket (Trade)</div>
+    <div class="test-product-card"><div><div class="test-product-name">Rare Ticket x50</div><div class="test-product-desc">max: 299</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿15</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Rare Ticket x50',15,'rare_ticket',50)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Rare Ticket x100</div><div class="test-product-desc">max: 299</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿29</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Rare Ticket x100',29,'rare_ticket',100)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Rare Ticket x200</div><div class="test-product-desc">max: 299</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿50</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Rare Ticket x200',50,'rare_ticket',200)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Rare Ticket x299</div><div class="test-product-desc">max: 299</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿70</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Rare Ticket x299',70,'rare_ticket',299)">+ เพิ่ม</button></div></div>
+
+    <!-- Battle Item -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">🥊 Battle Item</div>
+    <div class="test-product-card"><div><div class="test-product-name">Battle Item x100</div><div class="test-product-desc">เพิ่มทุกประเภท (1-6)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿10</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Battle Item x100',10,'battle_item',100)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Battle Item x500</div><div class="test-product-desc">เพิ่มทุกประเภท (1-6)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿43</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Battle Item x500',43,'battle_item',500)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Battle Item x5000</div><div class="test-product-desc">เพิ่มทุกประเภท (1-6)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿399</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Battle Item x5000',399,'battle_item',5000)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Battle Item x9,999</div><div class="test-product-desc">เพิ่มทุกประเภท (1-6)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿769</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Battle Item x9,999',769,'battle_item',9999)">+ เพิ่ม</button></div></div>
+
+    <!-- NP -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">💰 NP</div>
+    <div class="test-product-card"><div><div class="test-product-name">NP x100</div><div class="test-product-desc">max: 9,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿25</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('NP x100',25,'np',100)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">NP x1,000</div><div class="test-product-desc">max: 9,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿230</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('NP x1,000',230,'np',1000)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">NP x5,000</div><div class="test-product-desc">max: 9,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿1,087</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('NP x5,000',1087,'np',5000)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">NP x9,999</div><div class="test-product-desc">max: 9,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿2,049</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('NP x9,999',2049,'np',9999)">+ เพิ่ม</button></div></div>
+
+    <!-- Platinum Shard -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">🔷 Platinum Shard</div>
+    <div class="test-product-card"><div><div class="test-product-name">Platinum Shard x10</div><div class="test-product-desc">max: 99</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿30</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Platinum Shard x10',30,'platinum_shard',10)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Platinum Shard x30</div><div class="test-product-desc">max: 99</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿83</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Platinum Shard x30',83,'platinum_shard',30)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Platinum Shard x60</div><div class="test-product-desc">max: 99</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿160</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Platinum Shard x60',160,'platinum_shard',60)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Platinum Shard x99</div><div class="test-product-desc">max: 99</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿250</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Platinum Shard x99',250,'platinum_shard',99)">+ เพิ่ม</button></div></div>
+
+    <!-- Leadership -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">📈 Leadership</div>
+    <div class="test-product-card"><div><div class="test-product-name">Leadership x100</div><div class="test-product-desc">max: 9,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿20</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Leadership x100',20,'leadership',100)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Leadership x1,000</div><div class="test-product-desc">max: 9,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿185</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Leadership x1,000',185,'leadership',1000)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Leadership x5,000</div><div class="test-product-desc">max: 9,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿869</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Leadership x5,000',869,'leadership',5000)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Leadership x9,999</div><div class="test-product-desc">max: 9,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿1,639</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Leadership x9,999',1639,'leadership',9999)">+ เพิ่ม</button></div></div>
+
+    <!-- Catseye -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">💠 Catseye</div>
+    <div class="test-product-card"><div><div class="test-product-name">Catseye x100</div><div class="test-product-desc">เพิ่มทุกประเภท (1-6)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿20</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Catseye x100',20,'catseye',100)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Catseye x500</div><div class="test-product-desc">เพิ่มทุกประเภท (1-6)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿87</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Catseye x500',87,'catseye',500)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Catseye x5000</div><div class="test-product-desc">เพิ่มทุกประเภท (1-6)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿799</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Catseye x5000',799,'catseye',5000)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Catseye x9,999</div><div class="test-product-desc">เพิ่มทุกประเภท (1-6)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿1,559</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Catseye x9,999',1559,'catseye',9999)">+ เพิ่ม</button></div></div>
+
+    <!-- Catfruit -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">🍎 Catfruit</div>
+    <div class="test-product-card"><div><div class="test-product-name">Catfruit x100</div><div class="test-product-desc">เพิ่มทุกประเภท (1-29)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿30</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Catfruit x100',30,'catfruit',100)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Catfruit x300</div><div class="test-product-desc">เพิ่มทุกประเภท (1-29)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿85</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Catfruit x300',85,'catfruit',300)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Catfruit x500</div><div class="test-product-desc">เพิ่มทุกประเภท (1-29)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿139</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Catfruit x500',139,'catfruit',500)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Catfruit x998</div><div class="test-product-desc">เพิ่มทุกประเภท (1-29)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿269</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Catfruit x998',269,'catfruit',998)">+ เพิ่ม</button></div></div>
+
+    <!-- Catamins -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">🧪 Catamins</div>
+    <div class="test-product-card"><div><div class="test-product-name">Catamins x100</div><div class="test-product-desc">เพิ่มทุกประเภท (1-3)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿20</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Catamins x100',20,'catamins',100)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Catamins x500</div><div class="test-product-desc">เพิ่มทุกประเภท (1-3)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿87</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Catamins x500',87,'catamins',500)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Catamins x5000</div><div class="test-product-desc">เพิ่มทุกประเภท (1-3)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿799</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Catamins x5000',799,'catamins',5000)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Catamins x9,999</div><div class="test-product-desc">เพิ่มทุกประเภท (1-3)</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿1,559</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Catamins x9,999',1559,'catamins',9999)">+ เพิ่ม</button></div></div>
+
+    <!-- Legend Ticket -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">🏆 Legend Ticket</div>
+    <div class="test-product-card"><div><div class="test-product-name">Legend Ticket x1</div><div class="test-product-desc">max: 4</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿40</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Legend Ticket x1',40,'legend_ticket',1)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Legend Ticket x2</div><div class="test-product-desc">max: 4</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿74</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Legend Ticket x2',74,'legend_ticket',2)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Legend Ticket x3</div><div class="test-product-desc">max: 4</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿102</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Legend Ticket x3',102,'legend_ticket',3)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Legend Ticket x4</div><div class="test-product-desc">max: 4</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿125</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Legend Ticket x4',125,'legend_ticket',4)">+ เพิ่ม</button></div></div>
+
+    <!-- Lucky Ticket -->
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px;">🎲 Lucky Ticket</div>
+    <div class="test-product-card"><div><div class="test-product-name">Lucky Ticket x100</div><div class="test-product-desc">max: 2,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿10</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Lucky Ticket x100',10,'lucky_ticket',100)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Lucky Ticket x500</div><div class="test-product-desc">max: 2,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿45</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Lucky Ticket x500',45,'lucky_ticket',500)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Lucky Ticket x1000</div><div class="test-product-desc">max: 2,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿85</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Lucky Ticket x1000',85,'lucky_ticket',1000)">+ เพิ่ม</button></div></div>
+    <div class="test-product-card"><div><div class="test-product-name">Lucky Ticket x2999</div><div class="test-product-desc">max: 2,999</div></div><div style="display:flex;align-items:center;"><span class="test-product-price">฿239</span><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;" onclick="testAddItem('Lucky Ticket x2999',239,'lucky_ticket',2999)">+ เพิ่ม</button></div></div>
+  </div>
+
+  <!-- CART -->
+  <div class="test-section">
+    <div class="test-section-title">🛒 ตะกร้าสินค้า (ทดสอบ)</div>
+    <div id="testCartList">
+      <p style="color:rgba(210,190,255,0.4);text-align:center;padding:20px;font-family:'Chakra Petch',sans-serif;font-size:13px;">ตะกร้าว่างเปล่า</p>
+    </div>
+
+    <!-- รหัสเกมสำหรับรัน BCSFE -->
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);">
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">รหัสเกม (สำหรับรัน BCSFE)</div>
+      <div class="form-row">
+        <div><label class="form-label">Transfer Code</label><input type="text" id="cart-tc" class="form-input" placeholder="ABCD1234..."></div>
+        <div><label class="form-label">Confirmation Code</label><input type="text" id="cart-cc" class="form-input" placeholder="12345678"></div>
+      </div>
+      <div style="margin-bottom:12px;"><label class="form-label">Server</label>
+        <select id="cart-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+      </div>
+    </div>
+
+    <div id="cartBCSFEResult" style="display:none;margin-bottom:12px;"></div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-primary" style="flex:2;" onclick="runBCSFECart()">🚀 รัน BCSFE ทุกรายการในตะกร้า</button>
+      <button class="btn btn-outline" style="flex:1;" onclick="testClearCart()">🗑️ ล้างตะกร้า</button>
+    </div>
+  </div>
+
+  <!-- ORDER FORM (เพื่อทดสอบ checkout จริง) -->
+  <div class="test-section">
+    <div class="test-section-title">📝 ฟอร์มออเดอร์ทดสอบ (บันทึกลง Supabase)</div>
+
+    <div class="form-row">
+      <div>
+        <label class="form-label">Transfer Code</label>
+        <input type="text" id="tc-transferCode" class="form-input" placeholder="TEST1234567890">
+      </div>
+      <div>
+        <label class="form-label">Confirmation Code</label>
+        <input type="text" id="tc-confirmCode" class="form-input" placeholder="TEST12345678">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div>
+        <label class="form-label">Server</label>
+        <select id="tc-server" class="form-input">
+          <option value="">-- เลือก --</option>
+          <option value="1">EN (Global / TH / EU)</option>
+          <option value="2">JP (ญี่ปุ่น)</option>
+          <option value="3">KR (เกาหลี)</option>
+          <option value="4">TW (ไต้หวัน)</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">ชื่อ / Username</label>
+        <input type="text" id="tc-username" class="form-input" placeholder="ชื่อทดสอบ">
+      </div>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <label class="form-label">Line ID / Discord</label>
+      <input type="text" id="tc-contact" class="form-input" placeholder="@test_user">
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;" onclick="testFullCheckout()">
+      🚀 ทดสอบ checkout เต็มรูปแบบ (บันทึก Supabase)
+    </button>
+  </div>
+
+  <!-- BCSFE SYSTEM TEST -->
+  <div class="test-section">
+    <div class="test-section-title">⚙️ ทดสอบ BCSFE Backend</div>
+
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:12px;margin-bottom:16px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;">
+      ⚠️ ต้องมี FastAPI backend ทำงานอยู่ที่ URL ที่กำหนด
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label class="form-label">Backend URL</label>
+      <input type="text" id="backendURL" class="form-input" value="http://localhost:8000" placeholder="http://localhost:8000">
+    </div>
+
+    <div class="form-row">
+      <div>
+        <label class="form-label">Transfer Code</label>
+        <input type="text" id="bcsfe-transferCode" class="form-input" placeholder="ABCD1234EFGH5678">
+      </div>
+      <div>
+        <label class="form-label">Confirmation Code</label>
+        <input type="text" id="bcsfe-confirmCode" class="form-input" placeholder="12345678">
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label class="form-label">ประเภทของ</label>
+      <select id="itemType" class="form-input" onchange="onItemTypeChange()">
+        <option value="">-- เลือกของ --</option>
+        <option value="cat_food">🐱 Cat Food (Max: 45,000)</option>
+        <option value="xp">🧠 XP (Max: 99,999,999)</option>
+        <option value="normal_ticket">🎫 Normal Ticket (Max: 2,999)</option>
+        <option value="rare_ticket">🎫 Rare Ticket (Max: 299)</option>
+        <option value="np">💰 NP (Max: 9,999)</option>
+        <option value="platinum_shard">🔷 Platinum Shard (Max: 99)</option>
+        <option value="leadership">📈 Leadership (Max: 9,999)</option>
+        <option value="catseye">💠 Catseye (Max: 9,999)</option>
+        <option value="catfruit">🍎 Catfruit (Max: 998/type)</option>
+        <option value="battle_item">🥊 Battle Item (Max: 9,999)</option>
+        <option value="catamins">🧪 Catamins (Max: 9,999)</option>
+        <option value="legend_ticket">🏆 Legend Ticket (Max: 4)</option>
+        <option value="lucky_ticket">🎲 Lucky Ticket (Max: 2,999)</option>
+      </select>
+    </div>
+
+    <div id="subTypeContainer" style="display:none;margin-bottom:14px;">
+      <label class="form-label" id="subTypeLabel">เลือกประเภทย่อย</label>
+      <select id="subType" class="form-input"></select>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <label class="form-label">จำนวน</label>
+      <input type="number" id="itemAmount" class="form-input" placeholder="ป้อนจำนวน" min="1">
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;" onclick="testBCSFE()">🚀 ทดสอบเพิ่มของ</button>
+  </div>
+
+  <!-- UNLOCK CHARACTER FLOW -->
+  <div class="test-section">
+    <div class="test-section-title"><img src="pictures/icon cat.png" style="height:1.1em;vertical-align:middle;margin-right:5px;"> ปลดล็อคตัวละคร</div>
+
+    <!-- Step indicators -->
+    <div style="display:flex;margin-bottom:22px;border-radius:12px;overflow:hidden;border:1px solid rgba(124,58,237,0.2);">
+      <div id="si-1" style="flex:1;text-align:center;padding:10px 6px;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;background:rgba(124,58,237,0.35);color:#EDE6FF;border-right:1px solid rgba(124,58,237,0.2);">1 รหัสเกม</div>
+      <div id="si-2" style="flex:1;text-align:center;padding:10px 6px;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;background:transparent;color:rgba(210,190,255,0.35);border-right:1px solid rgba(124,58,237,0.2);">2 เลือกแมว</div>
+      <div id="si-3" style="flex:1;text-align:center;padding:10px 6px;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;background:transparent;color:rgba(210,190,255,0.35);">3 ปลดล็อค</div>
+    </div>
+
+    <!-- ── STEP 1: Game Codes ──────────────────────────── -->
+    <div id="uc-s1">
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-bottom:14px;">กรอก Transfer Code และ Confirmation Code ของลูกค้า</div>
+      <div class="form-row">
+        <div>
+          <label class="form-label">Transfer Code</label>
+          <input type="text" id="uc-tc" class="form-input" placeholder="ABCD1234EFGH5678">
+        </div>
+        <div>
+          <label class="form-label">Confirmation Code</label>
+          <input type="text" id="uc-cc" class="form-input" placeholder="12345678">
+        </div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="form-label">Server</label>
+        <select id="uc-srv" class="form-input">
+          <option value="1">EN (Global / TH / EU)</option>
+          <option value="2">JP (ญี่ปุ่น)</option>
+          <option value="3">KR (เกาหลี)</option>
+          <option value="4">TW (ไต้หวัน)</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%;" onclick="ucNext(1)">ถัดไป →</button>
+    </div>
+
+    <!-- ── STEP 2: Select Characters ─────────────────── -->
+    <div id="uc-s2" style="display:none;">
+      <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-bottom:12px;">ค้นหาและเลือกตัวละครที่ต้องการปลดล็อค</div>
+
+      <input type="text" id="uc-q" class="form-input" placeholder="ค้นหาชื่อหรือ ID เช่น 86, Valkyrie…" style="margin-bottom:8px;" oninput="ucSearch()">
+      <div id="uc-qres" style="display:none;max-height:210px;overflow-y:auto;border:1px solid rgba(124,58,237,0.22);border-radius:10px;margin-bottom:14px;"></div>
+
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);text-transform:uppercase;letter-spacing:0.8px;">เลือกแล้ว (<span id="uc-cnt">0</span>)</span>
+          <button onclick="ucClearSel()" style="padding:3px 10px;border-radius:8px;border:1px solid rgba(244,63,94,0.3);background:rgba(244,63,94,0.08);color:#FDA4AF;font-family:'Chakra Petch',sans-serif;font-size:11px;cursor:pointer;">ล้าง</button>
+        </div>
+        <div id="uc-tags" style="display:flex;flex-wrap:wrap;gap:5px;min-height:38px;padding:10px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px dashed rgba(124,58,237,0.2);">
+          <span id="uc-empty" style="color:rgba(210,190,255,0.3);font-family:'Chakra Petch',sans-serif;font-size:12px;align-self:center;">ยังไม่ได้เลือก</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label class="form-label">หรือพิมพ์ ID ตรงๆ (เว้นวรรค, range เช่น 1-43, หรือ all)</label>
+        <input type="text" id="uc-manual" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43  หรือ  all">
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-outline" onclick="ucGo(1)">← กลับ</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="ucNext(2)">ถัดไป →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Review & Execute ───────────────────── -->
+    <div id="uc-s3" style="display:none;">
+      <div id="uc-summary" style="background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:13px;"></div>
+
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <label class="form-label" style="margin:0;">ID List (สำหรับ BCSFE)</label>
+          <button onclick="ucCopyIds()" style="padding:3px 12px;border-radius:8px;border:1px solid rgba(124,58,237,0.3);background:rgba(124,58,237,0.1);color:#C4B5FD;font-family:'Chakra Petch',sans-serif;font-size:11px;cursor:pointer;">📋 Copy</button>
+        </div>
+        <div id="uc-idlist" class="debug-box" style="color:#FFD84E;font-size:13px;max-height:72px;"></div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="ucExecute()">🚀 ปลดล็อคผ่าน BCSFE API</button>
+
+      <div id="uc-result" style="display:none;margin-bottom:10px;"></div>
+
+      <button class="btn btn-outline" style="width:100%;" onclick="ucReset()">← เริ่มใหม่</button>
+    </div>
+  </div>
+
+  <!-- ── UPGRADE CHARACTER ─────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">⬆️ อัพเกรดตัวละคร Max Level (Uber=60 / SR,R=50 / Normal=30 · Plus=0)</div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="ug-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="ug-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="ug-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Cat IDs (เว้นวรรค, range เช่น 1-43)</label><input type="text" id="ug-ids" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43"></div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runCatAction('ug','upgrade/characters','⬆️ อัพเกรด')">⬆️ อัพเกรด Max (ระบุ ID)</button>
+    <div id="ug-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── UPGRADE ALL UNLOCKED ───────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">⬆️⬆️ อัพเกรด Max ทุกตัวที่มีในรหัส</div>
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;">
+      ⚠️ Upgrade ทุกตัวที่ unlock ถึง max level ตาม rarity (Uber=60, SR/R=50, Normal=30) — Plus=0
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="uga-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="uga-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="uga-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runAllCatAction('uga','upgrade/all','⬆️ Upgrade All')">⬆️ Upgrade Max ทุกตัวในรหัส</button>
+    <div id="uga-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── UNLOCK ALL ─────────────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🐱🐱 Unlock ทุกตัวละครในเกม</div>
+    <div style="background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FDA4AF;">
+      ⚠️ Unlock <strong>ทุกตัวในเกม</strong> — ไม่ใช่แค่ตัวที่ลูกค้ามี
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="ula-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="ula-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="ula-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runAllCatAction('ula','unlock/all','🐱 Unlock All')">🐱 Unlock ทุกตัวในเกม</button>
+    <div id="ula-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── TRUE FORM ALL ──────────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">✨✨ True Form ทุกตัวที่มีในรหัส</div>
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;">
+      ⚠️ True Form เฉพาะตัวที่ลูกค้ามีอยู่แล้ว
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="tfa-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="tfa-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="tfa-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runAllCatAction('tfa','trueform/all','✨ True Form All')">✨ True Form ทุกตัวในรหัส</button>
+    <div id="tfa-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── ULTRA FORM ALL ─────────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">💥💥 Ultra Form ทุกตัวที่มีในรหัส</div>
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;">
+      ⚠️ Ultra Form เฉพาะตัวที่ลูกค้ามีอยู่แล้ว
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="ufa-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="ufa-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="ufa-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runAllCatAction('ufa','ultraform/all','💥 Ultra Form All')">💥 Ultra Form ทุกตัวในรหัส</button>
+    <div id="ufa-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── TALENTS MAX ALL ────────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🌟🌟 Max Talents ทุกตัวที่มีในรหัส</div>
+    <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;">
+      ⚠️ Max Talents เฉพาะตัวที่ลูกค้ามีอยู่แล้ว
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="tla-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="tla-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="tla-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runAllCatAction('tla','talents/all','🌟 Talents Max All')">🌟 Max Talents ทุกตัวในรหัส</button>
+    <div id="tla-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── TRUE FORM CHARACTER ────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">✨ True Form ตัวละคร</div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="tf-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="tf-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="tf-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Cat IDs (เว้นวรรค, range เช่น 1-43, หรือ all)</label><input type="text" id="tf-ids" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43  หรือ  all"></div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runCatAction('tf','trueform/characters','✨ True Form')">✨ True Form ตัวละคร</button>
+    <div id="tf-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── ULTRA FORM CHARACTER ───────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">💥 Ultra Form ตัวละคร (4th Form)</div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="uf-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="uf-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="uf-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Cat IDs (เว้นวรรค, range เช่น 1-43, หรือ all)</label><input type="text" id="uf-ids" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43  หรือ  all"></div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runCatAction('uf','ultraform/characters','💥 Ultra Form')">💥 Ultra Form ตัวละคร</button>
+    <div id="uf-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── TALENTS MAX CHARACTER ──────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🌟 Max Talents ตัวละคร</div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="tl-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="tl-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="tl-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Cat IDs (เว้นวรรค, range เช่น 1-43, หรือ all)</label><input type="text" id="tl-ids" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43  หรือ  all"></div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runCatAction('tl','talents/characters','🌟 Max Talents')">🌟 Max Talents ตัวละคร</button>
+    <div id="tl-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── CRAZED ALL CAT PACKAGE ────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🐾 Package: Crazed All Cat (ปลดล็อค 9 ตัว #91–99)</div>
+    <div style="display:flex;align-items:center;gap:16px;background:rgba(255,120,0,0.07);border:1px solid rgba(255,120,0,0.3);border-radius:14px;padding:14px;margin-bottom:14px;">
+      <img src="pictures/crazed_all_cat.png" style="width:72px;height:72px;object-fit:contain;border-radius:10px;flex-shrink:0;" onerror="this.style.display='none'">
+      <div>
+        <div style="font-family:'Russo One',sans-serif;font-size:15px;color:#FFD84E;margin-bottom:4px;">Crazed All Cat</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:4px;">ปลดล็อค Crazed Cat ทั้ง 9 ตัว (ID 91–99)</div>
+        <div style="font-family:'Russo One',sans-serif;font-size:18px;color:#FF4D92;">฿150</div>
+      </div>
+    </div>
+    <div style="background:rgba(255,120,0,0.06);border:1px solid rgba(255,120,0,0.2);border-radius:8px;padding:8px 12px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(255,160,80,0.8);">
+      Cat IDs: <span style="color:#FFD84E;font-family:monospace;">91 92 93 94 95 96 97 98 99</span>
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="crazed-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="crazed-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="crazed-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;background:linear-gradient(135deg,#b45309,#f97316);" onclick="runCrazedPackage(event)">🐾 ปลดล็อค Crazed All Cat (91–99)</button>
+    <div id="crazed-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── MANIC ALL CAT PACKAGE ──────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🌟 Package: Manic All Cat (True Form 9 ตัว #91–99)</div>
+    <div style="display:flex;align-items:center;gap:16px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.3);border-radius:14px;padding:14px;margin-bottom:14px;">
+      <img src="pictures/manic_all_cat.png" style="width:72px;height:72px;object-fit:contain;border-radius:10px;flex-shrink:0;" onerror="this.style.display='none'">
+      <div>
+        <div style="font-family:'Russo One',sans-serif;font-size:15px;color:#FFD84E;margin-bottom:4px;">Manic All Cat</div>
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:4px;">True Form Crazed Cat ทั้ง 9 ตัว (ID 91–99)</div>
+        <div style="font-family:'Russo One',sans-serif;font-size:18px;color:#FF4D92;">฿150</div>
+      </div>
+    </div>
+    <div style="background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.2);border-radius:8px;padding:8px 12px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(196,181,253,0.7);">
+      ⚠️ ต้องมี Crazed Cat (91–99) อยู่แล้วก่อน · Cat IDs: <span style="color:#FFD84E;font-family:monospace;">91 92 93 94 95 96 97 98 99</span>
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="manic-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="manic-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="manic-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runManicPackage(event)">🌟 True Form Manic All Cat (91–99)</button>
+    <div id="manic-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── CLEAR STORY CHAPTERS (เลือก chapter) ─────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🗺️ เคลียร์ด่าน Main Story (เลือก Chapter)</div>
+    <div style="background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#93C5FD;">
+      เคลียร์ทั้ง 48 ด่านในแต่ละ chapter ที่เลือก — <strong>EoC Ch.1–3 / ItF Ch.1–3 / CotC Ch.1–3</strong>
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="csc-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="csc-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="csc-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label class="form-label">เลือก Chapter (กดเพื่อเลือก/ยกเลิก)</label>
+      <div id="csc-chapter-btns" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;">
+        <button onclick="cscToggle(1)" id="csc-c1" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">EoC Ch.1</button>
+        <button onclick="cscToggle(2)" id="csc-c2" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">EoC Ch.2</button>
+        <button onclick="cscToggle(3)" id="csc-c3" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">EoC Ch.3</button>
+        <button onclick="cscToggle(4)" id="csc-c4" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">ItF Ch.1</button>
+        <button onclick="cscToggle(5)" id="csc-c5" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">ItF Ch.2</button>
+        <button onclick="cscToggle(6)" id="csc-c6" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">ItF Ch.3</button>
+        <button onclick="cscToggle(7)" id="csc-c7" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">CotC Ch.1</button>
+        <button onclick="cscToggle(8)" id="csc-c8" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">CotC Ch.2</button>
+        <button onclick="cscToggle(9)" id="csc-c9" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">CotC Ch.3</button>
+      </div>
+      <div id="csc-sel-label" style="margin-top:8px;font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);">ยังไม่ได้เลือก</div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Clear Amount (จำนวนครั้งที่ผ่านต่อด่าน, ค่าเริ่มต้น 1)</label>
+      <input type="number" id="csc-amt" class="form-input" value="1" min="1" max="9999">
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runClearStoryChapters()">🗺️ เคลียร์ Chapter ที่เลือก</button>
+    <div id="csc-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── CLEAR STORY ALL ──────────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🗺️🗺️ เคลียร์ด่าน Main Story ทั้งหมด (9 Chapters)</div>
+    <div style="background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FDA4AF;">
+      ⚠️ เคลียร์ทั้ง 9 chapters — EoC Ch.1–3, ItF Ch.1–3, CotC Ch.1–3 (รวม 432 ด่าน)
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="csa-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="csa-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="csa-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Clear Amount (จำนวนครั้งที่ผ่านต่อด่าน, ค่าเริ่มต้น 1)</label>
+      <input type="number" id="csa-amt" class="form-input" value="1" min="1" max="9999">
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runClearStoryAll()">🗺️ เคลียร์ทุก Chapter (1–9)</button>
+    <div id="csa-result" style="display:none;"></div>
+  </div>
+  <!-- ── RESET STORY CHAPTERS (เลือก chapter) ──────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🔄 รีเซ็ตด่าน Main Story (เลือก Chapter)</div>
+    <div style="background:rgba(244,63,94,0.08);border:1px solid rgba(244,63,94,0.3);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FDA4AF;">
+      ⚠️ รีเซ็ต progress และ clear_times ของทุกด่านกลับเป็น 0 — ใช้สำหรับทดสอบระบบ Clear
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="rsc-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="rsc-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:14px;"><label class="form-label">Server</label>
+      <select id="rsc-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label class="form-label">เลือก Chapter ที่จะรีเซ็ต</label>
+      <div id="rsc-chapter-btns" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;">
+        <button onclick="rscToggle(1)" id="rsc-c1" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">EoC Ch.1</button>
+        <button onclick="rscToggle(2)" id="rsc-c2" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">EoC Ch.2</button>
+        <button onclick="rscToggle(3)" id="rsc-c3" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">EoC Ch.3</button>
+        <button onclick="rscToggle(4)" id="rsc-c4" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">ItF Ch.1</button>
+        <button onclick="rscToggle(5)" id="rsc-c5" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">ItF Ch.2</button>
+        <button onclick="rscToggle(6)" id="rsc-c6" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">ItF Ch.3</button>
+        <button onclick="rscToggle(7)" id="rsc-c7" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">CotC Ch.1</button>
+        <button onclick="rscToggle(8)" id="rsc-c8" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">CotC Ch.2</button>
+        <button onclick="rscToggle(9)" id="rsc-c9" class="btn btn-outline" style="padding:6px 12px;font-size:12px;">CotC Ch.3</button>
+      </div>
+      <div id="rsc-sel-label" style="margin-top:8px;font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);">ยังไม่ได้เลือก</div>
+    </div>
+    <button class="btn btn-outline" style="width:100%;margin-bottom:10px;border-color:rgba(244,63,94,0.5);color:#FDA4AF;" onclick="runResetStoryChapters()">🔄 รีเซ็ต Chapter ที่เลือก</button>
+    <div id="rsc-result" style="display:none;"></div>
+  </div>
+
+  <!-- ── RESET STORY ALL ──────────────────────────────────────── -->
+  <div class="test-section">
+    <div class="test-section-title">🔄🔄 รีเซ็ตด่าน Main Story ทั้งหมด (9 Chapters)</div>
+    <div style="background:rgba(244,63,94,0.12);border:1px solid rgba(244,63,94,0.45);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FDA4AF;">
+      ⚠️ รีเซ็ตทั้ง 9 chapters กลับเป็น 0 ทั้งหมด — ใช้เพื่อทดสอบระบบ Clear Story ซ้ำได้
+    </div>
+    <div class="form-row">
+      <div><label class="form-label">Transfer Code</label><input type="text" id="rsa-tc" class="form-input" placeholder="ABCD1234EFGH5678"></div>
+      <div><label class="form-label">Confirmation Code</label><input type="text" id="rsa-cc" class="form-input" placeholder="12345678"></div>
+    </div>
+    <div style="margin-bottom:16px;"><label class="form-label">Server</label>
+      <select id="rsa-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-outline" style="width:100%;margin-bottom:10px;border-color:rgba(244,63,94,0.5);color:#FDA4AF;" onclick="runResetStoryAll()">🔄 รีเซ็ตทุก Chapter (1–9)</button>
+    <div id="rsa-result" style="display:none;"></div>
+  </div>
+  <!-- TREASURE - เลือก Chapter -->
+  <div class="test-section">
+    <div class="test-section-title">💰 ตั้งค่า Treasure (เลือก Chapter)</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="form-group"><label class="form-label">Transfer Code</label><input id="stc-tc" class="form-input" placeholder="Transfer Code"></div>
+      <div class="form-group"><label class="form-label">Confirmation Code</label><input id="stc-cc" class="form-input" placeholder="Confirmation Code"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Server</label>
+      <select id="stc-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Treasure Grade</label>
+      <select id="stc-grade" class="form-input">
+        <option value="3">3 — Gold (ทอง)</option>
+        <option value="2">2 — Silver (เงิน)</option>
+        <option value="1">1 — Bronze (ทองแดง)</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">เลือก Chapter (กดเพื่อเลือก/ยกเลิก)</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+        <button id="stc-ch1"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(1)">EoC 1</button>
+        <button id="stc-ch2"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(2)">EoC 2</button>
+        <button id="stc-ch3"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(3)">EoC 3</button>
+        <button id="stc-ch4"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(4)">ItF 1</button>
+        <button id="stc-ch5"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(5)">ItF 2</button>
+        <button id="stc-ch6"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(6)">ItF 3</button>
+        <button id="stc-ch7"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(7)">CotC 1</button>
+        <button id="stc-ch8"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(8)">CotC 2</button>
+        <button id="stc-ch9"  class="btn btn-outline" style="min-width:60px;" onclick="stcToggle(9)">CotC 3</button>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runSetTreasureChapters()">💰 ตั้ง Treasure Chapters ที่เลือก</button>
+    <div id="stc-result" style="display:none;"></div>
+  </div>
+
+  <!-- TREASURE - ทั้งหมด -->
+  <div class="test-section">
+    <div class="test-section-title">💰💰 ตั้งค่า Treasure ทั้งหมด (ทุก Chapter)</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="form-group"><label class="form-label">Transfer Code</label><input id="sta-tc" class="form-input" placeholder="Transfer Code"></div>
+      <div class="form-group"><label class="form-label">Confirmation Code</label><input id="sta-cc" class="form-input" placeholder="Confirmation Code"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Server</label>
+      <select id="sta-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Treasure Grade</label>
+      <select id="sta-grade" class="form-input">
+        <option value="3">3 — Gold (ทอง)</option>
+        <option value="2">2 — Silver (เงิน)</option>
+        <option value="1">1 — Bronze (ทองแดง)</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runSetTreasureAll()">💰 ตั้ง Treasure ทุก Chapter (1–9)</button>
+    <div id="sta-result" style="display:none;"></div>
+  </div>
+
+  <!-- OUTBREAK - เลือก Chapter -->
+  <div class="test-section">
+    <div class="test-section-title">🧟 เคลียร์ Zombie Stages (เลือก Chapter)</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="form-group"><label class="form-label">Transfer Code</label><input id="obc-tc" class="form-input" placeholder="Transfer Code"></div>
+      <div class="form-group"><label class="form-label">Confirmation Code</label><input id="obc-cc" class="form-input" placeholder="Confirmation Code"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Server</label>
+      <select id="obc-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">เลือก Chapter (กดเพื่อเลือก/ยกเลิก)</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+        <button id="obc-ch1"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(1)">EoC 1</button>
+        <button id="obc-ch2"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(2)">EoC 2</button>
+        <button id="obc-ch3"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(3)">EoC 3</button>
+        <button id="obc-ch4"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(4)">ItF 1</button>
+        <button id="obc-ch5"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(5)">ItF 2</button>
+        <button id="obc-ch6"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(6)">ItF 3</button>
+        <button id="obc-ch7"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(7)">CotC 1</button>
+        <button id="obc-ch8"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(8)">CotC 2</button>
+        <button id="obc-ch9"  class="btn btn-outline" style="min-width:60px;" onclick="obcToggle(9)">CotC 3</button>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runClearOutbreakChapters()">🧟 เคลียร์ Zombie Chapters ที่เลือก</button>
+    <div id="obc-result" style="display:none;"></div>
+  </div>
+
+  <!-- OUTBREAK - ทั้งหมด -->
+  <div class="test-section">
+    <div class="test-section-title">🧟🧟 เคลียร์ Zombie Stages ทั้งหมด (ทุก Chapter)</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="form-group"><label class="form-label">Transfer Code</label><input id="oba-tc" class="form-input" placeholder="Transfer Code"></div>
+      <div class="form-group"><label class="form-label">Confirmation Code</label><input id="oba-cc" class="form-input" placeholder="Confirmation Code"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Server</label>
+      <select id="oba-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runClearOutbreakAll()">🧟 เคลียร์ Zombie ทุก Chapter (1–9)</button>
+    <div id="oba-result" style="display:none;"></div>
+  </div>
+
+  <!-- AKU REALM -->
+  <div class="test-section">
+    <div class="test-section-title">👹 Aku Realm — Unlock &amp; Clear Chapters</div>
+    <div style="background:rgba(244,63,94,0.06);border:1px solid rgba(244,63,94,0.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(244,63,94,0.8);">
+      เลือกได้ทั้ง 2 พร้อมกัน: Unlock = ปลดล็อค Aku Realm | Clear Chapters = ผ่านทุก stage ใน Aku Chapters
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="form-group"><label class="form-label">Transfer Code</label><input id="aku-tc" class="form-input" placeholder="Transfer Code"></div>
+      <div class="form-group"><label class="form-label">Confirmation Code</label><input id="aku-cc" class="form-input" placeholder="Confirmation Code"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Server</label>
+      <select id="aku-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">เลือก Action (กดเพื่อเลือก/ยกเลิก)</label>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;">
+        <button id="aku-unlock" class="btn btn-outline" style="min-width:200px;" onclick="akuToggle('unlock')">🔓 Unlock Aku Realm (#8)</button>
+        <button id="aku-chap"   class="btn btn-outline" style="min-width:200px;" onclick="akuToggle('chap')">⚔️ Clear Aku Chapters (#11)</button>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;background:linear-gradient(135deg,#7c3aed,#f43f5e);" onclick="runAku()">👹 ดำเนินการ Aku Realm</button>
+    <div id="aku-result" style="display:none;"></div>
+  </div>
+
+  <!-- LEGEND STAGES - SoL / UL / ZL -->
+  <div class="test-section">
+    <div class="test-section-title">👑 เคลียร์ Legend Stages (SoL / UL / ZL)</div>
+    <div style="background:rgba(255,216,78,0.06);border:1px solid rgba(255,216,78,0.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(255,216,78,0.8);">
+      เคลียร์ทุก map ใน legend type ที่เลือก — ตาม crown ที่กำหนด (crown 1-N หมายถึงเคลียร์ทุก star ตั้งแต่ 1 ถึง N)
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="form-group"><label class="form-label">Transfer Code</label><input id="leg-tc" class="form-input" placeholder="Transfer Code"></div>
+      <div class="form-group"><label class="form-label">Confirmation Code</label><input id="leg-cc" class="form-input" placeholder="Confirmation Code"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Server</label>
+      <select id="leg-srv" class="form-input"><option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">เลือก Legend Type (กดเพื่อเลือก/ยกเลิก)</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+        <button id="leg-sol" class="btn btn-outline" style="min-width:160px;" onclick="legToggle('sol')">📖 Stories of Legend</button>
+        <button id="leg-ul"  class="btn btn-outline" style="min-width:160px;" onclick="legToggle('ul')">🌀 Uncanny Legends</button>
+        <button id="leg-zl"  class="btn btn-outline" style="min-width:160px;" onclick="legToggle('zl')">⚡ Zero Legends</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Crown Level (เคลียร์ถึง crown ที่ N)</label>
+      <div style="display:flex;gap:8px;margin-top:6px;">
+        <button id="leg-cr1" class="btn btn-outline" style="min-width:56px;" onclick="legCrown(1)">👑×1</button>
+        <button id="leg-cr2" class="btn btn-outline" style="min-width:56px;" onclick="legCrown(2)">👑×2</button>
+        <button id="leg-cr3" class="btn btn-outline" style="min-width:56px;" onclick="legCrown(3)">👑×3</button>
+        <button id="leg-cr4" class="btn btn-primary" style="min-width:56px;" onclick="legCrown(4)">👑×4</button>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runClearLegends()">👑 เคลียร์ Legend Stages</button>
+    <div id="leg-result" style="display:none;"></div>
+  </div>
+
+  <!-- CONCURRENT TEST - Multi User -->
+  <div class="test-section">
+    <div class="test-section-title">⚡ ทดสอบ Multi Users (สูงสุด 10 คนพร้อมกัน)</div>
+    <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.25);border-radius:10px;padding:12px;margin-bottom:16px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#C4B5FD;">
+      ส่ง request พร้อมกันทุก user — แต่ละ user ใส่ได้หลายไอเทม (batch)
+    </div>
+    <div id="cu-users-container"></div>
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="btn btn-outline" id="cu-add-btn" onclick="cuAddUser()" style="flex:1;">+ เพิ่ม User</button>
+      <button class="btn btn-outline" onclick="cuClearAll()" style="color:#FDA4AF;border-color:rgba(244,63,94,0.4);">🗑 ล้างทั้งหมด</button>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:12px;" onclick="cuRunAll()">⚡ ยิงทุก User พร้อมกัน</button>
+    <div id="cu-result" style="display:none;"></div>
+  </div>
+
+  <!-- SYSTEM DATA -->
+  <div class="test-section">
+    <div class="test-section-title">🐛 Debug / ข้อมูลระบบ</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+      <button class="btn btn-outline" style="flex:1;" onclick="debugLocalStorage()">💾 localStorage</button>
+      <button class="btn btn-outline" style="flex:1;" onclick="debugSession()">👤 Session</button>
+      <button class="btn btn-outline" style="flex:1;" onclick="debugSupabase()">🗄️ Supabase orders</button>
+    </div>
+    <div id="debugBox" class="debug-box" style="display:none;"></div>
+  </div>
+
+</div>
+
+<!-- Toast notification -->
+<div id="testToast" style="position:fixed;bottom:28px;right:24px;z-index:9999;display:none;
+  background:rgba(14,6,32,0.97);border:1px solid rgba(124,58,237,0.45);border-radius:14px;
+  padding:13px 20px;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#EDE6FF;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);max-width:320px;transition:opacity 0.3s;"></div>
+
+<script src="assets/supabase-client.js"></script>
+<script src="assets/characters_data.js"></script>
+<script>
+var testCart   = [];
+var testOrders = 0;
+
+// ── Toast ────────────────────────────────────────────────────
+var _toastTimer = null;
+function toast(msg, type) {
+  var el = document.getElementById('testToast');
+  var colors = { ok:'#4ADE80', err:'#F87171', warn:'#FCD34D', info:'#60A5FA' };
+  el.style.borderColor = 'rgba(124,58,237,0.45)';
+  el.style.color = colors[type || 'info'] || '#EDE6FF';
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.opacity = '1';
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() {
+    el.style.opacity = '0';
+    setTimeout(function(){ el.style.display = 'none'; }, 300);
+  }, 3000);
+}
+
+// ── Supabase connection check ────────────────────────────────
+async function checkDB() {
+  var dot  = document.getElementById('dbDot');
+  var text = document.getElementById('dbStatusText');
+  try {
+    var res = await DB.from('orders_goble').select('id', { count: 'exact', head: true });
+    if (res.error) throw res.error;
+    dot.className  = 'status-dot ok';
+    text.textContent = 'Supabase เชื่อมต่อสำเร็จ ✓';
+    toast('✅ Supabase พร้อมใช้งาน', 'ok');
+  } catch(e) {
+    dot.className  = 'status-dot err';
+    text.textContent = 'Supabase: ' + (e.message || 'เชื่อมต่อไม่ได้');
+    toast('❌ Supabase: ' + (e.message || 'error'), 'err');
+  }
+}
+
+// ── Cart helpers ─────────────────────────────────────────────
+function testAddItem(name, price, key, amount, subType) {
+  if (key === 'rare_ticket' && testCart.some(function(i){ return i.key === 'rare_ticket'; })) {
+    toast('⚠️ Rare Ticket ได้แค่ 1 รายการต่อออเดอร์ (ต้องรับในตู้เย็นก่อน)', 'warn');
+    return;
+  }
+  testCart.push({ name:name, price:price, key:key, amount:amount, sub_type: subType || null });
+  renderTestCart();
+  toast('✅ เพิ่ม ' + name + (subType ? ' [type ' + subType + ']' : ''), 'ok');
+}
+
+function testRemoveItem(i) {
+  testCart.splice(i, 1);
+  renderTestCart();
+}
+
+function testClearCart() {
+  testCart = [];
+  renderTestCart();
+  toast('🗑️ ล้างตะกร้าแล้ว', 'warn');
+}
+
+function renderTestCart() {
+  var el    = document.getElementById('testCartList');
+  var total = testCart.reduce(function(s,i){ return s + i.price; }, 0);
+  document.getElementById('cartItemCount').textContent = testCart.length;
+  document.getElementById('totalPrice').textContent    = '฿' + total.toLocaleString();
+
+  if (!testCart.length) {
+    el.innerHTML = '<p style="color:rgba(210,190,255,0.4);text-align:center;padding:20px;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">ตะกร้าว่างเปล่า</p>';
+    return;
+  }
+  el.innerHTML = testCart.map(function(item, i) {
+    var subInfo = item.sub_type ? ' · type ' + item.sub_type : '';
+    return '<div class="cart-item-row">' +
+      '<div>' +
+        '<div style="font-family:\'Chakra Petch\',sans-serif;font-weight:700;font-size:13px;color:#EDE6FF;">' + item.name + '</div>' +
+        '<div style="font-size:11px;color:rgba(210,190,255,0.45);">จำนวน: ' + (item.amount||'').toLocaleString() + subInfo + '</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:10px;">' +
+        '<span style="font-family:\'Russo One\',sans-serif;color:#FF4D92;">฿' + item.price.toLocaleString() + '</span>' +
+        '<button class="btn btn-outline" style="padding:4px 10px;font-size:11px;border-color:rgba(244,63,94,0.4);color:#FDA4AF;" onclick="testRemoveItem(' + i + ')">✕</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── รัน BCSFE ทุกรายการในตะกร้า (batch — download/upload ครั้งเดียว) ──
+async function runBCSFECart() {
+  if (!testCart.length) { toast('❌ ตะกร้าว่างเปล่า', 'err'); return; }
+  var tc  = document.getElementById('cart-tc').value.trim();
+  var cc  = document.getElementById('cart-cc').value.trim();
+  var srv = document.getElementById('cart-srv').value;
+  var url = (document.getElementById('backendURL') ? document.getElementById('backendURL').value.trim() : '') || 'http://localhost:8000';
+  if (!tc || !cc) { toast('❌ กรอก Transfer Code และ Confirmation Code ก่อน', 'err'); return; }
+
+  var resEl = document.getElementById('cartBCSFEResult');
+  resEl.style.display = 'block';
+  resEl.innerHTML = '<div style="padding:12px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังรัน BCSFE ' + testCart.length + ' รายการทีเดียว...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/test/bcsfe/batch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        transfer_code:     tc,
+        confirmation_code: cc,
+        country:           srv,
+        items: testCart.map(function(item) {
+          return { key: item.key, amount: item.amount, sub_type: item.sub_type || null };
+        }),
+      }),
+    });
+    var data = await resp.json();
+
+    if (data.success) {
+      var newTc = data.new_transfer_code || '-';
+      var newCc = data.new_confirmation_code || '-';
+      document.getElementById('cart-tc').value = newTc;
+      document.getElementById('cart-cc').value = newCc;
+
+      var summaryHtml = (data.summary || []).map(function(s) {
+        return '<div style="color:#4ADE80;font-size:12px;padding:2px 0;">✔ ' + s.item + ' x' + s.amount.toLocaleString() + '</div>';
+      }).join('');
+
+      var customerNoteHtml = data.customer_note
+        ? '<div style="margin-top:14px;background:rgba(251,191,36,0.10);border:1px solid rgba(251,191,36,0.35);border-radius:10px;padding:12px;">' +
+          '<div style="font-size:10px;color:#FCD34D;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">📋 ข้อความแจ้งลูกค้า (copy ส่งให้ลูกค้า)</div>' +
+          '<div style="font-family:\'Chakra Petch\',monospace;font-size:13px;color:#FDE68A;cursor:pointer;" onclick="navigator.clipboard.writeText(this.textContent).then(function(){toast(\'✅ Copy แล้ว\',\'ok\');})">' + data.customer_note + '</div>' +
+          '</div>'
+        : '';
+
+      resEl.innerHTML = '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:10px;">✅ ทุกรายการสำเร็จ! (download/upload ครั้งเดียว)</div>' +
+        summaryHtml +
+        '<div style="margin-top:12px;"><div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + newTc + '</div></div>' +
+        '<div style="margin-top:8px;"><div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + newCc + '</div></div>' +
+        customerNoteHtml +
+        '</div>';
+      toast('✅ BCSFE สำเร็จ!', 'ok');
+    } else {
+      var latestHtml = '';
+      if (data.latest_transfer_code) {
+        var ltc = data.latest_transfer_code;
+        latestHtml =
+          '<div style="margin-top:14px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.30);border-radius:10px;padding:14px;">' +
+          '<div style="font-size:11px;color:#FBBF24;font-family:\'Russo One\',sans-serif;margin-bottom:10px;">⚠️ รหัสล่าสุดที่ได้มา — กรุณาติดต่อแอดมิน</div>' +
+          '<div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code</div>' +
+          '<div style="font-family:monospace;font-size:14px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:6px;cursor:pointer;" ' +
+          'onclick="navigator.clipboard.writeText(\'' + (ltc.transfer||'') + '\').then(function(){toast(\'✅ Copy TC แล้ว\',\'ok\');})">' + (ltc.transfer || '-') + '</div>' +
+          (ltc.confirmation ? '<div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;margin-top:8px;">Confirmation Code</div>' +
+          '<div style="font-family:monospace;font-size:14px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:6px;cursor:pointer;" ' +
+          'onclick="navigator.clipboard.writeText(\'' + ltc.confirmation + '\').then(function(){toast(\'✅ Copy CC แล้ว\',\'ok\');})">' + ltc.confirmation + '</div>' : '') +
+          '</div>';
+      }
+      resEl.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:16px;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#F87171;font-size:14px;">❌ ' + (data.error || 'Unknown error') + '</div>' +
+        latestHtml + '</div>';
+      toast('❌ ' + (data.error || 'error'), 'err');
+    }
+  } catch(e) {
+    resEl.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:16px;">' +
+      '<div style="font-family:\'Russo One\',sans-serif;color:#F87171;font-size:14px;">❌ เชื่อมต่อ API ไม่ได้: ' + e.message + '</div></div>';
+    toast('❌ เชื่อมต่อ API ไม่ได้', 'err');
+  }
+}
+
+// ── Create test order (saves to Supabase) ─────────────────────
+async function testCreateOrder() {
+  if (!testCart.length) { toast('❌ ตะกร้าว่างเปล่า', 'err'); return; }
+  var btn = event.target;
+  btn.disabled = true; btn.textContent = '⏳ กำลังบันทึก...';
+
+  try {
+    var total    = testCart.reduce(function(s,i){ return s+i.price; }, 0);
+    var authUser = (window.AUTH && AUTH.getCurrentUser()) || 'test_user';
+
+    var res = await DB.from('orders_goble').insert([{
+      order_id:          'TEST' + Date.now().toString(36).toUpperCase(),
+      username:          'TEST: ' + authUser,
+      transfer_code:     'TEST_CODE',
+      confirmation_code: 'TEST_CONF',
+      items:             testCart,
+      amount:            total,
+      status:            'test',
+    }]).select().single();
+
+    if (res.error) throw res.error;
+    testOrders++;
+    document.getElementById('orderCount').textContent = testOrders;
+
+    var shortId = res.data.id.substring(0,8).toUpperCase();
+    toast('✅ บันทึกสำเร็จ #' + shortId, 'ok');
+    showDebug('✅ Order saved to Supabase\nID: ' + res.data.id + '\nStatus: test\nTotal: ฿' + total);
+    testClearCart();
+  } catch(e) {
+    toast('❌ ' + (e.message || e), 'err');
+    showDebug('❌ Error: ' + (e.message || JSON.stringify(e)));
+  } finally {
+    btn.disabled = false; btn.textContent = '✅ ยืนยันคำสั่งซื้อ (บันทึก Supabase)';
+  }
+}
+
+// ── Full checkout test ────────────────────────────────────────
+async function testFullCheckout() {
+  var transferCode = document.getElementById('tc-transferCode').value.trim();
+  var confirmCode  = document.getElementById('tc-confirmCode').value.trim();
+  var server       = document.getElementById('tc-server').value;
+  var username     = document.getElementById('tc-username').value.trim();
+  var contact      = document.getElementById('tc-contact').value.trim();
+
+  if (!transferCode || !confirmCode || !server || !username || !contact) {
+    toast('❌ กรอกข้อมูลให้ครบก่อน', 'err'); return;
+  }
+
+  var fakeCart = [
+    { name:'Test Item A', price:99,  key:'cat_food',  amount:10000 },
+    { name:'Test Item B', price:149, key:'xp',        amount:99999999 },
+  ];
+  var total    = fakeCart.reduce(function(s,i){ return s+i.price; }, 0);
+  var authUser = (window.AUTH && AUTH.getCurrentUser()) || 'test_user';
+
+  var btn = event.target;
+  btn.disabled = true; btn.textContent = '⏳ กำลังทดสอบ...';
+
+  try {
+    var res = await DB.from('orders_goble').insert([{
+      order_id:          'TEST' + Date.now().toString(36).toUpperCase(),
+      username:          username,
+      transfer_code:     transferCode,
+      confirmation_code: confirmCode,
+      items:             fakeCart,
+      amount:            total,
+      status:            'test',
+    }]).select().single();
+
+    if (res.error) throw res.error;
+    toast('✅ checkout test สำเร็จ!', 'ok');
+    showDebug('✅ Full checkout test saved\nID: ' + res.data.id + '\nUsername: ' + username + '\nTransfer: ' + transferCode + '\nServer: ' + server + '\nTotal: ฿' + total);
+  } catch(e) {
+    toast('❌ ' + (e.message || e), 'err');
+    showDebug('❌ ' + (e.message || JSON.stringify(e)));
+  } finally {
+    btn.disabled = false; btn.textContent = '🚀 ทดสอบ checkout เต็มรูปแบบ (บันทึก Supabase)';
+  }
+}
+
+// ── BCSFE backend test ────────────────────────────────────────
+var ITEM_CONFIG = {
+  cat_food:      { subtypes: null },
+  xp:            { subtypes: null },
+  normal_ticket: { subtypes: null },
+  rare_ticket:   { subtypes: null },
+  np:            { subtypes: null },
+  platinum_shard:{ subtypes: null },
+  leadership:    { subtypes: null },
+  catseye:       { subtypes: 6,  labels:['Normal','Rare','SR','UR','LR','Alien'] },
+  catfruit:      { subtypes: 29, labels: Array.from({length:29},function(_,i){ return 'Type '+(i+1); }) },
+  battle_item:   { subtypes: 6,  labels:['Type 1','Type 2','Type 3','Type 4','Type 5','Type 6'] },
+  catamins:      { subtypes: 3,  labels:['Type 1','Type 2','Type 3'] },
+  legend_ticket: { subtypes: null },
+  lucky_ticket:  { subtypes: null },
+};
+
+function onItemTypeChange() {
+  var itemType = document.getElementById('itemType').value;
+  var container = document.getElementById('subTypeContainer');
+  var sel = document.getElementById('subType');
+  var lbl = document.getElementById('subTypeLabel');
+  if (!itemType || !ITEM_CONFIG[itemType] || !ITEM_CONFIG[itemType].subtypes) {
+    container.style.display = 'none'; return;
+  }
+  var cfg = ITEM_CONFIG[itemType];
+  lbl.textContent = 'ประเภทย่อย';
+  sel.innerHTML = '';
+  for (var i = 1; i <= cfg.subtypes; i++) {
+    var opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = cfg.labels ? cfg.labels[i-1] : 'Type '+i;
+    sel.appendChild(opt);
+  }
+  container.style.display = 'block';
+}
+
+async function testBCSFE() {
+  var backendURL   = document.getElementById('backendURL').value.trim();
+  var transferCode = document.getElementById('bcsfe-transferCode').value.trim();
+  var confirmCode  = document.getElementById('bcsfe-confirmCode').value.trim();
+  var itemType     = document.getElementById('itemType').value;
+  var amount       = parseInt(document.getElementById('itemAmount').value) || 0;
+  var subType      = document.getElementById('subType').value;
+
+  if (!backendURL)   { toast('❌ กรุณากำหนด Backend URL', 'err'); return; }
+  if (!transferCode) { toast('❌ กรุณากรอก Transfer Code', 'err'); return; }
+  if (!confirmCode)  { toast('❌ กรุณากรอก Confirmation Code', 'err'); return; }
+  if (!itemType)     { toast('❌ กรุณาเลือกประเภทของ', 'err'); return; }
+  if (amount <= 0)   { toast('❌ กรุณากรอกจำนวนมากกว่า 0', 'err'); return; }
+
+  showDebug('⏳ กำลังเรียก BCSFE...\nURL: ' + backendURL + '/api/test/bcsfe\nItem: ' + itemType + ' x' + amount);
+
+  try {
+    var response = await fetch(backendURL + '/api/test/bcsfe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        transfer_code:    transferCode,
+        confirmation_code: confirmCode,
+        item:    itemType,
+        amount:  amount,
+        sub_type: subType ? parseInt(subType) : null,
+        country: '1',
+      }),
+    });
+    var result = await response.json();
+    if (result.success) {
+      toast('✅ BCSFE สำเร็จ!', 'ok');
+      showDebug('✅ BCSFE Success!\nTransfer Code ใหม่:\n' + result.new_transfer_code + '\n\nConfirmation Code ใหม่:\n' + result.new_confirmation_code + '\n\nสรุป:\n' + (result.summary||[]).map(function(s){ return '• '+s.item+': +'+s.amount; }).join('\n'));
+    } else {
+      toast('❌ ' + (result.error||'Unknown error'), 'err');
+      var debugMsg = '❌ BCSFE Error:\n' + (result.error||JSON.stringify(result));
+      if (result.latest_transfer_code) {
+        var ltc = result.latest_transfer_code;
+        debugMsg += '\n\n⚠️ รหัสล่าสุดที่ได้มา (กรุณาติดต่อแอดมิน):' +
+          '\nTransfer Code: ' + (ltc.transfer || '-') +
+          (ltc.confirmation ? '\nConfirmation Code: ' + ltc.confirmation : '');
+      }
+      showDebug(debugMsg);
+    }
+  } catch(e) {
+    toast('❌ เข้าถึง API ไม่ได้', 'err');
+    showDebug('❌ Connection failed:\n' + e.message + '\n\nตรวจสอบ:\n• Backend server กำลังทำงานอยู่?\n• URL ถูกต้อง?\n• CORS ปิดอยู่?');
+  }
+}
+
+// ── Debug helpers ─────────────────────────────────────────────
+function showDebug(text) {
+  var el = document.getElementById('debugBox');
+  el.style.display = 'block';
+  el.textContent = text;
+  el.scrollTop = el.scrollHeight;
+}
+
+function debugLocalStorage() {
+  var data = {};
+  for (var k in localStorage) {
+    if (localStorage.hasOwnProperty(k)) {
+      try { data[k] = JSON.parse(localStorage[k]); } catch(e) { data[k] = localStorage[k]; }
+    }
+  }
+  showDebug(JSON.stringify(data, null, 2));
+}
+
+function debugSession() {
+  var user = (window.AUTH && AUTH.isLoggedIn()) ? AUTH.getCurrentUser() : '(ไม่ได้ login)';
+  var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  showDebug('User: ' + user + '\nMain cart: ' + cart.length + ' items\nTest cart: ' + testCart.length + ' items\nSession orders: ' + testOrders);
+}
+
+async function debugSupabase() {
+  showDebug('⏳ โหลด orders จาก Supabase...');
+  try {
+    var user = (window.AUTH && AUTH.getCurrentUser()) || null;
+    var q = DB.from('orders_goble').select('id,created_at,username,amount,status').order('created_at',{ascending:false}).limit(10);
+    if (user) q = q.eq('username', user);
+    var res = await q;
+    if (res.error) throw res.error;
+    showDebug('📋 ล่าสุด 10 orders' + (user ? ' (user: '+user+')' : ' (all)') + '\n\n' + JSON.stringify(res.data, null, 2));
+  } catch(e) {
+    showDebug('❌ ' + (e.message || e));
+  }
+}
+
+// ── Multi-User Concurrent Test ─────────────────────────────────
+var cuUsers  = [];
+var cuNextId = 1;
+
+var CU_ITEMS = [
+  {key:'cat_food',       name:'Cat Food',        def:10000},
+  {key:'xp',            name:'XP',              def:99999999},
+  {key:'normal_ticket', name:'Normal Ticket',   def:100},
+  {key:'rare_ticket',   name:'Rare Ticket',     def:50},
+  {key:'lucky_ticket',  name:'Lucky Ticket',    def:100},
+  {key:'np',            name:'NP',              def:100},
+  {key:'platinum_shard',name:'Platinum Shard',  def:10},
+  {key:'leadership',    name:'Leadership',      def:100},
+  {key:'catseye',       name:'Catseye',         def:100},
+  {key:'catfruit',      name:'Catfruit',        def:100},
+  {key:'catamins',      name:'Catamins',        def:100},
+  {key:'battle_item',   name:'Battle Item',     def:100},
+  {key:'legend_ticket', name:'Legend Ticket',   def:1},
+];
+
+function cuSaveInputs() {
+  cuUsers.forEach(function(u) {
+    var tcEl  = document.getElementById('cu-tc-'  + u.id);
+    var ccEl  = document.getElementById('cu-cc-'  + u.id);
+    var srvEl = document.getElementById('cu-srv-' + u.id);
+    if (tcEl)  u._tc  = tcEl.value;
+    if (ccEl)  u._cc  = ccEl.value;
+    if (srvEl) u._srv = srvEl.value;
+  });
+}
+
+function cuRender() {
+  cuSaveInputs();
+  var addBtn = document.getElementById('cu-add-btn');
+  if (addBtn) addBtn.disabled = cuUsers.length >= 10;
+
+  var itemOptsHtml = CU_ITEMS.map(function(i) {
+    return '<option value="' + i.key + '">' + i.name + ' (x' + i.def.toLocaleString() + ')</option>';
+  }).join('');
+
+  var html = cuUsers.map(function(u, idx) {
+    var tags = u.items.length
+      ? u.items.map(function(item, ii) {
+          return '<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(124,58,237,0.18);border:1px solid rgba(124,58,237,0.32);border-radius:999px;padding:3px 9px;font-family:\'Chakra Petch\',sans-serif;font-size:11px;">' +
+            '<span style="color:#C4B5FD;">' + item.name + ' x' + item.amount.toLocaleString() + '</span>' +
+            '<span onclick="cuRemoveItem(' + u.id + ',' + ii + ')" style="cursor:pointer;color:#F87171;margin-left:2px;">✕</span>' +
+          '</span>';
+        }).join('')
+      : '<span style="color:rgba(210,190,255,0.3);font-family:\'Chakra Petch\',sans-serif;font-size:12px;">ยังไม่มีของ — เพิ่มด้านบน</span>';
+
+    return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(124,58,237,0.2);border-radius:14px;padding:16px;margin-bottom:12px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
+        '<span style="font-family:\'Russo One\',sans-serif;font-size:13px;color:#C4B5FD;">User ' + (idx + 1) + '</span>' +
+        '<button onclick="cuRemoveUser(' + u.id + ')" style="padding:3px 10px;border-radius:8px;border:1px solid rgba(244,63,94,0.3);background:rgba(244,63,94,0.08);color:#FDA4AF;font-family:\'Chakra Petch\',sans-serif;font-size:11px;cursor:pointer;">✕ ลบ</button>' +
+      '</div>' +
+      '<div class="form-row">' +
+        '<div><label class="form-label">Transfer Code</label><input type="text" id="cu-tc-' + u.id + '" class="form-input" placeholder="Transfer Code"></div>' +
+        '<div><label class="form-label">Confirmation Code</label><input type="text" id="cu-cc-' + u.id + '" class="form-input" placeholder="1234"></div>' +
+      '</div>' +
+      '<div style="margin-bottom:12px;"><label class="form-label">Server</label>' +
+        '<select id="cu-srv-' + u.id + '" class="form-input">' +
+          '<option value="1">EN (Global / TH / EU)</option><option value="2">JP</option><option value="3">KR</option><option value="4">TW</option>' +
+        '</select>' +
+      '</div>' +
+      '<label class="form-label">ไอเทม</label>' +
+      '<div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">' +
+        '<select id="cu-sel-' + u.id + '" class="form-input" style="flex:2;min-width:120px;" onchange="cuFillAmt(' + u.id + ')">' + itemOptsHtml + '</select>' +
+        '<input type="number" id="cu-amt-' + u.id + '" class="form-input" style="flex:1;min-width:80px;" placeholder="จำนวน" min="1" value="' + CU_ITEMS[0].def + '">' +
+        '<button onclick="cuAddItem(' + u.id + ')" style="padding:8px 14px;border-radius:10px;border:1px solid rgba(124,58,237,0.4);background:rgba(124,58,237,0.15);color:#C4B5FD;font-family:\'Chakra Petch\',sans-serif;font-size:12px;cursor:pointer;white-space:nowrap;">+ เพิ่ม</button>' +
+      '</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;min-height:34px;padding:8px 10px;background:rgba(0,0,0,0.2);border-radius:8px;">' + tags + '</div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('cu-users-container').innerHTML = html;
+
+  cuUsers.forEach(function(u) {
+    var tcEl  = document.getElementById('cu-tc-'  + u.id);
+    var ccEl  = document.getElementById('cu-cc-'  + u.id);
+    var srvEl = document.getElementById('cu-srv-' + u.id);
+    if (tcEl  && u._tc)  tcEl.value  = u._tc;
+    if (ccEl  && u._cc)  ccEl.value  = u._cc;
+    if (srvEl && u._srv) srvEl.value = u._srv;
+  });
+}
+
+function cuAddUser() {
+  if (cuUsers.length >= 10) { toast('⚠ สูงสุด 10 users', 'warn'); return; }
+  cuUsers.push({id: cuNextId++, items: [], _tc: '', _cc: '', _srv: '1'});
+  cuRender();
+}
+
+function cuRemoveUser(id) {
+  cuUsers = cuUsers.filter(function(u) { return u.id !== id; });
+  cuRender();
+}
+
+function cuClearAll() {
+  cuUsers = [];
+  cuRender();
+}
+
+function cuFillAmt(userId) {
+  var key = document.getElementById('cu-sel-' + userId).value;
+  var cfg = CU_ITEMS.find(function(i) { return i.key === key; });
+  if (cfg) document.getElementById('cu-amt-' + userId).value = cfg.def;
+}
+
+function cuAddItem(userId) {
+  cuSaveInputs();
+  var u = cuUsers.find(function(u) { return u.id === userId; });
+  if (!u) return;
+  var key    = document.getElementById('cu-sel-' + userId).value;
+  var amount = parseInt(document.getElementById('cu-amt-' + userId).value) || 0;
+  if (!key)       { toast('⚠ เลือกประเภทของก่อน', 'warn'); return; }
+  if (amount <= 0) { toast('⚠ จำนวนต้องมากกว่า 0', 'warn'); return; }
+  var cfg = CU_ITEMS.find(function(i) { return i.key === key; });
+  u.items.push({key: key, name: cfg ? cfg.name : key, amount: amount});
+  cuRender();
+}
+
+function cuRemoveItem(userId, itemIdx) {
+  cuSaveInputs();
+  var u = cuUsers.find(function(u) { return u.id === userId; });
+  if (!u) return;
+  u.items.splice(itemIdx, 1);
+  cuRender();
+}
+
+async function cuRunAll() {
+  cuSaveInputs();
+  var url = (document.getElementById('backendURL') ? document.getElementById('backendURL').value.trim() : '') || 'http://localhost:8000';
+
+  var requests = [];
+  for (var i = 0; i < cuUsers.length; i++) {
+    var u   = cuUsers[i];
+    var tc  = (u._tc  || '').trim();
+    var cc  = (u._cc  || '').trim();
+    var srv = u._srv || '1';
+    if (!tc || !cc)     { toast('❌ User ' + (i+1) + ': กรอก TC/CC ก่อน', 'err'); return; }
+    if (!u.items.length) { toast('❌ User ' + (i+1) + ': เพิ่มของอย่างน้อย 1 รายการ', 'err'); return; }
+    requests.push({userNum: i + 1, tc: tc, cc: cc, srv: srv, items: u.items});
+  }
+
+  if (!requests.length) { toast('❌ เพิ่ม User ก่อนอย่างน้อย 1 คน', 'err'); return; }
+
+  var resEl = document.getElementById('cu-result');
+  resEl.style.display = 'block';
+  resEl.innerHTML = '<div style="padding:12px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ ส่ง ' + requests.length + ' requests พร้อมกัน...</div>';
+
+  var startTime = Date.now();
+
+  var promises = requests.map(function(req) {
+    return fetch(url + '/api/test/bcsfe/batch', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        transfer_code:     req.tc,
+        confirmation_code: req.cc,
+        country:           req.srv,
+        items: req.items.map(function(item) {
+          return {key: item.key, amount: item.amount, sub_type: null};
+        }),
+      }),
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      return {
+        userNum:               req.userNum,
+        success:               d.success,
+        new_transfer_code:     d.new_transfer_code,
+        new_confirmation_code: d.new_confirmation_code,
+        customer_note:         d.customer_note,
+        error:                 d.error,
+        elapsed:               ((Date.now() - startTime) / 1000).toFixed(1),
+      };
+    })
+    .catch(function(e) {
+      return {userNum: req.userNum, success: false, error: e.message, elapsed: ((Date.now() - startTime) / 1000).toFixed(1)};
+    });
+  });
+
+  var results = await Promise.all(promises);
+  var totalTime = ((Date.now() - startTime) / 1000).toFixed(1);
+
+  var html = '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;">';
+  html += '<div style="color:rgba(210,190,255,0.6);margin-bottom:10px;">รวมเวลาทั้งหมด: ' + totalTime + ' วินาที</div>';
+  results.forEach(function(r) {
+    var ok = r.success;
+    html += '<div style="background:' + (ok ? 'rgba(74,222,128,0.08)' : 'rgba(248,113,113,0.08)') + ';border:1px solid ' + (ok ? 'rgba(74,222,128,0.25)' : 'rgba(248,113,113,0.25)') + ';border-radius:10px;padding:12px;margin-bottom:8px;">';
+    html += '<div style="font-size:13px;color:' + (ok ? '#4ADE80' : '#F87171') + ';margin-bottom:' + (ok ? '8' : '0') + 'px;">' + (ok ? '✅' : '❌') + ' User ' + r.userNum + ' (เสร็จใน ' + r.elapsed + 's)</div>';
+    if (ok) {
+      html += '<div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;">Transfer Code ใหม่</div>';
+      html += '<div style="font-family:monospace;font-size:14px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:8px;border-radius:6px;word-break:break-all;">' + (r.new_transfer_code || '-') + ' / ' + (r.new_confirmation_code || '-') + '</div>';
+      if (r.customer_note) {
+        html += '<div style="margin-top:8px;font-size:12px;color:#FCD34D;cursor:pointer;" onclick="navigator.clipboard.writeText(\'' + r.customer_note.replace(/\'/g, "\\'") + '\').then(function(){toast(\'✅ Copy แล้ว\',\'ok\');})">📋 ' + r.customer_note + '</div>';
+      }
+    } else {
+      html += '<div style="color:#F87171;font-size:12px;">' + (r.error || 'unknown error') + '</div>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+
+  resEl.innerHTML = html;
+  var allOk = results.every(function(r) { return r.success; });
+  toast(allOk ? '✅ ทั้ง ' + results.length + ' requests สำเร็จ!' : '⚠ บางตัวล้มเหลว', allOk ? 'ok' : 'warn');
+}
+
+// ── Clear Story Chapters ──────────────────────────────────────
+var _cscSel = new Set();
+
+function cscToggle(n) {
+  var btn = document.getElementById('csc-c' + n);
+  if (_cscSel.has(n)) {
+    _cscSel.delete(n);
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-outline');
+  } else {
+    _cscSel.add(n);
+    btn.classList.remove('btn-outline');
+    btn.classList.add('btn-primary');
+  }
+  var names = {1:'EoC Ch.1',2:'EoC Ch.2',3:'EoC Ch.3',4:'ItF Ch.1',5:'ItF Ch.2',6:'ItF Ch.3',7:'CotC Ch.1',8:'CotC Ch.2',9:'CotC Ch.3'};
+  var sel = Array.from(_cscSel).sort(function(a,b){return a-b;});
+  document.getElementById('csc-sel-label').textContent = sel.length ? 'เลือกแล้ว: ' + sel.map(function(n){ return names[n]; }).join(', ') : 'ยังไม่ได้เลือก';
+}
+
+function _storyResultHtml(data) {
+  var logLines = data.log || [];
+  var logHtml = logLines.length
+    ? '<div style="margin-top:12px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">📋 Log</div>' +
+      '<div style="background:rgba(0,0,0,0.35);border-radius:10px;padding:10px 14px;max-height:160px;overflow-y:auto;font-family:monospace;font-size:11px;line-height:1.8;color:#86EFAC;white-space:pre;">' +
+      logLines.map(function(l){ return l.replace(/✘/g,'<span style="color:#F87171">✘</span>').replace(/✔/g,'<span style="color:#4ADE80">✔</span>'); }).join('\n') +
+      '</div></div>' : '';
+  return '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+    '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ เคลียร์ด่านสำเร็จ!</div>' +
+    '<div style="margin-bottom:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
+    '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code||'-') + '</div></div>' +
+    '<div><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+    '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code||'-') + '</div></div>' +
+    logHtml + '</div>';
+}
+
+async function runClearStoryChapters() {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('csc-tc').value.trim();
+  var cc  = document.getElementById('csc-cc').value.trim();
+  var srv = document.getElementById('csc-srv').value;
+  var ca  = parseInt(document.getElementById('csc-amt').value) || 1;
+  var sel = Array.from(_cscSel).sort(function(a,b){return a-b;});
+
+  if (!tc || !cc) { toast('❌ กรอก Transfer/Confirmation Code ก่อน', 'err'); return; }
+  if (!sel.length) { toast('❌ เลือก Chapter อย่างน้อย 1 ตัวก่อน', 'err'); return; }
+
+  var btn = event.target;
+  var res = document.getElementById('csc-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังเคลียร์ด่าน...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังเคลียร์ ' + sel.length + ' chapters...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/clear/story-chapters', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, chapters: sel, clear_amount: ca }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ เคลียร์ด่านสำเร็จ!', 'ok');
+      res.innerHTML = _storyResultHtml(data);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message||e), 'err');
+    res.innerHTML = _pkgErrorHtml(e.message||e);
+  } finally {
+    btn.disabled = false; btn.textContent = '🗺️ เคลียร์ Chapter ที่เลือก';
+  }
+}
+
+async function runClearStoryAll() {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('csa-tc').value.trim();
+  var cc  = document.getElementById('csa-cc').value.trim();
+  var srv = document.getElementById('csa-srv').value;
+  var ca  = parseInt(document.getElementById('csa-amt').value) || 1;
+
+  if (!tc || !cc) { toast('❌ กรอก Transfer/Confirmation Code ก่อน', 'err'); return; }
+
+  var btn = event.target;
+  var res = document.getElementById('csa-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังเคลียร์ทุก chapter...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังเคลียร์ทั้ง 9 chapters (432 ด่าน)...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/clear/story-all', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, clear_amount: ca }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ เคลียร์ทุก chapter สำเร็จ!', 'ok');
+      res.innerHTML = _storyResultHtml(data);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message||e), 'err');
+    res.innerHTML = _pkgErrorHtml(e.message||e);
+  } finally {
+    btn.disabled = false; btn.textContent = '🗺️ เคลียร์ทุก Chapter (1–9)';
+  }
+}
+// ── Reset Story Chapters ──────────────────────────────────────
+var _rscSel = new Set();
+
+function rscToggle(n) {
+  var btn = document.getElementById('rsc-c' + n);
+  if (_rscSel.has(n)) {
+    _rscSel.delete(n);
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-outline');
+    btn.style.borderColor = ''; btn.style.color = '';
+  } else {
+    _rscSel.add(n);
+    btn.classList.remove('btn-outline');
+    btn.classList.add('btn-primary');
+    btn.style.borderColor = 'rgba(244,63,94,0.7)';
+    btn.style.color = '#FDA4AF';
+  }
+  var names = {1:'EoC Ch.1',2:'EoC Ch.2',3:'EoC Ch.3',4:'ItF Ch.1',5:'ItF Ch.2',6:'ItF Ch.3',7:'CotC Ch.1',8:'CotC Ch.2',9:'CotC Ch.3'};
+  var sel = Array.from(_rscSel).sort(function(a,b){return a-b;});
+  document.getElementById('rsc-sel-label').textContent = sel.length ? 'เลือกแล้ว: ' + sel.map(function(n){ return names[n]; }).join(', ') : 'ยังไม่ได้เลือก';
+}
+
+function _resetResultHtml(data) {
+  var logLines = data.log || [];
+  var logHtml = logLines.length
+    ? '<div style="margin-top:12px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">📋 Log</div>' +
+      '<div style="background:rgba(0,0,0,0.35);border-radius:10px;padding:10px 14px;max-height:140px;overflow-y:auto;font-family:monospace;font-size:11px;line-height:1.8;color:#86EFAC;white-space:pre;">' +
+      logLines.map(function(l){ return l.replace(/✘/g,'<span style="color:#F87171">✘</span>').replace(/✔/g,'<span style="color:#4ADE80">✔</span>'); }).join('\n') +
+      '</div></div>' : '';
+  return '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+    '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ รีเซ็ตสำเร็จ!</div>' +
+    '<div style="margin-bottom:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
+    '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code||'-') + '</div></div>' +
+    '<div><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+    '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code||'-') + '</div></div>' +
+    logHtml + '</div>';
+}
+
+async function runResetStoryChapters() {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('rsc-tc').value.trim();
+  var cc  = document.getElementById('rsc-cc').value.trim();
+  var srv = document.getElementById('rsc-srv').value;
+  var sel = Array.from(_rscSel).sort(function(a,b){return a-b;});
+
+  if (!tc || !cc) { toast('❌ กรอก Transfer/Confirmation Code ก่อน', 'err'); return; }
+  if (!sel.length) { toast('❌ เลือก Chapter ที่จะรีเซ็ตก่อน', 'err'); return; }
+
+  var btn = event.target;
+  var res = document.getElementById('rsc-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังรีเซ็ต...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังรีเซ็ต ' + sel.length + ' chapters...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/reset/story-chapters', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, chapters: sel }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ รีเซ็ตสำเร็จ!', 'ok');
+      res.innerHTML = _resetResultHtml(data);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message||e), 'err');
+    res.innerHTML = _pkgErrorHtml(e.message||e);
+  } finally {
+    btn.disabled = false; btn.textContent = '🔄 รีเซ็ต Chapter ที่เลือก';
+  }
+}
+
+async function runResetStoryAll() {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('rsa-tc').value.trim();
+  var cc  = document.getElementById('rsa-cc').value.trim();
+  var srv = document.getElementById('rsa-srv').value;
+
+  if (!tc || !cc) { toast('❌ กรอก Transfer/Confirmation Code ก่อน', 'err'); return; }
+
+  var btn = event.target;
+  var res = document.getElementById('rsa-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังรีเซ็ตทุก chapter...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังรีเซ็ตทั้ง 9 chapters...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/reset/story-all', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ รีเซ็ตทุก chapter สำเร็จ!', 'ok');
+      res.innerHTML = _resetResultHtml(data);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message||e), 'err');
+    res.innerHTML = _pkgErrorHtml(e.message||e);
+  } finally {
+    btn.disabled = false; btn.textContent = '🔄 รีเซ็ตทุก Chapter (1–9)';
+  }
+}
+// ── Treasure ──────────────────────────────────────────────────
+var _stcSelected = new Set();
+function stcToggle(n) {
+  var btn = document.getElementById('stc-ch' + n);
+  if (_stcSelected.has(n)) { _stcSelected.delete(n); btn.className = 'btn btn-outline'; }
+  else { _stcSelected.add(n); btn.className = 'btn btn-primary'; }
+}
+
+function _treasureResultHtml(data, prefix) {
+  var tc = data.new_transfer_code || '-';
+  var cc = data.new_confirmation_code || '-';
+  var log = (data.log || []).map(function(l) { return '<div>' + l + '</div>'; }).join('');
+  return '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.3);border-radius:10px;padding:14px;font-family:\'Chakra Petch\',monospace;font-size:13px;">'
+    + '<div style="color:#86efac;font-weight:700;margin-bottom:8px;">✅ สำเร็จ!</div>'
+    + '<div style="margin-bottom:4px;"><strong>Transfer Code:</strong> <span style="color:#ffd94e;">' + tc + '</span></div>'
+    + '<div style="margin-bottom:10px;"><strong>Confirmation Code:</strong> <span style="color:#ffd94e;">' + cc + '</span></div>'
+    + '<div style="color:#C4B5FD;font-size:12px;">' + log + '</div></div>';
+}
+
+async function runSetTreasureChapters() {
+  var chapters = Array.from(_stcSelected);
+  if (!chapters.length) { alert('กรุณาเลือกอย่างน้อย 1 Chapter'); return; }
+  var tc = document.getElementById('stc-tc').value.trim();
+  var cc = document.getElementById('stc-cc').value.trim();
+  var srv = document.getElementById('stc-srv').value;
+  var tv = parseInt(document.getElementById('stc-grade').value);
+  var res = document.getElementById('stc-result');
+  res.style.display = 'block';
+  res.innerHTML = '<div style="color:#C4B5FD;font-family:\'Chakra Petch\',monospace;">กำลังตั้ง Treasure...</div>';
+  try {
+    var r = await fetch('/api/treasure/story-chapters', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, chapters: chapters, treasure_value: tv })
+    });
+    var d = await r.json();
+    res.innerHTML = d.success ? _treasureResultHtml(d) : '<div style="color:#FDA4AF;">❌ ' + (d.error || 'Unknown error') + '</div>';
+  } catch(e) { res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + e + '</div>'; }
+}
+
+async function runSetTreasureAll() {
+  var tc = document.getElementById('sta-tc').value.trim();
+  var cc = document.getElementById('sta-cc').value.trim();
+  var srv = document.getElementById('sta-srv').value;
+  var tv = parseInt(document.getElementById('sta-grade').value);
+  var res = document.getElementById('sta-result');
+  res.style.display = 'block';
+  res.innerHTML = '<div style="color:#C4B5FD;font-family:\'Chakra Petch\',monospace;">กำลังตั้ง Treasure ทุก Chapter...</div>';
+  try {
+    var r = await fetch('/api/treasure/story-all', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, treasure_value: tv })
+    });
+    var d = await r.json();
+    res.innerHTML = d.success ? _treasureResultHtml(d) : '<div style="color:#FDA4AF;">❌ ' + (d.error || 'Unknown error') + '</div>';
+  } catch(e) { res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + e + '</div>'; }
+}
+
+// ── Outbreak (Zombie) ──────────────────────────────────────────
+var _obcSelected = new Set();
+function obcToggle(n) {
+  var btn = document.getElementById('obc-ch' + n);
+  if (_obcSelected.has(n)) { _obcSelected.delete(n); btn.className = 'btn btn-outline'; }
+  else { _obcSelected.add(n); btn.className = 'btn btn-primary'; }
+}
+
+function _outbreakResultHtml(data) {
+  var tc = data.new_transfer_code || '-';
+  var cc = data.new_confirmation_code || '-';
+  var log = (data.log || []).map(function(l) { return '<div>' + l + '</div>'; }).join('');
+  return '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.3);border-radius:10px;padding:14px;font-family:\'Chakra Petch\',monospace;font-size:13px;">'
+    + '<div style="color:#86efac;font-weight:700;margin-bottom:8px;">✅ สำเร็จ!</div>'
+    + '<div style="margin-bottom:4px;"><strong>Transfer Code:</strong> <span style="color:#ffd94e;">' + tc + '</span></div>'
+    + '<div style="margin-bottom:10px;"><strong>Confirmation Code:</strong> <span style="color:#ffd94e;">' + cc + '</span></div>'
+    + '<div style="color:#C4B5FD;font-size:12px;">' + log + '</div></div>';
+}
+
+async function runClearOutbreakChapters() {
+  var chapters = Array.from(_obcSelected);
+  if (!chapters.length) { alert('กรุณาเลือกอย่างน้อย 1 Chapter'); return; }
+  var tc = document.getElementById('obc-tc').value.trim();
+  var cc = document.getElementById('obc-cc').value.trim();
+  var srv = document.getElementById('obc-srv').value;
+  var res = document.getElementById('obc-result');
+  res.style.display = 'block';
+  res.innerHTML = '<div style="color:#C4B5FD;font-family:\'Chakra Petch\',monospace;">กำลังเคลียร์ Zombie Stages...</div>';
+  try {
+    var r = await fetch('/api/outbreak/story-chapters', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, chapters: chapters })
+    });
+    var d = await r.json();
+    res.innerHTML = d.success ? _outbreakResultHtml(d) : '<div style="color:#FDA4AF;">❌ ' + (d.error || 'Unknown error') + '</div>';
+  } catch(e) { res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + e + '</div>'; }
+}
+
+async function runClearOutbreakAll() {
+  var tc = document.getElementById('oba-tc').value.trim();
+  var cc = document.getElementById('oba-cc').value.trim();
+  var srv = document.getElementById('oba-srv').value;
+  var res = document.getElementById('oba-result');
+  res.style.display = 'block';
+  res.innerHTML = '<div style="color:#C4B5FD;font-family:\'Chakra Petch\',monospace;">กำลังเคลียร์ Zombie Stages ทุก Chapter...</div>';
+  try {
+    var r = await fetch('/api/outbreak/story-all', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv })
+    });
+    var d = await r.json();
+    res.innerHTML = d.success ? _outbreakResultHtml(d) : '<div style="color:#FDA4AF;">❌ ' + (d.error || 'Unknown error') + '</div>';
+  } catch(e) { res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + e + '</div>'; }
+}
+
+// ── Aku Realm ──────────────────────────────────────────────────
+var _akuSelected = new Set();
+function akuToggle(type) {
+  var btn = document.getElementById('aku-' + type);
+  if (_akuSelected.has(type)) { _akuSelected.delete(type); btn.className = 'btn btn-outline'; }
+  else { _akuSelected.add(type); btn.className = 'btn btn-primary'; }
+}
+
+async function runAku() {
+  if (!_akuSelected.size) { alert('กรุณาเลือกอย่างน้อย 1 Action'); return; }
+  var tc = document.getElementById('aku-tc').value.trim();
+  var cc = document.getElementById('aku-cc').value.trim();
+  var srv = document.getElementById('aku-srv').value;
+  var doUnlock = _akuSelected.has('unlock');
+  var doChap   = _akuSelected.has('chap');
+  var res = document.getElementById('aku-result');
+  res.style.display = 'block';
+  var actions = [];
+  if (doUnlock) actions.push('Unlock Aku Realm');
+  if (doChap)   actions.push('Clear Aku Chapters');
+  res.innerHTML = '<div style="color:#C4B5FD;font-family:\'Chakra Petch\',monospace;">กำลังดำเนินการ: ' + actions.join(' + ') + '...</div>';
+  try {
+    var r = await fetch('/api/aku', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv,
+                              do_unlock: doUnlock, do_chapters: doChap, clear_amount: 1 })
+    });
+    var d = await r.json();
+    if (d.success) {
+      var tc2 = d.new_transfer_code || '-';
+      var cc2 = d.new_confirmation_code || '-';
+      var log = (d.log || []).map(function(l) { return '<div>' + l + '</div>'; }).join('');
+      res.innerHTML = '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.3);border-radius:10px;padding:14px;font-family:\'Chakra Petch\',monospace;font-size:13px;">'
+        + '<div style="color:#86efac;font-weight:700;margin-bottom:8px;">✅ สำเร็จ!</div>'
+        + '<div style="margin-bottom:4px;"><strong>Transfer Code:</strong> <span style="color:#ffd94e;">' + tc2 + '</span></div>'
+        + '<div style="margin-bottom:10px;"><strong>Confirmation Code:</strong> <span style="color:#ffd94e;">' + cc2 + '</span></div>'
+        + '<div style="color:#C4B5FD;font-size:12px;">' + log + '</div></div>';
+    } else {
+      res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + (d.error || 'Unknown error') + '</div>';
+    }
+  } catch(e) { res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + e + '</div>'; }
+}
+
+// ── Legend Stages (SoL / UL / ZL) ──────────────────────────────
+var _legSelected = new Set();
+var _legMaxCrown = 4;
+
+function legToggle(type) {
+  var btn = document.getElementById('leg-' + type);
+  if (_legSelected.has(type)) { _legSelected.delete(type); btn.className = 'btn btn-outline'; }
+  else { _legSelected.add(type); btn.className = 'btn btn-primary'; }
+}
+
+function legCrown(n) {
+  _legMaxCrown = n;
+  for (var i = 1; i <= 4; i++) {
+    document.getElementById('leg-cr' + i).className = (i === n) ? 'btn btn-primary' : 'btn btn-outline';
+  }
+}
+
+async function runClearLegends() {
+  var types = Array.from(_legSelected);
+  if (!types.length) { alert('กรุณาเลือกอย่างน้อย 1 Legend Type'); return; }
+  var tc = document.getElementById('leg-tc').value.trim();
+  var cc = document.getElementById('leg-cc').value.trim();
+  var srv = document.getElementById('leg-srv').value;
+  var res = document.getElementById('leg-result');
+  res.style.display = 'block';
+  var typeLabel = { sol: 'Stories of Legend', ul: 'Uncanny Legends', zl: 'Zero Legends' };
+  var typesStr = types.map(function(t) { return typeLabel[t] || t; }).join(', ');
+  res.innerHTML = '<div style="color:#C4B5FD;font-family:\'Chakra Petch\',monospace;">กำลังเคลียร์ ' + typesStr + ' (crown 1-' + _legMaxCrown + ')...</div>';
+  try {
+    var r = await fetch('/api/legend/clear', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv,
+                              legend_types: types, max_crown: _legMaxCrown, clear_amount: 1 })
+    });
+    var d = await r.json();
+    if (d.success) {
+      var tc2 = d.new_transfer_code || '-';
+      var cc2 = d.new_confirmation_code || '-';
+      var log = (d.log || []).map(function(l) { return '<div>' + l + '</div>'; }).join('');
+      res.innerHTML = '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.3);border-radius:10px;padding:14px;font-family:\'Chakra Petch\',monospace;font-size:13px;">'
+        + '<div style="color:#86efac;font-weight:700;margin-bottom:8px;">✅ สำเร็จ!</div>'
+        + '<div style="margin-bottom:4px;"><strong>Transfer Code:</strong> <span style="color:#ffd94e;">' + tc2 + '</span></div>'
+        + '<div style="margin-bottom:10px;"><strong>Confirmation Code:</strong> <span style="color:#ffd94e;">' + cc2 + '</span></div>'
+        + '<div style="color:#C4B5FD;font-size:12px;">' + log + '</div></div>';
+    } else {
+      res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + (d.error || 'Unknown error') + '</div>';
+    }
+  } catch(e) { res.innerHTML = '<div style="color:#FDA4AF;">❌ ' + e + '</div>'; }
+}
+
+// ── Init ──────────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  document.getElementById('cartCount').textContent = cart.length;
+  checkDB();
+  cuAddUser();
+  cuAddUser();
+});
+
+// ── Unlock Character Flow ─────────────────────────────────────
+var _ucSel = {}; // id -> {id, tier, name}
+var _ucIds = [];
+
+var TIER_COL = { N:'#9CA3AF', EX:'#60A5FA', RR:'#4ADE80', SR:'#C4B5FD', UR:'#FBBF24', LR:'#F87171' };
+
+function ucGo(n) {
+  [1,2,3].forEach(function(i) {
+    document.getElementById('uc-s'+i).style.display = i===n ? '' : 'none';
+    var si = document.getElementById('si-'+i);
+    if (i < n) {
+      si.style.background = 'rgba(74,222,128,0.18)';
+      si.style.color = '#4ADE80';
+    } else if (i === n) {
+      si.style.background = 'rgba(124,58,237,0.35)';
+      si.style.color = '#EDE6FF';
+    } else {
+      si.style.background = 'transparent';
+      si.style.color = 'rgba(210,190,255,0.35)';
+    }
+  });
+}
+
+function ucNext(from) {
+  if (from === 1) {
+    if (!document.getElementById('uc-tc').value.trim() || !document.getElementById('uc-cc').value.trim()) {
+      toast('❌ กรอก Transfer Code และ Confirmation Code ก่อน', 'err'); return;
+    }
+    ucGo(2);
+  } else if (from === 2) {
+    var manual  = document.getElementById('uc-manual').value.trim();
+    var selIds  = Object.keys(_ucSel).map(Number);
+    if (manual) selIds = selIds.concat(ucParseManual(manual));
+    selIds = selIds.filter(function(v,i,a){ return a.indexOf(v)===i; }).sort(function(a,b){return a-b;});
+    if (!selIds.length) { toast('❌ เลือกตัวละครหรือใส่ ID ก่อน', 'err'); return; }
+    _ucIds = selIds;
+
+    var tc  = document.getElementById('uc-tc').value.trim();
+    var cc  = document.getElementById('uc-cc').value.trim();
+    var srv = document.getElementById('uc-srv').value;
+    var srvLabel = {1:'EN',2:'JP',3:'KR',4:'TW'};
+    document.getElementById('uc-summary').innerHTML =
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">' +
+      '<div><div style="color:rgba(210,190,255,0.4);font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;">Transfer Code</div><div style="font-family:monospace;color:#EDE6FF;word-break:break-all;">' + tc + '</div></div>' +
+      '<div><div style="color:rgba(210,190,255,0.4);font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;">Confirmation Code</div><div style="font-family:monospace;color:#EDE6FF;">' + cc + '</div></div>' +
+      '<div><div style="color:rgba(210,190,255,0.4);font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;">Server</div><div style="color:#EDE6FF;">' + (srvLabel[srv]||srv) + '</div></div>' +
+      '<div><div style="color:rgba(210,190,255,0.4);font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;">ตัวละคร</div><div style="color:#FFD84E;font-family:\'Russo One\',sans-serif;">' + selIds.length + ' ตัว</div></div>' +
+      '</div>';
+    document.getElementById('uc-idlist').textContent = selIds.join(' ');
+    document.getElementById('uc-result').style.display = 'none';
+    ucGo(3);
+  }
+}
+
+function ucParseManual(s) {
+  if (s.toLowerCase() === 'all') {
+    var a = [];
+    for (var i = 0; i <= 860; i++) a.push(i);
+    return a;
+  }
+  var ids = [];
+  s.split(/[\s,]+/).forEach(function(p) {
+    var r = p.match(/^(\d+)-(\d+)$/);
+    if (r) {
+      for (var i = parseInt(r[1]); i <= parseInt(r[2]); i++) ids.push(i);
+    } else {
+      var n = parseInt(p);
+      if (!isNaN(n)) ids.push(n);
+    }
+  });
+  return ids;
+}
+
+function ucSearch() {
+  var q  = document.getElementById('uc-q').value.toLowerCase().trim();
+  var el = document.getElementById('uc-qres');
+  if (!q || !window.catsData) { el.style.display = 'none'; return; }
+
+  var results = window.catsData.filter(function(r) {
+    return (r[2]||'').toLowerCase().includes(q) || String(r[0]).includes(q);
+  }).slice(0, 15);
+
+  if (!results.length) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = results.map(function(r) {
+    var id = r[0], tier = r[1], name = r[2]||'-';
+    var col  = TIER_COL[tier] || '#EDE6FF';
+    var isSel = !!_ucSel[id];
+    return '<div onclick="ucToggle(' + id + ',\'' + tier + '\',\'' + name.replace(/'/g,'\\\'') + '\')" ' +
+      'style="padding:8px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;' +
+      'border-bottom:1px solid rgba(255,255,255,0.04);background:' + (isSel ? 'rgba(124,58,237,0.25)' : 'transparent') + ';transition:background 0.15s;">' +
+      '<div>' +
+        '<span style="font-family:monospace;font-size:11px;color:rgba(210,190,255,0.35);margin-right:8px;">#' + id + '</span>' +
+        '<span style="font-family:\'Chakra Petch\',sans-serif;font-size:13px;color:#EDE6FF;">' + name + '</span>' +
+        (isSel ? '<span style="margin-left:6px;font-size:10px;color:#4ADE80;">✓</span>' : '') +
+      '</div>' +
+      '<span style="font-size:10px;color:' + col + ';font-family:\'Chakra Petch\',sans-serif;">' + tier + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+function ucToggle(id, tier, name) {
+  if (_ucSel[id]) delete _ucSel[id];
+  else _ucSel[id] = { id:id, tier:tier, name:name };
+  ucRenderTags();
+  ucSearch();
+}
+
+function ucClearSel() {
+  _ucSel = {};
+  ucRenderTags();
+  ucSearch();
+}
+
+function ucRenderTags() {
+  var keys = Object.keys(_ucSel).map(Number).sort(function(a,b){return a-b;});
+  document.getElementById('uc-cnt').textContent = keys.length;
+  var el = document.getElementById('uc-tags');
+  if (!keys.length) {
+    el.innerHTML = '<span id="uc-empty" style="color:rgba(210,190,255,0.3);font-family:\'Chakra Petch\',sans-serif;font-size:12px;align-self:center;">ยังไม่ได้เลือก</span>';
+    return;
+  }
+  el.innerHTML = keys.map(function(id) {
+    var c = _ucSel[id];
+    var col = TIER_COL[c.tier] || '#EDE6FF';
+    return '<span onclick="ucToggle(' + id + ',\'' + c.tier + '\',\'' + c.name.replace(/'/g,'\\\'') + '\')" ' +
+      'style="display:inline-flex;align-items:center;gap:4px;background:rgba(124,58,237,0.18);border:1px solid rgba(124,58,237,0.32);' +
+      'border-radius:999px;padding:3px 9px;font-family:\'Chakra Petch\',sans-serif;font-size:11px;cursor:pointer;">' +
+      '<span style="color:' + col + ';">' + c.name + '</span>' +
+      '<span style="color:rgba(210,190,255,0.35);font-size:10px;">#' + id + '</span>' +
+      '<span style="color:rgba(244,63,94,0.6);margin-left:1px;">✕</span>' +
+    '</span>';
+  }).join('');
+}
+
+function ucCopyIds() {
+  var text = document.getElementById('uc-idlist').textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    toast('📋 คัดลอก ID แล้ว', 'ok');
+  }).catch(function() { toast('❌ Copy ไม่ได้', 'err'); });
+}
+
+async function ucExecute() {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('uc-tc').value.trim();
+  var cc  = document.getElementById('uc-cc').value.trim();
+  var srv = document.getElementById('uc-srv').value;
+  var btn = event.target;
+  var res = document.getElementById('uc-result');
+
+  btn.disabled = true; btn.textContent = '⏳ กำลังปลดล็อค...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังปลดล็อค ' + _ucIds.length + ' ตัวละคร...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/unlock/characters', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, cat_ids: _ucIds }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ ปลดล็อคสำเร็จ!', 'ok');
+      res.innerHTML =
+        '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ ปลดล็อคสำเร็จ!</div>' +
+        '<div style="margin-bottom:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่ (ส่งให้ลูกค้า)</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code||'-') + '</div></div>' +
+        '<div><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code||'-') + '</div></div>' +
+        '</div>';
+      showDebug('✅ Unlock Characters\nTransfer Code ใหม่: ' + data.new_transfer_code + '\nConfirmation Code ใหม่: ' + data.new_confirmation_code + '\nตัวละคร: ' + _ucIds.length + ' ตัว\nIDs: ' + _ucIds.join(' '));
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message||e), 'err');
+    res.innerHTML =
+      '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:16px;">' +
+      '<div style="font-family:\'Russo One\',sans-serif;color:#F87171;font-size:14px;margin-bottom:8px;">❌ เชื่อมต่อ API ไม่ได้</div>' +
+      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);margin-bottom:10px;">' + (e.message||'Unknown error') + '</div>' +
+      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);">ID List:<br><span style="color:#FFD84E;font-family:monospace;">' + _ucIds.join(' ') + '</span></div>' +
+      '</div>';
+  } finally {
+    btn.disabled = false; btn.textContent = '🚀 ปลดล็อคผ่าน BCSFE API';
+  }
+}
+
+// ── Crazed / Manic Package Runners ───────────────────────────
+var CRAZED_IDS = [91,92,93,94,95,96,97,98,99];
+
+async function runCrazedPackage(e) {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('crazed-tc').value.trim();
+  var cc  = document.getElementById('crazed-cc').value.trim();
+  var srv = document.getElementById('crazed-srv').value;
+  if (!tc || !cc) { toast('❌ กรอก Transfer Code และ Confirmation Code ก่อน', 'err'); return; }
+
+  var btn = e.target;
+  var res = document.getElementById('crazed-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังปลดล็อค...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังปลดล็อค Crazed Cat 9 ตัว...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/unlock/characters', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, cat_ids: CRAZED_IDS }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ Crazed All Cat ปลดล็อคสำเร็จ!', 'ok');
+      res.innerHTML = _pkgSuccessHtml('🐾 Crazed All Cat ปลดล็อคสำเร็จ! (9 ตัว)', data);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(err) {
+    toast('❌ ' + err.message, 'err');
+    res.innerHTML = _pkgErrorHtml(err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '🐾 ปลดล็อค Crazed All Cat (91–99)';
+  }
+}
+
+async function runManicPackage(e) {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById('manic-tc').value.trim();
+  var cc  = document.getElementById('manic-cc').value.trim();
+  var srv = document.getElementById('manic-srv').value;
+  if (!tc || !cc) { toast('❌ กรอก Transfer Code และ Confirmation Code ก่อน', 'err'); return; }
+
+  var btn = e.target;
+  var res = document.getElementById('manic-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังทำ True Form...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ กำลังทำ True Form Manic Cat 9 ตัว...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/trueform/characters', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, cat_ids: CRAZED_IDS }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ Manic All Cat True Form สำเร็จ!', 'ok');
+      res.innerHTML = _pkgSuccessHtml('🌟 Manic All Cat True Form สำเร็จ! (9 ตัว)', data);
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(err) {
+    toast('❌ ' + err.message, 'err');
+    res.innerHTML = _pkgErrorHtml(err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '🌟 True Form Manic All Cat (91–99)';
+  }
+}
+
+function _pkgSuccessHtml(title, data) {
+  var logLines = data.log || [];
+  var logHtml = logLines.length
+    ? '<div style="margin-top:12px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">📋 Log</div>' +
+      '<div style="background:rgba(0,0,0,0.35);border-radius:10px;padding:10px 14px;max-height:160px;overflow-y:auto;font-family:monospace;font-size:11px;line-height:1.8;color:#86EFAC;white-space:pre;">' +
+      logLines.map(function(l){ return l.replace(/✘/g,'<span style="color:#F87171">✘</span>').replace(/✔/g,'<span style="color:#4ADE80">✔</span>'); }).join('\n') +
+      '</div></div>' : '';
+  return '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+    '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ ' + title + '</div>' +
+    '<div style="margin-bottom:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
+    '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code||'-') + '</div></div>' +
+    '<div><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+    '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code||'-') + '</div></div>' +
+    logHtml + '</div>';
+}
+
+function _pkgErrorHtml(msg) {
+  return '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:16px;">' +
+    '<div style="font-family:\'Russo One\',sans-serif;color:#F87171;font-size:14px;margin-bottom:8px;">❌ เกิดข้อผิดพลาด</div>' +
+    '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);">' + msg + '</div></div>';
+}
+
+// ── Shared Cat Action Runner (upgrade / trueform / ultraform / talents) ──
+async function runCatAction(prefix, endpoint, label) {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById(prefix + '-tc').value.trim();
+  var cc  = document.getElementById(prefix + '-cc').value.trim();
+  var srv = document.getElementById(prefix + '-srv').value;
+  var rawIds = document.getElementById(prefix + '-ids').value.trim();
+
+  if (!tc || !cc) { toast('❌ กรอก Transfer Code และ Confirmation Code ก่อน', 'err'); return; }
+  if (!rawIds)    { toast('❌ ใส่ Cat IDs ก่อน', 'err'); return; }
+
+  var ids = ucParseManual(rawIds);
+  if (!ids.length) { toast('❌ IDs ไม่ถูกต้อง', 'err'); return; }
+
+  var btn = event.target;
+  var res = document.getElementById(prefix + '-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังทำ...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ ' + label + ' ' + ids.length + ' ตัวละคร...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/' + endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, cat_ids: ids }),
+    });
+    var data = await resp.json();
+
+    if (data.success) {
+      toast('✅ ' + label + ' สำเร็จ!', 'ok');
+      var logLines = (data.log || []);
+      var logHtml = logLines.length
+        ? '<div style="margin-top:14px;">' +
+          '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">📋 Log (' + logLines.length + ' รายการ)</div>' +
+          '<div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px 14px;max-height:180px;overflow-y:auto;font-family:monospace;font-size:11px;line-height:1.8;color:#86EFAC;white-space:pre;">' +
+          logLines.map(function(l){ return l.replace(/✘/g,'<span style="color:#F87171">✘</span>').replace(/✔/g,'<span style="color:#4ADE80">✔</span>').replace(/—/g,'<span style="color:rgba(210,190,255,0.4)">—</span>'); }).join('\n') +
+          '</div></div>'
+        : '';
+      res.innerHTML =
+        '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ ' + label + ' สำเร็จ! (' + ids.length + ' ตัว)</div>' +
+        '<div style="margin-bottom:10px;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code||'-') + '</div></div>' +
+        '<div style="margin-bottom:0;"><div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code||'-') + '</div></div>' +
+        logHtml +
+        '</div>';
+      showDebug(label + ' Success!\nTransfer: ' + data.new_transfer_code + '\nConfirmation: ' + data.new_confirmation_code + '\n\nLog:\n' + (data.log||[]).join('\n'));
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message||e), 'err');
+    res.innerHTML =
+      '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:16px;">' +
+      '<div style="font-family:\'Russo One\',sans-serif;color:#F87171;font-size:14px;margin-bottom:8px;">❌ เชื่อมต่อ API ไม่ได้</div>' +
+      '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(210,190,255,0.55);">' + (e.message||'Unknown error') + '</div>' +
+      '</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = (label === '⬆️ อัพเกรด' ? '⬆️ อัพเกรดถึง Max Level' :
+                       label === '✨ True Form' ? '✨ True Form ตัวละคร' :
+                       label === '💥 Ultra Form' ? '💥 Ultra Form ตัวละคร' :
+                       '🌟 Max Talents ตัวละคร');
+  }
+}
+
+// ── All-cats action (upgrade all / etc.) ────────────────────
+async function runAllCatAction(prefix, endpoint, label) {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc  = document.getElementById(prefix + '-tc').value.trim();
+  var cc  = document.getElementById(prefix + '-cc').value.trim();
+  var srv = document.getElementById(prefix + '-srv').value;
+
+  if (!tc || !cc) { toast('❌ กรอก Transfer Code และ Confirmation Code ก่อน', 'err'); return; }
+
+  var btn = event.target;
+  var res = document.getElementById(prefix + '-result');
+  btn.disabled = true; btn.textContent = '⏳ กำลังทำ...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ ' + label + ' ทุกตัวละครในรหัส...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/' + endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv }),
+    });
+    var data = await resp.json();
+    if (data.success) {
+      toast('✅ ' + label + ' สำเร็จ! (' + (data.count || 0) + ' ตัว)', 'ok');
+      var logLines = (data.log || []);
+      var logHtml = logLines.length
+        ? '<div style="margin-top:14px;">' +
+          '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">📋 Log (' + logLines.length + ' รายการ)</div>' +
+          '<div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px 14px;max-height:220px;overflow-y:auto;font-family:monospace;font-size:11px;line-height:1.8;color:#86EFAC;white-space:pre;">' +
+          logLines.map(function(l){ return l.replace(/✘/g,'<span style="color:#F87171">✘</span>').replace(/✔/g,'<span style="color:#4ADE80">✔</span>').replace(/—/g,'<span style="color:rgba(210,190,255,0.4)">—</span>'); }).join('\n') +
+          '</div></div>'
+        : '';
+      res.innerHTML =
+        '<div style="background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;padding:16px;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:14px;margin-bottom:12px;">✅ ' + label + ' สำเร็จ! (' + (data.count || 0) + ' ตัว)</div>' +
+        '<div style="margin-bottom:8px;"><div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Transfer Code ใหม่</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;word-break:break-all;">' + (data.new_transfer_code || '-') + '</div></div>' +
+        '<div style="margin-bottom:0;"><div style="font-size:10px;color:rgba(210,190,255,0.4);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;">Confirmation Code ใหม่</div>' +
+        '<div style="font-family:monospace;font-size:15px;color:#FFD84E;background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;">' + (data.new_confirmation_code || '-') + '</div></div>' +
+        logHtml +
+        '</div>';
+      showDebug(label + ' Success!\nTransfer: ' + data.new_transfer_code + '\nConfirmation: ' + data.new_confirmation_code + '\n\nLog:\n' + (data.log||[]).join('\n'));
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch(e) {
+    toast('❌ ' + (e.message || e), 'err');
+    res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:16px;">' +
+      '<div style="font-family:\'Russo One\',sans-serif;color:#F87171;font-size:14px;">❌ ' + (e.message || e) + '</div></div>';
+  } finally {
+    btn.disabled = false; btn.textContent = label;
+  }
+}
+
+function ucReset() {
+  _ucSel = {}; _ucIds = [];
+  ['uc-tc','uc-cc','uc-q','uc-manual'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('uc-qres').style.display = 'none';
+  document.getElementById('uc-result').style.display = 'none';
+  ucRenderTags();
+  ucGo(1);
+}
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- CHECK ID SECTION                                             -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="test-section" style="margin-top:32px;border:1px solid rgba(56,189,248,0.3);border-radius:16px;padding:24px;">
+  <h2 class="section-title" style="margin-bottom:20px;">🔍 checkID</h2>
+
+  <div style="background:rgba(56,189,248,0.07);border:1px solid rgba(56,189,248,0.25);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#7DD3FC;line-height:1.7;">
+    ตรวจว่ารหัสยังใช้ได้อยู่ไหม — download save → re-upload (ไม่แก้ไข) → ได้ TC ใหม่คืน<br>
+    ใส่ได้หลายรหัสพร้อมกัน ระบบตรวจทีละรหัสตามลำดับ
+  </div>
+
+  <div style="margin-bottom:12px;">
+    <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">Server</label>
+    <select id="chk-srv" style="padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;">
+      <option value="1">EN (Global / TH / EU)</option>
+      <option value="2">JP</option>
+      <option value="3">KR</option>
+      <option value="4">TW</option>
+    </select>
+  </div>
+
+  <!-- paste import -->
+  <div style="margin-bottom:14px;">
+    <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">📋 วางจากไฟล์ Dupe Save (ก๊อปทั้งหมดมาวาง)</label>
+    <div style="display:flex;gap:8px;align-items:flex-start;">
+      <textarea id="chk-paste-input" rows="3" placeholder="  1  TC: abc123456   CC: 1234   Inquiry: xyz...&#10;  2  TC: def789abc   CC: 5678   Inquiry: uvw..." style="flex:1;padding:9px 12px;border:1px solid rgba(56,189,248,0.25);border-radius:8px;background:rgba(56,189,248,0.05);color:white;font-family:monospace;font-size:12px;resize:vertical;box-sizing:border-box;"></textarea>
+      <button onclick="chkImportText()" style="padding:9px 14px;background:rgba(56,189,248,0.15);color:#38BDF8;border:1px solid rgba(56,189,248,0.35);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;align-self:stretch;">📋 นำเข้า</button>
+    </div>
+  </div>
+
+  <!-- rows -->
+  <div id="chk-rows" style="margin-bottom:14px;"></div>
+
+  <div style="display:flex;gap:8px;margin-bottom:20px;">
+    <button onclick="chkAddRow()" style="padding:7px 16px;background:rgba(56,189,248,0.12);color:#7DD3FC;border:1px solid rgba(56,189,248,0.3);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">+ เพิ่มรหัส</button>
+    <button onclick="chkClear()" style="padding:7px 16px;background:rgba(255,255,255,0.05);color:rgba(210,190,255,0.5);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-family:'Chakra Petch',sans-serif;font-size:12px;cursor:pointer;">ล้างทั้งหมด</button>
+  </div>
+
+  <button onclick="runCheckID(event)" class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;background:linear-gradient(135deg,#0ea5e9,#6366f1);">
+    🔍 ตรวจสอบรหัส
+  </button>
+
+  <div id="chk-result" style="display:none;margin-top:16px;"></div>
+</div>
+
+<script>
+var _chkRowCount = 0;
+
+function chkAddRow(tc, cc) {
+  _chkRowCount++;
+  var id = _chkRowCount;
+  var div = document.createElement('div');
+  div.id = 'chk-row-' + id;
+  div.style.cssText = 'display:grid;grid-template-columns:1fr 120px 36px;gap:8px;margin-bottom:8px;align-items:center;';
+  div.innerHTML =
+    '<input type="text" id="chk-tc-'+id+'" placeholder="Transfer Code" value="'+(tc||'')+'" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;background:rgba(255,255,255,0.06);color:white;font-size:13px;">' +
+    '<input type="text" id="chk-cc-'+id+'" placeholder="Conf Code" value="'+(cc||'')+'" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;background:rgba(255,255,255,0.06);color:white;font-size:13px;">' +
+    '<button onclick="chkRemoveRow('+id+')" style="width:36px;height:36px;background:rgba(248,113,113,0.12);color:#F87171;border:1px solid rgba(248,113,113,0.25);border-radius:8px;cursor:pointer;font-size:16px;line-height:1;">✕</button>';
+  document.getElementById('chk-rows').appendChild(div);
+}
+
+function chkRemoveRow(id) {
+  var el = document.getElementById('chk-row-' + id);
+  if (el) el.remove();
+}
+
+function chkClear() {
+  document.getElementById('chk-rows').innerHTML = '';
+  _chkRowCount = 0;
+  document.getElementById('chk-result').style.display = 'none';
+  chkAddRow();
+}
+
+function chkImportText() {
+  var text = document.getElementById('chk-paste-input').value;
+  var lines = text.split('\n');
+  var parsed = [];
+  lines.forEach(function(line) {
+    var tcMatch = line.match(/TC:\s*([a-fA-F0-9]+)/);
+    var ccMatch = line.match(/CC:\s*([0-9]+)/);
+    if (tcMatch && ccMatch) {
+      parsed.push({ tc: tcMatch[1].trim(), cc: ccMatch[1].trim() });
+    }
+  });
+  if (parsed.length === 0) { toast('❌ ไม่พบรหัสในข้อความ', 'err'); return; }
+  document.getElementById('chk-rows').innerHTML = '';
+  _chkRowCount = 0;
+  parsed.forEach(function(p) { chkAddRow(p.tc, p.cc); });
+  document.getElementById('chk-paste-input').value = '';
+  toast('✅ นำเข้า ' + parsed.length + ' รหัสแล้ว', 'ok');
+}
+
+// init 1 row
+chkAddRow();
+
+var _chkLastResults = null;
+
+function downloadCheckID() {
+  if (!_chkLastResults || _chkLastResults.length === 0) return;
+  var now = new Date();
+  var ts = now.getFullYear() + '-' +
+    String(now.getMonth()+1).padStart(2,'0') + '-' +
+    String(now.getDate()).padStart(2,'0') + ' ' +
+    String(now.getHours()).padStart(2,'0') + ':' +
+    String(now.getMinutes()).padStart(2,'0') + ':' +
+    String(now.getSeconds()).padStart(2,'0');
+  var ok = _chkLastResults.filter(function(r){ return r.valid; }).length;
+  var lines = [
+    'BattleCats CheckID — ' + ts,
+    '='.repeat(50),
+    'ตรวจ ' + _chkLastResults.length + ' รหัส  |  ✅ ' + ok + ' ใช้ได้  |  ❌ ' + (_chkLastResults.length - ok) + ' ไม่ได้',
+    '='.repeat(50),
+    ''
+  ];
+  var idx = 1;
+  _chkLastResults.forEach(function(r) {
+    var num = String(idx).padStart(3, ' ');
+    if (r.valid) {
+      lines.push(num + '  TC: ' + (r.new_tc || '-') + '   CC: ' + (r.new_cc || '-') + '   Inquiry: ' + (r.inquiry_code || '-'));
+      idx++;
+    } else {
+      lines.push('# ❌  TC เดิม: ' + r.original_tc + ' — ' + (r.error || 'ไม่ได้'));
+    }
+  });
+  lines.push('');
+  var blob = new Blob([lines.join('\r\n')], { type: 'text/plain;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  var fn = 'checkID_' + ts.replace(/[: -]/g,'').substring(0,15) + '.txt';
+  a.download = fn;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+async function runCheckID(event) {
+  var url = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var srv = document.getElementById('chk-srv').value;
+  var btn = event.target;
+  var res = document.getElementById('chk-result');
+
+  // เก็บทุก row ที่มี TC
+  var codes = [];
+  for (var i = 1; i <= _chkRowCount; i++) {
+    var tcEl = document.getElementById('chk-tc-' + i);
+    var ccEl = document.getElementById('chk-cc-' + i);
+    if (!tcEl) continue;
+    var tc = tcEl.value.trim();
+    var cc = ccEl.value.trim();
+    if (tc) codes.push({ transfer_code: tc, confirmation_code: cc });
+  }
+  if (codes.length === 0) { toast('❌ ใส่รหัสอย่างน้อย 1 รายการ', 'err'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ กำลังตรวจ ' + codes.length + ' รหัส...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#7DD3FC;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ ตรวจสอบอยู่ ' + codes.length + ' รหัส...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/check/id', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ codes: codes, country: srv }),
+    });
+    var data = await resp.json();
+
+    if (data.success) {
+      toast('✅ ตรวจครบ — ใช้ได้ ' + data.ok + '/' + (data.ok + data.error_count), 'ok');
+      _chkLastResults = data.results;
+      var rows = data.results.map(function(r) {
+        if (r.valid) {
+          return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' +
+            '<td style="padding:9px 10px;font-family:monospace;font-size:12px;color:#9CA3AF;">' + r.original_tc + '</td>' +
+            '<td style="padding:9px 10px;text-align:center;"><span style="background:rgba(74,222,128,0.12);color:#4ADE80;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:\'Chakra Petch\',sans-serif;">✅ ใช้ได้</span></td>' +
+            '<td style="padding:9px 10px;font-family:monospace;font-size:13px;color:#FFD84E;">' + (r.new_tc || '-') + '</td>' +
+            '<td style="padding:9px 10px;font-family:monospace;font-size:13px;color:#FFD84E;">' + (r.new_cc || '-') + '</td>' +
+            '<td style="padding:9px 10px;font-family:monospace;font-size:11px;color:#7DD3FC;">' + (r.inquiry_code || '-') + '</td>' +
+            '<td style="padding:9px 4px;">' +
+              '<button onclick="copyText(\'' + (r.new_tc||'') + '\',this)" style="padding:3px 7px;background:rgba(99,102,241,0.2);color:#c4b5fd;border:1px solid rgba(99,102,241,0.35);border-radius:5px;font-size:10px;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;margin-right:3px;">TC</button>' +
+              '<button onclick="copyText(\'' + (r.new_cc||'') + '\',this)" style="padding:3px 7px;background:rgba(99,102,241,0.2);color:#c4b5fd;border:1px solid rgba(99,102,241,0.35);border-radius:5px;font-size:10px;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;">CC</button>' +
+            '</td>' +
+          '</tr>';
+        } else {
+          return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' +
+            '<td style="padding:9px 10px;font-family:monospace;font-size:12px;color:#9CA3AF;">' + r.original_tc + '</td>' +
+            '<td style="padding:9px 10px;text-align:center;"><span style="background:rgba(248,113,113,0.12);color:#F87171;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:\'Chakra Petch\',sans-serif;">❌ ไม่ได้</span></td>' +
+            '<td colspan="4" style="padding:9px 10px;font-size:11px;color:rgba(248,113,113,0.7);">' + (r.error || '') + '</td>' +
+          '</tr>';
+        }
+      }).join('');
+
+      res.innerHTML =
+        '<div style="background:rgba(14,165,233,0.05);border:1px solid rgba(14,165,233,0.2);border-radius:12px;padding:16px;overflow-x:auto;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#38BDF8;font-size:12px;margin-bottom:12px;">ผล: ใช้ได้ ' + data.ok + ' / ไม่ได้ ' + data.error_count + ' จาก ' + data.results.length + ' รหัส</div>' +
+        '<table style="width:100%;border-collapse:collapse;">' +
+        '<thead><tr style="border-bottom:1px solid rgba(255,255,255,0.12);">' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;font-family:\'Chakra Petch\',sans-serif;">Transfer Code (เดิม)</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:center;font-family:\'Chakra Petch\',sans-serif;">สถานะ</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;font-family:\'Chakra Petch\',sans-serif;">TC ใหม่</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;font-family:\'Chakra Petch\',sans-serif;">CC ใหม่</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;font-family:\'Chakra Petch\',sans-serif;">Inquiry Code</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;font-family:\'Chakra Petch\',sans-serif;">คัดลอก</th>' +
+        '</tr></thead><tbody>' + rows + '</tbody></table>' +
+        '<div style="margin-top:12px;text-align:right;">' +
+        '<button onclick="downloadCheckID()" style="padding:6px 16px;background:rgba(14,165,233,0.15);color:#38BDF8;border:1px solid rgba(14,165,233,0.35);border-radius:8px;font-size:12px;font-family:\'Chakra Petch\',sans-serif;cursor:pointer;">📥 โหลดเป็น .txt</button>' +
+        '</div></div>';
+    } else {
+      toast('❌ ' + (data.error || 'Error'), 'err');
+      res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:14px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#FCA5A5;">❌ ' + (data.error || 'Unknown error') + '</div>';
+    }
+  } catch(e) {
+    toast('❌ ' + e.message, 'err');
+    res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:14px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#FCA5A5;">❌ ' + e.message + '</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔍 ตรวจสอบรหัส';
+  }
+}
+</script>
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- DUPE SAVE SECTION                                            -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="test-section" style="margin-top:32px;border:1px solid rgba(251,191,36,0.3);border-radius:16px;padding:24px;">
+  <h2 class="section-title" style="margin-bottom:20px;">🔀 Dupe Save</h2>
+
+  <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.3);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;line-height:1.7;">
+    ⚠️ ระบบ dupe ใช้ <strong>create_new_account (unban)</strong> สร้าง Inquiry Code ใหม่ทุกรอบ<br>
+    download ครั้งเดียว → dupe N รอบ → ได้ TC N ชุด → ลบ backup อัตโนมัติ
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">Transfer Code</label>
+      <input type="text" id="dupe-tc" placeholder="8274501e5" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;background:rgba(255,255,255,0.06);color:white;box-sizing:border-box;">
+    </div>
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">Confirmation Code</label>
+      <input type="text" id="dupe-cc" placeholder="0792" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;background:rgba(255,255,255,0.06);color:white;box-sizing:border-box;">
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">Server</label>
+      <select id="dupe-srv" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;">
+        <option value="1">EN (Global / TH / EU)</option>
+        <option value="2">JP</option>
+        <option value="3">KR</option>
+        <option value="4">TW</option>
+      </select>
+    </div>
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">จำนวน dupe (สูงสุด 20)</label>
+      <input type="number" id="dupe-count" value="3" min="1" max="100" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;">
+    </div>
+  </div>
+
+  <button onclick="runDupeSave(event)" class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;">
+    🔀 เริ่ม Dupe
+  </button>
+
+  <div id="dupe-result" style="display:none;margin-top:16px;"></div>
+</div>
+
+<script>
+var _dupeLastData = null;
+
+function downloadDupeSave() {
+  if (!_dupeLastData || !_dupeLastData.codes || _dupeLastData.codes.length === 0) return;
+  var now = new Date();
+  var ts = now.getFullYear() + '-' +
+    String(now.getMonth()+1).padStart(2,'0') + '-' +
+    String(now.getDate()).padStart(2,'0') + ' ' +
+    String(now.getHours()).padStart(2,'0') + ':' +
+    String(now.getMinutes()).padStart(2,'0') + ':' +
+    String(now.getSeconds()).padStart(2,'0');
+  var codes = _dupeLastData.codes;
+  var lines = [
+    'BattleCats Dupe Save — ' + ts,
+    '='.repeat(50),
+    'จำนวน: ' + codes.length + ' รหัส',
+    '='.repeat(50),
+    ''
+  ];
+  codes.forEach(function(c, i) {
+    var num = String(i+1).padStart(3, ' ');
+    lines.push(num + '  TC: ' + (c.transfer || '-') + '   CC: ' + (c.confirmation || '-') + '   Inquiry: ' + (c.inquiry || '-'));
+  });
+  lines.push('');
+  var blob = new Blob([lines.join('\r\n')], { type: 'text/plain;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  var fn = 'dupe_' + ts.replace(/[: -]/g,'').substring(0,15) + '.txt';
+  a.download = fn;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+async function runDupeSave(event) {
+  var url   = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc    = document.getElementById('dupe-tc').value.trim();
+  var cc    = document.getElementById('dupe-cc').value.trim();
+  var srv   = document.getElementById('dupe-srv').value;
+  var count = parseInt(document.getElementById('dupe-count').value) || 1;
+  var btn   = event.target;
+  var res   = document.getElementById('dupe-result');
+
+  if (!tc || !cc) { toast('❌ กรอก TC และ CC ก่อน', 'err'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ กำลัง dupe... (อาจใช้เวลาหลายนาที)';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#FBBF24;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ Downloading save แล้ว dupe ' + count + ' รอบ...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/dupe/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, count: count }),
+    });
+    var data = await resp.json();
+
+    if (data.success && data.codes && data.codes.length > 0) {
+      toast('✅ Dupe สำเร็จ ' + data.count + ' รหัส!', 'ok');
+      _dupeLastData = data;
+      var rows = data.codes.map(function(c, i) {
+        return '<tr>' +
+          '<td style="padding:8px 10px;color:#9CA3AF;font-size:12px;">#' + (i+1) + '</td>' +
+          '<td style="padding:8px 10px;font-family:monospace;color:#FFD84E;font-size:13px;">' + c.transfer + '</td>' +
+          '<td style="padding:8px 10px;font-family:monospace;color:#FFD84E;font-size:13px;">' + c.confirmation + '</td>' +
+          '<td style="padding:8px 10px;font-family:monospace;font-size:11px;color:#7DD3FC;">' + (c.inquiry || '-') + '</td>' +
+          '<td style="padding:8px 4px;">' +
+            '<button onclick="copyText(\'' + c.transfer + '\',this)" style="padding:3px 8px;background:rgba(99,102,241,0.25);color:#c4b5fd;border:1px solid rgba(99,102,241,0.4);border-radius:5px;font-size:10px;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;margin-right:4px;">TC</button>' +
+            '<button onclick="copyText(\'' + c.confirmation + '\',this)" style="padding:3px 8px;background:rgba(99,102,241,0.25);color:#c4b5fd;border:1px solid rgba(99,102,241,0.4);border-radius:5px;font-size:10px;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;">CC</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+      res.innerHTML =
+        '<div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:16px;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:13px;margin-bottom:12px;">✅ Dupe สำเร็จ ' + data.count + ' รหัส — backup ถูกลบแล้ว</div>' +
+        '<table style="width:100%;border-collapse:collapse;">' +
+        '<thead><tr style="border-bottom:1px solid rgba(255,255,255,0.1);">' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">#</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">Transfer Code</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">Confirmation</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">Inquiry Code</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">คัดลอก</th>' +
+        '</tr></thead><tbody>' + rows + '</tbody></table>' +
+        '<div style="margin-top:12px;text-align:right;">' +
+        '<button onclick="downloadDupeSave()" style="padding:6px 16px;background:rgba(251,191,36,0.12);color:#FBBF24;border:1px solid rgba(251,191,36,0.35);border-radius:8px;font-size:12px;font-family:\'Chakra Petch\',sans-serif;cursor:pointer;">📥 โหลดเป็น .txt</button>' +
+        '</div></div>';
+    } else {
+      toast('❌ Dupe ล้มเหลว', 'err');
+      res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:14px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#FCA5A5;">❌ ' + (data.error || 'Unknown error') + '</div>';
+    }
+  } catch(e) {
+    toast('❌ ' + e.message, 'err');
+    res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:14px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#FCA5A5;">❌ ' + e.message + '</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔀 เริ่ม Dupe';
+  }
+}
+</script>
+<script src="assets/auth.js?v=20260613"></script>
+<script src="assets/animations.js"></script>
+</body>
+</html>

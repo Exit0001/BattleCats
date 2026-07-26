@@ -1,0 +1,648 @@
+============================================================
+เวลา      : 2026-07-26 17:56:53
+Transfer  : 12e81976b
+Confirm   : 9858
+Country   : en
+============================================================
+[OP] เพิ่มของ 2 รายการ
+[BCSFE] ⬇  Downloading save (transfer=12e819... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 12 → 10012  (+10000)
+[ITEM] Rare Ticket (Trade): defer → CLI (current=2)
+[CLI] บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_cli_d5869f1d
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260726_175655_12e81976
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_d5869f1d
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260726_175655_12e81976
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: b9449299c | Confirm ใหม่: 0497
+============================================================
+[CLI] รอ 15 วินาที (PONOS rate limit cooldown หลัง API upload)...
+[CLI] Rare Ticket: current=2, room=297, to_add=50
+[CLI] โหลดจาก C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_cli_d5869f1d (--input-path)
+  [CLI] Local version: 3.4.0 | Latest version: 3.6.0
+  [CLI] Welcome to the Battle Cats Save File Editor!
+  [CLI] Made by fieryhenry
+  [CLI] Codeberg: https://codeberg.org/fieryhenry/BCSFE-Python
+  [CLI] Discord: https://discord.gg/DvmMgvn5ZB - Please report any bugs to #bug-reports and suggestions to #suggestions
+  [CLI] Donate: https://ko-fi.com/fieryhenry
+  [CLI] Config File Location: C:\Users\modpo\Documents\bcsfe\config.yaml
+  [CLI] Current Theme: Default (Version 1.0.0)
+  [CLI] Made by fieryhenry
+  [CLI] Theme File Location: C:\Users\modpo\AppData\Local\Programs\Python\Python312\Lib\site-packages\bcsfe\files\themes\default.json
+  [CLI] Current Locale: English
+  [CLI] Made by fieryhenry
+  [CLI] Locale File Location: C:\Users\modpo\AppData\Local\Programs\Python\Python312\Lib\site-packages\bcsfe\files\locales\en
+  [CLI] Thanks To:
+  [CLI] - Lethal's editor for giving me inspiration and helping me work out how to orignally patch the save data and edit cf/xp: https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
+  [CLI] - Beeven and csehydrogen's code, which helped me figure out how to patch save data: https://github.com/beeven/battlecats and https://github.com/csehydrogen/BattleCatsHacker
+  [CLI] - Anyone who has supported my work for giving me motivation to keep working on this and similar projects: https://ko-fi.com/fieryhenry
+  [CLI] - Everyone in the discord for giving me saves, reporting bugs, suggesting new features, and for being an amazing community: https://discord.gg/DvmMgvn5ZB
+  [CLI] If you paid for this program, you have been scammed. This program is free and open source.
+  [CLI] Use this tool at your own risk. I am not responsible for any bans or damage caused to your save file.
+  [CLI] Obviously, the save editor does try to prevent this from happening, but I cannot guarantee that your save is safe.
+  [CLI] Though if your save does get corrupted please do still report it to the discord.
+  [CLI] I recommend you to make backups of your save file before editing it.
+  [CLI] Loading save from: C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_cli_d5869f1d
+  [CLI] Current Save: en-15.3.0 Inquiry: 359d***b7
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save Management
+  [CLI]  3. Items
+  [CLI]  4. Cats / Special Skills
+  [CLI]  5. Levels / Story / Treasure
+  [CLI]  6. Gamatoto / Ototo
+  [CLI]  7. Account
+  [CLI]  8. Gacha
+  [CLI]  9. Fixes
+  [CLI]  10. Other
+  [CLI]  11. Config
+  [CLI]  12. Update External Content
+  [CLI]  13. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Cat Food
+  [CLI]  3. XP
+  [CLI]  4. Normal Tickets
+  [CLI]  5. Rare Tickets
+  [CLI]  6. Rare Ticket Trade (Allows for unbannable rare tickets)
+  [CLI]  7. Platinum Tickets
+  [CLI]  8. Legend Tickets
+  [CLI]  9. Platinum Shards
+  [CLI]  10. NP
+  [CLI]  11. Leadership
+  [CLI]  12. Battle Items
+  [CLI]  13. Endless Battle Items
+  [CLI]  14. Catseyes
+  [CLI]  15. Catfruit
+  [CLI]  16. Talent Orbs
+  [CLI]  17. Catamins
+  [CLI]  18. Scheme Items
+  [CLI]  19. Labyrinth Medals
+  [CLI]  20. 100 Million Downloads Tickets
+  [CLI]  21. Event Tickets / Lucky Tickets
+  [CLI]  22. Treasure Chests
+  [CLI]  23. Reset Golden Cat CPU Uses
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:Enter the number of rare tickets you want to add (max value: 297) (current amount: 2):Successfully gave 50 rare tickets.
+  [CLI] You now need to enter the cat storage and press the Use all button and then press the Trade for Ticket button to get your tickets.
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save Management
+  [CLI]  3. Items
+  [CLI]  4. Cats / Special Skills
+  [CLI]  5. Levels / Story / Treasure
+  [CLI]  6. Gamatoto / Ototo
+  [CLI]  7. Account
+  [CLI]  8. Gacha
+  [CLI]  9. Fixes
+  [CLI]  10. Other
+  [CLI]  11. Config
+  [CLI]  12. Update External Content
+  [CLI]  13. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save save
+  [CLI]  3. Upload save file to server and get transfer and confirmation code
+  [CLI]  4. Save save to specific file
+  [CLI]  5. Save save to C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+  [CLI]  6. Push the save file to a waydroid device (Do not rerun the game after pushing)
+  [CLI]  7. Push the save file to a waydroid device (Also rerun the game after pushing)
+  [CLI]  8. Use adb to push the save file to a device (Do not rerun the game after pushing)
+  [CLI]  9. Use adb to push the save file to a device (Rerun the game after pushing)
+  [CLI]  10. Use root to push save directly to the game
+  [CLI]  11. Use root to push save directly to the game (and rerun the game)
+  [CLI]  12. Export save file to json
+  [CLI]  13. Load save file
+  [CLI]  14. Convert country code (e.g en -> jp)
+  [CLI]  15. Convert game version (e.g 12.2.1 -> 12.2.0)
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save save
+  [CLI]  3. Upload save file to server and get transfer and confirmation code
+  [CLI]  4. Save save to specific file
+  [CLI]  5. Save save to C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+  [CLI]  6. Push the save file to a waydroid device (Do not rerun the game after pushing)
+  [CLI]  7. Push the save file to a waydroid device (Also rerun the game after pushing)
+  [CLI]  8. Use adb to push the save file to a device (Do not rerun the game after pushing)
+  [CLI]  9. Use adb to push the save file to a device (Rerun the game after pushing)
+  [CLI]  10. Use root to push save directly to the game
+  [CLI]  11. Use root to push save directly to the game (and rerun the game)
+  [CLI]  12. Export save file to json
+  [CLI]  13. Load save file
+  [CLI]  14. Convert country code (e.g en -> jp)
+  [CLI]  15. Convert game version (e.g 12.2.1 -> 12.2.0)
+  [CLI]  16. Save Management
+  [CLI]  17. Cat Food
+  [CLI]  18. XP
+  [CLI]  19. Normal Tickets
+  [CLI]  20. Rare Tickets
+  [CLI]  21. Rare Ticket Trade (Allows for unbannable rare tickets)
+  [CLI]  22. Platinum Tickets
+  [CLI]  23. Legend Tickets
+  [CLI]  24. Platinum Shards
+  [CLI]  25. NP
+  [CLI]  26. Leadership
+  [CLI]  27. Battle Items
+  [CLI]  28. Endless Battle Items
+  [CLI]  29. Catseyes
+  [CLI]  30. Catfruit
+  [CLI]  31. Talent Orbs
+  [CLI]  32. Catamins
+  [CLI]  33. Scheme Items
+  [CLI]  34. Labyrinth Medals
+  [CLI]  35. 100 Million Downloads Tickets
+  [CLI]  36. Event Tickets / Lucky Tickets
+  [CLI]  37. Treasure Chests
+  [CLI]  38. Reset Golden Cat CPU Uses
+  [CLI]  39. Items
+  [CLI]  40. Unlock Cats / Remove Cats
+  [CLI]  41. Upgrade Cats
+  [CLI]  42. True Form Cats / Remove Cat True Forms
+  [CLI]  43. Force True Form Cats
+  [CLI]  44. Ultra Form Cats / Remove Cat Ultra Forms (4th Forms)
+  [CLI]  45. Force Ultra Form Cats (4th Forms)
+  [CLI]  46. Upgrade Talents / Remove Talents Cats
+  [CLI]  47. Claim / Unclaim Cat Guide Entries
+  [CLI]  48. Special Skills / Base Abilities
+  [CLI]  49. Cat Storage
+  [CLI]  50. Cats / Special Skills
+  [CLI]  51. Clear Tutorial
+  [CLI]  52. Main Story Chapters
+  [CLI]  53. Challenge Score
+  [CLI]  54. Dojo Score
+  [CLI]  55. Add Enigma Stages
+  [CLI]  56. Clear Enigma Stages
+  [CLI]  57. Unlock Aku Realm
+  [CLI]  58. Story Treasures
+  [CLI]  59. Outbreaks / Zombie Stages
+  [CLI]  60. Aku Realm Chapters
+  [CLI]  61. Into the Future Timed Scores
+  [CLI]  62. Re-enable Filibuster Stage
+  [CLI]  63. Stories of Legend
+  [CLI]  64. Normal Event Stages
+  [CLI]  65. Collaboration Event Stages
+  [CLI]  66. Gauntlets
+  [CLI]  67. Collaboration Gauntlets
+  [CLI]  68. Uncanny Legends
+  [CLI]  69. Catamin Stages
+  [CLI]  70. Behemoth Culling
+  [CLI]  71. Legend Quest
+  [CLI]  72. Towers
+  [CLI]  73. Zero Legends
+  [CLI]  74. Clear Dojo Catclaw Championships
+  [CLI]  75. Levels / Story / Treasure
+  [CLI]  76. Engineers
+  [CLI]  77. Base Materials
+  [CLI]  78. Gamatoto XP / Level
+  [CLI]  79. Gamatoto Helpers
+  [CLI]  80. Ototo Cat Cannon
+  [CLI]  81. Edit Cat Shrine
+  [CLI]  82. Gamatoto / Ototo
+  [CLI]  83. Unban Account / Fix Save Used Elsewhere Error
+  [CLI]  84. Upload managed items to server
+  [CLI]  85. Inquiry Code
+  [CLI]  86. Password Refresh Token
+  [CLI]  87. Account
+  [CLI]  88. Rare Gacha Seed
+  [CLI]  89. Normal Gacha Seed
+  [CLI]  90. Event Gacha Seed
+  [CLI]  91. Gacha
+  [CLI]  92. Fix gamatoto from crashing the game
+  [CLI]  93. Fix ototo from crashing the game
+  [CLI]  94. Fix time related issues
+  [CLI]  95. Unlock Equip Menu
+  [CLI]  96. Fix Officer Club Crashing
+  [CLI]  97. Fixes
+  [CLI]  98. Unlocked Slots
+  [CLI]  99. Reset Wildcat Slots and Cat Scratcher Lottery
+  [CLI]  100. Restart Pack
+  [CLI]  101. Play Time
+  [CLI]  102. Enemy Guide
+  [CLI]  103. Claim User Rank Rewards (Does not give rewards)
+  [CLI]  104. Gold Pass / Officer Club
+  [CLI]  105. Meow Medals
+  [CLI]  106. Catnip Challenges / Missions
+  [CLI]  107. Other
+  [CLI]  108. Config
+  [CLI]  109. Update External Content
+  [CLI]  110. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:Save file saved to C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_cli_d5869f1d
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save Management
+  [CLI]  3. Items
+  [CLI]  4. Cats / Special Skills
+  [CLI]  5. Levels / Story / Treasure
+  [CLI]  6. Gamatoto / Ototo
+  [CLI]  7. Account
+  [CLI]  8. Gacha
+  [CLI]  9. Fixes
+  [CLI]  10. Other
+  [CLI]  11. Config
+  [CLI]  12. Update External Content
+  [CLI]  13. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save save
+  [CLI]  3. Upload save file to server and get transfer and confirmation code
+  [CLI]  4. Save save to specific file
+  [CLI]  5. Save save to C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+  [CLI]  6. Push the save file to a waydroid device (Do not rerun the game after pushing)
+  [CLI]  7. Push the save file to a waydroid device (Also rerun the game after pushing)
+  [CLI]  8. Use adb to push the save file to a device (Do not rerun the game after pushing)
+  [CLI]  9. Use adb to push the save file to a device (Rerun the game after pushing)
+  [CLI]  10. Use root to push save directly to the game
+  [CLI]  11. Use root to push save directly to the game (and rerun the game)
+  [CLI]  12. Export save file to json
+  [CLI]  13. Load save file
+  [CLI]  14. Convert country code (e.g en -> jp)
+  [CLI]  15. Convert game version (e.g 12.2.1 -> 12.2.0)
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:Getting account save key...
+  [CLI] Uploading save file to server...
+  [CLI] Failed to upload save file. Please try again. If error persists please report this to #bug-reports on the discord: https://discord.gg/DvmMgvn5ZB Please see the log file for more details.
+  [CLI] Save file saved to C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_cli_d5869f1d
+  [CLI] Features:
+  [CLI]  1. Go back
+  [CLI]  2. Save Management
+  [CLI]  3. Items
+  [CLI]  4. Cats / Special Skills
+  [CLI]  5. Levels / Story / Treasure
+  [CLI]  6. Gamatoto / Ototo
+  [CLI]  7. Account
+  [CLI]  8. Gacha
+  [CLI]  9. Fixes
+  [CLI]  10. Other
+  [CLI]  11. Config
+  [CLI]  12. Update External Content
+  [CLI]  13. Exit
+  [CLI] To select a feature, enter
+  [CLI] - a number corresponding to the number on the left
+  [CLI] - text to search for a feature
+  [CLI] You can press enter to view all features
+  [CLI] Some features are categories and so when selected, will display all of its sub-features
+  [CLI] Input:Failed to recover save file from temp file. Latest save changes are lost (<@w>Failed to detect country code from save file. 
+  [CLI] Please enter your country code manually</>)
+  [CLI] Traceback (most recent call last):
+  [CLI]   File "C:\Users\modpo\AppData\Local\Programs\Python\Python312\Lib\site-packages\bcsfe\cli\main.py", line 320, in exit_editor
+  [CLI]     save_file_temp = core.SaveFile(temp_path.read())
+  [CLI]                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [CLI]   File "C:\Users\modpo\AppData\Local\Programs\Python\Python312\Lib\site-packages\bcsfe\core\io\save.py", line 49, in __init__
+  [CLI]     raise CantDetectSaveCCError(
+  [CLI] bcsfe.core.io.save.CantDetectSaveCCError: <@w>Failed to detect country code from save file. 
+  [CLI] Please enter your country code manually</>
+  [CLI] Thank you for using the Battle Cats Save File Editor!
+[CLI] ⚠ Upload ล้มเหลว (rate limit) — รอ 15 วินาทีแล้ว retry ด้วย backup...
+[CLI] retry โหลดจาก backup: C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_backup_d5869f1d
+  [RETRY] Local version: 3.4.0 | Latest version: 3.6.0
+  [RETRY] Welcome to the Battle Cats Save File Editor!
+  [RETRY] Made by fieryhenry
+  [RETRY] Codeberg: https://codeberg.org/fieryhenry/BCSFE-Python
+  [RETRY] Discord: https://discord.gg/DvmMgvn5ZB - Please report any bugs to #bug-reports and suggestions to #suggestions
+  [RETRY] Donate: https://ko-fi.com/fieryhenry
+  [RETRY] Config File Location: C:\Users\modpo\Documents\bcsfe\config.yaml
+  [RETRY] Current Theme: Default (Version 1.0.0)
+  [RETRY] Made by fieryhenry
+  [RETRY] Theme File Location: C:\Users\modpo\AppData\Local\Programs\Python\Python312\Lib\site-packages\bcsfe\files\themes\default.json
+  [RETRY] Current Locale: English
+  [RETRY] Made by fieryhenry
+  [RETRY] Locale File Location: C:\Users\modpo\AppData\Local\Programs\Python\Python312\Lib\site-packages\bcsfe\files\locales\en
+  [RETRY] Thanks To:
+  [RETRY] - Lethal's editor for giving me inspiration and helping me work out how to orignally patch the save data and edit cf/xp: https://www.reddit.com/r/BattleCatsCheats/comments/djehhn/editoren/
+  [RETRY] - Beeven and csehydrogen's code, which helped me figure out how to patch save data: https://github.com/beeven/battlecats and https://github.com/csehydrogen/BattleCatsHacker
+  [RETRY] - Anyone who has supported my work for giving me motivation to keep working on this and similar projects: https://ko-fi.com/fieryhenry
+  [RETRY] - Everyone in the discord for giving me saves, reporting bugs, suggesting new features, and for being an amazing community: https://discord.gg/DvmMgvn5ZB
+  [RETRY] If you paid for this program, you have been scammed. This program is free and open source.
+  [RETRY] Use this tool at your own risk. I am not responsible for any bans or damage caused to your save file.
+  [RETRY] Obviously, the save editor does try to prevent this from happening, but I cannot guarantee that your save is safe.
+  [RETRY] Though if your save does get corrupted please do still report it to the discord.
+  [RETRY] I recommend you to make backups of your save file before editing it.
+  [RETRY] Loading save from: C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_backup_d5869f1d
+  [RETRY] Current Save: en-15.3.0 Inquiry: 359d***b7
+  [RETRY] Features:
+  [RETRY]  1. Go back
+  [RETRY]  2. Save Management
+  [RETRY]  3. Items
+  [RETRY]  4. Cats / Special Skills
+  [RETRY]  5. Levels / Story / Treasure
+  [RETRY]  6. Gamatoto / Ototo
+  [RETRY]  7. Account
+  [RETRY]  8. Gacha
+  [RETRY]  9. Fixes
+  [RETRY]  10. Other
+  [RETRY]  11. Config
+  [RETRY]  12. Update External Content
+  [RETRY]  13. Exit
+  [RETRY] To select a feature, enter
+  [RETRY] - a number corresponding to the number on the left
+  [RETRY] - text to search for a feature
+  [RETRY] You can press enter to view all features
+  [RETRY] Some features are categories and so when selected, will display all of its sub-features
+  [RETRY] Input:
+  [RETRY] Features:
+  [RETRY]  1. Go back
+  [RETRY]  2. Cat Food
+  [RETRY]  3. XP
+  [RETRY]  4. Normal Tickets
+  [RETRY]  5. Rare Tickets
+  [RETRY]  6. Rare Ticket Trade (Allows for unbannable rare tickets)
+  [RETRY]  7. Platinum Tickets
+  [RETRY]  8. Legend Tickets
+  [RETRY]  9. Platinum Shards
+  [RETRY]  10. NP
+  [RETRY]  11. Leadership
+  [RETRY]  12. Battle Items
+  [RETRY]  13. Endless Battle Items
+  [RETRY]  14. Catseyes
+  [RETRY]  15. Catfruit
+  [RETRY]  16. Talent Orbs
+  [RETRY]  17. Catamins
+  [RETRY]  18. Scheme Items
+  [RETRY]  19. Labyrinth Medals
+  [RETRY]  20. 100 Million Downloads Tickets
+  [RETRY]  21. Event Tickets / Lucky Tickets
+  [RETRY]  22. Treasure Chests
+  [RETRY]  23. Reset Golden Cat CPU Uses
+  [RETRY] To select a feature, enter
+  [RETRY] - a number corresponding to the number on the left
+  [RETRY] - text to search for a feature
+  [RETRY] You can press enter to view all features
+  [RETRY] Some features are categories and so when selected, will display all of its sub-features
+  [RETRY] Input:Enter the number of rare tickets you want to add (max value: 297) (current amount: 2):Successfully gave 50 rare tickets.
+  [RETRY] You now need to enter the cat storage and press the Use all button and then press the Trade for Ticket button to get your tickets.
+  [RETRY] Features:
+  [RETRY]  1. Go back
+  [RETRY]  2. Save Management
+  [RETRY]  3. Items
+  [RETRY]  4. Cats / Special Skills
+  [RETRY]  5. Levels / Story / Treasure
+  [RETRY]  6. Gamatoto / Ototo
+  [RETRY]  7. Account
+  [RETRY]  8. Gacha
+  [RETRY]  9. Fixes
+  [RETRY]  10. Other
+  [RETRY]  11. Config
+  [RETRY]  12. Update External Content
+  [RETRY]  13. Exit
+  [RETRY] To select a feature, enter
+  [RETRY] - a number corresponding to the number on the left
+  [RETRY] - text to search for a feature
+  [RETRY] You can press enter to view all features
+  [RETRY] Some features are categories and so when selected, will display all of its sub-features
+  [RETRY] Input:
+  [RETRY] Features:
+  [RETRY]  1. Go back
+  [RETRY]  2. Save save
+  [RETRY]  3. Upload save file to server and get transfer and confirmation code
+  [RETRY]  4. Save save to specific file
+  [RETRY]  5. Save save to C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+  [RETRY]  6. Push the save file to a waydroid device (Do not rerun the game after pushing)
+  [RETRY]  7. Push the save file to a waydroid device (Also rerun the game after pushing)
+  [RETRY]  8. Use adb to push the save file to a device (Do not rerun the game after pushing)
+  [RETRY]  9. Use adb to push the save file to a device (Rerun the game after pushing)
+  [RETRY]  10. Use root to push save directly to the game
+  [RETRY]  11. Use root to push save directly to the game (and rerun the game)
+  [RETRY]  12. Export save file to json
+  [RETRY]  13. Load save file
+  [RETRY]  14. Convert country code (e.g en -> jp)
+  [RETRY]  15. Convert game version (e.g 12.2.1 -> 12.2.0)
+  [RETRY] To select a feature, enter
+  [RETRY] - a number corresponding to the number on the left
+  [RETRY] - text to search for a feature
+  [RETRY] You can press enter to view all features
+  [RETRY] Some features are categories and so when selected, will display all of its sub-features
+  [RETRY] Input:
+  [RETRY] Features:
+  [RETRY]  1. Go back
+  [RETRY]  2. Save save
+  [RETRY]  3. Upload save file to server and get transfer and confirmation code
+  [RETRY]  4. Save save to specific file
+  [RETRY]  5. Save save to C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+  [RETRY]  6. Push the save file to a waydroid device (Do not rerun the game after pushing)
+  [RETRY]  7. Push the save file to a waydroid device (Also rerun the game after pushing)
+  [RETRY]  8. Use adb to push the save file to a device (Do not rerun the game after pushing)
+  [RETRY]  9. Use adb to push the save file to a device (Rerun the game after pushing)
+  [RETRY]  10. Use root to push save directly to the game
+  [RETRY]  11. Use root to push save directly to the game (and rerun the game)
+  [RETRY]  12. Export save file to json
+  [RETRY]  13. Load save file
+  [RETRY]  14. Convert country code (e.g en -> jp)
+  [RETRY]  15. Convert game version (e.g 12.2.1 -> 12.2.0)
+  [RETRY]  16. Save Management
+  [RETRY]  17. Cat Food
+  [RETRY]  18. XP
+  [RETRY]  19. Normal Tickets
+  [RETRY]  20. Rare Tickets
+  [RETRY]  21. Rare Ticket Trade (Allows for unbannable rare tickets)
+  [RETRY]  22. Platinum Tickets
+  [RETRY]  23. Legend Tickets
+  [RETRY]  24. Platinum Shards
+  [RETRY]  25. NP
+  [RETRY]  26. Leadership
+  [RETRY]  27. Battle Items
+  [RETRY]  28. Endless Battle Items
+  [RETRY]  29. Catseyes
+  [RETRY]  30. Catfruit
+  [RETRY]  31. Talent Orbs
+  [RETRY]  32. Catamins
+  [RETRY]  33. Scheme Items
+  [RETRY]  34. Labyrinth Medals
+  [RETRY]  35. 100 Million Downloads Tickets
+  [RETRY]  36. Event Tickets / Lucky Tickets
+  [RETRY]  37. Treasure Chests
+  [RETRY]  38. Reset Golden Cat CPU Uses
+  [RETRY]  39. Items
+  [RETRY]  40. Unlock Cats / Remove Cats
+  [RETRY]  41. Upgrade Cats
+  [RETRY]  42. True Form Cats / Remove Cat True Forms
+  [RETRY]  43. Force True Form Cats
+  [RETRY]  44. Ultra Form Cats / Remove Cat Ultra Forms (4th Forms)
+  [RETRY]  45. Force Ultra Form Cats (4th Forms)
+  [RETRY]  46. Upgrade Talents / Remove Talents Cats
+  [RETRY]  47. Claim / Unclaim Cat Guide Entries
+  [RETRY]  48. Special Skills / Base Abilities
+  [RETRY]  49. Cat Storage
+  [RETRY]  50. Cats / Special Skills
+  [RETRY]  51. Clear Tutorial
+  [RETRY]  52. Main Story Chapters
+  [RETRY]  53. Challenge Score
+  [RETRY]  54. Dojo Score
+  [RETRY]  55. Add Enigma Stages
+  [RETRY]  56. Clear Enigma Stages
+  [RETRY]  57. Unlock Aku Realm
+  [RETRY]  58. Story Treasures
+  [RETRY]  59. Outbreaks / Zombie Stages
+  [RETRY]  60. Aku Realm Chapters
+  [RETRY]  61. Into the Future Timed Scores
+  [RETRY]  62. Re-enable Filibuster Stage
+  [RETRY]  63. Stories of Legend
+  [RETRY]  64. Normal Event Stages
+  [RETRY]  65. Collaboration Event Stages
+  [RETRY]  66. Gauntlets
+  [RETRY]  67. Collaboration Gauntlets
+  [RETRY]  68. Uncanny Legends
+  [RETRY]  69. Catamin Stages
+  [RETRY]  70. Behemoth Culling
+  [RETRY]  71. Legend Quest
+  [RETRY]  72. Towers
+  [RETRY]  73. Zero Legends
+  [RETRY]  74. Clear Dojo Catclaw Championships
+  [RETRY]  75. Levels / Story / Treasure
+  [RETRY]  76. Engineers
+  [RETRY]  77. Base Materials
+  [RETRY]  78. Gamatoto XP / Level
+  [RETRY]  79. Gamatoto Helpers
+  [RETRY]  80. Ototo Cat Cannon
+  [RETRY]  81. Edit Cat Shrine
+  [RETRY]  82. Gamatoto / Ototo
+  [RETRY]  83. Unban Account / Fix Save Used Elsewhere Error
+  [RETRY]  84. Upload managed items to server
+  [RETRY]  85. Inquiry Code
+  [RETRY]  86. Password Refresh Token
+  [RETRY]  87. Account
+  [RETRY]  88. Rare Gacha Seed
+  [RETRY]  89. Normal Gacha Seed
+  [RETRY]  90. Event Gacha Seed
+  [RETRY]  91. Gacha
+  [RETRY]  92. Fix gamatoto from crashing the game
+  [RETRY]  93. Fix ototo from crashing the game
+  [RETRY]  94. Fix time related issues
+  [RETRY]  95. Unlock Equip Menu
+  [RETRY]  96. Fix Officer Club Crashing
+  [RETRY]  97. Fixes
+  [RETRY]  98. Unlocked Slots
+  [RETRY]  99. Reset Wildcat Slots and Cat Scratcher Lottery
+  [RETRY]  100. Restart Pack
+  [RETRY]  101. Play Time
+  [RETRY]  102. Enemy Guide
+  [RETRY]  103. Claim User Rank Rewards (Does not give rewards)
+  [RETRY]  104. Gold Pass / Officer Club
+  [RETRY]  105. Meow Medals
+  [RETRY]  106. Catnip Challenges / Missions
+  [RETRY]  107. Other
+  [RETRY]  108. Config
+  [RETRY]  109. Update External Content
+  [RETRY]  110. Exit
+  [RETRY] To select a feature, enter
+  [RETRY] - a number corresponding to the number on the left
+  [RETRY] - text to search for a feature
+  [RETRY] You can press enter to view all features
+  [RETRY] Some features are categories and so when selected, will display all of its sub-features
+  [RETRY] Input:Save file saved to C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_backup_d5869f1d
+  [RETRY] Features:
+  [RETRY]  1. Go back
+  [RETRY]  2. Save Management
+  [RETRY]  3. Items
+  [RETRY]  4. Cats / Special Skills
+  [RETRY]  5. Levels / Story / Treasure
+  [RETRY]  6. Gamatoto / Ototo
+  [RETRY]  7. Account
+  [RETRY]  8. Gacha
+  [RETRY]  9. Fixes
+  [RETRY]  10. Other
+  [RETRY]  11. Config
+  [RETRY]  12. Update External Content
+  [RETRY]  13. Exit
+  [RETRY] To select a feature, enter
+  [RETRY] - a number corresponding to the number on the left
+  [RETRY] - text to search for a feature
+  [RETRY] You can press enter to view all features
+  [RETRY] Some features are categories and so when selected, will display all of its sub-features
+  [RETRY] Input:
+  [RETRY] Features:
+  [RETRY]  1. Go back
+  [RETRY]  2. Save save
+  [RETRY]  3. Upload save file to server and get transfer and confirmation code
+  [RETRY]  4. Save save to specific file
+  [RETRY]  5. Save save to C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA
+  [RETRY]  6. Push the save file to a waydroid device (Do not rerun the game after pushing)
+  [RETRY]  7. Push the save file to a waydroid device (Also rerun the game after pushing)
+  [RETRY]  8. Use adb to push the save file to a device (Do not rerun the game after pushing)
+  [RETRY]  9. Use adb to push the save file to a device (Rerun the game after pushing)
+  [RETRY]  10. Use root to push save directly to the game
+  [RETRY]  11. Use root to push save directly to the game (and rerun the game)
+  [RETRY]  12. Export save file to json
+  [RETRY]  13. Load save file
+  [RETRY]  14. Convert country code (e.g en -> jp)
+  [RETRY]  15. Convert game version (e.g 12.2.1 -> 12.2.0)
+  [RETRY] To select a feature, enter
+  [RETRY] - a number corresponding to the number on the left
+  [RETRY] - text to search for a feature
+  [RETRY] You can press enter to view all features
+  [RETRY] Some features are categories and so when selected, will display all of its sub-features
+  [RETRY] Input:Getting account save key...
+  [RETRY] Uploading save file to server...
+  [RETRY] Failed to upload save file. Please try again. If error persists please report this to #bug-reports on the discord: https://discord.gg/DvmMgvn5ZB Please see the log file for more details.
+  [RETRY] Save file saved to C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_backup_d5869f1d
+  [RETRY] Features:
+  [RETRY]  1. Go back
+  [RETRY]  2. Save Management
+  [RETRY]  3. Items
+  [RETRY]  4. Cats / Special Skills
+  [RETRY]  5. Levels / Story / Treasure
+  [RETRY]  6. Gamatoto / Ototo
+  [RETRY]  7. Account
+  [RETRY]  8. Gacha
+  [RETRY]  9. Fixes
+  [RETRY]  10. Other
+  [RETRY]  11. Config
+  [RETRY]  12. Update External Content
+  [RETRY]  13. Exit
+  [RETRY] To select a feature, enter
+  [RETRY] - a number corresponding to the number on the left
+  [RETRY] - text to search for a feature
+  [RETRY] You can press enter to view all features
+  [RETRY] Some features are categories and so when selected, will display all of its sub-features
+  [RETRY] Input:Failed to recover save file from temp file. Latest save changes are lost (<@w>Failed to detect country code from save file. 
+  [RETRY] Please enter your country code manually</>)
+  [RETRY] Traceback (most recent call last):
+  [RETRY]   File "C:\Users\modpo\AppData\Local\Programs\Python\Python312\Lib\site-packages\bcsfe\cli\main.py", line 320, in exit_editor
+  [RETRY]     save_file_temp = core.SaveFile(temp_path.read())
+  [RETRY]                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  [RETRY]   File "C:\Users\modpo\AppData\Local\Programs\Python\Python312\Lib\site-packages\bcsfe\core\io\save.py", line 49, in __init__
+  [RETRY]     raise CantDetectSaveCCError(
+  [RETRY] bcsfe.core.io.save.CantDetectSaveCCError: <@w>Failed to detect country code from save file. 
+  [RETRY] Please enter your country code manually</>
+  [RETRY] Thank you for using the Battle Cats Save File Editor!
+[CLI] ❌ Upload ล้มเหลวทั้งสองรอบ — เก็บ backup ไว้ให้แอดมิน
+[CLI] 📁 save ที่แก้แล้ว (มีของอยู่): C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_backup_d5869f1d
+[CLI] 👨‍💼 TC ปัจจุบัน: b9449299c / 0497
+[BCSFE] ⚠ Rare Ticket (Trade) CLI ล้มเหลว — ลูกค้าใช้ TC จาก API upload ได้: b9449299c
+============================================================
