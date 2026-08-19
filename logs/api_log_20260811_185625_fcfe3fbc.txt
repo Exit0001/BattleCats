@@ -1,0 +1,23 @@
+============================================================
+เวลา      : 2026-08-11 18:56:25
+Transfer  : fcfe3fbcd
+Confirm   : 9349
+Country   : en
+============================================================
+[OP] Upgrade Characters จำนวน 8 ตัว
+[BCSFE] ⬇  Downloading save (transfer=fcfe3f... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #840 — Lv1+0 → Lv60+0
+[CAT] ✔ #841 — Lv1+0 → Lv60+0
+[CAT] ✔ #842 — Lv1+0 → Lv60+0
+[CAT] ✔ #843 — Lv1+0 → Lv60+0
+[CAT] ✔ #844 — Lv1+0 → Lv60+0
+[CAT] ✔ #845 — Lv1+0 → Lv60+0
+[CAT] ✔ #846 — Lv1+0 → Lv60+0
+[CAT] ✔ #847 — Lv1+0 → Lv50+0
+[BCSFE] Upgraded 8/8 cats → max
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_418da17e
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260811_185627_fcfe3fbc
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 51cbf6ee6 | Confirm ใหม่: 9238
+============================================================

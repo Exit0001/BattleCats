@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-08-07 16:23:06
+Transfer  : 9c732bc3e
+Confirm   : 5207
+Country   : en
+============================================================
+[OP] Upgrade Max + Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=9c732b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #39 — Lv1+0 → Lv50+70
+[BCSFE] Upgraded+Plus 1/1 cats → max+max
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_6036a660
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260807_162308_9c732bc3
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: f5fbad919 | Confirm ใหม่: 1222
+============================================================

@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — Battle Cats Shop</title>
-  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/styles.css?v=2">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     .order-card {
@@ -318,10 +318,89 @@
     <div id="crProductList" style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.4);">⏳ กำลังโหลด...</div>
   </div>
 
+  <!-- ── Event Packs Admin ── -->
+  <div style="margin-top:36px;border-top:1px solid rgba(252,211,77,0.2);padding-top:28px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+      <h2 class="section-title" style="font-size:18px;margin-bottom:0;">🎁 จัดการ Event Packs</h2>
+      <button onclick="loadEventPacks_admin()" class="save-btn" style="background:rgba(252,211,77,0.1);border:1px solid rgba(252,211,77,0.3);color:#FCD34D;">🔄 Refresh</button>
+    </div>
+
+    <div id="eventPackList" style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:rgba(210,190,255,0.4);">⏳ กำลังโหลด...</div>
+
+    <!-- เพิ่ม pack ใหม่ -->
+    <details style="margin-top:20px;">
+      <summary style="cursor:pointer;color:#FCD34D;font-family:'Chakra Petch',sans-serif;font-size:13px;padding:6px 0;user-select:none;">➕ เพิ่ม Event Pack ใหม่</summary>
+      <div style="background:rgba(252,211,77,0.04);border:1px solid rgba(252,211,77,0.2);border-radius:14px;padding:18px;margin-top:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;">
+        <div>
+          <div class="detail-label">ID * (ตัวเล็ก ไม่มีช่องว่าง)</div>
+          <input id="ep-id" placeholder="sonic" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">Label * (ชื่อ Unlock)</div>
+          <input id="ep-label" placeholder="Sonic Pack" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">Label Max — เว้นว่าง=ใช้ชื่อเดียวกัน + Max</div>
+          <input id="ep-label-max" placeholder="Sonic Pack + Max" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">ราคา Unlock * (฿)</div>
+          <input id="ep-price-unlock" type="number" placeholder="150" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">ราคาเต็ม Unlock (฿) — แสดงขีดทิ้ง เช่น ~~฿440~~</div>
+          <input id="ep-orig-unlock" type="number" placeholder="440" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.2);background:rgba(255,255,255,0.03);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">ราคา Max (฿) — เว้นว่าง=ไม่มี</div>
+          <input id="ep-price-max" type="number" placeholder="" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">ราคาเต็ม Max (฿) — แสดงขีดทิ้ง เช่น ~~฿800~~</div>
+          <input id="ep-orig-max" type="number" placeholder="800" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.2);background:rgba(255,255,255,0.03);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">Cat IDs * (คั่นด้วย comma)</div>
+          <input id="ep-cat-ids" placeholder="789,790,791,792,793,794" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">Path รูป banner (Unlock)</div>
+          <input id="ep-banner" placeholder="pictures/sonic_pack.png" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">Path รูป banner (Max) — เว้นว่าง=ใช้รูปเดียวกัน</div>
+          <input id="ep-banner-max" placeholder="pictures/sonic_pack_max.png" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">Warning text (เว้นว่าง=ไม่มี)</div>
+          <input id="ep-warning" placeholder="⚠️ ต้องมี ... ก่อน" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <div class="detail-label">เปิดเมื่อ (starts_at) — เว้นว่าง=เปิดทันที</div>
+          <input id="ep-starts-at" type="datetime-local" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+            <div class="detail-label" style="margin-bottom:0;">คำอธิบาย Unlock (HTML) — ใส่รูปตัวละครที่จะได้รับ</div>
+            <button onclick="genCatImagesHtml('ep-cat-ids','ep-desc-unlock')" style="background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.45);color:#c4b5fd;border-radius:7px;padding:3px 10px;cursor:pointer;font-size:11px;white-space:nowrap;">🖼 สร้างรูปจาก Cat IDs</button>
+          </div>
+          <textarea id="ep-desc-unlock" rows="3" placeholder='ปลดล็อค <strong>24 ตัว</strong> ครบชุด' style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;resize:vertical;"></textarea>
+        </div>
+        <div style="grid-column:1/-1">
+          <div class="detail-label">คำอธิบาย Max (HTML) — เว้นว่าง=ใช้อันเดียวกับ Unlock</div>
+          <textarea id="ep-desc-max" rows="2" style="width:100%;padding:8px 12px;border-radius:9px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.05);color:#EDE6FF;font-family:'Chakra Petch',sans-serif;font-size:12px;box-sizing:border-box;resize:vertical;"></textarea>
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+          <button onclick="addEventPack()" class="save-btn" style="width:100%;background:rgba(252,211,77,0.2);border:1px solid rgba(252,211,77,0.5);color:#FCD34D;">✅ บันทึก</button>
+        </div>
+      </div>
+    </details>
+  </div>
+
 </div>
 </div><!-- /adminMain -->
 
-<script src="assets/supabase-client.js"></script>
+<script src="assets/supabase-client.js?v=2"></script>
 <script>
 var _allOrders   = [];
 var _filterStatus = 'all';
@@ -391,6 +470,7 @@ function showAdminPanel() {
   document.getElementById('adminMain').style.display = 'block';
   document.getElementById('adminUserLabel').textContent = '👤 ' + _adminUser;
   loadOrders();
+  loadEventPacks_admin();
 }
 
 function adminLogout() {
@@ -634,6 +714,246 @@ function toggleAddCRForm() {
   var f = document.getElementById('crAddForm');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
   document.getElementById('crAddMsg').textContent = '';
+}
+
+// ── Event Packs Admin ────────────────────────────────────────
+var _eventPacks = [];
+
+async function loadEventPacks_admin() {
+  var el = document.getElementById('eventPackList');
+  if (!el) return;
+  el.innerHTML = '<div style="color:rgba(210,190,255,0.4);padding:16px 0;">⏳ กำลังโหลด...</div>';
+  try {
+    var res = await DB.from('event_packs').select('*').order('sort_order', {ascending: true});
+    if (res.error) throw res.error;
+    _eventPacks = res.data || [];
+    renderEventPacks_admin();
+  } catch(e) {
+    el.innerHTML = '<div style="color:#f87171;">❌ ' + e.message + '</div>';
+  }
+}
+
+function renderEventPacks_admin() {
+  var el = document.getElementById('eventPackList');
+  if (!_eventPacks.length) {
+    el.innerHTML = '<div style="color:rgba(210,190,255,0.4);padding:12px 0;">ยังไม่มี event pack</div>';
+    return;
+  }
+  var inp  = 'padding:4px 8px;border-radius:7px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#EDE6FF;font-family:\'Chakra Petch\',sans-serif;font-size:12px;';
+  var inpY = 'padding:4px 8px;border-radius:7px;border:1px solid rgba(252,211,77,0.35);background:rgba(255,255,255,0.06);color:#EDE6FF;font-family:\'Chakra Petch\',sans-serif;font-size:12px;';
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:12px;font-family:\'Chakra Petch\',sans-serif;">';
+  html += '<thead><tr style="color:rgba(210,190,255,0.5);border-bottom:1px solid rgba(255,255,255,0.08);">';
+  html += '<th style="padding:6px 8px;text-align:left;">ID</th>';
+  html += '<th style="padding:6px 8px;text-align:left;">Label</th>';
+  html += '<th style="padding:6px 8px;text-align:left;">ราคา</th>';
+  html += '<th style="padding:6px 8px;text-align:center;">เปิด/ปิด</th>';
+  html += '<th style="padding:6px 8px;text-align:left;">เปิดเมื่อ</th>';
+  html += '<th style="padding:6px 8px;text-align:left;">หมดอายุ</th>';
+  html += '<th style="padding:6px 8px;text-align:center;">จัดการ</th>';
+  html += '</tr></thead><tbody>';
+  function toLocalInput(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    var local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0,16);
+  }
+  _eventPacks.forEach(function(p) {
+    var startVal   = toLocalInput(p.starts_at);
+    var expVal     = toLocalInput(p.expires_at);
+    var notStarted = p.starts_at && new Date(p.starts_at) > new Date();
+    var statusNote = notStarted ? ' <span style="color:#FCD34D;font-size:10px;">⏳ยังไม่เปิด</span>' : '';
+    var eid = 'ep-edit-' + p.id;
+
+    // main row
+    html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">';
+    html += '<td style="padding:8px;">' + p.id + statusNote + '</td>';
+    html += '<td style="padding:8px;color:#FCD34D;">' + p.label + '</td>';
+    html += '<td style="padding:8px;">฿' + p.price_unlock + (p.price_max ? ' / ฿' + p.price_max : '') + '</td>';
+    html += '<td style="padding:8px;text-align:center;"><label style="cursor:pointer;">';
+    html += '<input type="checkbox"' + (p.enabled ? ' checked' : '') + ' onchange="toggleEventPack(\'' + p.id + '\',this.checked)" style="width:16px;height:16px;cursor:pointer;">';
+    html += '</label></td>';
+    html += '<td style="padding:8px;"><input type="datetime-local" value="' + startVal + '"';
+    html += ' onchange="setEventStartsAt(\'' + p.id + '\',this.value)" style="' + inp + 'width:170px;"></td>';
+    html += '<td style="padding:8px;"><input type="datetime-local" value="' + expVal + '"';
+    html += ' onchange="setEventExpiry(\'' + p.id + '\',this.value)" style="' + inp + 'width:170px;"></td>';
+    var isFirst = _eventPacks.indexOf(p) === 0;
+    var isLast  = _eventPacks.indexOf(p) === _eventPacks.length - 1;
+    html += '<td style="padding:8px;text-align:center;white-space:nowrap;display:flex;gap:5px;justify-content:center;align-items:center;">';
+    html += '<button onclick="moveEventPack(\'' + p.id + '\',-1)" ' + (isFirst ? 'disabled' : '') + ' style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:rgba(210,190,255,' + (isFirst ? '0.2' : '0.8') + ');border-radius:7px;padding:4px 8px;cursor:' + (isFirst ? 'default' : 'pointer') + ';font-size:13px;line-height:1;">↑</button>';
+    html += '<button onclick="moveEventPack(\'' + p.id + '\',1)" ' + (isLast ? 'disabled' : '') + ' style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:rgba(210,190,255,' + (isLast ? '0.2' : '0.8') + ');border-radius:7px;padding:4px 8px;cursor:' + (isLast ? 'default' : 'pointer') + ';font-size:13px;line-height:1;">↓</button>';
+    html += '<button onclick="toggleEditRow(\'' + eid + '\')" style="background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.45);color:#c4b5fd;border-radius:7px;padding:4px 10px;cursor:pointer;font-size:11px;">✏️</button>';
+    html += '<button onclick="deleteEventPack(\'' + p.id + '\')" style="background:rgba(248,113,113,0.15);border:1px solid rgba(248,113,113,0.4);color:#fca5a5;border-radius:7px;padding:4px 10px;cursor:pointer;font-size:11px;">🗑</button>';
+    html += '</td></tr>';
+
+    // edit row (hidden by default)
+    var catStr = (p.cat_ids || []).join(',');
+    html += '<tr id="' + eid + '" style="display:none;background:rgba(139,92,246,0.04);">';
+    html += '<td colspan="7" style="padding:12px 8px;">';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;">';
+    html += '<div><div class="detail-label">Label (Unlock)</div><input id="' + eid + '-label" value="' + p.label.replace(/"/g,'&quot;') + '" style="' + inpY + 'width:100%;box-sizing:border-box;"></div>';
+    html += '<div><div class="detail-label">Label Max — ว่าง=ใช้ชื่อเดียวกัน + Max</div><input id="' + eid + '-label-max" value="' + (p.label_max || '').replace(/"/g,'&quot;') + '" style="' + inpY + 'width:100%;box-sizing:border-box;"></div>';
+    html += '<div><div class="detail-label">ราคา Unlock (฿)</div><input id="' + eid + '-unlock" type="number" value="' + p.price_unlock + '" style="' + inpY + 'width:100%;box-sizing:border-box;"></div>';
+    html += '<div><div class="detail-label">ราคาเต็ม Unlock (฿) — ขีดทิ้ง</div><input id="' + eid + '-orig-unlock" type="number" value="' + (p.original_price_unlock || '') + '" style="' + inpY + 'width:100%;box-sizing:border-box;"></div>';
+    html += '<div><div class="detail-label">ราคา Max (฿) — ว่าง=ไม่มี</div><input id="' + eid + '-max" type="number" value="' + (p.price_max || '') + '" style="' + inpY + 'width:100%;box-sizing:border-box;"></div>';
+    html += '<div><div class="detail-label">ราคาเต็ม Max (฿) — ขีดทิ้ง</div><input id="' + eid + '-orig-max" type="number" value="' + (p.original_price_max || '') + '" style="' + inpY + 'width:100%;box-sizing:border-box;"></div>';
+    html += '<div><div class="detail-label">Cat IDs (คั่นด้วย comma)</div><input id="' + eid + '-cats" value="' + catStr + '" style="' + inpY + 'width:100%;box-sizing:border-box;"></div>';
+    html += '<div><div class="detail-label">Banner (Unlock)</div><input id="' + eid + '-img" value="' + (p.banner_img || '') + '" style="' + inpY + 'width:100%;box-sizing:border-box;"></div>';
+    html += '<div><div class="detail-label">Banner (Max) — ว่าง=ใช้รูปเดียวกัน</div><input id="' + eid + '-img-max" value="' + (p.banner_img_max || '') + '" style="' + inpY + 'width:100%;box-sizing:border-box;"></div>';
+    html += '<div><div class="detail-label">Warning text</div><input id="' + eid + '-warn" value="' + (p.warning_text || '').replace(/"/g,'&quot;') + '" style="' + inpY + 'width:100%;box-sizing:border-box;"></div>';
+    html += '<div><div class="detail-label">Header color (hex)</div><input id="' + eid + '-color" value="' + (p.header_color || '#FCD34D') + '" style="' + inpY + 'width:100%;box-sizing:border-box;"></div>';
+    html += '<div style="grid-column:1/-1"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div class="detail-label" style="margin-bottom:0;">คำอธิบาย Unlock — รูปตัวละคร / HTML</div><button onclick="genCatImagesHtml(\'' + eid + '-cats\',\'' + eid + '-desc-unlock\')" style="background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.45);color:#c4b5fd;border-radius:7px;padding:3px 10px;cursor:pointer;font-size:11px;">🖼 สร้างรูปจาก Cat IDs</button></div><textarea id="' + eid + '-desc-unlock" rows="3" style="' + inpY + 'width:100%;box-sizing:border-box;resize:vertical;">' + (p.desc_unlock || '').replace(/</g,'&lt;') + '</textarea></div>';
+    html += '<div style="grid-column:1/-1"><div class="detail-label">คำอธิบาย Max (desc_max) — ว่าง=ใช้อันเดียวกับ Unlock</div><textarea id="' + eid + '-desc-max" rows="2" style="' + inpY + 'width:100%;box-sizing:border-box;resize:vertical;">' + (p.desc_max || '').replace(/</g,'&lt;') + '</textarea></div>';
+    html += '</div>';
+    html += '<div style="margin-top:10px;display:flex;gap:8px;">';
+    html += '<button onclick="saveEditEventPack(\'' + p.id + '\',\'' + eid + '\')" style="background:rgba(74,222,128,0.2);border:1px solid rgba(74,222,128,0.45);color:#4ade80;border-radius:7px;padding:5px 16px;cursor:pointer;font-size:12px;">✅ บันทึก</button>';
+    html += '<button onclick="toggleEditRow(\'' + eid + '\')" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:rgba(210,190,255,0.7);border-radius:7px;padding:5px 16px;cursor:pointer;font-size:12px;">ยกเลิก</button>';
+    html += '</div></td></tr>';
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
+async function moveEventPack(id, dir) {
+  var idx = _eventPacks.findIndex(function(p){ return p.id === id; });
+  var swapIdx = idx + dir;
+  if (swapIdx < 0 || swapIdx >= _eventPacks.length) return;
+
+  var a = _eventPacks[idx];
+  var b = _eventPacks[swapIdx];
+  var sortA = a.sort_order ?? idx;
+  var sortB = b.sort_order ?? swapIdx;
+
+  try {
+    await Promise.all([
+      DB.from('event_packs').update({ sort_order: sortB }).eq('id', a.id),
+      DB.from('event_packs').update({ sort_order: sortA }).eq('id', b.id)
+    ]);
+  } catch(e) { alert('❌ ' + e.message); return; }
+  loadEventPacks_admin();
+}
+
+function toggleEditRow(eid) {
+  var row = document.getElementById(eid);
+  if (row) row.style.display = row.style.display === 'none' ? '' : 'none';
+}
+
+async function saveEditEventPack(id, eid) {
+  var label      = (document.getElementById(eid + '-label').value || '').trim();
+  var labelMax   = (document.getElementById(eid + '-label-max').value || '').trim() || null;
+  var pUnlock    = parseInt(document.getElementById(eid + '-unlock').value) || 0;
+  var origUnlock = parseInt(document.getElementById(eid + '-orig-unlock').value) || null;
+  var pMax       = parseInt(document.getElementById(eid + '-max').value) || null;
+  var origMax    = parseInt(document.getElementById(eid + '-orig-max').value) || null;
+  var catRaw     = (document.getElementById(eid + '-cats').value || '').trim();
+  var catIds     = catRaw.split(',').map(function(s){ return parseInt(s.trim()); }).filter(Boolean);
+  var banner     = (document.getElementById(eid + '-img').value || '').trim() || null;
+  var bannerMx   = (document.getElementById(eid + '-img-max').value || '').trim() || null;
+  var warning    = (document.getElementById(eid + '-warn').value || '').trim() || null;
+  var color      = (document.getElementById(eid + '-color').value || '').trim() || null;
+  var descUnlock = (document.getElementById(eid + '-desc-unlock').value || '').trim() || null;
+  var descMax    = (document.getElementById(eid + '-desc-max').value || '').trim() || null;
+
+  if (!label || !pUnlock || !catIds.length) { alert('กรอก Label, ราคา Unlock และ Cat IDs ให้ครบ'); return; }
+  try {
+    var res = await DB.from('event_packs').update({
+      label: label, label_max: labelMax,
+      price_unlock: pUnlock, original_price_unlock: origUnlock,
+      price_max: pMax, original_price_max: origMax,
+      cat_ids: catIds, banner_img: banner, banner_img_max: bannerMx,
+      warning_text: warning, header_color: color,
+      desc_unlock: descUnlock, desc_max: descMax,
+      actions_max: pMax ? ['unlock','upgrade'] : null
+    }).eq('id', id);
+    if (res.error) throw res.error;
+  } catch(e) { alert('❌ ' + e.message); return; }
+  loadEventPacks_admin();
+}
+
+async function setEventStartsAt(id, val) {
+  var startsAt = val ? new Date(val).toISOString() : null;
+  try {
+    var res = await DB.from('event_packs').update({starts_at: startsAt}).eq('id', id);
+    if (res.error) throw res.error;
+  } catch(e) { alert('❌ ' + e.message); }
+}
+
+async function toggleEventPack(id, enabled) {
+  try {
+    var res = await DB.from('event_packs').update({enabled: enabled}).eq('id', id);
+    if (res.error) throw res.error;
+  } catch(e) { alert('❌ ' + e.message); }
+  loadEventPacks_admin();
+}
+
+async function setEventExpiry(id, val) {
+  var expiresAt = val ? new Date(val).toISOString() : null;
+  try {
+    var res = await DB.from('event_packs').update({expires_at: expiresAt}).eq('id', id);
+    if (res.error) throw res.error;
+  } catch(e) { alert('❌ ' + e.message); }
+}
+
+async function deleteEventPack(id) {
+  if (!confirm('ลบ event pack "' + id + '" จริงๆ หรือ?\nออเดอร์เก่าที่ใช้ key นี้จะ error ถ้า pack หายไป')) return;
+  try {
+    var res = await DB.from('event_packs').delete().eq('id', id);
+    if (res.error) throw res.error;
+  } catch(e) { alert('❌ ' + e.message); return; }
+  loadEventPacks_admin();
+}
+
+function genCatImagesHtml(catIdsFieldId, descFieldId) {
+  var catRaw = (document.getElementById(catIdsFieldId).value || '').trim();
+  var ids = catRaw.split(',').map(function(s){ return parseInt(s.trim()); }).filter(Boolean);
+  if (!ids.length) { alert('กรอก Cat IDs ก่อน'); return; }
+  var imgs = ids.map(function(id) {
+    return '<img src="pictures/cats/' + id + '.png" style="width:48px;height:48px;border-radius:4px;object-fit:cover;" onerror="this.style.display:\'none\'">';
+  }).join('');
+  document.getElementById(descFieldId).value =
+    '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;">' + imgs + '</div>';
+}
+
+async function addEventPack() {
+  var id        = (document.getElementById('ep-id').value || '').trim().toLowerCase().replace(/\s+/g,'_');
+  var label     = (document.getElementById('ep-label').value || '').trim();
+  var labelMax  = (document.getElementById('ep-label-max').value || '').trim() || null;
+  var pUnlock   = parseInt(document.getElementById('ep-price-unlock').value) || 0;
+  var origUnlock= parseInt(document.getElementById('ep-orig-unlock').value) || null;
+  var pMax      = parseInt(document.getElementById('ep-price-max').value) || null;
+  var origMax   = parseInt(document.getElementById('ep-orig-max').value) || null;
+  var catRaw    = (document.getElementById('ep-cat-ids').value || '').trim();
+  var catIds    = catRaw.split(',').map(function(s){ return parseInt(s.trim()); }).filter(Boolean);
+  var banner    = (document.getElementById('ep-banner').value || '').trim() || null;
+  var bannerMax = (document.getElementById('ep-banner-max').value || '').trim() || null;
+  var warning   = (document.getElementById('ep-warning').value || '').trim() || null;
+  var startsRaw = (document.getElementById('ep-starts-at').value || '').trim();
+  var startsAt  = startsRaw ? new Date(startsRaw).toISOString() : null;
+  var descUnlock= (document.getElementById('ep-desc-unlock').value || '').trim() || null;
+  var descMax   = (document.getElementById('ep-desc-max').value || '').trim() || null;
+
+  if (!id || !label || !pUnlock || !catIds.length) {
+    alert('กรอก ID, Label, ราคา Unlock และ Cat IDs ให้ครบก่อน'); return;
+  }
+  try {
+    var res = await DB.from('event_packs').insert({
+      id: id, label: label, label_max: labelMax,
+      price_unlock: pUnlock, original_price_unlock: origUnlock,
+      price_max: pMax, original_price_max: origMax,
+      cat_ids: catIds,
+      banner_img: banner, banner_img_max: bannerMax,
+      warning_text: warning,
+      desc_unlock: descUnlock, desc_max: descMax,
+      starts_at: startsAt,
+      actions_unlock: ['unlock'],
+      actions_max: pMax ? ['unlock','upgrade'] : null,
+      sort_order: _eventPacks.length + 1
+    });
+    if (res.error) throw res.error;
+    ['ep-id','ep-label','ep-label-max','ep-price-unlock','ep-orig-unlock','ep-price-max','ep-orig-max',
+     'ep-cat-ids','ep-banner','ep-banner-max','ep-warning','ep-starts-at','ep-desc-unlock','ep-desc-max'
+    ].forEach(function(fid){ document.getElementById(fid).value=''; });
+  } catch(e) { alert('❌ ' + e.message); return; }
+  loadEventPacks_admin();
 }
 
 async function loadCRProducts() {

@@ -1,0 +1,40 @@
+============================================================
+เวลา      : 2026-08-18 17:53:49
+Transfer  : f2e7dae15
+Confirm   : 6745
+Country   : en
+============================================================
+[OP] Unlock Characters จำนวน 24 ตัว
+[BCSFE] ⬇  Downloading save (transfer=f2e7da... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] พบ 24/24 ตัวใน save
+[CAT] ✔ #110 — unlocked
+[CAT] ✔ #111 — unlocked
+[CAT] ✔ #112 — unlocked
+[CAT] ✔ #113 — unlocked
+[CAT] ✔ #114 — unlocked
+[CAT] ✔ #115 — unlocked
+[CAT] ✔ #116 — unlocked
+[CAT] ✔ #117 — unlocked
+[CAT] ✔ #118 — unlocked
+[CAT] ✔ #119 — unlocked
+[CAT] ✔ #120 — unlocked
+[CAT] ✔ #121 — unlocked
+[CAT] ✔ #185 — unlocked
+[CAT] ✔ #186 — unlocked
+[CAT] ✔ #187 — unlocked
+[CAT] ✔ #188 — unlocked
+[CAT] ✔ #189 — unlocked
+[CAT] ✔ #190 — unlocked
+[CAT] ✔ #191 — unlocked
+[CAT] ✔ #344 — unlocked
+[CAT] ✔ #345 — unlocked
+[CAT] ✔ #346 — unlocked
+[CAT] ✔ #506 — unlocked
+[CAT] ✔ #768 — unlocked
+[BCSFE] Unlocked 24 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_cf91f042
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260818_175351_f2e7dae1
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: b415fc40b | Confirm ใหม่: 0235
+============================================================

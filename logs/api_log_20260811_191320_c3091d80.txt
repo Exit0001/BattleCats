@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-08-11 19:13:20
+Transfer  : c3091d804
+Confirm   : 0800
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=c3091d... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] XP: 99999999 → 99999999  (+0)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_20af0040
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260811_191321_c3091d80
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 682588bc6 | Confirm ใหม่: 6248
+============================================================
+============================================================

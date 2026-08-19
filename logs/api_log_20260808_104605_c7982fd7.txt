@@ -1,0 +1,14 @@
+============================================================
+เวลา      : 2026-08-08 10:46:05
+Transfer  : c7982fd74
+Confirm   : 9162
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=c7982f... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK] Inquiry Code: 7214fdbf3
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_c26ce3cb
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 4a47277ff | Confirm ใหม่: 5614
+============================================================

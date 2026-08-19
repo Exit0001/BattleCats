@@ -20,6 +20,8 @@ from pathlib import Path
 # ══════════════════════════════════════════
 
 PROMPTPAY_ID   = "004999236376637"       # K PLUS e-Wallet ID (15 หลัก) ที่รับเงิน
+KBANK_ACCOUNT  = "2278616293"            # บัญชีกสิกรที่ผูกกับ PromptPay (EasySlip อาจ return เลขนี้แทน)
+ALLOWED_RECEIVERS = {PROMPTPAY_ID, KBANK_ACCOUNT}  # receiver ที่รับได้
 TRUEMONEY_ID   = "0634515901"       # TrueMoney Wallet phone number (แก้ถ้าต่างกัน)
 EASYSLIP_API_KEY = "1c49e3f0-85f9-4718-b3f6-de74ec35fe30"  # API Key จาก easyslip.com
 ORDER_DB       = Path("orders.json")
@@ -110,11 +112,23 @@ ITEM_PRICE = {
         1000: 85,
         2999: 239,
     },
+    "base_material": {
+        30:  20,
+        100: 49,
+        500: 149,
+        999: 249,
+    },
+    "gamatoto_level":     {50: 29, 80: 49, 100: 79, 130: 200},
+    "gamatoto_lackey":    {10: 19},
+    "gamatoto_underling": {10: 39},
+    "gamatoto_assistant": {10: 69},
+    "gamatoto_legend":    {10: 120},
     # Per-cat services (price per 1 cat)
-    "upgrade_cat":   {1: 15},
-    "trueform_cat":  {1: 15},
-    "ultraform_cat": {1: 20},
-    "talents_cat":   {1: 20},
+    "upgrade_cat":      {1: 15},
+    "upgrade_plus_cat": {1: 100},
+    "trueform_cat":     {1: 15},
+    "ultraform_cat":    {1: 20},
+    "talents_cat":      {1: 20},
     # All-character packages — ราคาอยู่ใน ALL_PACKAGE_MAP ใน main.py แล้ว ห้ามซ้ำตรงนี้
 }
 
@@ -440,7 +454,7 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
 
     if is_order_expired(order):
         update_order_status(order_id, "expired")
-        return {"success": False, "reason": "order หมดอายุแล้ว กรุณาสั่งใหม่"}
+        return {"success": False, "reason": "order หมดอายุแล้ว กรุณากดยกเลิก แล้วทำรายการใหม่ (ใส่สลิปเดิมได้เลย)"}
 
     if order["status"] == "paid":
         return {"success": False, "reason": "order นี้ชำระแล้ว"}
@@ -452,11 +466,21 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
                 "https://api.easyslip.com/v2/verify/bank",
                 headers={"Authorization": f"Bearer {EASYSLIP_API_KEY}"},
                 files={"image": ("slip.jpg", slip_image_bytes, "image/jpeg")},
+                data={"matchAccount": "true"},
             )
-        data = resp.json()
+        print(f"[EASYSLIP] status={resp.status_code} body={resp.text[:500]}")
+        if resp.status_code in (502, 503, 504):
+            return {"success": False, "reason": "ระบบเช็คสลิปขัดข้องชั่วคราว (EasySlip server down) กรุณารอสักครู่แล้วลองใหม่"}
+        if resp.status_code == 401:
+            return {"success": False, "reason": "EasySlip API Key หมดอายุหรือไม่ถูกต้อง กรุณาติดต่อแอดมิน"}
+        try:
+            data = resp.json()
+        except Exception:
+            return {"success": False, "reason": f"EasySlip ตอบกลับผิดปกติ (status {resp.status_code}) กรุณาลองใหม่"}
         print(f"[EASYSLIP] response: {json.dumps(data, ensure_ascii=False)}")
     except Exception as e:
-        return {"success": False, "reason": f"เช็คสลิปไม่ได้: {e}"}
+        reason = str(e) if str(e) else "เชื่อมต่อ EasySlip ไม่ได้ กรุณาลองใหม่อีกครั้ง"
+        return {"success": False, "reason": f"เช็คสลิปไม่ได้: {reason}"}
 
     # ── ตรวจผลลัพธ์ ──
     if not data.get("success"):
@@ -471,6 +495,69 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
         return {"success": False, "reason": friendly}
 
     slip_data = data.get("data", {})
+
+    # 0) เช็ค receiver — ต้องโอนเข้าบัญชีร้านเราเท่านั้น
+    _raw       = slip_data.get("rawSlip", {})
+    _recv_acc  = _raw.get("receiver", {}).get("account", {})
+    _proxy     = _recv_acc.get("proxy", {}) or {}
+    _bank_recv = _recv_acc.get("bank",  {}) or {}
+    _proxy_type  = _proxy.get("type", "")
+    _proxy_acct  = (_proxy.get("account", "") or "").replace("-", "").replace(" ", "")
+    _bank_acct   = (_bank_recv.get("account", "") or "").replace("-", "").replace(" ", "")
+    _name_obj    = _recv_acc.get("name", {}) or {}
+    _recv_name_th = (_name_obj.get("th", "") or "").strip()
+    _recv_name_en = (_name_obj.get("en", "") or "").strip()
+    _matched_account = slip_data.get("matchedAccount")
+    print(f"[EASYSLIP] receiver: th={_recv_name_th!r} proxy_type={_proxy_type!r} matchedAccount={_matched_account!r}")
+
+    # ── ชั้น 1: BILLERID = ร้านค้า/บริการ (LINE MAN, ค่าไฟ ฯลฯ) ──
+    if _proxy_type == "BILLERID":
+        print(f"[EASYSLIP] ❌ BILLERID receiver: {_recv_name_th!r}")
+        return {"success": False, "reason": "สลิปนี้โอนเข้าบัญชีอื่น ไม่ใช่บัญชีร้านค้า กรุณาโอนเข้า PromptPay ของร้านเท่านั้น"}
+
+    # ── ชั้น 2: digit groups — ทุกชุดเลขต้องอยู่ในเลขบัญชีเรา ──
+    _acct_src = _proxy_acct or _bank_acct
+    if _acct_src:
+        _digit_groups = re.findall(r'\d{2,}', _acct_src)
+        _our_accounts = [PROMPTPAY_ID, KBANK_ACCOUNT]
+        if _digit_groups:
+            _all_match = all(any(g in acct for acct in _our_accounts) for g in _digit_groups)
+            print(f"[EASYSLIP] receiver digit groups: {_digit_groups} → match={_all_match}")
+            if not _all_match:
+                print(f"[EASYSLIP] ❌ account digit mismatch: {_digit_groups}")
+                return {"success": False, "reason": "สลิปนี้โอนเข้าบัญชีอื่น ไม่ใช่บัญชีร้านค้า กรุณาโอนเข้า PromptPay ของร้านเท่านั้น"}
+
+    # ── ชั้น 3: เช็คชื่อผู้รับเงิน ──
+    _TITLES = ("นาย", "นาง", "นางสาว", "ด.ช.", "ด.ญ.", "Mr.", "Mrs.", "Miss", "MR.", "MRS.")
+    def _strip_title(s: str) -> str:
+        s = s.strip()
+        for t in _TITLES:
+            if s.startswith(t):
+                return s[len(t):].strip()
+        return s
+
+    OWNER_NAME_TH = "สรวิชญ์ ทองอินทร์"
+    OWNER_NAME_EN = "sorawit thongin"
+
+    _name_th_clean = _strip_title(_recv_name_th)
+    _name_en_clean = _strip_title(_recv_name_en).lower()
+    if _recv_name_th or _recv_name_en:  # มีชื่อมาให้เช็ค
+        # EasySlip ตัดชื่อกลางคัน + บางธนาคารส่งนามสกุลขึ้นก่อน
+        # → เช็คแค่ว่าชื่อจริงหรือนามสกุลปรากฏอยู่ในข้อความที่ได้รับ
+        _name_ok = (
+            ("สรวิชญ์" in _name_th_clean or "ทองอินทร์" in _name_th_clean) or
+            ("sorawit" in _name_en_clean or "thongin" in _name_en_clean)
+        )
+        if not _name_ok:
+            print(f"[EASYSLIP] ❌ wrong receiver name: th={_name_th_clean!r} en={_name_en_clean!r}")
+            return {"success": False, "reason": "สลิปนี้โอนเข้าบัญชีอื่น ไม่ใช่บัญชีร้านค้า กรุณาโอนเข้า PromptPay ของร้านเท่านั้น"}
+
+    # ── fallback: ถ้าไม่มี receiver info เลย → reject ──
+    _has_account_info = bool(_proxy_type or _proxy_acct or _bank_acct)
+    _has_name_info    = bool(_recv_name_th or _recv_name_en)
+    if not _has_account_info and not _has_name_info:
+        print(f"[EASYSLIP] ❌ no receiver info at all — reject")
+        return {"success": False, "reason": "ไม่สามารถยืนยันบัญชีผู้รับได้ กรุณาติดต่อแอดมิน"}
 
     # 1) เช็คยอด — รับได้ถ้า received >= expected (ส่วนเกินเข้า wallet)
     raw_slip = slip_data.get("rawSlip", {})
@@ -533,7 +620,7 @@ async def redeem_truemoney_voucher(voucher_code: str, order_id: str) -> dict:
 
     if is_order_expired(order):
         update_order_status(order_id, "expired")
-        return {"success": False, "reason": "order หมดอายุแล้ว กรุณาสั่งใหม่"}
+        return {"success": False, "reason": "order หมดอายุแล้ว กรุณากดยกเลิก แล้วทำรายการใหม่ (ใส่สลิปเดิมได้เลย)"}
 
     if order["status"] == "paid":
         return {"success": False, "reason": "order นี้ชำระแล้ว"}
@@ -785,7 +872,8 @@ def verify_loyalty_session(username: str, session_token: str) -> bool:
         return False
 
 
-def save_loyalty_redemption(username: str, cycles: int, new_tc: str, new_cc: str):
+def save_loyalty_redemption(username: str, cycles: int, new_tc: str, new_cc: str,
+                            original_transfer_code: str = "", country: str = "en"):
     """บันทึก redemption history ลง loyalty_redemptions"""
     try:
         with httpx.Client(timeout=8) as client:
@@ -802,6 +890,8 @@ def save_loyalty_redemption(username: str, cycles: int, new_tc: str, new_cc: str
                     "cycles_redeemed": cycles,
                     "new_transfer_code": new_tc,
                     "new_confirmation_code": new_cc,
+                    "original_transfer_code": original_transfer_code,
+                    "country": country,
                 },
             )
         print(f"[LOYALTY] {username}: saved redemption history ({cycles} cycles)")
@@ -829,6 +919,48 @@ def get_loyalty_redemptions(username: str) -> list:
     except Exception as e:
         print(f"[LOYALTY] get_redemptions error: {e}")
         return []
+
+
+def get_loyalty_redemption_by_id(redemption_id: str) -> dict | None:
+    """ดึง loyalty redemption record เดียวตาม id"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/loyalty_redemptions",
+                params={"id": f"eq.{redemption_id}", "limit": "1"},
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                },
+            )
+        data = resp.json() if resp.status_code == 200 else []
+        return data[0] if data else None
+    except Exception as e:
+        print(f"[LOYALTY] get_redemption_by_id error: {e}")
+        return None
+
+
+def update_loyalty_redemption_tc(redemption_id: str, new_tc: str, new_cc: str):
+    """อัพเดท TC/CC ใน loyalty_redemptions หลัง retry สำเร็จ"""
+    try:
+        with httpx.Client(timeout=8) as client:
+            client.patch(
+                f"{SUPABASE_URL}/rest/v1/loyalty_redemptions",
+                params={"id": f"eq.{redemption_id}"},
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                    "Content-Type": "application/json",
+                    "Prefer": "return=minimal",
+                },
+                json={
+                    "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc,
+                },
+            )
+        print(f"[LOYALTY] redemption {redemption_id}: updated TC → {new_tc}")
+    except Exception as e:
+        print(f"[LOYALTY] update_redemption_tc error: {e}")
 
 
 def increment_loyalty_redeemed(username: str):
@@ -880,7 +1012,7 @@ def _get_revenue_for_range(start: datetime, end: datetime) -> dict:
             params={
                 "status": "eq.done",
                 "created_at": [f"gte.{start.isoformat()}", f"lt.{end.isoformat()}"],
-                "select": "order_id,amount,base_amount,order_type,username,created_at",
+                "select": "order_id,amount,base_amount,order_type,payment_method,username,created_at",
             },
             headers=_sh(),
         )
@@ -895,9 +1027,14 @@ def _get_revenue_for_range(start: datetime, end: datetime) -> dict:
 
     total_revenue = sum(_rev(o) for o in orders)
     by_type: dict = {}
+    by_method: dict = {}
+    by_method_count: dict = {}
     for o in orders:
         t = o.get("order_type") or "unknown"
         by_type[t] = by_type.get(t, 0) + _rev(o)
+        m = o.get("payment_method") or "unknown"
+        by_method[m] = by_method.get(m, 0) + _rev(o)
+        by_method_count[m] = by_method_count.get(m, 0) + 1
 
     orders_sorted = sorted(orders, key=lambda o: o.get("created_at") or "")
 
@@ -905,6 +1042,8 @@ def _get_revenue_for_range(start: datetime, end: datetime) -> dict:
         "total_revenue": total_revenue,
         "total_orders": len(orders),
         "by_type": by_type,
+        "by_method": by_method,
+        "by_method_count": by_method_count,
         "excluded_admins": admin_usernames,
         "excluded_no_username_count": len(all_orders) - len(orders) - sum(
             1 for o in all_orders if o.get("username") in admin_usernames
@@ -1992,7 +2131,7 @@ async def verify_cr_slip(slip_image_bytes: bytes, order_id: str) -> dict:
         return {"success": False, "reason": "ไม่พบ order นี้"}
     if is_order_expired(order):
         update_cr_order_status(order_id, "expired")
-        return {"success": False, "reason": "order หมดอายุแล้ว กรุณาสั่งใหม่"}
+        return {"success": False, "reason": "order หมดอายุแล้ว กรุณากดยกเลิก แล้วทำรายการใหม่ (ใส่สลิปเดิมได้เลย)"}
     if order["status"] == "paid":
         return {"success": False, "reason": "order นี้ชำระแล้ว"}
 
@@ -2006,7 +2145,8 @@ async def verify_cr_slip(slip_image_bytes: bytes, order_id: str) -> dict:
         data = resp.json()
         print(f"[CR-EASYSLIP] response: {json.dumps(data, ensure_ascii=False)}")
     except Exception as e:
-        return {"success": False, "reason": f"เช็คสลิปไม่ได้: {e}"}
+        reason = str(e) if str(e) else "เชื่อมต่อ EasySlip ไม่ได้ กรุณาลองใหม่อีกครั้ง"
+        return {"success": False, "reason": f"เช็คสลิปไม่ได้: {reason}"}
 
     if not data.get("success"):
         msg = data.get("message") or "สลิปไม่ถูกต้อง"
@@ -2048,7 +2188,7 @@ async def redeem_truemoney_voucher_cr(voucher_code: str, order_id: str) -> dict:
         return {"success": False, "reason": "ไม่พบ order นี้"}
     if is_order_expired(order):
         update_cr_order_status(order_id, "expired")
-        return {"success": False, "reason": "order หมดอายุแล้ว กรุณาสั่งใหม่"}
+        return {"success": False, "reason": "order หมดอายุแล้ว กรุณากดยกเลิก แล้วทำรายการใหม่ (ใส่สลิปเดิมได้เลย)"}
     if order["status"] == "paid":
         return {"success": False, "reason": "order นี้ชำระแล้ว"}
 

@@ -1,0 +1,20 @@
+============================================================
+เวลา      : 2026-08-11 18:23:35
+Transfer  : b5574b258
+Confirm   : 4088
+Country   : en
+============================================================
+[OP] Unlock Characters จำนวน 4 ตัว
+[BCSFE] ⬇  Downloading save (transfer=b5574b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] พบ 4/4 ตัวใน save
+[CAT] ✔ #20 — unlocked
+[CAT] ✔ #25 — unlocked
+[CAT] ✔ #26 — unlocked
+[CAT] ✔ #29 — unlocked
+[BCSFE] Unlocked 4 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_ac4ac4b2
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260811_182336_b5574b25
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 830567f3c | Confirm ใหม่: 2208
+============================================================

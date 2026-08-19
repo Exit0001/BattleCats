@@ -103,6 +103,45 @@
 
   window.addEventListener('resize', updateLayout);
 
+  /* ── Mobile wallet chip (ใน mobile menu auth area) ─────────── */
+  function injectMobileWalletChip() {
+    // sync balance เข้า mobileAuthSlot หลัง mirrorAuth clone แล้ว
+    function syncChip() {
+      var badge  = document.getElementById('bc-wallet-badge');
+      var mSlot  = document.getElementById('mobileAuthSlot');
+      var mChip  = document.getElementById('bc-mobile-wallet');
+      if (!badge || !mSlot) return;
+      if (badge.style.display === 'none') return; // ยังโหลดไม่เสร็จ
+
+      if (!mChip) {
+        var chip = document.createElement('a');
+        chip.id = 'bc-mobile-wallet';
+        chip.href = 'wallet.html';
+        chip.style.cssText = [
+          'font-size:13px;font-weight:700;color:#34d399;',
+          'background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.35);',
+          'padding:5px 12px;border-radius:20px;white-space:nowrap;text-decoration:none;',
+          "font-family:'Chakra Petch',sans-serif;display:inline-flex;align-items:center;",
+        ].join('');
+        chip.textContent = badge.textContent;
+        // เพิ่มไว้บน auth slot (ก่อน username/ออก)
+        mSlot.insertBefore(chip, mSlot.firstChild);
+      } else {
+        mChip.textContent = badge.textContent;
+      }
+    }
+
+    var badgeObs = new MutationObserver(syncChip);
+    var tryObserve = setInterval(function() {
+      var badge = document.getElementById('bc-wallet-badge');
+      if (badge) {
+        clearInterval(tryObserve);
+        badgeObs.observe(badge, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
+        syncChip();
+      }
+    }, 200);
+  }
+
   /* ── Mirror auth badge into mobile menu ─────────────────────── */
   function mirrorAuth() {
     var slot  = document.getElementById('mobileAuthSlot');
@@ -137,10 +176,39 @@
     }
   });
 
+  /* ── Facebook Notice Banner ─────────────────────────────────── */
+  function injectFbNotice() {
+    if (document.getElementById('bc-fb-notice')) return;
+    var bar = document.createElement('div');
+    bar.id = 'bc-fb-notice';
+    bar.style.cssText = 'background:linear-gradient(90deg,#7c2d12,#9a3412);border-bottom:1px solid rgba(251,146,60,0.4);padding:10px 16px;font-family:\'Chakra Petch\',sans-serif;font-size:13px;color:#fed7aa;position:relative;z-index:1000;';
+    bar.innerHTML = [
+      '<div style="max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:10px;">',
+        '<span style="flex:1;min-width:200px;">⚠️ <strong style="color:#fb923c;">Facebook ใช้งานไม่ได้ชั่วคราว</strong> — ติดต่อเราผ่าน Line OpenChat แทนได้เลยครับ</span>',
+        '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">',
+          '<a href="https://line.me/ti/g2/PUmYGL3dhCeY4UbjU6QuHIrVEg7f2G7xS21voQ?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank" ',
+            'style="background:#06c755;color:#fff;padding:6px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:12px;white-space:nowrap;">',
+            '💬 เข้า Line OpenChat</a>',
+          '<button onclick="document.getElementById(\'bc-fb-qr\').style.display=document.getElementById(\'bc-fb-qr\').style.display===\'none\'?\'block\':\'none\'" ',
+            'style="background:rgba(255,255,255,0.15);color:#fed7aa;border:1px solid rgba(255,255,255,0.25);padding:6px 12px;border-radius:8px;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;font-size:12px;white-space:nowrap;">',
+            '📱 ดู QR Code</button>',
+          '<button onclick="document.getElementById(\'bc-fb-notice\').style.display=\'none\'" ',
+            'style="background:transparent;border:none;color:rgba(254,215,170,0.6);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;">✕</button>',
+        '</div>',
+        '<div id="bc-fb-qr" style="display:none;width:100%;text-align:center;padding:10px 0;">',
+          '<img src="/pictures/qr.jpg" alt="QR Line OpenChat" style="width:180px;height:180px;object-fit:contain;border-radius:12px;border:3px solid #06c755;">',
+          '<div style="font-size:11px;color:rgba(254,215,170,0.7);margin-top:6px;">สแกน QR เพื่อเข้าร่วม Line OpenChat</div>',
+        '</div>',
+      '</div>'
+    ].join('');
+    document.body.insertBefore(bar, document.body.firstChild);
+  }
+
   /* ── Boot ───────────────────────────────────────────────────── */
   function init() {
     injectCSS();
     updateLayout();
+    injectMobileWalletChip();
     mirrorAuth();
     observer.observe(document.body, { childList: true, subtree: true });
   }

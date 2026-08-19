@@ -5,7 +5,7 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>สะสมยอดซื้อ - Battle Cats Shop</title>
-  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/styles.css?v=2">
   <style>
     /* ── Hero ── */
     .loy-hero {
@@ -362,6 +362,36 @@
   </style>
 </head>
 <body>
+
+<!-- LINE OpenChat Banner -->
+<div id="line-banner" style="display:none;background:#06C755;color:#fff;z-index:9999;font-family:'Chakra Petch',sans-serif;font-size:14px;position:relative;">
+  <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 14px;padding:9px 52px 9px 16px;">
+    <span>💬 สามารถทักเข้า OpenChat มาสอบถามพูดคุยกันได้</span>
+    <a href="https://line.me/ti/g2/PUmYGL3dhCeY4UbjU6QuHIrVEg7f2G7xS21voQ" target="_blank" rel="noopener"
+       style="color:#fff;font-weight:700;text-decoration:underline;white-space:nowrap;">คลิกเลย</a>
+    <button onclick="document.getElementById('line-qr-modal').style.display='flex';"
+            style="background:rgba(0,0,0,0.25);border:1.5px solid rgba(255,255,255,0.5);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;border-radius:6px;padding:3px 9px;cursor:pointer;white-space:nowrap;">📷 QR Code</button>
+    <label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;white-space:nowrap;background:rgba(0,0,0,0.18);border-radius:6px;padding:3px 9px;">
+      <input type="checkbox" id="line-banner-no-show" style="cursor:pointer;width:14px;height:14px;"> ไม่แสดงอีก
+    </label>
+  </div>
+  <button onclick="if(document.getElementById('line-banner-no-show').checked)localStorage.setItem('lineBannerHidden','1');document.getElementById('line-banner').style.display='none';"
+          style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;" aria-label="ปิด">×</button>
+</div>
+<script>if(!localStorage.getItem('lineBannerHidden'))document.getElementById('line-banner').style.display='block';</script>
+
+<!-- QR Code Modal -->
+<div id="line-qr-modal" onclick="if(event.target===this)this.style.display='none';"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:99999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:18px;padding:20px;text-align:center;max-width:280px;width:90%;position:relative;">
+    <button onclick="document.getElementById('line-qr-modal').style.display='none';"
+            style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:22px;cursor:pointer;color:#333;line-height:1;">×</button>
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:14px;font-weight:700;color:#06C755;margin-bottom:12px;">💬 LINE OpenChat</div>
+    <img src="pictures/qr.jpg" alt="LINE QR Code" style="width:100%;max-width:220px;border-radius:10px;">
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#555;margin-top:10px;">สแกน QR เพื่อเข้ากลุ่ม</div>
+  </div>
+</div>
+
 <nav class="navbar">
   <div class="nav-container">
     <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="เมนู">
@@ -662,6 +692,11 @@ function loadHistory(show) {
         var dt = new Date(row.redeemed_at);
         var dateStr = dt.toLocaleDateString('th-TH', { day:'2-digit', month:'short', year:'numeric' });
         var timeStr = dt.toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' });
+        var rid = row.id || '';
+        var btnId = 'loy-retry-btn-' + rid;
+        var msgId = 'loy-retry-msg-' + rid;
+        var tcId  = 'loy-tc-'  + rid;
+        var ccId  = 'loy-cc-'  + rid;
         return (
           '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:18px 20px;margin-bottom:12px;">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">' +
@@ -669,15 +704,23 @@ function loadHistory(show) {
               '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(196,181,253,0.45);">' + dateStr + ' · ' + timeStr + '</div>' +
             '</div>' +
             '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">' + window.bcT('loy_new_tc_label','Transfer Code ใหม่') + '</div>' +
-            '<div class="code-row" style="margin-bottom:8px;" onclick="copyFromHistory(this,\'' + row.new_transfer_code + '\')">' +
+            '<div id="' + tcId + '" class="code-row" style="margin-bottom:8px;" onclick="copyFromHistory(this,this.querySelector(\'.code-val\').textContent)">' +
               '<div class="code-val">' + row.new_transfer_code + '</div>' +
               '<div class="copy-hint">' + window.bcT('loy_tap_to_copy','แตะเพื่อคัดลอก 📋') + '</div>' +
             '</div>' +
             '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Confirmation Code</div>' +
-            '<div class="code-row" onclick="copyFromHistory(this,\'' + row.new_confirmation_code + '\')">' +
+            '<div id="' + ccId + '" class="code-row" onclick="copyFromHistory(this,this.querySelector(\'.code-val\').textContent)">' +
               '<div class="code-val">' + row.new_confirmation_code + '</div>' +
               '<div class="copy-hint">' + window.bcT('loy_tap_to_copy','แตะเพื่อคัดลอก 📋') + '</div>' +
             '</div>' +
+            (rid ? (
+              '<div style="margin-top:12px;padding:10px 12px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.18);border-radius:10px;">' +
+                '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:#f87171;font-weight:700;margin-bottom:6px;">⚠️ ถ้า error TE01 หรือรหัสเข้าไม่ได้ ให้กดขอรหัสใหม่ — ถ้ารหัสใช้ได้แล้ว ห้ามกด!</div>' +
+                '<button id="' + btnId + '" onclick="doLoyaltyRetryTc(\'' + rid + '\',\'' + btnId + '\',\'' + msgId + '\',\'' + tcId + '\',\'' + ccId + '\')" ' +
+                  'style="width:100%;padding:7px 14px;background:#dc2626;color:#fff;border:none;border-radius:8px;font-family:\'Chakra Petch\',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">🔄 รหัสใช้ไม่ได้? ขอรหัสใหม่</button>' +
+                '<div id="' + msgId + '" style="display:none;margin-top:6px;font-size:11px;"></div>' +
+              '</div>'
+            ) : '') +
           '</div>'
         );
       }).join('');
@@ -694,6 +737,59 @@ function copyFromHistory(row, text) {
     hint.style.color = '#10b981';
     setTimeout(function() { hint.textContent = orig; hint.style.color = ''; }, 1500);
   });
+}
+
+function doLoyaltyRetryTc(redemptionId, btnId, msgId, tcId, ccId) {
+  var btn = document.getElementById(btnId);
+  var msg = document.getElementById(msgId);
+  if (!btn) return;
+  btn.disabled = true;
+  btn.textContent = 'กำลังขอรหัสใหม่...';
+  btn.style.background = '#374151';
+  btn.style.color = '#9ca3af';
+  if (msg) msg.style.display = 'none';
+
+  fetch('/api/loyalty/retry-tc/' + redemptionId, { method: 'POST' })
+    .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+    .then(function(res) {
+      if (res.ok && res.data.success) {
+        var newTc = res.data.new_transfer_code || '-';
+        var newCc = res.data.new_confirmation_code || '-';
+        // อัพเดทค่า TC/CC ในการ์ดตรงๆ
+        var tcEl = document.getElementById(tcId);
+        var ccEl = document.getElementById(ccId);
+        if (tcEl) tcEl.querySelector('.code-val').textContent = newTc;
+        if (ccEl) ccEl.querySelector('.code-val').textContent = newCc;
+        btn.textContent = '✅ ได้รหัสใหม่แล้ว';
+        btn.style.background = '#16a34a';
+        btn.style.color = '#fff';
+        btn.disabled = false;
+        if (msg) {
+          msg.style.display = 'block';
+          msg.innerHTML =
+            '<div style="margin-top:4px;padding:8px 10px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.3);border-radius:8px;">' +
+            '<div style="font-size:10px;color:rgba(255,255,255,0.45);margin-bottom:2px;">TRANSFER CODE ใหม่</div>' +
+            '<div style="font-family:monospace;font-size:14px;color:#FFD84E;font-weight:700;word-break:break-all;">' + newTc + '</div>' +
+            '<div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:6px;margin-bottom:2px;">CONFIRMATION CODE ใหม่</div>' +
+            '<div style="font-family:monospace;font-size:14px;color:#FFD84E;font-weight:700;">' + newCc + '</div>' +
+            '</div>';
+        }
+      } else {
+        var errMsg = (res.data && res.data.detail) || 'retry ล้มเหลว';
+        if (msg) { msg.style.display = 'block'; msg.style.color = '#f87171'; msg.textContent = '❌ ' + errMsg; }
+        btn.disabled = false;
+        btn.textContent = '🔄 ลองอีกครั้ง';
+        btn.style.background = '#dc2626';
+        btn.style.color = '#fff';
+      }
+    })
+    .catch(function(e) {
+      if (msg) { msg.style.display = 'block'; msg.style.color = '#f87171'; msg.textContent = '❌ ' + e.message; }
+      btn.disabled = false;
+      btn.textContent = '🔄 ลองอีกครั้ง';
+      btn.style.background = '#dc2626';
+      btn.style.color = '#fff';
+    });
 }
 
 function rareTicketGuide() {
@@ -872,7 +968,7 @@ loadStatus();
 document.addEventListener('bc-lang-changed', function() { loadStatus(); });
 </script>
 <script src="assets/auth.js?v=20260717"></script>
-<script src="assets/nav.js"></script>
-<script src="assets/i18n.js"></script>
+<script src="assets/nav.js?v=4"></script>
+<script src="assets/i18n.js?v=2"></script>
 </body>
 </html>

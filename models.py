@@ -83,6 +83,13 @@ class DupeSaveRequest(BaseModel):
     country: str = "1"
     count: int = 1              # จำนวนที่ต้องการ dupe (1-20)
 
+class UnbanRequest(BaseModel):
+    order_id: str = ""           # ใส่ order_id → ดึง TC จาก orders table
+    transfer_code: str = ""      # หรือใส่ TC โดยตรง (จาก loyalty_redemptions)
+    country: str = "1"
+    username: str = ""
+    session_token: str = ""
+
 class UnlockCharactersRequest(BaseModel):
     """โมเดลสำหรับปลดล็อคตัวละคร"""
     transfer_code: str          # Transfer Code จากเกม

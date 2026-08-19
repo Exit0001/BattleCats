@@ -1,0 +1,9 @@
+============================================================
+เวลา      : 2026-08-08 11:12:43
+Transfer  : 4a47277ff
+Confirm   : 5614
+Country   : en
+============================================================
+[OP] Check ID — download + re-upload (no edit)
+[BCSFE] ⬇  Downloading save (transfer=4a4727... cc=en)
+[BCSFE] ❌ ❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว กรุณากด 'Begin Data Transfer' ในเกมใหม่แล้วลองอีกครั้ง

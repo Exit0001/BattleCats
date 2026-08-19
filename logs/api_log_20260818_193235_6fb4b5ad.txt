@@ -1,0 +1,10 @@
+============================================================
+เวลา      : 2026-08-18 19:32:35
+Transfer  : 6fb4b5adc
+Confirm   : 7842
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=6fb4b5... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] ❌ module 'bcsfe.core' has no attribute 'core'

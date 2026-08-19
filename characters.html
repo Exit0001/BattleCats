@@ -11,7 +11,7 @@
   <meta property="og:description" content="ปลดล็อคแมว The Battle Cats ทุกตัว อัพเกรด True Form, Ultra Form, Max Talents ราคาเริ่ม 15 บาท ส่งผ่าน Transfer Code">
   <meta property="og:url" content="https://battlecatpromax.cloud/characters.html">
   <meta property="og:image" content="https://battlecatpromax.cloud/pictures/logo.png">
-  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/styles.css?v=2">
   <style>
     /* ── Cat card grid ─────────────────────────────────────── */
     .cat-grid {
@@ -152,17 +152,28 @@
 
     /* ── Service Modal ─────────────────────────────────────────── */
     #svcModal {
-      display: none;
+      display: none; /* JS จะเปลี่ยนเป็น flex ตอนเปิด */
       position: fixed;
       inset: 0;
       z-index: 9100;
       background: rgba(0,0,0,0.78);
       backdrop-filter: blur(5px);
+      overflow: hidden;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #svcList {
+      max-height: calc(100dvh - 300px);
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
     .svc-box {
       max-width: 480px;
-      margin: 40px auto 40px;
+      width: 100%;
+      max-height: calc(100dvh - 32px);
+      overflow: hidden;
       background: linear-gradient(145deg,#100827 0%,#0b051a 100%);
       border: 1px solid rgba(124,58,237,0.38);
       border-radius: 20px;
@@ -275,21 +286,58 @@
     @media (max-width: 768px) {
       .pkg-row1 { grid-template-columns: repeat(2, 1fr) !important; gap: 14px !important; }
       .pkg-row2 { grid-template-columns: repeat(2, 1fr) !important; max-width: 100% !important; gap: 14px !important; }
-      .svc-box { margin: 24px 16px; }
+      .svc-box { margin: 0; }
       .crazed-manic-grid { grid-template-columns: 1fr !important; max-width: 100% !important; }
+      .baki-pack-grid { grid-template-columns: 1fr !important; max-width: 100% !important; }
     }
     @media (max-width: 520px) {
       .pkg-row1 { grid-template-columns: 1fr !important; }
       .pkg-row2 { grid-template-columns: 1fr !important; }
-      .svc-box { margin: 12px 10px; padding: 20px 16px; }
+      .svc-box { margin: 0; padding: 16px 14px; }
       .cat-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); max-height: 500px; }
       .search-input { min-width: 0; width: 100%; }
-      .svc-cat-header { gap: 10px; }
-      .svc-thumb { width: 60px; height: 60px; }
+      .svc-cat-header { gap: 10px; margin-bottom: 12px; padding-bottom: 12px; }
+      .svc-thumb { width: 52px; height: 52px; }
+      .svc-title { font-size: 13px; margin-bottom: 10px; }
+      .svc-item { padding: 8px 10px; margin-bottom: 5px; gap: 8px; }
+      .svc-lbl { font-size: 12px; }
+      .svc-note { font-size: 10px; padding: 3px 7px; margin-top: 4px; }
+      .svc-price { font-size: 13px; }
+      .svc-cb { width: 18px; height: 18px; }
+      .svc-total-row { padding: 10px 0 12px; margin-top: 4px; }
     }
   </style>
 </head>
 <body>
+
+<!-- LINE OpenChat Banner -->
+<div id="line-banner" style="display:none;background:#06C755;color:#fff;z-index:9999;font-family:'Chakra Petch',sans-serif;font-size:14px;position:relative;">
+  <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 14px;padding:9px 52px 9px 16px;">
+    <span>💬 สามารถทักเข้า OpenChat มาสอบถามพูดคุยกันได้</span>
+    <a href="https://line.me/ti/g2/PUmYGL3dhCeY4UbjU6QuHIrVEg7f2G7xS21voQ" target="_blank" rel="noopener"
+       style="color:#fff;font-weight:700;text-decoration:underline;white-space:nowrap;">คลิกเลย</a>
+    <button onclick="document.getElementById('line-qr-modal').style.display='flex';"
+            style="background:rgba(0,0,0,0.25);border:1.5px solid rgba(255,255,255,0.5);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;border-radius:6px;padding:3px 9px;cursor:pointer;white-space:nowrap;">📷 QR Code</button>
+    <label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;white-space:nowrap;background:rgba(0,0,0,0.18);border-radius:6px;padding:3px 9px;">
+      <input type="checkbox" id="line-banner-no-show" style="cursor:pointer;width:14px;height:14px;"> ไม่แสดงอีก
+    </label>
+  </div>
+  <button onclick="if(document.getElementById('line-banner-no-show').checked)localStorage.setItem('lineBannerHidden','1');document.getElementById('line-banner').style.display='none';"
+          style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;" aria-label="ปิด">×</button>
+</div>
+<script>if(!localStorage.getItem('lineBannerHidden'))document.getElementById('line-banner').style.display='block';</script>
+
+<!-- QR Code Modal -->
+<div id="line-qr-modal" onclick="if(event.target===this)this.style.display='none';"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:99999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:18px;padding:20px;text-align:center;max-width:280px;width:90%;position:relative;">
+    <button onclick="document.getElementById('line-qr-modal').style.display='none';"
+            style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:22px;cursor:pointer;color:#333;line-height:1;">×</button>
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:14px;font-weight:700;color:#06C755;margin-bottom:12px;">💬 LINE OpenChat</div>
+    <img src="pictures/qr.jpg" alt="LINE QR Code" style="width:100%;max-width:220px;border-radius:10px;">
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#555;margin-top:10px;">สแกน QR เพื่อเข้ากลุ่ม</div>
+  </div>
+</div>
 
 <nav class="navbar">
   <div class="nav-container">
@@ -332,6 +380,11 @@
 
   <h1 class="section-title" data-i18n="char_title">🐱 ปลดล็อคแมว</h1>
   <p style="color:rgba(210,190,255,0.65);margin-bottom:24px;font-size:14px;" data-i18n="char_subtitle">ค้นหาแมวที่ต้องการ — รูปภาพดึงจาก Battle Cats Wiki โดยตรง</p>
+
+  <!-- EVENT PACKS (dynamic from /api/events) — แสดงบนสุด ──────── -->
+  <div id="event-packs-container">
+    <div style="text-align:center;color:rgba(210,190,255,0.4);padding:28px 0;font-family:'Chakra Petch',sans-serif;font-size:13px;">⏳ กำลังโหลด event packs...</div>
+  </div>
 
   <!-- ALL-CHARACTER PACKAGES ──────────────────────────────────── -->
   <section style="margin-bottom:40px;">
@@ -405,44 +458,6 @@
 
     </div>
 
-    <!-- แถว Set Crazed & Manic -->
-    <div style="margin-top:28px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-        <span style="font-family:'Russo One',sans-serif;font-size:14px;color:#FCA5A5;letter-spacing:1px;">🐾 SET CRAZED & MANIC</span>
-        <span style="height:1px;flex:1;background:linear-gradient(90deg,rgba(248,113,113,0.35),transparent);"></span>
-        <span style="font-family:'Chakra Petch',sans-serif;font-size:11px;color:rgba(210,190,255,0.4);" data-i18n="char_cat_count_9">Cat #91–99 (9 ตัว)</span>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:min(calc(66.67% - 8px),100%);margin:0 auto;" class="crazed-manic-grid">
-
-        <!-- Crazed All Cat -->
-        <div class="card" style="cursor:default;padding:24px 20px;">
-          <div class="card-picture"><img loading="lazy" src="pictures/crazed_all_cat.png" style="width:100%;height:auto;display:block;"></div>
-          <div class="card-tag tag-super">SET</div>
-          <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:8px;">Crazed All Cat</div>
-          <div class="card-desc" style="line-height:1.7;" data-i18n="char_crazed_desc">ปลดล็อค <strong style="color:#EDE6FF;">Crazed Cat 9 ตัว</strong><br>Cat ID #91–99 ครบทุกตัว</div>
-          <div class="card-price" style="margin-top:14px;"><span class="price-now">฿70</span></div>
-          <div style="margin-top:auto;padding-top:14px;">
-            <button class="btn btn-primary" style="width:100%;" onclick="addAllPackage('crazed_all','Crazed All Cat',70)" data-i18n="add_to_cart_plus">+ ใส่ตะกร้า</button>
-          </div>
-        </div>
-
-        <!-- Manic All Cat -->
-        <div class="card" style="cursor:default;padding:24px 20px;border-color:rgba(248,113,113,0.25);">
-          <div class="card-picture"><img loading="lazy" src="pictures/manic_all_cat.png" style="width:100%;height:auto;display:block;"></div>
-          <div class="card-tag" style="background:rgba(248,113,113,0.15);color:#FCA5A5;border-color:rgba(248,113,113,0.35);">SET</div>
-          <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:8px;">Manic All Cat</div>
-          <div class="card-desc" style="line-height:1.7;" data-i18n="char_manic_desc">True Form <strong style="color:#EDE6FF;">Manic Cat 9 ตัว</strong><br>Cat ID #91–99 (ต้องมี Crazed ก่อน)</div>
-          <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.28);border-radius:8px;padding:7px 10px;margin-top:8px;font-family:'Chakra Petch',sans-serif;font-size:11px;color:#FCD34D;line-height:1.5;" data-i18n="char_manic_warn">
-            ⚠️ ต้องมี Cat #91–99 และเวล Lv.30 ก่อน
-          </div>
-          <div class="card-price" style="margin-top:12px;"><span class="price-now">฿125</span></div>
-          <div style="margin-top:auto;padding-top:14px;">
-            <button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#be123c,#f43f5e);" onclick="openManicConfirm()" data-i18n="add_to_cart_plus">+ ใส่ตะกร้า</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
   </section>
 
   <!-- TIER FILTER + SEARCH ──────────────────────────────────── -->
@@ -548,6 +563,7 @@
         <ul>
           <li><a href="https://www.facebook.com/pronajaa.gamedee.1/" target="_blank" rel="noopener">📘 <span data-i18n="fb_user">Facebook (ผู้ใช้)</span></a></li>
           <li><a href="https://www.facebook.com/profile.php?id=61572054218886" target="_blank" rel="noopener">📘 <span data-i18n="fb_page">Facebook (เพจร้าน)</span></a></li>
+          <li><a href="https://line.me/ti/g2/PUmYGL3dhCeY4UbjU6QuHIrVEg7f2G7xS21voQ?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank" rel="noopener">💚 Line OpenChat</a></li>
         </ul>
       </div>
     </div>
@@ -568,8 +584,8 @@
 <div id="toastNotif"></div>
 
 <!-- SERVICE SELECT MODAL ───────────────────────────────────────── -->
-<div id="svcModal" onclick="if(event.target===this)closeSvcModal()">
-  <div class="svc-box">
+<div id="svcModal" onclick="closeSvcModal()">
+  <div class="svc-box" onclick="event.stopPropagation()">
     <button class="svc-close" onclick="closeSvcModal()">✕</button>
 
     <!-- Cat header -->
@@ -598,6 +614,14 @@
       เพิ่มลงตะกร้า
     </button>
   </div>
+</div>
+
+<!-- CAT LIGHTBOX -->
+<div id="catLightbox" onclick="if(event.target===this)closeCatLightbox()" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.88);backdrop-filter:blur(8px);align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+  <img id="catLightboxImg" src="" style="max-width:min(220px,75vw);max-height:min(220px,55vh);border-radius:16px;image-rendering:pixelated;box-shadow:0 0 40px rgba(180,100,255,0.3);">
+  <div id="catLightboxTier" style="padding:3px 14px;border-radius:20px;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;"></div>
+  <div id="catLightboxName" style="font-family:'Chakra Petch',sans-serif;font-size:15px;color:#EDE6FF;letter-spacing:0.5px;"></div>
+  <button onclick="closeCatLightbox()" style="margin-top:4px;padding:8px 24px;border-radius:20px;border:1px solid rgba(210,190,255,0.3);background:rgba(210,190,255,0.08);color:rgba(210,190,255,0.6);font-family:'Chakra Petch',sans-serif;font-size:12px;cursor:pointer;">✕ ปิด</button>
 </div>
 
 <!-- MANIC CONFIRM DIALOG -->
@@ -720,7 +744,36 @@ var TIER_COL = { N:'#9CA3AF', EX:'#60A5FA', RR:'#4ADE80', SR:'#C4B5FD', UR:'#FBB
 var TIER_BG  = { N:'rgba(156,163,175,0.12)', EX:'rgba(96,165,250,0.12)',
                  RR:'rgba(74,222,128,0.12)', SR:'rgba(196,181,253,0.12)',
                  UR:'rgba(251,191,36,0.12)',  LR:'rgba(248,113,113,0.12)' };
-var TIER_LABEL = { N:'Normal', EX:'EX', RR:'Rare', SR:'Super Rare', UR:'Uber Rare', LR:'Legend Rare' };
+var TIER_LABEL   = { N:'Normal', EX:'EX', RR:'Rare', SR:'Super Rare', UR:'Uber Rare', LR:'Legend Rare' };
+var TIER_MAX_LVL = { N:20, EX:'40-50', RR:50, SR:50, UR:60, LR:50 };
+
+/* ── JP-Only cats (ไม่มีใน EN server) ── */
+var JP_ONLY_IDS = new Set([
+  /* แคมเปญสินค้า */ 356,479,608,823,542,541,540,
+  /* CoroCoro/Switch */ 615,501,616,
+  /* Bikkuriman */ 466,467,468,469,470,471,555,472,556,474,475,476,477,557,473,
+  /* Castle & Dragon */ 249,250,251,252,253,254,255,256,434,567,
+  /* Yurudrasil */ 231,232,233,234,235,236,
+  /* Monster Hunter */ 204,205,206,207,208,
+  /* Shin Japan Heroes Universe */ 701,702,703,704,
+  /* Gudetama */ 430,347,348,349,350,
+  /* World Trigger */ 677,678,679,
+  /* Princess Punt Sweets */ 26,69,530,485,337,161,66,486,160,68,67,65,64,
+  /* Pac-Man */ 866,867,868,
+  /* JRA */ 626,627,628,
+  /* Kyoto City Subway */ 425,422,423,424,
+  /* Kaohsiung Rapid Transit */ 639,640,638,637,
+  /* Kishidan */ 162,163,164,165,166,167,
+  /* Closed games */ 309,156,157,90,102,101,89,77,
+  /* Mascots/Brand */ 281,524,54,133,178,266,
+  /* Early JP Exclusives */ 141,142,
+  /* Cuckoo Crew */ 182,
+  /* Nyan Nyan Nyanko */ 262,263,264,265,
+  /* Nazousagi */ 321,
+  /* Honeyto-kun */ 398,
+  /* GeGeGe no Kitaro */ 453,454,480,
+  /* Chicken Cat (never released globally) */ 155,
+]);
 
 // ── Image URLs ─────────────────────────────────────────────────
 // Primary:  Fandom wiki  Special:FilePath  (browser follows redirect automatically)
@@ -748,7 +801,11 @@ function _catCardHtml(r) {
   var col   = TIER_COL[tier]   || '#C4B5FD';
   var bg    = TIER_BG[tier]    || 'rgba(124,58,237,0.12)';
   var label = TIER_LABEL[tier] || tier;
-  return '<div class="cat-card">' +
+  var jpBadge = JP_ONLY_IDS.has(id)
+    ? '<div style="position:absolute;top:6px;right:6px;background:rgba(239,68,68,0.85);color:#fff;font-family:\'Chakra Petch\',sans-serif;font-size:9px;font-weight:700;padding:2px 6px;border-radius:6px;letter-spacing:0.3px;line-height:1.4;">🇯🇵 JP Only</div>'
+    : '';
+  return '<div class="cat-card" style="position:relative;">' +
+    jpBadge +
     '<div class="cat-img-wrap">' +
       '<img loading="lazy" src="' + catImgPrimary(id) + '" alt="' + name + '" loading="lazy"' +
         ' onerror="this.onerror=null;this.parentNode.innerHTML=\'<span style=&quot;font-size:48px;line-height:80px;&quot;>🐱</span>\';">' +
@@ -851,9 +908,10 @@ var _svcSel = {};  // { key: price }
 
 var SVC_OPTIONS = [
   { key: 'unlock_cat',    get label() { return window.bcT('char_svc_unlock','ปลดล็อค'); },    byTier: true,  get note() { return null; } },
-  { key: 'upgrade_cat',   get label() { return window.bcT('char_svc_upgrade','อัพเกรด Max'); }, price: 15,    get note() { return null; } },
+  { key: 'upgrade_cat',      get label() { return window.bcT('char_svc_upgrade','อัพเกรด Max'); },        price: 15,  get note() { var lv = TIER_MAX_LVL[_svcCat && _svcCat.tier] || '?'; return 'Max Lv.' + lv + ' · ไม่มี + · ⚠️ ต้องปลดตัวละครก่อนถึงจะอัพเกรดได้'; } },
+  { key: 'upgrade_plus_cat', get label() { return window.bcT('char_svc_upgrade_plus','อัพเกรด Max +'); }, price: 100, get note() { var lv = TIER_MAX_LVL[_svcCat && _svcCat.tier] || '?'; return 'Max Lv.' + lv + ' พร้อม + สูงสุด · ⚠️ ต้องปลดตัวละครก่อนถึงจะอัพเกรดได้'; } },
   { key: 'trueform_cat',  label: 'True Form',              price: 15,     get note() { return window.bcT('char_svc_trueform_note','ใช้ได้เฉพาะตัวละครที่มีระบบ True Form และ Lv.30 ขึ้นไป'); } },
-  { key: 'ultraform_cat', label: 'Ultra Form',             price: 20,     get note() { return window.bcT('char_svc_ultraform_note','ใช้ได้เฉพาะตัวละครที่มีระบบ Ultra Form และต้องมี True Form แล้ว'); } },
+  { key: 'ultraform_cat', label: 'Ultra Form',             price: 20,     get note() { return window.bcT('char_svc_ultraform_note','ใช้ได้เฉพาะตัวละครที่มีระบบ Ultra Form · ต้องมี True Form แล้ว · Lv.60 ขึ้นไป'); } },
   { key: 'talents_cat',   label: 'Talent Max',             price: 20,     get note() { return window.bcT('char_svc_talents_note','ใช้ได้เฉพาะตัวละครที่มีระบบ Talent'); } },
 ];
 
@@ -899,12 +957,27 @@ function openSvcModal(id, tier, name) {
     '</label>';
   }).join('');
 
+  /* ── JP-Only warning ── */
+  var jpWarn = document.getElementById('svcJpWarn');
+  if (jpWarn) jpWarn.remove();
+  if (JP_ONLY_IDS.has(id)) {
+    var w = document.createElement('div');
+    w.id = 'svcJpWarn';
+    w.style.cssText = 'background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.4);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#FCA5A5;line-height:1.6;';
+    w.innerHTML = '🇯🇵 <strong style="color:#F87171;">ตัวละคร JP Only</strong> — มีเฉพาะใน Server JP เท่านั้น<br>ลูกค้าที่ใช้ <strong>Server EN/TH</strong> จะไม่ได้รับตัวละครนี้';
+    document.getElementById('svcList').insertAdjacentElement('beforebegin', w);
+  }
+
   var totalEl = document.getElementById('svcTotal');
   totalEl.textContent = '฿0';
   totalEl.classList.remove('has-total');
   document.getElementById('svcAddBtn').disabled = true;
-  document.getElementById('svcModal').style.display = 'block';
+  document.getElementById('svcModal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
+  var w = document.getElementById('bc-lang-widget');
+  if (w) w.style.display = 'none';
+  var listEl = document.getElementById('svcList');
+  if (listEl) listEl.scrollTop = 0;
 }
 
 function svcLabelClick(e, key) {
@@ -929,6 +1002,8 @@ function svcToggle(cb) {
 function closeSvcModal() {
   document.getElementById('svcModal').style.display = 'none';
   document.body.style.overflow = '';
+  var w = document.getElementById('bc-lang-widget');
+  if (w) w.style.display = '';
 }
 
 function addSelectedToCart() {
@@ -965,6 +1040,322 @@ function showToast(msg) {
   el.classList.add('toast-show');
   if (_toastTimer) clearTimeout(_toastTimer);
   _toastTimer = setTimeout(function(){ el.classList.remove('toast-show'); }, 3200);
+}
+
+// ── Cat grid helper (auto-generate from cat_ids, no names) ──────
+function buildCatGrid(catIds) {
+  if (!catIds || !catIds.length) return '';
+  var map = {};
+  if (typeof catsData !== 'undefined') {
+    catsData.forEach(function(c) { map[c[0]] = {tier: c[1], name: c[2]}; });
+  }
+  var items = catIds.map(function(id) {
+    var cat  = map[id] || {tier: 'N', name: '#' + id};
+    var name = cat.name;
+    var tier = cat.tier;
+    var src  = 'pictures/cats/' + id + '.png';
+    var safeN = name.replace(/'/g, "\\'");
+    var tierColor = {N:'#aaa',EX:'#7dd3fc',RR:'#86efac',SR:'#c4b5fd',UR:'#fcd34d',LR:'#fca5a5'}[tier] || '#aaa';
+    return '<div style="cursor:pointer;text-align:center;" title="' + name + ' (' + tier + ')" onclick="openCatLightbox(\'' + src + '\',\'' + safeN + '\',\'' + tier + '\')">'
+      + '<div style="position:relative;display:inline-block;">'
+      + '<img src="' + src + '" loading="lazy"'
+      + ' style="width:80px;height:80px;border-radius:8px;object-fit:cover;display:block;transition:transform 0.15s,box-shadow 0.15s;"'
+      + ' onmouseover="this.style.transform=\'scale(1.08)\';this.style.boxShadow=\'0 0 14px rgba(180,100,255,0.55)\'"'
+      + ' onmouseout="this.style.transform=\'\';this.style.boxShadow=\'\'"'
+      + ' onerror="this.parentElement.parentElement.style.display=\'none\'">'
+      + '<span style="position:absolute;top:3px;right:3px;padding:1px 5px;border-radius:6px;font-size:8px;font-weight:700;font-family:\'Chakra Petch\',sans-serif;background:rgba(0,0,0,0.65);color:' + tierColor + ';line-height:1.6;pointer-events:none;">' + tier + '</span>'
+      + '</div>'
+      + '<div style="font-size:11px;color:rgba(210,190,255,0.75);margin-top:4px;line-height:1.3;word-break:break-word;">' + name + '</div>'
+      + '</div>';
+  }).join('');
+  return '<details style="margin-top:10px;">'
+    + '<summary style="cursor:pointer;list-style:none;user-select:none;display:inline-flex;align-items:center;gap:8px;'
+    + 'padding:7px 16px;border-radius:20px;border:1px solid rgba(180,120,255,0.5);'
+    + 'background:linear-gradient(135deg,rgba(130,60,220,0.35),rgba(180,100,255,0.2));'
+    + 'font-family:\'Chakra Petch\',sans-serif;font-size:12px;font-weight:600;'
+    + 'color:#d8b4fe;box-shadow:0 0 10px rgba(160,80,255,0.2);transition:all 0.15s;"'
+    + ' onmouseover="this.style.background=\'linear-gradient(135deg,rgba(130,60,220,0.55),rgba(180,100,255,0.35))\';this.style.boxShadow=\'0 0 16px rgba(160,80,255,0.45)\'"'
+    + ' onmouseout="this.style.background=\'linear-gradient(135deg,rgba(130,60,220,0.35),rgba(180,100,255,0.2))\';this.style.boxShadow=\'0 0 10px rgba(160,80,255,0.2)\'"'
+    + '>🐱 ดูตัวละคร ' + catIds.length + ' ตัว — กดที่นี่</summary>'
+    + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;">' + items + '</div>'
+    + '</details>';
+}
+
+// ── Pack description (auto from actions) ───────────────────────
+function buildPackDesc(actions, count) {
+  if (!actions || !actions.length || !count) return '';
+  var parts = [];
+  if (actions.indexOf('unlock')    !== -1) parts.push('ปลดล็อค');
+  if (actions.indexOf('trueform')  !== -1) parts.push('True Form');
+  if (actions.indexOf('ultraform') !== -1) parts.push('Ultra Form');
+  if (actions.indexOf('upgrade')   !== -1) parts.push('Max Level');
+  if (!parts.length) return '';
+  return '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.6);margin-bottom:6px;">'
+    + parts.join(' + ') + ' <strong style="color:#EDE6FF;">' + count + ' ตัว</strong> ครบชุด'
+    + '</div>';
+}
+
+// ── Event Packs — dynamic render ──────────────────────────────
+(function loadEventPacks() {
+  fetch('/api/events')
+    .then(function(r) { return r.json(); })
+    .then(function(packs) {
+      var container = document.getElementById('event-packs-container');
+      if (!packs || !packs.length) { container.innerHTML = ''; return; }
+
+      // จัดกลุ่ม pack ที่มี group_id เดียวกันให้อยู่ section เดียว
+      var groups = [];
+      var groupMap = {};
+      packs.forEach(function(pack) {
+        var gid = pack.group_id || ('__single__' + pack.id);
+        if (groupMap.hasOwnProperty(gid)) {
+          groups[groupMap[gid]].packs.push(pack);
+        } else {
+          groupMap[gid] = groups.length;
+          groups.push({
+            isGroup: !!pack.group_id,
+            label: pack.group_label || pack.label,
+            color: pack.header_color || '#FCD34D',
+            catIds: pack.cat_ids || [],
+            packs: [pack]
+          });
+        }
+      });
+
+      // รวบรวม packs ทุกตัวที่มี expires_at
+      var expiryPacks = [];
+      packs.forEach(function(p) {
+        if (p.expires_at) {
+          expiryPacks.push({ label: p.label || p.id, expiry: new Date(p.expires_at) });
+        }
+      });
+
+      // ── Outer EVENT PROMOTION banner ──
+      var outerHtml = '';
+      outerHtml += '<div style="position:relative;margin-bottom:40px;border-radius:18px;overflow:hidden;background:linear-gradient(135deg,rgba(88,28,135,0.45) 0%,rgba(30,10,60,0.7) 50%,rgba(120,53,15,0.35) 100%);border:1.5px solid rgba(252,211,77,0.35);box-shadow:0 0 40px rgba(139,92,246,0.18),inset 0 1px 0 rgba(255,255,255,0.06);">';
+      // animated top border glow
+      outerHtml += '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#FCD34D,#c4b5fd,#FCD34D,transparent);animation:ev-shimmer 3s linear infinite;"></div>';
+      outerHtml += '<style>';
+      outerHtml += '@keyframes ev-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}';
+      outerHtml += '@keyframes ev-pulse{0%,100%{opacity:1}50%{opacity:.5}}';
+      outerHtml += '.ev-hd{padding:18px 28px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-bottom:1px solid rgba(252,211,77,0.15);}';
+      outerHtml += '.ev-body{padding:16px 28px 28px;}';
+      outerHtml += '.ev-title{font-family:"Russo One",sans-serif;font-size:22px;color:#FCD34D;letter-spacing:2px;text-shadow:0 0 20px rgba(252,211,77,0.5);}';
+      outerHtml += '.ev-collab{font-family:"Chakra Petch",sans-serif;font-size:12px;color:rgba(252,211,77,0.6);}';
+      outerHtml += '.ev-grid-group{display:grid;gap:16px;max-width:min(calc(66.67% - 8px),660px);margin:0 auto;}';
+      outerHtml += '.ev-grid-single{display:grid;gap:16px;max-width:min(calc(66.67% - 8px),660px);margin:0 auto;}';
+      outerHtml += '@media(max-width:600px){';
+      outerHtml += '.ev-hd{padding:14px 14px 12px;}';
+      outerHtml += '.ev-body{padding:12px 12px 18px;}';
+      outerHtml += '.ev-title{font-size:16px;letter-spacing:1px;}';
+      outerHtml += '.ev-collab{display:none;}';
+      outerHtml += '.ev-grid-group{max-width:100%;grid-template-columns:1fr!important;}';
+      outerHtml += '.ev-grid-single{max-width:100%;grid-template-columns:1fr!important;}';
+      outerHtml += '}';
+      outerHtml += '</style>';
+      // header bar
+      outerHtml += '<div class="ev-hd">';
+      outerHtml += '<div style="display:flex;align-items:center;gap:12px;">';
+      outerHtml += '<span class="ev-title">🎉 EVENT PROMOTION</span>';
+      outerHtml += '<span style="background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;font-family:\'Chakra Petch\',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:3px 10px;border-radius:20px;animation:ev-pulse 2s ease-in-out infinite;white-space:nowrap;">⚡ LIMITED</span>';
+      outerHtml += '</div>';
+      outerHtml += '<span class="ev-collab">Collaboration & Special Packs</span>';
+      outerHtml += '</div>';
+      // countdown — แถวใต้ header แสดงทุก pack ที่มี expires_at
+      if (expiryPacks.length) {
+        outerHtml += '<div style="padding:4px 28px 10px;border-bottom:1px solid rgba(252,211,77,0.15);display:flex;flex-wrap:wrap;justify-content:center;gap:8px 20px;">';
+        expiryPacks.forEach(function(ep, i) {
+          outerHtml += '<span id="ev-cd-' + i + '" style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(252,211,77,0.9);white-space:nowrap;">⏱ ' + ep.label + ' หมดใน ...</span>';
+        });
+        outerHtml += '</div>';
+      }
+      // packs area
+      outerHtml += '<div class="ev-body">';
+
+      var html = '';
+      groups.forEach(function(group) {
+        var color = group.color;
+        var hexToRgba = function(hex, a) {
+          var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+          return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+        };
+        var gradLine = hexToRgba(color, 0.35);
+        var catIds = group.catIds;
+        var catCount = catIds.length;
+        var catRange = catCount > 1 ? 'Cat #' + catIds[0] + '–' + catIds[catCount-1] + ' (' + catCount + ' ตัว)' : catCount + ' ตัว';
+
+        html += '<div style="margin-top:24px;">';
+        // section sub-header
+        html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">';
+        html += '<span style="font-family:\'Russo One\',sans-serif;font-size:13px;color:' + color + ';letter-spacing:1px;">🎁 ' + group.label.toUpperCase() + '</span>';
+        html += '<span style="height:1px;flex:1;background:linear-gradient(90deg,' + gradLine + ',transparent);"></span>';
+        html += '<span style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.35);">' + catRange + '</span>';
+        html += '</div>';
+
+        if (group.isGroup) {
+          // ── หลาย pack รวม section เดียว (เช่น Crazed + Manic) ──
+          html += '<div class="ev-grid-group" style="grid-template-columns:repeat(' + group.packs.length + ',1fr);">';
+          group.packs.forEach(function(pack) {
+            var unlockKey = 'ev_' + pack.id + '_unlock';
+            var safeLabel = (pack.label || '').replace(/'/g, "\\'");
+            var warnEsc  = (pack.warning_text || '').replace(/'/g, "\\'");
+            var bdrColor  = hexToRgba(color, 0.25);
+            var tagBg     = hexToRgba(color, 0.15);
+            var tagBdr    = hexToRgba(color, 0.35);
+            var btnGrad   = color === '#FCA5A5'
+              ? 'linear-gradient(135deg,#be123c,#f43f5e)'
+              : 'linear-gradient(135deg,#b45309,#f59e0b)';
+
+            html += '<div class="card" style="cursor:default;padding:24px 20px;border-color:' + bdrColor + ';">';
+            if (pack.banner_img) html += '<div class="card-picture"><img loading="lazy" src="' + pack.banner_img + '" style="width:100%;height:auto;display:block;" onerror="this.style.display=\'none\'"></div>';
+            html += '<div class="card-tag" style="background:' + tagBg + ';color:' + color + ';border-color:' + tagBdr + ';">SET</div>';
+            html += '<div class="card-name" style="font-size:15px;font-family:\'Russo One\',sans-serif;margin-bottom:8px;">' + (pack.label || '') + '</div>';
+            html += buildPackDesc(pack.actions_unlock, (pack.cat_ids||[]).length);
+            html += buildCatGrid(pack.cat_ids);
+            if (pack.warning_text) {
+              html += '<div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.28);border-radius:8px;padding:7px 10px;margin-top:8px;font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:#FCD34D;line-height:1.5;">' + pack.warning_text + '</div>';
+            }
+            if (pack.original_price_unlock) {
+              html += '<div style="margin-top:10px;"><span style="font-size:11px;color:rgba(210,190,255,0.45);text-decoration:line-through;">ราคาปกติ ฿' + pack.original_price_unlock + '</span></div>';
+            }
+            html += '<div class="card-price" style="margin-top:4px;"><span class="price-now">฿' + pack.price_unlock + '</span></div>';
+            html += '<div style="margin-top:auto;padding-top:14px;">';
+            if (pack.warning_text) {
+              html += '<button class="btn btn-primary" style="width:100%;background:' + btnGrad + ';" onclick="openEventConfirm(\'' + unlockKey + '\',\'' + safeLabel + '\',' + pack.price_unlock + ',\'' + warnEsc + '\')">+ ใส่ตะกร้า</button>';
+            } else {
+              html += '<button class="btn btn-primary" style="width:100%;background:' + btnGrad + ';" onclick="addAllPackage(\'' + unlockKey + '\',\'' + safeLabel + '\',' + pack.price_unlock + ')">+ ใส่ตะกร้า</button>';
+            }
+            html += '</div></div>';
+          });
+          html += '</div>';
+
+        } else {
+          // ── Pack เดี่ยว อาจมี unlock + max ──
+          var pack = group.packs[0];
+          var hasMax = !!pack.price_max;
+          var unlockKey = 'ev_' + pack.id + '_unlock';
+          var safeLabel = (pack.label || '').replace(/'/g, "\\'");
+          var imgUnlock = pack.banner_img || '';
+          var imgMax    = pack.banner_img_max || pack.banner_img || '';
+          var cols = hasMax ? 'repeat(2,1fr)' : '1fr';
+
+          html += '<div class="ev-grid-single" style="grid-template-columns:' + cols + ';">';
+
+          // Unlock card
+          html += '<div class="card" style="cursor:default;padding:24px 20px;border-color:rgba(252,211,77,0.3);">';
+          if (imgUnlock) html += '<div class="card-picture"><img loading="lazy" src="' + imgUnlock + '" style="width:100%;height:auto;display:block;" onerror="this.style.display=\'none\'"></div>';
+          html += '<div class="card-tag" style="background:rgba(252,211,77,0.15);color:#FCD34D;border-color:rgba(252,211,77,0.4);">SET</div>';
+          html += '<div class="card-name" style="font-size:15px;font-family:\'Russo One\',sans-serif;margin-bottom:8px;">' + (pack.label || '') + '</div>';
+          html += buildPackDesc(pack.actions_unlock, (pack.cat_ids||[]).length);
+          html += buildCatGrid(pack.cat_ids);
+          if (pack.original_price_unlock) {
+            html += '<div style="margin-top:10px;"><span style="font-size:11px;color:rgba(210,190,255,0.45);text-decoration:line-through;">ราคาปกติ ฿' + pack.original_price_unlock + '</span></div>';
+          }
+          html += '<div class="card-price" style="margin-top:4px;"><span class="price-now">฿' + pack.price_unlock + '</span></div>';
+          html += '<div style="margin-top:auto;padding-top:14px;">';
+          html += '<button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#b45309,#f59e0b);" onclick="addAllPackage(\'' + unlockKey + '\',\'' + safeLabel + '\',' + pack.price_unlock + ')">+ ใส่ตะกร้า</button>';
+          html += '</div></div>';
+
+          // Max card
+          if (hasMax) {
+            var maxKey = 'ev_' + pack.id + '_max';
+            var safeLabelMax = safeLabel + ' + Max';
+            html += '<div class="card" style="cursor:default;padding:24px 20px;border-color:rgba(252,211,77,0.5);">';
+            if (imgMax) html += '<div class="card-picture"><img loading="lazy" src="' + imgMax + '" style="width:100%;height:auto;display:block;" onerror="this.style.display=\'none\'"></div>';
+            html += '<div class="card-tag" style="background:rgba(252,211,77,0.25);color:#FCD34D;border-color:rgba(252,211,77,0.6);">SET+</div>';
+            html += '<div class="card-name" style="font-size:15px;font-family:\'Russo One\',sans-serif;margin-bottom:8px;">' + (pack.label_max || (pack.label || '') + ' + Max') + '</div>';
+            html += buildPackDesc(pack.actions_max, (pack.cat_ids||[]).length);
+            html += buildCatGrid(pack.cat_ids);
+            if (pack.original_price_max) {
+              html += '<div style="margin-top:10px;"><span style="font-size:11px;color:rgba(210,190,255,0.45);text-decoration:line-through;">ราคาปกติ ฿' + pack.original_price_max + '</span></div>';
+            }
+            html += '<div class="card-price" style="margin-top:4px;"><span class="price-now">฿' + pack.price_max + '</span></div>';
+            html += '<div style="margin-top:auto;padding-top:14px;">';
+            html += '<button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#92400e,#d97706);" onclick="addAllPackage(\'' + maxKey + '\',\'' + safeLabelMax + '\',' + pack.price_max + ')">+ ใส่ตะกร้า</button>';
+            html += '</div></div>';
+          }
+          html += '</div>';
+        }
+
+        html += '</div><div style="height:1px;background:rgba(255,255,255,0.06);margin-top:24px;"></div>'; // close wrapper + divider
+      });
+      // ตัด divider บรรทัดสุดท้ายออก
+      var lastDivider = html.lastIndexOf('<div style="height:1px');
+      if (lastDivider !== -1) html = html.slice(0, lastDivider);
+      // ปิด packs area + outer banner
+      outerHtml += html + '</div></div>';
+      container.innerHTML = outerHtml;
+
+      // ── Countdown Timer (ทุก pack ที่มี expires_at) ──
+      if (expiryPacks.length) {
+        if (window._evCountdownTimer) clearInterval(window._evCountdownTimer);
+        var pad2 = function(n) { return n < 10 ? '0' + n : '' + n; };
+        function _evTick() {
+          var anyActive = false;
+          expiryPacks.forEach(function(ep, i) {
+            var el = document.getElementById('ev-cd-' + i);
+            if (!el) return;
+            var diff = ep.expiry - Date.now();
+            if (diff <= 0) {
+              el.textContent = ep.label + ' หมดเวลาแล้ว';
+              el.style.color = 'rgba(239,68,68,0.9)';
+            } else {
+              anyActive = true;
+              var d = Math.floor(diff / 86400000);
+              var h = Math.floor((diff % 86400000) / 3600000);
+              var m = Math.floor((diff % 3600000) / 60000);
+              var s = Math.floor((diff % 60000) / 1000);
+              var time = (d > 0 ? d + ' วัน ' : '') + pad2(h) + ':' + pad2(m) + ':' + pad2(s);
+              el.textContent = '⏱ ' + ep.label + ' หมดใน ' + time;
+            }
+          });
+          if (!anyActive) {
+            clearInterval(window._evCountdownTimer);
+            setTimeout(function() { location.reload(); }, 3000);
+          }
+        }
+        _evTick();
+        window._evCountdownTimer = setInterval(_evTick, 1000);
+      }
+    })
+    .catch(function() {
+      document.getElementById('event-packs-container').innerHTML = '';
+    });
+})();
+
+function openCatLightbox(src, name, tier) {
+  var tierStyles = {
+    'N':  {bg:'rgba(150,150,150,0.2)', border:'rgba(180,180,180,0.4)', color:'#ccc',    label:'Normal'},
+    'EX': {bg:'rgba(100,180,255,0.15)',border:'rgba(100,180,255,0.4)', color:'#7dd3fc', label:'Special'},
+    'RR': {bg:'rgba(100,220,130,0.15)',border:'rgba(100,220,130,0.4)', color:'#86efac', label:'Rare'},
+    'SR': {bg:'rgba(160,130,255,0.15)',border:'rgba(160,130,255,0.4)', color:'#c4b5fd', label:'Super Rare'},
+    'UR': {bg:'rgba(255,180,50,0.15)', border:'rgba(255,180,50,0.4)',  color:'#fcd34d', label:'Uber Rare'},
+    'LR': {bg:'rgba(255,80,80,0.15)',  border:'rgba(255,80,80,0.4)',   color:'#fca5a5', label:'Legend Rare'},
+  };
+  var s = tierStyles[tier] || tierStyles['N'];
+  var tierEl = document.getElementById('catLightboxTier');
+  tierEl.textContent = s.label;
+  tierEl.style.cssText = 'padding:3px 14px;border-radius:20px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;'
+    + 'background:' + s.bg + ';border:1px solid ' + s.border + ';color:' + s.color + ';';
+  document.getElementById('catLightboxImg').src = src;
+  document.getElementById('catLightboxName').textContent = name;
+  document.getElementById('catLightbox').style.display = 'flex';
+}
+function closeCatLightbox() {
+  document.getElementById('catLightbox').style.display = 'none';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeCatLightbox();
+});
+
+function openEventConfirm(key, name, price, warning) {
+  var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  if (cart.find(function(i) { return i.key === key; })) {
+    showToast('⚠ ' + name + ' อยู่ในตะกร้าแล้ว!'); return;
+  }
+  if (!warning || confirm(warning + '\n\nต้องการเพิ่ม ' + name + ' ลงตะกร้าหรือไม่?')) {
+    addAllPackage(key, name, price);
+  }
 }
 
 // ── Legacy cart helper ─────────────────────────────────────────
@@ -1251,15 +1642,15 @@ document.querySelectorAll('.nav-links a').forEach(function(link) {
 
 document.addEventListener('bc-lang-changed', function() {
   if (window.catsData) applyFilters();
-  if (document.getElementById('svcModal').style.display === 'block' && _svcCat) {
+  if (document.getElementById('svcModal').style.display === 'flex' && _svcCat) {
     openSvcModal(_svcCat.id, _svcCat.tier, _svcCat.name);
   }
 });
 </script>
 
 <script src="assets/auth.js?v=20260717"></script>
-<script src="assets/animations.js"></script>
-<script src="assets/nav.js"></script>
-<script src="assets/i18n.js"></script>
+<script src="assets/animations.js?v=2"></script>
+<script src="assets/nav.js?v=4"></script>
+<script src="assets/i18n.js?v=2"></script>
 </body>
 </html>

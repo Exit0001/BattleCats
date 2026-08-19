@@ -5,7 +5,7 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>กระเป๋าเงิน - Battle Cats Shop</title>
-  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/styles.css?v=2">
   <style>
     .wallet-hero {
       text-align: center;
@@ -224,6 +224,35 @@
 </head>
 <body>
 
+<!-- LINE OpenChat Banner -->
+<div id="line-banner" style="display:none;background:#06C755;color:#fff;z-index:9999;font-family:'Chakra Petch',sans-serif;font-size:14px;">
+  <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 16px;padding:9px 48px 9px 16px;">
+    <span>💬 สามารถทักเข้า OpenChat มาสอบถามพูดคุยกันได้</span>
+    <a href="https://line.me/ti/g2/PUmYGL3dhCeY4UbjU6QuHIrVEg7f2G7xS21voQ" target="_blank" rel="noopener"
+       style="color:#fff;font-weight:700;text-decoration:underline;white-space:nowrap;">คลิกเลย</a>
+    <button onclick="document.getElementById('line-qr-modal').style.display='flex';"
+            style="background:rgba(0,0,0,0.25);border:1.5px solid rgba(255,255,255,0.5);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;border-radius:6px;padding:3px 9px;cursor:pointer;white-space:nowrap;">📷 QR Code</button>
+    <label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;opacity:0.9;cursor:pointer;white-space:nowrap;background:rgba(0,0,0,0.15);border-radius:6px;padding:3px 8px;">
+      <input type="checkbox" id="line-banner-no-show" style="cursor:pointer;accent-color:#fff;width:14px;height:14px;"> ไม่แสดงอีก
+    </label>
+  </div>
+  <button onclick="if(document.getElementById('line-banner-no-show').checked)localStorage.setItem('lineBannerHidden','1');document.getElementById('line-banner').style.display='none';"
+          style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;" aria-label="ปิด">×</button>
+</div>
+<script>if(!localStorage.getItem('lineBannerHidden'))document.getElementById('line-banner').style.display='block';</script>
+
+<!-- QR Code Modal -->
+<div id="line-qr-modal" onclick="if(event.target===this)this.style.display='none';"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:99999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:18px;padding:20px;text-align:center;max-width:280px;width:90%;position:relative;">
+    <button onclick="document.getElementById('line-qr-modal').style.display='none';"
+            style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:22px;cursor:pointer;color:#333;line-height:1;">×</button>
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:14px;font-weight:700;color:#06C755;margin-bottom:12px;">💬 LINE OpenChat</div>
+    <img src="pictures/qr.jpg" alt="LINE QR Code" style="width:100%;max-width:220px;border-radius:10px;">
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#555;margin-top:10px;">สแกน QR เพื่อเข้ากลุ่ม</div>
+  </div>
+</div>
+
 <nav class="navbar" id="mainNav">
   <div class="nav-container">
     <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()" aria-label="เมนู">
@@ -318,6 +347,41 @@
 
     <!-- TrueMoney panel -->
     <div class="panel" id="panelTrueMoney">
+
+      <!-- Calculator -->
+      <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:14px;padding:16px 18px;margin-bottom:18px;">
+        <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;letter-spacing:0.5px;margin-bottom:12px;">🧮 คำนวณซองอั่งเป่า</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="flex:1;">
+            <div style="font-size:13px;color:rgba(210,190,255,0.7);margin-bottom:6px;">อยากได้รับ (บาท)</div>
+            <input type="number" id="calcDesired" min="1" step="1" placeholder="เช่น 50"
+              style="width:100%;background:rgba(255,255,255,0.06);border:1.5px solid rgba(251,191,36,0.3);border-radius:10px;padding:11px 13px;font-family:'Chakra Petch',sans-serif;font-size:17px;color:#fff;outline:none;box-sizing:border-box;transition:border-color 0.2s;"
+              oninput="calcAngpao()" onfocus="this.style.borderColor='rgba(251,191,36,0.7)'" onblur="this.style.borderColor='rgba(251,191,36,0.3)'">
+          </div>
+          <div style="color:rgba(210,190,255,0.35);font-size:20px;padding-top:18px;">→</div>
+          <div style="flex:1;text-align:center;">
+            <div style="font-size:13px;color:rgba(210,190,255,0.7);margin-bottom:6px;">สร้างอั่งเป่า</div>
+            <div id="calcResult" style="font-family:'Russo One',sans-serif;font-size:28px;color:#FCD34D;">—</div>
+          </div>
+        </div>
+        <div id="calcBreakdown" style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-top:10px;text-align:center;min-height:16px;"></div>
+      </div>
+
+      <!-- วิดีโอสอนวิธีส่งซองอั่งเป่า -->
+      <div style="margin-bottom:18px;border:1px solid rgba(255,120,0,0.30);border-radius:10px;overflow:hidden;">
+        <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('span:last-child').style.transform=this.nextElementSibling.style.display==='block'?'rotate(90deg)':'rotate(0deg)'" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(255,120,0,0.12);border:none;cursor:pointer;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;color:#FCA269;text-align:left;">
+          <span>🎬 วิธีส่งซองอั่งเป่า TrueWallet</span>
+          <span style="font-size:18px;transition:transform 0.2s;display:inline-block;">›</span>
+        </button>
+        <div style="display:none;">
+          <div style="position:relative;width:100%;padding-bottom:56.25%;background:#000;">
+            <iframe src="https://www.youtube.com/embed/wygU82jTSsI?rel=0&modestbranding=1"
+              style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+        </div>
+      </div>
+
       <div class="form-group">
         <label class="form-label" data-i18n="wl_tw_code_label">ลิงก์หรือโค้ดซองอั่งเป่า TrueWallet</label>
         <input type="text" class="form-input" id="tmVoucher" placeholder="https://gift.truemoney.com/campaign/?v=XXXXXX">
@@ -366,6 +430,23 @@ function loadBalance() {
     .catch(function() {
       document.getElementById('balanceSub').textContent = window.bcT('wl_bal_load_fail','โหลดไม่สำเร็จ');
     });
+}
+
+// ── Angpao calculator ─────────────────────────────────────────────
+function calcAngpao() {
+  var desired = parseFloat(document.getElementById('calcDesired').value);
+  var result = document.getElementById('calcResult');
+  var breakdown = document.getElementById('calcBreakdown');
+  if (!desired || desired <= 0) { result.textContent = '—'; breakdown.textContent = ''; return; }
+  var angpao = Math.ceil(desired);
+  for (var i = 0; i < 50; i++) {
+    var fee = Math.min(Math.ceil(angpao * 0.029), 20);
+    if (angpao - fee >= desired) break;
+    angpao++;
+  }
+  var fee = Math.min(Math.ceil(angpao * 0.029), 20);
+  result.textContent = '฿' + angpao;
+  breakdown.textContent = 'ค่าธรรมเนียม ฿' + fee + ' · ได้รับ ฿' + (angpao - fee);
 }
 
 // ── Tab switch ────────────────────────────────────────────────────
@@ -495,7 +576,7 @@ function updateBalance(bal) {
 initWallet();
 </script>
 <script src="assets/auth.js?v=20260717"></script>
-<script src="assets/nav.js"></script>
-<script src="assets/i18n.js"></script>
+<script src="assets/nav.js?v=4"></script>
+<script src="assets/i18n.js?v=2"></script>
 </body>
 </html>

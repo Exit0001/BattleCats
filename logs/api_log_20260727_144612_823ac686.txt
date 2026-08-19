@@ -1,0 +1,41 @@
+============================================================
+เวลา      : 2026-07-27 14:46:12
+Transfer  : 823ac6866
+Confirm   : 2556
+Country   : en
+============================================================
+[OP] เพิ่มของ 1 รายการ
+[BCSFE] ⬇  Downloading save (transfer=823ac6... cc=en)
+[BCSFE] ❌ from_codes exception: FailedToLoadError: Failed to load save file
+[BCSFE] TRACEBACK:
+Traceback (most recent call last):
+  File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\core\io\save.py", line 139, in load_wrapper
+    self.load()
+    ~~~~~~~~~^^
+  File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\core\io\save.py", line 1261, in load
+    assert self.data.read_int() == 140300
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\runner.py", line 292, in _download_save
+    handler, _ = core.ServerHandler.from_codes(
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.transfer, self.confirm, cc, gv, print=False, save_backup=backup
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\core\server\server_handler.py", line 569, in from_codes
+    save_file = core.SaveFile(core.Data(save_data), cc=cc)
+  File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\core\io\save.py", line 63, in __init__
+    self.load_wrapper()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\modpo\OneDrive\เดสก์ท็อป\btc\BattleCats\.venv\Lib\site-packages\bcsfe\core\io\save.py", line 143, in load_wrapper
+    raise FailedToLoadError(
+        core.core_data.local_manager.get_key("failed_to_load_save")
+    ) from e
+bcsfe.core.io.save.FailedToLoadError: Failed to load save file
+
+[BCSFE] ❌ Failed to load save file

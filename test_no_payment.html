@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🧪 ทดสอบระบบ - Battle Cats Shop</title>
-  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/styles.css?v=2">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     /* ── Test-specific styles (dark theme) ── */
@@ -544,6 +544,7 @@
     </div>
     <div style="margin-bottom:16px;"><label class="form-label">Cat IDs (เว้นวรรค, range เช่น 1-43)</label><input type="text" id="ug-ids" class="form-input" placeholder="เช่น 1 2 3 192  หรือ  1-43"></div>
     <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="runCatAction('ug','upgrade/characters','⬆️ อัพเกรด')">⬆️ อัพเกรด Max (ระบุ ID)</button>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:10px;background:linear-gradient(135deg,#7c3aed,#db2777);" onclick="runCatAction('ug','upgrade/plus/characters','⬆️✨ อัพเกรด Max+')">⬆️✨ อัพเกรด Max + (base+plus สูงสุด)</button>
     <div id="ug-result" style="display:none;"></div>
   </div>
 
@@ -1017,8 +1018,8 @@
   padding:13px 20px;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#EDE6FF;
   box-shadow:0 8px 32px rgba(0,0,0,0.5);max-width:320px;transition:opacity 0.3s;"></div>
 
-<script src="assets/supabase-client.js"></script>
-<script src="assets/characters_data.js"></script>
+<script src="assets/supabase-client.js?v=2"></script>
+<script src="assets/characters_data.js?v=2"></script>
 <script>
 var testCart   = [];
 var testOrders = 0;
@@ -2814,6 +2815,6 @@ async function runDupeSave(event) {
 }
 </script>
 <script src="assets/auth.js?v=20260613"></script>
-<script src="assets/animations.js"></script>
+<script src="assets/animations.js?v=2"></script>
 </body>
 </html>

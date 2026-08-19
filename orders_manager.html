@@ -5,7 +5,7 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>📦 จัดการออเดอร์ - Battle Cats Shop</title>
-  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/styles.css?v=2">
   <style>
     .order-card {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -327,6 +327,32 @@
     💡 คลิกเลือกออเดอร์จากรายการด้านซ้าย แล้วใช้งาน BCSFE ได้เลย - สะดวกและรวดเร็ว!
   </div>
 
+  <!-- ── Revenue Chart ── -->
+  <div class="bcsfe-section" style="margin-bottom: 24px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+      <h3 style="color:#667eea;margin:0;">📈 กราฟรายได้</h3>
+      <div style="display:flex;gap:6px;">
+        <button id="chart-range-7"  onclick="loadRevenueChart(7)"  style="padding:5px 14px;font-size:12px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.3);border-radius:8px;color:#C4B5FD;cursor:pointer;font-family:'Chakra Petch',sans-serif;">7 วัน</button>
+        <button id="chart-range-14" onclick="loadRevenueChart(14)" style="padding:5px 14px;font-size:12px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.3);border-radius:8px;color:#C4B5FD;cursor:pointer;font-family:'Chakra Petch',sans-serif;">14 วัน</button>
+        <button id="chart-range-30" onclick="loadRevenueChart(30)" style="padding:5px 14px;font-size:12px;background:rgba(139,92,246,0.4);border:1px solid rgba(139,92,246,0.7);border-radius:8px;color:#EDE6FF;cursor:pointer;font-family:'Chakra Petch',sans-serif;font-weight:700;">30 วัน</button>
+      </div>
+    </div>
+    <!-- Legend -->
+    <div style="display:flex;gap:18px;margin-bottom:12px;flex-wrap:wrap;align-items:center;">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(210,190,255,0.7);font-family:'Chakra Petch',sans-serif;">
+        <span style="display:inline-block;width:22px;height:2px;background:#8B5CF6;border-radius:2px;"></span> รายได้ (฿)
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(210,190,255,0.7);font-family:'Chakra Petch',sans-serif;">
+        <span style="display:inline-block;width:22px;height:2px;background:#34D399;border-radius:2px;"></span> จำนวนออเดอร์
+      </div>
+      <div style="font-size:11px;color:rgba(210,190,255,0.3);margin-left:auto;font-family:'Chakra Petch',sans-serif;">แต่ละเส้น normalize เป็น 0–100%</div>
+    </div>
+    <!-- Chart -->
+    <div id="revenueChart" style="position:relative;min-height:80px;"></div>
+    <!-- Payment method breakdown -->
+    <div id="revenueBreakdown"></div>
+  </div>
+
   <!-- ── Revenue Summary ── -->
   <div class="bcsfe-section" style="margin-bottom: 24px;">
     <h3 style="color: #667eea; margin-bottom: 15px;">📊 สรุปยอดรายได้รายเดือน</h3>
@@ -476,7 +502,7 @@
 </div>
 </div><!-- /adminMain -->
 
-<script src="assets/supabase-client.js"></script>
+<script src="assets/supabase-client.js?v=2"></script>
 <script>
 const ITEM_CONFIG = {
   cat_food:       { name: "Cat Food", subtypes: null },
@@ -502,6 +528,7 @@ function showAdminPanel() {
   document.getElementById('authGate').style.display  = 'none';
   document.getElementById('adminMain').style.display = 'block';
   loadOrders();
+  loadRevenueChart(30);
   // ตั้งค่าเดือน/วันปัจจุบันให้ช่องเลือกโดย default
   var now = new Date();
   var pad2 = function (n) { return String(n).padStart(2, '0'); };
@@ -561,6 +588,268 @@ window.addEventListener('load', function () {
   }
 });
 
+// ── Revenue Chart ────────────────────────────────────────────
+var _chartRange = 30;
+
+async function loadRevenueChart(range) {
+  _chartRange = range;
+  // Update range button styles
+  [7, 14, 30].forEach(function (r) {
+    var btn = document.getElementById('chart-range-' + r);
+    if (!btn) return;
+    if (r === range) {
+      btn.style.background = 'rgba(139,92,246,0.4)';
+      btn.style.borderColor = 'rgba(139,92,246,0.7)';
+      btn.style.color = '#EDE6FF';
+      btn.style.fontWeight = '700';
+    } else {
+      btn.style.background = 'rgba(139,92,246,0.08)';
+      btn.style.borderColor = 'rgba(139,92,246,0.3)';
+      btn.style.color = '#C4B5FD';
+      btn.style.fontWeight = '';
+    }
+  });
+
+  var chartEl = document.getElementById('revenueChart');
+  chartEl.innerHTML = '<div style="color:rgba(210,190,255,0.4);text-align:center;padding:40px;font-family:\'Chakra Petch\',sans-serif;">⏳ กำลังโหลด...</div>';
+  document.getElementById('revenueBreakdown').innerHTML = '';
+
+  var backendURL = document.getElementById('backendURL').value.trim() || 'http://localhost:8000';
+  var today = new Date();
+  var days = [];
+  for (var i = range - 1; i >= 0; i--) {
+    var d = new Date(today);
+    d.setDate(d.getDate() - i);
+    days.push({ y: d.getFullYear(), m: d.getMonth() + 1, d: d.getDate() });
+  }
+
+  try {
+    var promises = days.map(function (day) {
+      return fetch(backendURL + '/api/admin/revenue/daily?year=' + day.y + '&month=' + day.m + '&day=' + day.d)
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; });
+    });
+    var results = await Promise.all(promises);
+    _renderRevenueChart(days, results);
+    _renderPaymentBreakdown(results);
+  } catch (e) {
+    chartEl.innerHTML = '<div style="color:#f87171;font-family:\'Chakra Petch\',sans-serif;">❌ โหลดข้อมูลไม่ได้</div>';
+  }
+}
+
+function _renderRevenueChart(days, results) {
+  var n = days.length;
+  var revenues = results.map(function (r) { return r ? (r.total_revenue || 0) : 0; });
+  var orders   = results.map(function (r) { return r ? (r.total_orders  || 0) : 0; });
+
+  var maxRev = Math.max.apply(null, revenues) || 1;
+  var maxOrd = Math.max.apply(null, orders)   || 1;
+
+  // SVG viewport
+  var VW = 600, VH = 190;
+  var PL = 8, PR = 8, PT = 10, PB = 26;
+  var cW = VW - PL - PR, cH = VH - PT - PB;
+
+  function xOf(i) { return PL + (n <= 1 ? cW / 2 : i / (n - 1) * cW); }
+  function yRev(v) { return PT + cH - (v / maxRev * cH); }
+  function yOrd(v) { return PT + cH - (v / maxOrd * cH); }
+
+  function pts(vals, yFn) {
+    return vals.map(function (v, i) { return xOf(i).toFixed(1) + ',' + yFn(v).toFixed(1); }).join(' ');
+  }
+  function polyPath(vals, yFn) {
+    var base = (PT + cH).toFixed(1);
+    return 'M' + pts(vals, yFn).replace(/(\S+,\S+)(?: (\S+,\S+))*/g, function (m) { return m.split(' ').join(' L'); })
+      + ' L' + xOf(n - 1).toFixed(1) + ',' + base
+      + ' L' + xOf(0).toFixed(1) + ',' + base + ' Z';
+  }
+  // Build smooth paths using polyline points
+  function linePath(vals, yFn) {
+    return vals.map(function (v, i) {
+      return (i === 0 ? 'M' : 'L') + xOf(i).toFixed(1) + ',' + yFn(v).toFixed(1);
+    }).join(' ');
+  }
+  function areaPath(vals, yFn) {
+    var base = (PT + cH).toFixed(1);
+    return linePath(vals, yFn)
+      + ' L' + xOf(n - 1).toFixed(1) + ',' + base
+      + ' L' + xOf(0).toFixed(1) + ',' + base + ' Z';
+  }
+
+  // Horizontal grid lines
+  var grid = [0.25, 0.5, 0.75, 1.0].map(function (p) {
+    var y = (PT + cH * (1 - p)).toFixed(1);
+    return '<line x1="' + PL + '" y1="' + y + '" x2="' + (PL + cW) + '" y2="' + y
+      + '" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>';
+  }).join('');
+
+  // X-axis date labels (up to 7 evenly spaced)
+  var lblCount = Math.min(n, 7);
+  var xlabels = Array.from({ length: lblCount }, function (_, li) {
+    var idx = Math.round(li / (lblCount - 1 || 1) * (n - 1));
+    var dy = days[idx];
+    return '<text x="' + xOf(idx).toFixed(1) + '" y="' + (VH - 6) + '"'
+      + ' text-anchor="middle" fill="rgba(210,190,255,0.35)" font-size="10"'
+      + ' font-family="Chakra Petch,sans-serif">' + dy.d + '/' + dy.m + '</text>';
+  }).join('');
+
+  // Endpoint dots (last point emphasized)
+  var dotR = '<circle cx="' + xOf(n-1).toFixed(1) + '" cy="' + yRev(revenues[n-1]).toFixed(1) + '" r="3.5" fill="#8B5CF6"/>';
+  var dotO = '<circle cx="' + xOf(n-1).toFixed(1) + '" cy="' + yOrd(orders[n-1]).toFixed(1) + '" r="3.5" fill="#34D399"/>';
+
+  var svg = [
+    '<svg id="rev-svg" viewBox="0 0 ' + VW + ' ' + VH + '" style="width:100%;height:190px;display:block;overflow:visible;cursor:crosshair;">',
+    '<defs>',
+    '<linearGradient id="gr-rev" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.25"/><stop offset="100%" stop-color="#8B5CF6" stop-opacity="0.02"/></linearGradient>',
+    '<linearGradient id="gr-ord" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#34D399" stop-opacity="0.18"/><stop offset="100%" stop-color="#34D399" stop-opacity="0.02"/></linearGradient>',
+    '</defs>',
+    grid,
+    // Baseline
+    '<line x1="' + PL + '" y1="' + (PT + cH) + '" x2="' + (PL + cW) + '" y2="' + (PT + cH) + '" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>',
+    // Area fills
+    '<path d="' + areaPath(revenues, yRev) + '" fill="url(#gr-rev)"/>',
+    '<path d="' + areaPath(orders,   yOrd) + '" fill="url(#gr-ord)"/>',
+    // Lines
+    '<path d="' + linePath(revenues, yRev) + '" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>',
+    '<path d="' + linePath(orders,   yOrd) + '" fill="none" stroke="#34D399" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>',
+    dotR, dotO,
+    xlabels,
+    // Crosshair (hidden)
+    '<g id="rev-xhair" style="display:none;">',
+    '<line id="rev-vl" stroke="rgba(255,255,255,0.18)" stroke-width="1" stroke-dasharray="3,3"/>',
+    '<circle id="rev-dr" r="4.5" fill="#8B5CF6" stroke="rgba(8,4,20,0.9)" stroke-width="2"/>',
+    '<circle id="rev-do" r="4.5" fill="#34D399" stroke="rgba(8,4,20,0.9)" stroke-width="2"/>',
+    '</g>',
+    '</svg>',
+    '<div id="rev-tip" style="position:absolute;background:rgba(8,4,20,0.95);border:1px solid rgba(139,92,246,0.4);border-radius:8px;padding:8px 12px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;pointer-events:none;display:none;z-index:20;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.5);"></div>',
+  ].join('');
+
+  var chartEl = document.getElementById('revenueChart');
+  chartEl.innerHTML = svg;
+
+  // Store data for hover
+  chartEl._chartData = { days: days, revenues: revenues, orders: orders, VW: VW, VH: VH, PL: PL, PR: PR, PT: PT, PB: PB, cW: cW, cH: cH, n: n, maxRev: maxRev, maxOrd: maxOrd };
+
+  var svgEl = document.getElementById('rev-svg');
+  svgEl.addEventListener('mousemove', _chartHover);
+  svgEl.addEventListener('mouseleave', function () {
+    document.getElementById('rev-xhair').style.display = 'none';
+    document.getElementById('rev-tip').style.display = 'none';
+  });
+}
+
+function _chartHover(e) {
+  var chartEl = document.getElementById('revenueChart');
+  var cd = chartEl._chartData;
+  if (!cd) return;
+  var svgEl = document.getElementById('rev-svg');
+
+  // แปลง client coords → SVG viewBox coords อย่างถูกต้อง
+  var pt = svgEl.createSVGPoint();
+  pt.x = e.clientX;
+  pt.y = e.clientY;
+  var svgPt = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+  var svgX = svgPt.x;
+
+  var idx = Math.round((svgX - cd.PL) / cd.cW * (cd.n - 1));
+  idx = Math.max(0, Math.min(cd.n - 1, idx));
+
+  function xOf(i) { return cd.PL + (cd.n <= 1 ? cd.cW / 2 : i / (cd.n - 1) * cd.cW); }
+  function yRev(v) { return cd.PT + cd.cH - (v / cd.maxRev * cd.cH); }
+  function yOrd(v) { return cd.PT + cd.cH - (v / cd.maxOrd * cd.cH); }
+
+  var xPos = xOf(idx);
+  document.getElementById('rev-vl').setAttribute('x1', xPos.toFixed(1));
+  document.getElementById('rev-vl').setAttribute('x2', xPos.toFixed(1));
+  document.getElementById('rev-vl').setAttribute('y1', cd.PT);
+  document.getElementById('rev-vl').setAttribute('y2', cd.PT + cd.cH);
+  document.getElementById('rev-dr').setAttribute('cx', xPos.toFixed(1));
+  document.getElementById('rev-dr').setAttribute('cy', yRev(cd.revenues[idx]).toFixed(1));
+  document.getElementById('rev-do').setAttribute('cx', xPos.toFixed(1));
+  document.getElementById('rev-do').setAttribute('cy', yOrd(cd.orders[idx]).toFixed(1));
+  document.getElementById('rev-xhair').style.display = '';
+
+  var day = cd.days[idx];
+  var tip = document.getElementById('rev-tip');
+  tip.innerHTML = '<div style="color:rgba(210,190,255,0.5);margin-bottom:5px;font-size:11px;">'
+    + day.d + '/' + day.m + '/' + day.y + '</div>'
+    + '<div style="color:#A78BFA;">💰 ฿' + cd.revenues[idx].toLocaleString() + '</div>'
+    + '<div style="color:#34D399;">📦 ' + cd.orders[idx] + ' ออเดอร์</div>';
+
+  // ตำแหน่ง tooltip relative กับ container ของกราฟ
+  var containerRect = chartEl.getBoundingClientRect();
+  var tipX = (e.clientX - containerRect.left) + 14;
+  var tipY = (e.clientY - containerRect.top) - 30;
+  if (tipX + 160 > containerRect.width) tipX -= 170;
+  if (tipY < 0) tipY = 5;
+  tip.style.left = tipX + 'px';
+  tip.style.top  = tipY + 'px';
+  tip.style.display = 'block';
+}
+
+function _renderPaymentBreakdown(results) {
+  // รวม by_method และ by_method_count จากทุกวัน
+  var byAmt = {}, byCnt = {}, hasData = false;
+  results.forEach(function (r) {
+    if (!r) return;
+    Object.keys(r.by_method || {}).forEach(function (m) {
+      byAmt[m] = (byAmt[m] || 0) + r.by_method[m];
+      hasData = true;
+    });
+    Object.keys(r.by_method_count || {}).forEach(function (m) {
+      byCnt[m] = (byCnt[m] || 0) + r.by_method_count[m];
+    });
+  });
+
+  // ถ้า API ยังไม่ return by_method → ไม่แสดง section นี้
+  if (!hasData) { document.getElementById('revenueBreakdown').innerHTML = ''; return; }
+
+  var methods = [
+    { key: 'promptpay', label: 'PromptPay', color: '#A78BFA', bg: 'rgba(139,92,246,0.1)', border: 'rgba(139,92,246,0.25)', icon: '💳' },
+    { key: 'truemoney', label: 'TrueMoney', color: '#FCD34D', bg: 'rgba(252,211,77,0.08)', border: 'rgba(252,211,77,0.2)',  icon: '🟡' },
+    { key: 'wallet',    label: 'Wallet',    color: '#34D399', bg: 'rgba(52,211,153,0.08)', border: 'rgba(52,211,153,0.2)',  icon: '💰' },
+  ];
+
+  var html = '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;">';
+  methods.forEach(function (m) {
+    var amt = byAmt[m.key] || 0;
+    var cnt = byCnt[m.key] || 0;
+    html += '<div style="display:flex;flex-direction:column;gap:3px;background:' + m.bg + ';border:1px solid ' + m.border + ';border-radius:10px;padding:9px 16px;min-width:110px;">'
+      + '<div style="font-size:11px;color:rgba(210,190,255,0.5);font-family:\'Chakra Petch\',sans-serif;">' + m.icon + ' ' + m.label + '</div>'
+      + '<div style="font-size:16px;font-weight:700;color:' + m.color + ';font-family:\'Chakra Petch\',sans-serif;">฿' + amt.toLocaleString() + '</div>'
+      + '<div style="font-size:11px;color:rgba(210,190,255,0.4);font-family:\'Chakra Petch\',sans-serif;">' + cnt + ' รายการ</div>'
+      + '</div>';
+  });
+
+  // Other methods (unknown, etc.)
+  var knownKeys = methods.map(function (m) { return m.key; });
+  var otherAmt = 0, otherCnt = 0;
+  Object.keys(byAmt).forEach(function (k) {
+    if (knownKeys.indexOf(k) === -1 && k !== 'unknown') { otherAmt += byAmt[k]; otherCnt += byCnt[k] || 0; }
+  });
+  if (otherAmt > 0) {
+    html += '<div style="display:flex;flex-direction:column;gap:3px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:9px 16px;">'
+      + '<div style="font-size:11px;color:rgba(210,190,255,0.5);font-family:\'Chakra Petch\',sans-serif;">❓ อื่นๆ</div>'
+      + '<div style="font-size:16px;font-weight:700;color:rgba(210,190,255,0.6);font-family:\'Chakra Petch\',sans-serif;">฿' + otherAmt.toLocaleString() + '</div>'
+      + '<div style="font-size:11px;color:rgba(210,190,255,0.4);font-family:\'Chakra Petch\',sans-serif;">' + otherCnt + ' รายการ</div>'
+      + '</div>';
+  }
+
+  // คำนวณยอดรวมทุก method
+  var totalAmt = 0, totalCnt = 0;
+  Object.keys(byAmt).forEach(function (k) { totalAmt += byAmt[k]; });
+  Object.keys(byCnt).forEach(function (k) { totalCnt += byCnt[k]; });
+
+  html += '</div>';
+  html += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:16px;font-family:\'Chakra Petch\',sans-serif;">'
+    + '<span style="font-size:12px;color:rgba(210,190,255,0.45);">รวมทั้งหมด</span>'
+    + '<span style="font-size:15px;font-weight:700;color:#EDE6FF;">฿' + totalAmt.toLocaleString() + '</span>'
+    + '<span style="font-size:12px;color:rgba(210,190,255,0.5);">' + totalCnt.toLocaleString() + ' รายการ</span>'
+    + '</div>';
+
+  document.getElementById('revenueBreakdown').innerHTML = html;
+}
+
 // ── Monthly Revenue Summary ──────────────────────────────────
 const ORDER_TYPE_LABEL = {
   bcsfe: 'บริการแก้ไขเซฟ', code_shop: 'รหัสสำเร็จรูป', stages: 'ปลดล็อคด่าน', unknown: 'อื่นๆ'
@@ -589,7 +878,7 @@ async function loadRevenueMonth() {
     }
     var results = await Promise.all(promises);
 
-    var totalRevenue = 0, totalOrders = 0, byType = {}, allOrders = [], excludedAdmins = [], excludedNoUsername = 0;
+    var totalRevenue = 0, totalOrders = 0, byType = {}, byMethod = {}, byMethodCount = {}, allOrders = [], excludedAdmins = [], excludedNoUsername = 0;
     results.forEach(function(r) {
       if (!r || r.error) return;
       totalRevenue += r.total_revenue || 0;
@@ -598,10 +887,13 @@ async function loadRevenueMonth() {
       if (r.excluded_admins && r.excluded_admins.length) excludedAdmins = r.excluded_admins;
       excludedNoUsername += r.excluded_no_username_count || 0;
       Object.keys(r.by_type || {}).forEach(function(t) { byType[t] = (byType[t] || 0) + r.by_type[t]; });
+      Object.keys(r.by_method || {}).forEach(function(m) { byMethod[m] = (byMethod[m] || 0) + r.by_method[m]; });
+      Object.keys(r.by_method_count || {}).forEach(function(m) { byMethodCount[m] = (byMethodCount[m] || 0) + r.by_method_count[m]; });
     });
     allOrders.sort(function(a, b) { return (a.created_at || '').localeCompare(b.created_at || ''); });
 
     renderRevenueResult({ total_revenue: totalRevenue, total_orders: totalOrders, by_type: byType,
+      by_method: byMethod, by_method_count: byMethodCount,
       orders: allOrders, excluded_admins: excludedAdmins, excluded_no_username_count: excludedNoUsername }, box);
   } catch (e) {
     box.innerHTML = '<p style="color:#f44;">❌ เชื่อมต่อ API ไม่ได้</p>';
@@ -646,10 +938,34 @@ function renderRevenueResult(d, box) {
       '<td style="padding:3px 8px;color:#999;">' + (o.created_at || '').replace('T', ' ').slice(0, 16) + '</td></tr>';
   }).join('');
 
+  // Payment method breakdown
+  var methods = [
+    { key: 'promptpay', label: 'PromptPay', color: '#A78BFA', bg: 'rgba(139,92,246,0.1)', border: 'rgba(139,92,246,0.25)', icon: '💳' },
+    { key: 'truemoney', label: 'TrueMoney', color: '#FCD34D', bg: 'rgba(252,211,77,0.08)', border: 'rgba(252,211,77,0.2)', icon: '🟡' },
+    { key: 'wallet',    label: 'Wallet',    color: '#34D399', bg: 'rgba(52,211,153,0.08)', border: 'rgba(52,211,153,0.2)', icon: '💰' },
+  ];
+  var byMethod = d.by_method || {};
+  var byMethodCount = d.by_method_count || {};
+  var methodHtml = '';
+  if (Object.keys(byMethod).length > 0) {
+    methodHtml = '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">'
+      + methods.map(function (m) {
+          var amt = byMethod[m.key] || 0;
+          var cnt = byMethodCount[m.key] || 0;
+          return '<div style="display:flex;flex-direction:column;gap:2px;background:' + m.bg + ';border:1px solid ' + m.border + ';border-radius:8px;padding:7px 12px;min-width:100px;">'
+            + '<div style="font-size:11px;color:rgba(210,190,255,0.5);font-family:\'Chakra Petch\',sans-serif;">' + m.icon + ' ' + m.label + '</div>'
+            + '<div style="font-size:14px;font-weight:700;color:' + m.color + ';font-family:\'Chakra Petch\',sans-serif;">฿' + amt.toLocaleString() + '</div>'
+            + '<div style="font-size:11px;color:rgba(210,190,255,0.4);font-family:\'Chakra Petch\',sans-serif;">' + cnt + ' รายการ</div>'
+            + '</div>';
+        }).join('')
+      + '</div>';
+  }
+
   box.innerHTML =
     '<div class="result-item" style="font-size:15px;"><strong>💰 รายได้รวม: ฿' + d.total_revenue.toLocaleString() + '</strong></div>' +
     '<div class="result-item">📦 จำนวนออเดอร์: ' + d.total_orders + ' รายการ</div>' +
-    '<div class="result-item">' + byTypeHtml + '</div>' +
+    methodHtml +
+    '<div class="result-item" style="margin-top:10px;">' + byTypeHtml + '</div>' +
     (d.excluded_admins && d.excluded_admins.length
       ? '<div style="color:#999;font-size:12px;margin-top:8px;">ไม่นับรวมบัญชี admin: ' + d.excluded_admins.join(', ') + '</div>'
       : '') +

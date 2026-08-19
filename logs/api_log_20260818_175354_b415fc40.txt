@@ -1,0 +1,39 @@
+============================================================
+เวลา      : 2026-08-18 17:53:54
+Transfer  : b415fc40b
+Confirm   : 0235
+Country   : en
+============================================================
+[OP] Upgrade Characters จำนวน 24 ตัว
+[BCSFE] ⬇  Downloading save (transfer=b415fc... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #110 — Lv1+0 → Lv50+0
+[CAT] ✔ #111 — Lv1+0 → Lv50+0
+[CAT] ✔ #112 — Lv10+0 → Lv50+0
+[CAT] ✔ #113 — Lv1+0 → Lv50+0
+[CAT] ✔ #114 — Lv1+0 → Lv50+0
+[CAT] ✔ #115 — Lv1+0 → Lv50+0
+[CAT] ✔ #116 — Lv10+0 → Lv50+0
+[CAT] ✔ #117 — Lv1+0 → Lv50+0
+[CAT] ✔ #118 — Lv1+0 → Lv50+0
+[CAT] ✔ #119 — Lv1+0 → Lv60+0
+[CAT] ✔ #120 — Lv1+0 → Lv50+0
+[CAT] ✔ #121 — Lv1+0 → Lv50+0
+[CAT] ✔ #185 — Lv1+0 → Lv60+0
+[CAT] ✔ #186 — Lv1+0 → Lv60+0
+[CAT] ✔ #187 — Lv30+0 → Lv60+0
+[CAT] ✔ #188 — Lv1+0 → Lv60+0
+[CAT] ✔ #189 — Lv1+0 → Lv50+0
+[CAT] ✔ #190 — Lv1+0 → Lv50+0
+[CAT] ✔ #191 — Lv1+0 → Lv50+0
+[CAT] ✔ #344 — Lv1+0 → Lv50+0
+[CAT] ✔ #345 — Lv1+0 → Lv60+0
+[CAT] ✔ #346 — Lv1+0 → Lv60+0
+[CAT] ✔ #506 — Lv1+0 → Lv60+0
+[CAT] ✔ #768 — Lv1+0 → Lv60+0
+[BCSFE] Upgraded 24/24 cats → max
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_09621741
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260818_175355_b415fc40
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 0111460e5 | Confirm ใหม่: 1285
+============================================================

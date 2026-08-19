@@ -67,10 +67,12 @@ def _calc_stages_price(cfg) -> int:
     if cfg.aku_chapters: total += _STAGE_AKU_CHAPTERS
     return total
 
-from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest, LoyaltyRedeemRequest, CodeShopBuyRequest, AdminProductRequest, AdminToggleRequest, AdminEditProductRequest, AdminStockRequest, ClearStoryChaptersRequest, ClearStoryAllRequest, ResetStoryChaptersRequest, ResetStoryAllRequest, SetTreasureChaptersRequest, SetTreasureAllRequest, ClearOutbreakChaptersRequest, ClearOutbreakAllRequest, AkuRequest, ClearLegendsRequest, StagesPaymentRequest, WalletTopupRequest, WalletVoucherRequest, WalletPayRequest, CRBuyRequest, CRAdminProductRequest, CRAdminEditProductRequest, CRAdminStockRequest
+from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest, LoyaltyRedeemRequest, CodeShopBuyRequest, AdminProductRequest, AdminToggleRequest, AdminEditProductRequest, AdminStockRequest, ClearStoryChaptersRequest, ClearStoryAllRequest, ResetStoryChaptersRequest, ResetStoryAllRequest, SetTreasureChaptersRequest, SetTreasureAllRequest, ClearOutbreakChaptersRequest, ClearOutbreakAllRequest, AkuRequest, ClearLegendsRequest, StagesPaymentRequest, WalletTopupRequest, WalletVoucherRequest, WalletPayRequest, CRBuyRequest, CRAdminProductRequest, CRAdminEditProductRequest, CRAdminStockRequest, UnbanRequest
 from runner import BCSFERunner
 from config import ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES
 from payment import (
+    SUPABASE_URL,
+    SUPABASE_KEY,
     ITEM_PRICE,
     TRUEMONEY_ID,
     create_order as create_payment_order,
@@ -87,6 +89,8 @@ from payment import (
     add_loyalty_redeemed_cycles,
     save_loyalty_redemption,
     get_loyalty_redemptions,
+    get_loyalty_redemption_by_id,
+    update_loyalty_redemption_tc,
     verify_loyalty_session,
     verify_admin_session,
     get_code_products,
@@ -152,9 +156,49 @@ ALL_PACKAGE_MAP = {
     "talents_all":   {"label": "Max Talents All",   "price": 300, "runner": "run_talents_max_all"},
     "crazed_all":    {"label": "Crazed All Cat",    "price": 70,  "runner": None},
     "manic_all":     {"label": "Manic All Cat",     "price": 125, "runner": None},
+    "baki_all":      {"label": "Baki Pack",         "price": 150, "runner": None},
+    "baki_upgrade_all": {"label": "Baki Pack + Upgrade", "price": 200, "runner": None},
 }
 
 CRAZED_CAT_IDS = list(range(91, 100))  # 91-99
+BAKI_CAT_IDS = [789, 790, 791, 792, 793, 794]
+
+def _fetch_event_packs_sync() -> list[dict]:
+    """ดึง event_packs จาก Supabase
+    Pack แสดงเมื่อ:
+      - (enabled=true  AND ไม่มี starts_at หรือ starts_at ผ่านแล้ว)
+      - OR starts_at ตั้งไว้และผ่านแล้ว (auto-schedule แม้ enabled=false)
+    AND expires_at ยังไม่ถึง (หรือไม่ได้ตั้ง)
+    """
+    import httpx, datetime
+    url = f"{SUPABASE_URL}/rest/v1/event_packs?select=*&order=sort_order.asc"
+    headers = {"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+    try:
+        r = httpx.get(url, headers=headers, timeout=5)
+        packs = r.json() if r.status_code == 200 else []
+        now = datetime.datetime.now(datetime.timezone.utc)
+        def _iso(s):
+            return datetime.datetime.fromisoformat(s.replace("Z", "+00:00"))
+        result = []
+        for p in packs:
+            starts  = _iso(p["starts_at"])  if p.get("starts_at")  else None
+            expires = _iso(p["expires_at"]) if p.get("expires_at") else None
+            # หมดอายุแล้ว → ข้าม
+            if expires and expires <= now:
+                continue
+            # starts_at ตั้งไว้และถึงเวลาแล้ว → แสดงเสมอ (auto-schedule)
+            if starts and starts <= now:
+                result.append(p)
+                continue
+            # starts_at ยังไม่ถึง → ไม่แสดง
+            if starts and starts > now:
+                continue
+            # ไม่มี starts_at → ดูจาก enabled
+            if p.get("enabled"):
+                result.append(p)
+        return result
+    except Exception:
+        return []
 
 # Import เพิ่มเติมสำหรับ /api/orders/list
 from payment import ORDER_DB
@@ -298,6 +342,12 @@ async def verify_recaptcha(body: dict):
     ok = bool(result.get("success")) and float(result.get("score", 0)) >= 0.3
     return {"success": ok}
 
+@app.get("/api/events")
+def get_events():
+    """ส่ง event_packs ที่ enabled และยังไม่หมดอายุ"""
+    return _fetch_event_packs_sync()
+
+
 @app.get("/api/items")
 def get_items():
     """
@@ -325,6 +375,8 @@ async def payment_create(order: OrderRequest):
     for item in order.items:
         if item.key in ALL_PACKAGE_MAP:
             continue  # all-package items bypass ITEM_MAP validation
+        if item.key.startswith("ev_"):
+            continue  # dynamic event pack keys — validated at execution time
         if item.key not in ITEM_MAP:
             raise HTTPException(status_code=400, detail=f"ไม่รู้จัก item: {item.key}")
         if item.amount <= 0:
@@ -333,10 +385,20 @@ async def payment_create(order: OrderRequest):
             raise HTTPException(status_code=400, detail=f"{ITEM_MAP[item.key]['label']} เกินจำนวนสูงสุด ({ITEM_MAP[item.key]['max']})")
 
     # คำนวณราคา all-package items แยก แล้วรวมเข้า total
+    _ev_packs_map = {p["id"]: p for p in _fetch_event_packs_sync()} if any(i.key.startswith("ev_") for i in order.items) else {}
+    def _ev_price(key: str) -> int:
+        if key.endswith("_unlock"):
+            pid = key[3:-7]  # ev_baki_unlock → baki
+            return (_ev_packs_map.get(pid) or {}).get("price_unlock") or 0
+        elif key.endswith("_max"):
+            pid = key[3:-4]  # ev_baki_max → baki
+            return (_ev_packs_map.get(pid) or {}).get("price_max") or 0
+        return 0
+
     pkg_extra = sum(
-        ALL_PACKAGE_MAP[item.key]["price"]
+        ALL_PACKAGE_MAP[item.key]["price"] if item.key in ALL_PACKAGE_MAP else _ev_price(item.key)
         for item in order.items
-        if item.key in ALL_PACKAGE_MAP
+        if item.key in ALL_PACKAGE_MAP or item.key.startswith("ev_")
     )
 
     items_payload = []
@@ -431,10 +493,11 @@ async def payment_create_unlock(body: UnlockPaymentRequest):
 
 
 PER_CAT_RUNNER = {
-    "upgrade_cat":   "run_upgrade_characters",
-    "trueform_cat":  "run_true_form_characters",
-    "ultraform_cat": "run_ultra_form_characters",
-    "talents_cat":   "run_talents_max_characters",
+    "upgrade_cat":      "run_upgrade_characters",
+    "upgrade_plus_cat": "run_upgrade_plus_characters",
+    "trueform_cat":     "run_true_form_characters",
+    "ultraform_cat":    "run_ultra_form_characters",
+    "talents_cat":      "run_talents_max_characters",
 }
 
 
@@ -451,7 +514,9 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
 
     # ── Separate item categories ──
     regular_items = [i for i in all_order_items
-                     if i["key"] not in all_pkg_keys and i["key"] not in per_cat_keys]
+                     if i["key"] not in all_pkg_keys
+                     and i["key"] not in per_cat_keys
+                     and not i["key"].startswith("ev_")]
     per_cat_items = [i for i in all_order_items if i["key"] in per_cat_keys]
     all_pkg_items = [i for i in all_order_items if i["key"] in all_pkg_keys]
 
@@ -525,6 +590,23 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
         summary.append({"item": "Crazed All Cat (Unlock #91-99)", "amount": 9})
         print(f"[BCSFE] crazed_all done -> tc={cur_tc}")
 
+    if "baki_all" in all_pkg_set:
+        r = _call("run_unlock_characters", BAKI_CAT_IDS)
+        if not r["success"]: return _fail(r)
+        _upd(r["new_transfer_code"])
+        summary.append({"item": "Baki Pack (Unlock #789-794)", "amount": 6})
+        print(f"[BCSFE] baki_all done -> tc={cur_tc}")
+
+    if "baki_upgrade_all" in all_pkg_set:
+        r = _call("run_unlock_characters", BAKI_CAT_IDS)
+        if not r["success"]: return _fail(r)
+        _upd(r["new_transfer_code"])
+        r = _call("run_upgrade_characters", BAKI_CAT_IDS)
+        if not r["success"]: return _fail(r)
+        _upd(r["new_transfer_code"])
+        summary.append({"item": "Baki Pack + Upgrade (Unlock+Max #789-794)", "amount": 6})
+        print(f"[BCSFE] baki_upgrade_all done -> tc={cur_tc}")
+
     # ── Step 3: Upgrade Max ──
     if "upgrade_cat" in per_cat_groups:
         ids = per_cat_groups["upgrade_cat"]
@@ -533,6 +615,14 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
         _upd(r["new_transfer_code"])
         summary.append({"item": f"Upgrade Max ({len(ids)} ตัว)", "amount": len(ids)})
         print(f"[BCSFE] upgrade_cat x{len(ids)} done -> tc={cur_tc}")
+
+    if "upgrade_plus_cat" in per_cat_groups:
+        ids = per_cat_groups["upgrade_plus_cat"]
+        r = _call("run_upgrade_plus_characters", ids)
+        if not r["success"]: return _fail(r)
+        _upd(r["new_transfer_code"])
+        summary.append({"item": f"Upgrade Max + ({len(ids)} ตัว)", "amount": len(ids)})
+        print(f"[BCSFE] upgrade_plus_cat x{len(ids)} done -> tc={cur_tc}")
 
     if "upgrade_all" in all_pkg_set:
         r = _call("run_upgrade_all_characters")
@@ -563,6 +653,50 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
         _upd(r["new_transfer_code"])
         summary.append({"item": "Manic All Cat (True Form #91-99)", "amount": 9})
         print(f"[BCSFE] manic_all done -> tc={cur_tc}")
+
+    # ── Dynamic event packs (ev_* keys) ──
+    _ev_keys = [i["key"] for i in all_order_items if i["key"].startswith("ev_")]
+    if _ev_keys:
+        _ev_packs_run = {p["id"]: p for p in _fetch_event_packs_sync()}
+        for ev_key in _ev_keys:
+            # parse pack_id และ variant จาก key เช่น ev_baki_unlock
+            tail = ev_key[3:]  # baki_unlock
+            if tail.endswith("_unlock"):
+                pack_id, variant = tail[:-7], "unlock"
+            elif tail.endswith("_max"):
+                pack_id, variant = tail[:-4], "max"
+            else:
+                pack_id, variant = tail, "unlock"
+
+            pack = _ev_packs_run.get(pack_id)
+            if not pack:
+                summary.append({"item": f"[SKIP] event pack ไม่พบหรือหมดอายุ: {pack_id}", "amount": 0})
+                print(f"[BCSFE] {ev_key} — pack not found/expired")
+                continue
+
+            cat_ids = pack.get("cat_ids") or []
+            actions = pack.get("actions_unlock") if variant == "unlock" else (pack.get("actions_max") or [])
+            if not actions:
+                summary.append({"item": f"[SKIP] {pack['label']} — ไม่มี actions สำหรับ {variant}", "amount": 0})
+                continue
+
+            for action in actions:
+                if action == "unlock":
+                    r = _call("run_unlock_characters", cat_ids)
+                elif action == "upgrade":
+                    r = _call("run_upgrade_characters", cat_ids)
+                elif action == "trueform":
+                    r = _call("run_true_form_characters", cat_ids)
+                elif action == "ultraform":
+                    r = _call("run_ultra_form_characters", cat_ids)
+                else:
+                    continue
+                if not r["success"]: return _fail(r)
+                _upd(r["new_transfer_code"])
+
+            lbl = f"{pack['label']} ({'Max' if variant == 'max' else 'Unlock'})"
+            summary.append({"item": lbl, "amount": len(cat_ids)})
+            print(f"[BCSFE] {ev_key} done -> tc={cur_tc}")
 
     # ── Step 5: Ultra Form ──
     if "ultraform_cat" in per_cat_groups:
@@ -940,7 +1074,8 @@ async def loyalty_redeem(body: LoyaltyRedeemRequest):
     new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
     new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
     add_loyalty_redeemed_cycles(body.username, cycles)
-    save_loyalty_redemption(body.username, cycles, new_tc or "", new_cc or "")
+    save_loyalty_redemption(body.username, cycles, new_tc or "", new_cc or "",
+                            body.transfer_code, body.country)
     return {
         "success":               True,
         "new_transfer_code":     new_tc,
@@ -955,6 +1090,39 @@ async def loyalty_redeem(body: LoyaltyRedeemRequest):
 async def loyalty_history(username: str):
     rows = get_loyalty_redemptions(username)
     return {"history": rows}
+
+
+@app.post("/api/loyalty/retry-tc/{redemption_id}")
+async def loyalty_retry_tc(redemption_id: str):
+    """ขอ TC ใหม่ — โหลด backup → re-run rare_ticket CLI (เหมือน order retry-tc)"""
+    rec = get_loyalty_redemption_by_id(redemption_id)
+    if not rec:
+        raise HTTPException(status_code=404, detail="ไม่พบ redemption record")
+
+    original_tc = rec.get("original_transfer_code", "")
+    backup_path = None
+    if original_tc:
+        backup_dir = Path("saves_backup")
+        matches = sorted(backup_dir.glob(f"*_{original_tc[:8]}"),
+                         key=lambda f: f.stat().st_mtime, reverse=True)
+        if matches:
+            backup_path = matches[0]
+
+    latest_tc = rec.get("new_transfer_code", "")
+    latest_cc = rec.get("new_confirmation_code", "")
+    country   = rec.get("country") or "en"
+    cycles    = rec.get("cycles_redeemed") or 1
+    cli_items = [{"key": "rare_ticket", "amount": 10 * cycles}]
+
+    runner = BCSFERunner(transfer=latest_tc, confirm=latest_cc, country=country)
+    result = runner.run_retry_fresh(cli_items, backup_path=backup_path)
+    if not result.get("success"):
+        raise HTTPException(status_code=500, detail=result.get("error", "retry ล้มเหลว"))
+
+    new_tc = result["transfer"]
+    new_cc = result["confirmation"]
+    update_loyalty_redemption_tc(redemption_id, new_tc or "", new_cc or "")
+    return {"success": True, "new_transfer_code": new_tc, "new_confirmation_code": new_cc}
 
 
 @app.get("/api/payment/status/{order_id}")
@@ -1141,28 +1309,31 @@ def cancel_order(order_id: str):
 
 @app.get("/api/orders/my/{username}")
 def my_orders(username: str):
-    """ดึง orders ของ user คนนั้น อ่านจาก user_orders.json"""
+    """ดึง orders ของ user คนนั้น จาก Supabase โดยตรง (sync ข้ามอุปกรณ์)"""
     try:
-        import json
-        from pathlib import Path
-        user_orders_path = Path("user_orders.json")
-        order_ids = []
-        if user_orders_path.exists():
-            data = json.loads(user_orders_path.read_text(encoding="utf-8"))
-            order_ids = data.get(username, [])
+        with httpx.Client(timeout=8) as client:
+            resp = client.get(
+                f"{SUPABASE_URL}/rest/v1/orders",
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                },
+                params={
+                    "username": f"eq.{username}",
+                    "order": "created_at.desc",
+                    "limit": "30",
+                    "select": "*",
+                },
+            )
+        if resp.status_code != 200:
+            return {"success": False, "orders": []}
 
-        orders_dict = {}
-        if ORDER_DB.exists():
-            orders_dict = json.loads(ORDER_DB.read_text(encoding="utf-8"))
+        orders = resp.json()
+        # ลบ qr_base64 ออก (ใหญ่เกิน + ไม่จำเป็น)
+        for o in orders:
+            o.pop("qr_base64", None)
 
-        result = []
-        for oid in order_ids[:30]:
-            if oid in orders_dict:
-                o = dict(orders_dict[oid])
-                o.pop("qr_base64", None)  # ไม่ส่ง QR base64 (ใหญ่เกิน)
-                result.append(o)
-
-        return {"success": True, "orders": result}
+        return {"success": True, "orders": orders}
     except Exception as e:
         return {"success": False, "orders": []}
 
@@ -1394,6 +1565,34 @@ async def upgrade_characters(request: UnlockCharactersRequest):
                              confirm=request.confirmation_code.strip(),
                              country=request.country)
         result = await run_bcsfe(runner.run_upgrade_characters, request.cat_ids)
+        if result["success"]:
+            codes = result.get("new_transfer_code", {})
+            new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
+            new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
+            backup_save(new_tc or request.transfer_code)
+            return {"success": True, "new_transfer_code": new_tc,
+                    "new_confirmation_code": new_cc, "count": len(request.cat_ids), "log": result.get("log", [])}
+        return {"success": False, "error": result.get("error", "Unknown error")}
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+
+@app.post("/api/upgrade/plus/characters")
+async def upgrade_plus_characters(request: UnlockCharactersRequest):
+    """อัพเกรดตัวละครถึง max level + max plus"""
+    try:
+        if not request.transfer_code.strip() or not request.confirmation_code.strip():
+            return {"success": False, "error": "Transfer/Confirmation Code ห้ามว่าง"}
+        if not request.cat_ids:
+            return {"success": False, "error": "ต้องระบุ cat_ids อย่างน้อย 1 ตัว"}
+        if request.country not in COUNTRIES:
+            return {"success": False, "error": f"Country ไม่ถูกต้อง: {request.country}"}
+
+        print(f"\n[UPGRADE-PLUS] ⬆️ upgrade+plus {len(request.cat_ids)} ตัวละคร")
+        runner = BCSFERunner(transfer=request.transfer_code.strip(),
+                             confirm=request.confirmation_code.strip(),
+                             country=request.country)
+        result = await run_bcsfe(runner.run_upgrade_plus_characters, request.cat_ids)
         if result["success"]:
             codes = result.get("new_transfer_code", {})
             new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
@@ -1827,6 +2026,83 @@ async def dupe_save(request: DupeSaveRequest):
         return {"success": False, "error": result.get("error", "Unknown error")}
     except Exception as e:
         return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+@app.post("/api/admin/unban/run")
+async def admin_unban_run(request: UnbanRequest):
+    """Unban tool (VPS): ใส่ order_id → TC จาก Supabase → หา backup local → สร้าง TC ใหม่"""
+    import httpx, glob as _glob, os as _os
+
+    try:
+        # ── Auth ─────────────────────────────────────────────────────────────
+        if not verify_admin_session(request.username, request.session_token):
+            raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+
+        # ── 1. หา TC — จาก transfer_code โดยตรง หรือจาก order_id ──────────
+        headers = {"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}
+
+        tc_old  = (request.transfer_code or "").strip()
+        country = request.country or "1"
+
+        if not tc_old:
+            # ดึงจาก orders table
+            if not request.order_id:
+                return {"success": False, "error": "ต้องใส่ order_id หรือ transfer_code"}
+            r = httpx.get(
+                f"{SUPABASE_URL}/rest/v1/orders?order_id=eq.{request.order_id}&select=*",
+                headers=headers, timeout=10
+            )
+            rows = r.json() if r.status_code == 200 else []
+            if not rows:
+                return {"success": False, "error": f"ไม่พบ order: {request.order_id}"}
+            order = rows[0]
+            tc_old  = (order.get("transfer_code") or "").strip()
+            country = request.country or order.get("country", "1")
+            if not tc_old:
+                return {"success": False, "error": "order นี้ไม่มี transfer_code"}
+
+        tc_prefix = tc_old[:8]   # 8 ตัวแรก → ตรงกับท้ายชื่อ backup
+
+        # ── 2. ค้นหา backup ใน saves_backup/ (อ่านจาก local filesystem) ──────
+        BACKUP_DIR = "saves_backup"  # relative path เดียวกับที่ runner.py ใช้
+        pattern = _os.path.join(BACKUP_DIR, f"SAVE_*_{tc_prefix}")
+        matches = _glob.glob(pattern)
+        if not matches:
+            return {
+                "success": False,
+                "error": (f"ไม่พบ backup สำหรับ TC prefix '{tc_prefix}' (8 ตัวแรก)\n"
+                          f"ค้นที่: {BACKUP_DIR}/SAVE_*_{tc_prefix}")
+            }
+
+        # เลือกไฟล์ใหม่สุด (กรณีมีหลายไฟล์)
+        backup_path = max(matches, key=_os.path.getmtime)
+        backup_name = _os.path.basename(backup_path)
+
+        # ── 3. อ่าน save bytes ───────────────────────────────────────────────
+        with open(backup_path, "rb") as f:
+            save_bytes = f.read()
+        if not save_bytes:
+            return {"success": False, "error": f"backup ว่างเปล่า: {backup_name}"}
+
+        # ── 4. รัน unban (create_new_account + get_codes) ────────────────────
+        runner = BCSFERunner(transfer=tc_old, confirm="00000000", country=country)
+        result = await run_bcsfe(lambda: runner.run_unban_from_backup(save_bytes))
+
+        if result["success"]:
+            return {
+                "success": True,
+                "new_transfer_code":     result["new_transfer_code"],
+                "new_confirmation_code": result["new_confirmation_code"],
+                "inquiry_before":        result.get("inquiry_before", ""),
+                "inquiry_after":         result.get("inquiry_after", ""),
+                "backup_used":           backup_name,
+                "tc_old":                tc_old,
+            }
+        return {"success": False, "error": result.get("error", "Unknown")}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
 @app.post("/api/check/id")
 async def check_id(request: CheckIDRequest):
     """ตรวจสอบรหัสหลายชุด — download + re-upload (ไม่แก้ไข) → ได้ TC ใหม่"""

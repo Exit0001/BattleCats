@@ -1354,7 +1354,7 @@ function showSuccessModal(orderId, cart, result) {
   document.getElementById('modal-title').style.color = isSuccess ? '#22c55e' : '#f59e0b';
 
   document.getElementById('resultSummary').textContent = isSuccess
-    ? window.bcT('ord_success_summary','BCSFE ดำเนินการสำเร็จ! ใช้ Transfer Code ใหม่เพื่อโหลด Save ในเกม')
+    ? window.bcT('ord_success_summary','ดำเนินการสำเร็จ! ใช้ Transfer Code ใหม่เพื่อโหลด Save ในเกม')
     : window.bcT('ord_partial_success_summary','เงินของคุณถูกรับแล้ว แต่ Transfer/Confirmation Code ไม่ถูกต้อง กรุณากรอกใหม่');
 
   document.getElementById('modal-success-box').style.display = isSuccess ? 'block' : 'none';
@@ -1599,7 +1599,7 @@ async function retryBCSFE() {
     document.getElementById('modal-icon').textContent  = '✅';
     document.getElementById('modal-title').textContent = window.bcT('ord_success_title','ออเดอร์สำเร็จ!');
     document.getElementById('modal-title').style.color = '#22c55e';
-    document.getElementById('resultSummary').textContent = window.bcT('ord_success_summary','BCSFE ดำเนินการสำเร็จ! ใช้ Transfer Code ใหม่เพื่อโหลด Save ในเกม');
+    document.getElementById('resultSummary').textContent = window.bcT('ord_success_summary','ดำเนินการสำเร็จ! ใช้ Transfer Code ใหม่เพื่อโหลด Save ในเกม');
     document.getElementById('newTransferCode').textContent = data.new_transfer_code || '-';
     document.getElementById('newConfirmCode').textContent  = data.new_confirmation_code || '-';
 

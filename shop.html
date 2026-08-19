@@ -11,9 +11,38 @@
   <meta property="og:description" content="ซื้อไอเทม The Battle Cats ราคาถูก เติม Catfood, XP, Catseye, Catfruit, Lucky Ticket, Rare Ticket ส่งผ่าน Transfer Code ภายใน 5 นาที">
   <meta property="og:url" content="https://battlecatpromax.cloud/shop.html">
   <meta property="og:image" content="https://battlecatpromax.cloud/pictures/logo.png">
-  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/styles.css?v=2">
 </head>
 <body>
+
+<!-- LINE OpenChat Banner -->
+<div id="line-banner" style="display:none;background:#06C755;color:#fff;z-index:9999;font-family:'Chakra Petch',sans-serif;font-size:14px;position:relative;">
+  <div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 14px;padding:9px 52px 9px 16px;">
+    <span>💬 สามารถทักเข้า OpenChat มาสอบถามพูดคุยกันได้</span>
+    <a href="https://line.me/ti/g2/PUmYGL3dhCeY4UbjU6QuHIrVEg7f2G7xS21voQ" target="_blank" rel="noopener"
+       style="color:#fff;font-weight:700;text-decoration:underline;white-space:nowrap;">คลิกเลย</a>
+    <button onclick="document.getElementById('line-qr-modal').style.display='flex';"
+            style="background:rgba(0,0,0,0.25);border:1.5px solid rgba(255,255,255,0.5);color:#fff;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;border-radius:6px;padding:3px 9px;cursor:pointer;white-space:nowrap;">📷 QR Code</button>
+    <label style="display:inline-flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;white-space:nowrap;background:rgba(0,0,0,0.18);border-radius:6px;padding:3px 9px;">
+      <input type="checkbox" id="line-banner-no-show" style="cursor:pointer;width:14px;height:14px;"> ไม่แสดงอีก
+    </label>
+  </div>
+  <button onclick="if(document.getElementById('line-banner-no-show').checked)localStorage.setItem('lineBannerHidden','1');document.getElementById('line-banner').style.display='none';"
+          style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;" aria-label="ปิด">×</button>
+</div>
+<script>if(!localStorage.getItem('lineBannerHidden'))document.getElementById('line-banner').style.display='block';</script>
+
+<!-- QR Code Modal -->
+<div id="line-qr-modal" onclick="if(event.target===this)this.style.display='none';"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:99999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:18px;padding:20px;text-align:center;max-width:280px;width:90%;position:relative;">
+    <button onclick="document.getElementById('line-qr-modal').style.display='none';"
+            style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:22px;cursor:pointer;color:#333;line-height:1;">×</button>
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:14px;font-weight:700;color:#06C755;margin-bottom:12px;">💬 LINE OpenChat</div>
+    <img src="pictures/qr.jpg" alt="LINE QR Code" style="width:100%;max-width:220px;border-radius:10px;">
+    <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:#555;margin-top:10px;">สแกน QR เพื่อเข้ากลุ่ม</div>
+  </div>
+</div>
 
 <nav class="navbar">
   <div class="nav-container">
@@ -74,7 +103,7 @@
       <div class="card-name">Cat Food x10,000</div>
       <div class="card-desc"><span data-i18n="shop_catfood_10k">เติม Cat Food 10,000 หน่วย</span></div>
       <div class="card-price"><span class="price-now">฿10</span><span class="price-old">฿30</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Cat Food x10,000', 10)"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Cat Food x10,000', 10)"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -83,7 +112,7 @@
       <div class="card-name">Cat Food x20,000</div>
       <div class="card-desc"><span data-i18n="shop_catfood_20k">เติม Cat Food 20,000 หน่วย</span></div>
       <div class="card-price"><span class="price-now">฿19</span><span class="price-old">฿45</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Cat Food x20,000', 19)"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Cat Food x20,000', 19)"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -91,7 +120,7 @@
       <div class="card-name">Cat Food x30,000</div>
       <div class="card-desc"><span data-i18n="shop_catfood_30k">เติม Cat Food 30,000 หน่วย</span></div>
       <div class="card-price"><span class="price-now">฿25</span><span class="price-old">฿65</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Cat Food x30,000', 25)"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Cat Food x30,000', 25)"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -100,7 +129,7 @@
       <div class="card-name">Cat Food x45,000</div>
       <div class="card-desc"><span data-i18n="shop_catfood_45k">เติม Cat Food 45,000 หน่วย</span></div>
       <div class="card-price"><span class="price-now">฿35</span><span class="price-old">฿90</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Cat Food x45,000', 35)"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Cat Food x45,000', 35)"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -112,7 +141,7 @@
       <div class="card-name">XP x99,999,999</div>
       <div class="card-desc"><span data-i18n="shop_xp_max">เพิ่ม XP จำนวนสูงสุดในครั้งเดียว</span></div>
       <div class="card-price"><span class="price-now">฿25</span><span class="price-old">฿480</span></div>
-      <button class="btn btn-primary" onclick="addToCart('XP x99,999,999', 25)"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('XP x99,999,999', 25)"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -125,7 +154,7 @@
       <div class="card-name">Normal Ticket x100</div>
       <div class="card-desc"><span data-i18n="shop_nt_good">โอกาสได้แมวดี</span></div>
       <div class="card-price"><span class="price-now">฿10</span><span class="price-old">฿19</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Normal Ticket x100', 10)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Normal Ticket x100', 10)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -134,7 +163,7 @@
       <div class="card-name">Normal Ticket x500</div>
       <div class="card-desc"><span data-i18n="shop_nt_rare">ลุ้นแมวหายาก</span></div>
       <div class="card-price"><span class="price-now">฿45</span><span class="price-old">฿89</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Normal Ticket x500', 45)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Normal Ticket x500', 45)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -143,7 +172,7 @@
       <div class="card-name">Normal Ticket x1000</div>
       <div class="card-desc"><span data-i18n="shop_nt_safe">ปลอดภัยไม่โดนแบน</span></div>
       <div class="card-price"><span class="price-now">฿85</span><span class="price-old">฿169</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Normal Ticket x1000', 85)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Normal Ticket x1000', 85)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -152,7 +181,7 @@
       <div class="card-name">Normal Ticket x2999</div>
       <div class="card-desc"><span data-i18n="shop_nt_sr">ลุ้น Super Rare 1 ตัว!</span></div>
       <div class="card-price"><span class="price-now">฿239</span><span class="price-old">฿469</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Normal Ticket x2999', 239)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Normal Ticket x2999', 239)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -180,7 +209,7 @@
       <div class="card-name">Rare Ticket x50</div>
       <div class="card-desc"><span data-i18n="shop_rt_trade">ใช้ Route Trade เพื่อปลอดภัย</span></div>
       <div class="card-price"><span class="price-now">฿15</span><span class="price-old">฿29</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Rare Ticket x50', 15)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Rare Ticket x50', 15)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -189,7 +218,7 @@
       <div class="card-name">Rare Ticket x100</div>
       <div class="card-desc"><span data-i18n="shop_rt_rare">ลุ้นแมวหายาก ด้วยตั๋ว Rare</span></div>
       <div class="card-price"><span class="price-now">฿29</span><span class="price-old">฿52</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Rare Ticket x100', 29)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Rare Ticket x100', 29)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -198,7 +227,7 @@
       <div class="card-name">Rare Ticket x200</div>
       <div class="card-desc"><span data-i18n="shop_rt_big">ชุดใหญ่ของ Rare Ticket</span></div>
       <div class="card-price"><span class="price-now">฿50</span><span class="price-old">฿99</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Rare Ticket x200', 50)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Rare Ticket x200', 50)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -207,7 +236,7 @@
       <div class="card-name">Rare Ticket x299</div>
       <div class="card-desc"><span data-i18n="shop_rt_max">ชุด Rare Ticket สูงสุด</span></div>
       <div class="card-price"><span class="price-now">฿70</span><span class="price-old">฿139</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Rare Ticket x299', 70)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Rare Ticket x299', 70)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -217,33 +246,33 @@
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/battleitem 1.png" width="200"></div>
       <div class="card-name">Battle Item x100</div>
-      <div class="card-desc"><span data-i18n="shop_battleitem_choose">เลือกประเภท Battle Item (1-6)</span></div>
+      <div class="card-desc"><span data-i18n="shop_battleitem_choose">ได้ทุกชนิด ครบทุก 6 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿10</span><span class="price-old">฿19</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Battle Item x100', 10)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Battle Item x100', 10)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/battleitem 2.png" width="200"></div>
       <div class="card-name">Battle Item x500</div>
-      <div class="card-desc"><span data-i18n="shop_battleitem_choose">เลือกประเภท Battle Item (1-6)</span></div>
+      <div class="card-desc"><span data-i18n="shop_battleitem_choose">ได้ทุกชนิด ครบทุก 6 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿43</span><span class="price-old">฿85</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Battle Item x500', 43)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Battle Item x500', 43)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/battleitem 3.png" width="200"></div>
       <div class="card-name">Battle Item x5000</div>
-      <div class="card-desc"><span data-i18n="shop_battleitem_choose">เลือกประเภท Battle Item (1-6)</span></div>
+      <div class="card-desc"><span data-i18n="shop_battleitem_choose">ได้ทุกชนิด ครบทุก 6 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿399</span><span class="price-old">฿779</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Battle Item x5000', 399)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Battle Item x5000', 399)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/battleitem 4.png" width="200"></div>
       <div class="card-name">Battle Item x9,999</div>
-      <div class="card-desc"><span data-i18n="shop_battleitem_choose">เลือกประเภท Battle Item (1-6)</span></div>
+      <div class="card-desc"><span data-i18n="shop_battleitem_choose">ได้ทุกชนิด ครบทุก 6 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿769</span><span class="price-old">฿1,499</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Battle Item x9,999', 769)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Battle Item x9,999', 769)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -255,7 +284,7 @@
       <div class="card-name">NP x100</div>
       <div class="card-desc"><span data-i18n="shop_np_instant">เพิ่มเงินในเกมทันที</span></div>
       <div class="card-price"><span class="price-now">฿5</span><span class="price-old">฿9</span></div>
-      <button class="btn btn-primary" onclick="addToCart('NP x100', 5)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('NP x100', 5)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -263,7 +292,7 @@
       <div class="card-name">NP x1,000</div>
       <div class="card-desc"><span data-i18n="shop_np_accum">เพิ่ม NP สะสม</span></div>
       <div class="card-price"><span class="price-now">฿49</span><span class="price-old">฿99</span></div>
-      <button class="btn btn-primary" onclick="addToCart('NP x1,000', 49)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('NP x1,000', 49)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -271,7 +300,7 @@
       <div class="card-name">NP x5,000</div>
       <div class="card-desc"><span data-i18n="shop_np_big">เหมาะสำหรับซื้อของใหญ่</span></div>
       <div class="card-price"><span class="price-now">฿239</span><span class="price-old">฿479</span></div>
-      <button class="btn btn-primary" onclick="addToCart('NP x5,000', 239)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('NP x5,000', 239)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -279,7 +308,7 @@
       <div class="card-name">NP x9,999</div>
       <div class="card-desc"><span data-i18n="shop_np_max">ยอด NP สูงสุด — ถูกที่สุดต่อหน่วย</span></div>
       <div class="card-price"><span class="price-now">฿449</span><span class="price-old">฿899</span></div>
-      <button class="btn btn-primary" onclick="addToCart('NP x9,999', 449)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('NP x9,999', 449)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -291,7 +320,7 @@
       <div class="card-name">Platinum Shard x10</div>
       <div class="card-desc"><span data-i18n="shop_ps_collect">สะสมเพื่อรับ Platinum Ticket</span></div>
       <div class="card-price"><span class="price-now">฿30</span><span class="price-old">฿59</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Platinum Shard x10', 30)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Platinum Shard x10', 30)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -299,7 +328,7 @@
       <div class="card-name">Platinum Shard x30</div>
       <div class="card-desc"><span data-i18n="shop_ps_mid">ชุดกลางสำหรับหลักบอร์ด</span></div>
       <div class="card-price"><span class="price-now">฿83</span><span class="price-old">฿159</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Platinum Shard x30', 83)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Platinum Shard x30', 83)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -307,7 +336,7 @@
       <div class="card-name">Platinum Shard x60</div>
       <div class="card-desc"><span data-i18n="shop_ps_big">ชุดใหญ่ใกล้แลกตั๋วทอง</span></div>
       <div class="card-price"><span class="price-now">฿160</span><span class="price-old">฿299</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Platinum Shard x60', 160)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Platinum Shard x60', 160)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -315,7 +344,7 @@
       <div class="card-name">Platinum Shard x99</div>
       <div class="card-desc"><span data-i18n="shop_ps_best">คุ้มที่สุดสำหรับ Platinum Ticket</span></div>
       <div class="card-price"><span class="price-now">฿250</span><span class="price-old">฿489</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Platinum Shard x99', 250)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Platinum Shard x99', 250)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -327,7 +356,7 @@
       <div class="card-name">Leadership x100</div>
       <div class="card-desc"><span data-i18n="shop_ld_team">เพิ่ม Leadership เพื่อทีมแข็งแรง</span></div>
       <div class="card-price"><span class="price-now">฿20</span><span class="price-old">฿39</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Leadership x100', 20)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Leadership x100', 20)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -335,7 +364,7 @@
       <div class="card-name">Leadership x1,000</div>
       <div class="card-desc"><span data-i18n="shop_ld_battle">เพิ่ม Leadership สำหรับการต่อสู้</span></div>
       <div class="card-price"><span class="price-now">฿185</span><span class="price-old">฿359</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Leadership x1,000', 185)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Leadership x1,000', 185)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -343,7 +372,7 @@
       <div class="card-name">Leadership x5,000</div>
       <div class="card-desc"><span data-i18n="shop_ld_big">ชุดใหญ่สำหรับการ์ดทีม</span></div>
       <div class="card-price"><span class="price-now">฿869</span><span class="price-old">฿1,699</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Leadership x5,000', 869)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Leadership x5,000', 869)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -351,7 +380,7 @@
       <div class="card-name">Leadership x9,999</div>
       <div class="card-desc"><span data-i18n="shop_ld_max">เต็ม Leadership สูงสุด</span></div>
       <div class="card-price"><span class="price-now">฿1,639</span><span class="price-old">฿3,199</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Leadership x9,999', 1639)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Leadership x9,999', 1639)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -361,33 +390,33 @@
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/cateye1.png" width="200"></div>
       <div class="card-name">Catseye x100</div>
-      <div class="card-desc"><span data-i18n="shop_ce_choose">เลือกประเภท Catseye (1-6)</span></div>
+      <div class="card-desc"><span data-i18n="shop_ce_choose">ได้ทุกชนิด ครบทุก 6 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿20</span><span class="price-old">฿39</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Catseye x100', 20)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Catseye x100', 20)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/cateye2.png" width="200"></div>
       <div class="card-name">Catseye x500</div>
-      <div class="card-desc"><span data-i18n="shop_ce_choose">เลือกประเภท Catseye (1-6)</span></div>
+      <div class="card-desc"><span data-i18n="shop_ce_choose">ได้ทุกชนิด ครบทุก 6 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿87</span><span class="price-old">฿169</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Catseye x500', 87)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Catseye x500', 87)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/cateye3.png" width="200"></div>
       <div class="card-name">Catseye x5000</div>
-      <div class="card-desc"><span data-i18n="shop_ce_choose">เลือกประเภท Catseye (1-6)</span></div>
+      <div class="card-desc"><span data-i18n="shop_ce_choose">ได้ทุกชนิด ครบทุก 6 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿799</span><span class="price-old">฿1,559</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Catseye x5000', 799)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Catseye x5000', 799)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/cateye4.png" width="200"></div>
       <div class="card-name">Catseye x9,999</div>
-      <div class="card-desc"><span data-i18n="shop_ce_choose">เลือกประเภท Catseye (1-6)</span></div>
+      <div class="card-desc"><span data-i18n="shop_ce_choose">ได้ทุกชนิด ครบทุก 6 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿1,559</span><span class="price-old">฿3,039</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Catseye x9,999', 1559)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Catseye x9,999', 1559)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -397,33 +426,33 @@
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/catfruit1.png" width="200"></div>
       <div class="card-name">Catfruit x100</div>
-      <div class="card-desc"><span data-i18n="shop_cfr_choose">เลือกประเภท Catfruit (1-29)</span></div>
+      <div class="card-desc"><span data-i18n="shop_cfr_choose">ได้ทุกชนิด ครบทุก 29 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿30</span><span class="price-old">฿50</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Catfruit x100', 30)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Catfruit x100', 30)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/catfruit2.png" width="200"></div>
       <div class="card-name">Catfruit x300</div>
-      <div class="card-desc"><span data-i18n="shop_cfr_choose">เลือกประเภท Catfruit (1-29)</span></div>
+      <div class="card-desc"><span data-i18n="shop_cfr_choose">ได้ทุกชนิด ครบทุก 29 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿85</span><span class="price-old">฿130</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Catfruit x300', 85)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Catfruit x300', 85)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/catfruit3.png" width="200"></div>
       <div class="card-name">Catfruit x500</div>
-      <div class="card-desc"><span data-i18n="shop_cfr_choose">เลือกประเภท Catfruit (1-29)</span></div>
+      <div class="card-desc"><span data-i18n="shop_cfr_choose">ได้ทุกชนิด ครบทุก 29 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿139</span><span class="price-old">฿210</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Catfruit x500', 139)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Catfruit x500', 139)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/catfruit4.png" width="200"></div>
       <div class="card-name">Catfruit x998</div>
-      <div class="card-desc"><span data-i18n="shop_cfr_choose">เลือกประเภท Catfruit (1-29)</span></div>
+      <div class="card-desc"><span data-i18n="shop_cfr_choose">ได้ทุกชนิด ครบทุก 29 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿269</span><span class="price-old">฿399</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Catfruit x998', 269)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Catfruit x998', 269)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -433,33 +462,135 @@
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/catamin1.png" width="200"></div>
       <div class="card-name">Catamins x100</div>
-      <div class="card-desc"><span data-i18n="shop_cam_choose">เลือกประเภท Catamins (1-3)</span></div>
+      <div class="card-desc"><span data-i18n="shop_cam_choose">ได้ทุกชนิด ครบทุก 3 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿20</span><span class="price-old">฿39</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Catamins x100', 20)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Catamins x100', 20)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/catamin 2.png" width="200"></div>
       <div class="card-name">Catamins x500</div>
-      <div class="card-desc"><span data-i18n="shop_cam_choose">เลือกประเภท Catamins (1-3)</span></div>
+      <div class="card-desc"><span data-i18n="shop_cam_choose">ได้ทุกชนิด ครบทุก 3 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿87</span><span class="price-old">฿169</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Catamins x500', 87)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Catamins x500', 87)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/catamin3.png" width="200"></div>
       <div class="card-name">Catamins x5000</div>
-      <div class="card-desc"><span data-i18n="shop_cam_choose">เลือกประเภท Catamins (1-3)</span></div>
+      <div class="card-desc"><span data-i18n="shop_cam_choose">ได้ทุกชนิด ครบทุก 3 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿799</span><span class="price-old">฿1,559</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Catamins x5000', 799)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Catamins x5000', 799)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
       <div class="card-picture"><img loading="lazy" src="pictures/catamin4.png" width="200"></div>
       <div class="card-name">Catamins x9,999</div>
-      <div class="card-desc"><span data-i18n="shop_cam_choose">เลือกประเภท Catamins (1-3)</span></div>
+      <div class="card-desc"><span data-i18n="shop_cam_choose">ได้ทุกชนิด ครบทุก 3 ประเภท</span></div>
       <div class="card-price"><span class="price-now">฿1,559</span><span class="price-old">฿3,039</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Catamins x9,999', 1559)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Catamins x9,999', 1559)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
+    </div>
+  </div>
+
+  <!-- BASE MATERIALS SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">🧱 Base Materials</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-picture"><img loading="lazy" src="pictures/Base Materials_30.jpg" width="200" onerror="this.style.display='none'"></div>
+      <div class="card-name">Base Materials x30</div>
+      <div class="card-desc">+30 ทุกชนิด ครบทั้ง 16 ประเภท</div>
+      <div class="card-price"><span class="price-now">฿20</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Base Materials x30', 20)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-picture"><img loading="lazy" src="pictures/Base Materials_100.jpg" width="200" onerror="this.style.display='none'"></div>
+      <div class="card-name">Base Materials x100</div>
+      <div class="card-desc">+100 ทุกชนิด ครบทั้ง 16 ประเภท</div>
+      <div class="card-price"><span class="price-now">฿49</span><span class="price-old">฿67</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Base Materials x100', 49)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-picture"><img loading="lazy" src="pictures/Base Materials_500.jpg" width="200" onerror="this.style.display='none'"></div>
+      <div class="card-name">Base Materials x500</div>
+      <div class="card-desc">+500 ทุกชนิด ครบทั้ง 16 ประเภท</div>
+      <div class="card-price"><span class="price-now">฿149</span><span class="price-old">฿333</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Base Materials x500', 149)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
+    </div>
+
+    <div class="card">
+      <div class="card-picture"><img loading="lazy" src="pictures/Base Materials_999.jpg" width="200" onerror="this.style.display='none'"></div>
+      <div class="card-name">Base Materials x999</div>
+      <div class="card-desc">+999 ทุกชนิด ครบทั้ง 16 ประเภท</div>
+      <div class="card-price"><span class="price-now">฿249</span><span class="price-old">฿666</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Base Materials x999', 249)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
+    </div>
+  </div>
+
+  <!-- GAMATOTO LEVEL SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">🏕️ Gamatoto Level</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-picture"><img loading="lazy" src="pictures/gamatoto_50.jpg" width="200" onerror="this.style.display='none'"></div>
+      <div class="card-name">Gamatoto Lv 50</div>
+      <div class="card-desc">ตั้ง Gamatoto ให้ถึง Level 50</div>
+      <div class="card-price"><span class="price-now">฿29</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Gamatoto Lv 50', 29)" style="width:100%; margin-top:auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
+    </div>
+    <div class="card">
+      <div class="card-picture"><img loading="lazy" src="pictures/gamatoto_80.jpg" width="200" onerror="this.style.display='none'"></div>
+      <div class="card-name">Gamatoto Lv 80</div>
+      <div class="card-desc">ตั้ง Gamatoto ให้ถึง Level 80</div>
+      <div class="card-price"><span class="price-now">฿49</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Gamatoto Lv 80', 49)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
+    </div>
+    <div class="card">
+      <div class="card-picture"><img loading="lazy" src="pictures/gamatoto_100.jpg" width="200" onerror="this.style.display='none'"></div>
+      <div class="card-name">Gamatoto Lv 100</div>
+      <div class="card-desc">ตั้ง Gamatoto ให้ถึง Level 100</div>
+      <div class="card-price"><span class="price-now">฿79</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Gamatoto Lv 100', 79)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
+    </div>
+    <div class="card">
+      <div class="card-picture"><img loading="lazy" src="pictures/gamatoto_130.jpg" width="200" onerror="this.style.display='none'"></div>
+      <div class="card-name">Gamatoto Lv 130 (Max)</div>
+      <div class="card-desc">ตั้ง Gamatoto ให้ถึง Level สูงสุด 130</div>
+      <div class="card-price"><span class="price-now">฿200</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Gamatoto Lv 130', 200)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
+    </div>
+  </div>
+
+  <!-- GAMATOTO HELPERS SECTION -->
+  <h2 class="section-title" style="margin-top: 32px;">🏕️ Gamatoto Helpers</h2>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-picture"><img loading="lazy" src="pictures/helper1.jpg" width="200" onerror="this.style.display='none'"></div>
+      <div class="card-name">Lackey x10</div>
+      <div class="card-desc">ลบ helper เดิมทั้งหมด แล้วใส่ Lackey ใหม่ 10 ตัว</div>
+      <div class="card-price"><span class="price-now">฿19</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Gamatoto Lackey x10', 19)" style="width:100%; margin-top:auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
+    </div>
+    <div class="card">
+      <div class="card-picture"><img loading="lazy" src="pictures/helper2.jpg" width="200" onerror="this.style.display='none'"></div>
+      <div class="card-name">Underling x10</div>
+      <div class="card-desc">ลบ helper เดิมทั้งหมด แล้วใส่ Underling ใหม่ 10 ตัว</div>
+      <div class="card-price"><span class="price-now">฿39</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Gamatoto Underling x10', 39)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
+    </div>
+    <div class="card">
+      <div class="card-picture"><img loading="lazy" src="pictures/helper3.jpg" width="200" onerror="this.style.display='none'"></div>
+      <div class="card-name">Assistant x10</div>
+      <div class="card-desc">ลบ helper เดิมทั้งหมด แล้วใส่ Assistant ใหม่ 10 ตัว</div>
+      <div class="card-price"><span class="price-now">฿69</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Gamatoto Assistant x10', 69)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
+    </div>
+    <div class="card">
+      <div class="card-picture"><img loading="lazy" src="pictures/helper4.jpg" width="200" onerror="this.style.display='none'"></div>
+      <div class="card-name">Legend x10</div>
+      <div class="card-desc">ลบ helper เดิมทั้งหมด แล้วใส่ Legend ใหม่ 10 ตัว</div>
+      <div class="card-price"><span class="price-now">฿120</span></div>
+      <button class="btn btn-primary" onclick="addToCart('Gamatoto Legend x10', 120)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -471,7 +602,7 @@
       <div class="card-name">Legend Ticket x1</div>
       <div class="card-desc"><span data-i18n="shop_lt_add">เพิ่มจำนวน Legend Ticket</span></div>
       <div class="card-price"><span class="price-now">฿40</span><span class="price-old">฿79</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Legend Ticket x1', 40)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Legend Ticket x1', 40)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -479,7 +610,7 @@
       <div class="card-name">Legend Ticket x2</div>
       <div class="card-desc"><span data-i18n="shop_lt_add">เพิ่มจำนวน Legend Ticket</span></div>
       <div class="card-price"><span class="price-now">฿74</span><span class="price-old">฿145</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Legend Ticket x2', 74)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Legend Ticket x2', 74)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -487,7 +618,7 @@
       <div class="card-name">Legend Ticket x3</div>
       <div class="card-desc"><span data-i18n="shop_lt_add">เพิ่มจำนวน Legend Ticket</span></div>
       <div class="card-price"><span class="price-now">฿102</span><span class="price-old">฿199</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Legend Ticket x3', 102)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Legend Ticket x3', 102)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -495,7 +626,7 @@
       <div class="card-name">Legend Ticket x4</div>
       <div class="card-desc"><span data-i18n="shop_lt_add">เพิ่มจำนวน Legend Ticket</span></div>
       <div class="card-price"><span class="price-now">฿125</span><span class="price-old">฿245</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Legend Ticket x4', 125)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Legend Ticket x4', 125)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -507,7 +638,7 @@
       <div class="card-name">Lucky Ticket x100</div>
       <div class="card-desc"><span data-i18n="shop_luck_press">เพิ่มตั๋วโชคดี ใช้ลุ้นรางวัลพิเศษในเกม</span></div>
       <div class="card-price"><span class="price-now">฿10</span><span class="price-old">฿19</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Lucky Ticket x100', 10)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Lucky Ticket x100', 10)" style="width:100%; margin-top: auto;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -515,7 +646,7 @@
       <div class="card-name">Lucky Ticket x500</div>
       <div class="card-desc"><span data-i18n="shop_luck_press">เพิ่มตั๋วโชคดี ใช้ลุ้นรางวัลพิเศษในเกม</span></div>
       <div class="card-price"><span class="price-now">฿45</span><span class="price-old">฿89</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Lucky Ticket x500', 45)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Lucky Ticket x500', 45)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -523,7 +654,7 @@
       <div class="card-name">Lucky Ticket x1000</div>
       <div class="card-desc"><span data-i18n="shop_luck_press">เพิ่มตั๋วโชคดี ใช้ลุ้นรางวัลพิเศษในเกม</span></div>
       <div class="card-price"><span class="price-now">฿85</span><span class="price-old">฿169</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Lucky Ticket x1000', 85)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Lucky Ticket x1000', 85)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
 
     <div class="card">
@@ -531,7 +662,7 @@
       <div class="card-name">Lucky Ticket x2999</div>
       <div class="card-desc"><span data-i18n="shop_luck_press">เพิ่มตั๋วโชคดี ใช้ลุ้นรางวัลพิเศษในเกม</span></div>
       <div class="card-price"><span class="price-now">฿239</span><span class="price-old">฿469</span></div>
-      <button class="btn btn-primary" onclick="addToCart('Lucky Ticket x2999', 239)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงการ์ท</span></button>
+      <button class="btn btn-primary" onclick="addToCart('Lucky Ticket x2999', 239)" style="width:100%;"><span data-i18n="add_to_cart">เพิ่มลงตะกร้า</span></button>
     </div>
   </div>
 
@@ -559,6 +690,7 @@
         <ul>
           <li><a href="https://www.facebook.com/pronajaa.gamedee.1/" target="_blank" rel="noopener">📘 <span data-i18n="fb_user">Facebook (ผู้ใช้)</span></a></li>
           <li><a href="https://www.facebook.com/profile.php?id=61572054218886" target="_blank" rel="noopener">📘 <span data-i18n="fb_page">Facebook (เพจร้าน)</span></a></li>
+          <li><a href="https://line.me/ti/g2/PUmYGL3dhCeY4UbjU6QuHIrVEg7f2G7xS21voQ?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank" rel="noopener">💚 Line OpenChat</a></li>
         </ul>
       </div>
     </div>
@@ -626,6 +758,18 @@ const PRODUCT_MAP = {
   'Lucky Ticket x500': { key: 'lucky_ticket', amount: 500 },
   'Lucky Ticket x1000': { key: 'lucky_ticket', amount: 1000 },
   'Lucky Ticket x2999': { key: 'lucky_ticket', amount: 2999 },
+  'Base Materials x30':  { key: 'base_material', amount: 30 },
+  'Base Materials x100': { key: 'base_material', amount: 100 },
+  'Base Materials x500': { key: 'base_material', amount: 500 },
+  'Base Materials x999': { key: 'base_material', amount: 999 },
+  'Gamatoto Lv 50':         { key: 'gamatoto_level', amount: 50 },
+  'Gamatoto Lv 80':         { key: 'gamatoto_level', amount: 80 },
+  'Gamatoto Lv 100':        { key: 'gamatoto_level', amount: 100 },
+  'Gamatoto Lv 130':        { key: 'gamatoto_level', amount: 130 },
+  'Gamatoto Lackey x10':    { key: 'gamatoto_lackey',    amount: 10 },
+  'Gamatoto Underling x10': { key: 'gamatoto_underling', amount: 10 },
+  'Gamatoto Assistant x10': { key: 'gamatoto_assistant', amount: 10 },
+  'Gamatoto Legend x10':    { key: 'gamatoto_legend',    amount: 10 },
 };
 
 function addToCart(itemName, price) {
@@ -672,6 +816,12 @@ const MAX_VALUES = {
   catamins:      9999,
   battle_item:   9999,
   leadership:    9999,
+  base_material:      9999,
+  gamatoto_level:     130,
+  gamatoto_lackey:    10,
+  gamatoto_underling: 10,
+  gamatoto_assistant: 10,
+  gamatoto_legend:    10,
 };
 
 function _fmt(n) { return n.toLocaleString('en-US'); }
@@ -726,8 +876,8 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 </script>
 
 <script src="assets/auth.js?v=20260717"></script>
-<script src="assets/animations.js"></script>
-<script src="assets/nav.js"></script>
-<script src="assets/i18n.js"></script>
+<script src="assets/animations.js?v=2"></script>
+<script src="assets/nav.js?v=4"></script>
+<script src="assets/i18n.js?v=2"></script>
 </body>
 </html>

@@ -140,7 +140,7 @@ class BCSFERunner:
                 _backup_path = None
 
             self._log(f"[CLI] โหลดจาก {cli_path_str} (--input-path)")
-            inputs = "\n".join(nav + ["2", "", "2", "2", "3", "13", "n"]) + "\n"
+            inputs = "\n".join(nav + ["2", "n", "2", "2", "3", "12", "n"]) + "\n"
             result = self._cli_communicate(inputs, env, cli_args=["--input-path", cli_path_str])
 
             # ถ้า upload ล้มเหลว → retry ด้วย backup (clean file) + full nav (re-add tickets)
@@ -175,7 +175,7 @@ class BCSFERunner:
                 if correct_add != value_to_send:
                     self._log(f"[CLI] Lucky Ticket current จริง={actual_current} ≠ assumed={current} → re-run ด้วย {actual_current}+{amount}={correct_add}")
                     nav2 = ["3", "21", "1", str(correct_add)]
-                    inputs2 = "\n".join(nav2 + ["2", "", "2", "2", "3", "13", "n"]) + "\n"
+                    inputs2 = "\n".join(nav2 + ["2", "", "2", "2", "3", "12", "n"]) + "\n"
                     self._log("[CLI] รอ 15 วินาที (rate limit cooldown หลัง first run upload)...")
                     time.sleep(15)
                     rerun_result = self._cli_communicate(inputs2, env,
@@ -192,7 +192,7 @@ class BCSFERunner:
                         if _backup_path and _backup_path.exists():
                             try:
                                 time.sleep(15)
-                                inputs_restore = "\n".join(["2", "3", "13", "n"]) + "\n"
+                                inputs_restore = "\n".join(["2", "3", "12", "n"]) + "\n"
                                 restore_result = self._cli_communicate(inputs_restore, env,
                                                                       cli_args=["--input-path", str(_backup_path)])
                                 if restore_result.get("success"):
@@ -216,7 +216,7 @@ class BCSFERunner:
                 if correct_add != to_add:
                     self._log(f"[CLI] Rare Ticket current จริง={actual_current} ≠ assumed={current} → re-run ด้วย to_add={correct_add}")
                     nav2 = ["3", "6", str(correct_add)]
-                    inputs2 = "\n".join(nav2 + ["2", "", "2", "2", "3", "13", "n"]) + "\n"
+                    inputs2 = "\n".join(nav2 + ["2", "", "2", "2", "3", "12", "n"]) + "\n"
                     result = self._cli_communicate(inputs2, env,
                                                    cli_args=["--input-path", str(self._cli_save_path)])
                 else:
@@ -288,9 +288,13 @@ class BCSFERunner:
         cc = self._get_cc()
         gv = core.GameVersion(120200)
         self._log(f"[BCSFE] ⬇  Downloading save (transfer={self.transfer[:6]}... cc={cc})")
-        handler, _ = core.ServerHandler.from_codes(
-            self.transfer, self.confirm, cc, gv, print=False, save_backup=backup
-        )
+        try:
+            handler, _ = core.ServerHandler.from_codes(
+                self.transfer, self.confirm, cc, gv, print=False, save_backup=backup
+            )
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ from_codes exception: {type(e).__name__}: {e}")
+            raise
         if handler is None:
             raise RuntimeError(
                 "❌ Transfer Code หรือ Confirmation Code ไม่ถูกต้อง หรือหมดอายุแล้ว "
@@ -370,6 +374,62 @@ class BCSFERunner:
         # ── array items (sub-type loop) ──
         if cfg.get("sub_select"):
             self._edit_array_item(save_file, key, amount, max_val, label)
+            return
+
+        # ── base_material: เพิ่มทุกชนิดพร้อมกัน ──
+        if key == "base_material":
+            MATERIAL_NAMES = [
+                "Bricks","Feathers","Coal","Sprockets","Gold","Meteorite","Beast Bones","Ammonite",
+                "Brick Z","Feathers Z","Coal Z","Sprockets Z","Gold Z","Meteorite Z","Beast Bones Z","Ammonite Z",
+            ]
+            mats = save_file.ototo.base_materials.materials
+            for i, mat in enumerate(mats):
+                old = mat.amount
+                mat.amount = min(old + amount, max_val)
+                name = MATERIAL_NAMES[i] if i < len(MATERIAL_NAMES) else f"Mat#{i}"
+                self._log(f"[ITEM] {name}: {old} + {amount} → {mat.amount}")
+            return
+
+        # ── gamatoto_level: set XP ให้ตรงกับ level ที่เลือก ──
+        if key == "gamatoto_level":
+            import bcsfe.core as _bc
+            gamatoto_levels = _bc.core_data.get_gamatoto_levels(save_file)
+            old_xp = save_file.gamatoto.xp
+            old_lv = gamatoto_levels.get_level_from_xp(old_xp)
+            xp = gamatoto_levels.get_xp_from_level(amount)
+            if xp is None:
+                self._log(f"[ITEM] Gamatoto Level: ไม่พบ level {amount}")
+                return
+            save_file.gamatoto.xp = xp
+            old_str = f"Lv{old_lv.level}" if old_lv else "?"
+            self._log(f"[ITEM] Gamatoto Level: {old_str} → Lv{amount} (xp={xp})")
+            return
+
+        # ── gamatoto helpers: clear ทั้งหมดแล้วใส่ rarity ที่เลือก 10 ตัว ──
+        GAMATOTO_RARITY = {
+            "gamatoto_lackey":    1,
+            "gamatoto_underling": 2,
+            "gamatoto_assistant": 3,
+            "gamatoto_legend":    4,
+        }
+        GAMATOTO_NAMES = {
+            "gamatoto_lackey":    "Lackey",
+            "gamatoto_underling": "Underling",
+            "gamatoto_assistant": "Assistant",
+            "gamatoto_legend":    "Legend",
+        }
+        if key in GAMATOTO_RARITY:
+            import bcsfe.core as _bc
+            import bcsfe.core.game.gamoto.gamatoto as _gam
+            rarity   = GAMATOTO_RARITY[key]
+            rname    = GAMATOTO_NAMES[key]
+            members_data = _bc.GamatotoMembersName(save_file)
+            members  = members_data.get_all_rarity(rarity) or []
+            count    = min(amount, len(members))
+            helpers  = [_gam.Helper(m.member_id) for m in members[:count]]
+            old_count = len([h for h in save_file.gamatoto.helpers.helpers if h.is_valid()])
+            save_file.gamatoto.helpers = _gam.Helpers(helpers)
+            self._log(f"[ITEM] Gamatoto Helpers: ลบ {old_count} ตัวเดิม → เพิ่ม {count} {rname}")
             return
 
         # ── lucky_ticket / rare_ticket: deferred ไปรัน CLI หลัง upload ──
@@ -672,6 +732,40 @@ class BCSFERunner:
             self._close_log()
             return self._error_result(e)
 
+    def run_upgrade_plus_characters(self, cat_ids: list) -> dict:
+        """Upgrade max level + max plus ตาม IDs ที่ระบุ"""
+        try:
+            self._log(f"[OP] Upgrade Max + Characters จำนวน {len(cat_ids)} ตัว")
+            core.core_data.init_data()
+            save_file = self._download_save()
+
+            cats = self._find_owned_cats(save_file, cat_ids)
+            logs = []
+            not_found = [i for i in cat_ids if not any(c.id == i for c in cats)]
+            for cat in cats:
+                old_lv = cat.upgrade.base + 1
+                old_plus = cat.upgrade.plus
+                self._set_base_max(cat, save_file)
+                power_up = core.PowerUpHelper(cat, save_file)
+                max_plus = power_up.get_max_possible_plus()
+                cat.upgrade.plus = max_plus
+                entry = f"✔ #{cat.id} — Lv{old_lv}+{old_plus} → Lv{cat.upgrade.base+1}+{max_plus}"
+                logs.append(entry)
+                self._log(f"[CAT] {entry}")
+            for i in not_found:
+                logs.append(f"✘ #{i} — ไม่พบใน save")
+                self._log(f"[CAT] ✘ #{i} — ไม่พบใน save")
+            self._log(f"[BCSFE] Upgraded+Plus {len(cats)}/{len(cat_ids)} cats → max+max")
+
+            codes = self._upload_save(save_file)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
     def run_upgrade_all_characters(self) -> dict:
         """Upgrade max (with catseyes) ทุกตัวที่ unlock อยู่ใน save"""
         try:
@@ -904,6 +998,55 @@ class BCSFERunner:
 
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    def run_unban_from_backup(self, vps_save_bytes: bytes) -> dict:
+        """โหลด save จาก bytes (ดึงมาจาก VPS backup) แล้วทำ unban เหมือน dupe"""
+        try:
+            self._log("[OP] Unban from Backup (create_new_account + get_codes)")
+            core.core_data.init_data()
+            cc = self._get_cc()
+
+            # โหลด save จาก raw bytes (ไม่ต้อง download จาก PONOS)
+            save_file = core.SaveFile(core.Data(vps_save_bytes), cc=cc)
+            self._log("[UNBAN] ✅ โหลด save จาก backup สำเร็จ")
+
+            inquiry_before = getattr(save_file, "inquiry_code", "?")
+            self._log(f"[UNBAN] Inquiry ก่อน : {inquiry_before}")
+
+            # Step 1: สร้าง account ใหม่ (เหมือน dupe — unban โดยปริยาย)
+            server_handler = core.ServerHandler(save_file)
+            ok = server_handler.create_new_account()
+            if not ok:
+                raise RuntimeError("create_new_account ล้มเหลว — ไม่สามารถ unban ได้")
+
+            inquiry_after = getattr(save_file, "inquiry_code", "?")
+            changed = "✅ เปลี่ยนแล้ว" if inquiry_before != inquiry_after else "⚠️ ไม่เปลี่ยน!"
+            self._log(f"[UNBAN] Inquiry หลัง: {inquiry_after}  {changed}")
+
+            import time as _time
+            _time.sleep(2)
+
+            # Step 2: get_codes → ได้ TC ใหม่ (get_codes ตั้ง show_ban_message=False อัตโนมัติ)
+            result = core.ServerHandler(save_file).get_codes()
+            if result is None:
+                raise RuntimeError("get_codes ล้มเหลว — ลองใหม่อีกครั้ง")
+
+            new_tc, new_cc = result
+            self._log(f"[UNBAN] ✅ TC={new_tc} | CC={new_cc}")
+
+            self._close_log()
+            return {
+                "success": True,
+                "new_transfer_code": new_tc,
+                "new_confirmation_code": new_cc,
+                "inquiry_before": str(inquiry_before),
+                "inquiry_after":  str(inquiry_after),
+            }
+
+        except Exception as e:
+            self._log(f"[UNBAN] ❌ {e}")
             self._close_log()
             return self._error_result(e)
 
@@ -1347,5 +1490,37 @@ class BCSFERunner:
 
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    def run_base_materials(self, amount: int) -> dict:
+        """เพิ่ม Base Materials ทุกชนิดพร้อมกัน"""
+        try:
+            self._log(f"[OP] Base Materials → {amount} ทุกชนิด")
+            core.core_data.init_data()
+            save_file = self._download_save()
+
+            mats = save_file.ototo.base_materials.materials
+            n = len(mats)
+            MATERIAL_NAMES = [
+                "Bricks","Feathers","Coal","Sprockets","Gold","Meteorite","Beast Bones","Ammonite",
+                "Brick Z","Feathers Z","Coal Z","Sprockets Z","Gold Z","Meteorite Z","Beast Bones Z","Ammonite Z",
+            ]
+            logs = []
+            for i, mat in enumerate(mats):
+                old = mat.amount
+                mat.amount = min(old + amount, 9999)
+                name = MATERIAL_NAMES[i] if i < len(MATERIAL_NAMES) else f"Mat#{i}"
+                logs.append(f"✔ {name}: {old} + {amount} → {mat.amount}")
+                self._log(f"[BCSFE] ✔ {name}: {old} + {amount} → {mat.amount}")
+            self._log(f"[BCSFE] Base Materials {n} ชนิด เสร็จแล้ว")
+
+            codes = self._upload_save(save_file)
+            self._close_log()
+            return {"success": True, "new_transfer_code": codes, "log": logs}
+
+        except Exception as e:
+            import traceback
+            self._log(f"[BCSFE] ❌ {e}\n{traceback.format_exc()}")
             self._close_log()
             return self._error_result(e)

@@ -35,9 +35,24 @@ ITEM_MAP = {
     "lucky_ticket":    {"menu_no": 21, "max": 2999,     "has_warning": False, "label": "Lucky Ticket",          "sub_select": None,
                         "sub_enter": 1},
 
+    # ── Base Materials (เพิ่มทุกชนิดพร้อมกัน) ──
+    "base_material":   {"max": 9999, "has_warning": False, "label": "Base Materials (ทุกชนิด)",
+                        "note": "เพิ่มวัสดุทุกชนิด (Bricks/Feathers/Coal/Sprockets ฯลฯ) สะสมได้สูงสุด 9999/ชนิด"},
+
+    # ── Gamatoto Level (set XP ให้ตรงกับ level ที่เลือก) ──
+    "gamatoto_level": {"max": 130, "has_warning": False, "label": "Gamatoto Level",
+                       "note": "ตั้ง Gamatoto ให้ถึง level ที่เลือก (max 130)"},
+
+    # ── Gamatoto Helpers (clear เดิมแล้วใส่ใหม่ 10 ตัว) ──
+    "gamatoto_lackey":    {"max": 10, "has_warning": False, "label": "Gamatoto Helper — Lackey",    "note": "ลบ helper เดิมทั้งหมด แล้วใส่ Lackey 10 ตัว"},
+    "gamatoto_underling": {"max": 10, "has_warning": False, "label": "Gamatoto Helper — Underling", "note": "ลบ helper เดิมทั้งหมด แล้วใส่ Underling 10 ตัว"},
+    "gamatoto_assistant": {"max": 10, "has_warning": False, "label": "Gamatoto Helper — Assistant", "note": "ลบ helper เดิมทั้งหมด แล้วใส่ Assistant 10 ตัว"},
+    "gamatoto_legend":    {"max": 10, "has_warning": False, "label": "Gamatoto Helper — Legend",    "note": "ลบ helper เดิมทั้งหมด แล้วใส่ Legend 10 ตัว"},
+
     # ── Per-cat services (amount=1, needs cat_id in request) ──
-    "upgrade_cat":   {"max": 1, "label": "Upgrade Max",   "is_per_cat": True},
-    "trueform_cat":  {"max": 1, "label": "True Form",     "is_per_cat": True},
+    "upgrade_cat":      {"max": 1, "label": "Upgrade Max",    "is_per_cat": True},
+    "upgrade_plus_cat": {"max": 1, "label": "Upgrade Max +",  "is_per_cat": True},
+    "trueform_cat":     {"max": 1, "label": "True Form",      "is_per_cat": True},
     "ultraform_cat": {"max": 1, "label": "Ultra Form",    "is_per_cat": True},
     "talents_cat":   {"max": 1, "label": "Talent Max",    "is_per_cat": True},
 
@@ -64,6 +79,12 @@ AMOUNT_OPTIONS = {
     "catamins":        [100, 500, 5000, 9999],
     "legend_ticket":   [1, 2, 3, 4],
     "lucky_ticket":    [100, 500, 1000, 2999],
+    "base_material":   [30, 100, 500, 999],
+    "gamatoto_level":     [50, 80, 100, 130],
+    "gamatoto_lackey":    [10],
+    "gamatoto_underling": [10],
+    "gamatoto_assistant": [10],
+    "gamatoto_legend":    [10],
 }
 
 # ข้อมูลเพิ่มเติมเกี่ยวกับแต่ละ item

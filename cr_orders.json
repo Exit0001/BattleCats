@@ -1005,5 +1005,24 @@
     "expires_at": "2026-07-16T18:38:19.719264+07:00",
     "qr_base64": null,
     "done_at": "2026-07-16T18:23:27.581185"
+  },
+  "CCD19972": {
+    "order_id": "CCD19972",
+    "order_type": "cr_shop",
+    "product_id": "89749e56-c626-479f-bf07-5e66660ae321",
+    "stock_id": "b0a713cd-1dd4-4dff-a284-331eccc87458",
+    "stock_ids": [
+      "b0a713cd-1dd4-4dff-a284-331eccc87458"
+    ],
+    "quantity": 1,
+    "username": "modpo111",
+    "base_amount": 140,
+    "truemoney_fee": 0,
+    "amount": 140,
+    "payment_method": "wallet",
+    "status": "cancelled",
+    "created_at": "2026-08-18T18:12:53.538963+07:00",
+    "expires_at": "2026-08-18T18:27:53.538947+07:00",
+    "qr_base64": null
   }
 }

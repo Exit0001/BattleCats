@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unban Tool — Battle Cats Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Russo+One&family=Chakra+Petch:wght@400;500;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #090c10;
+  --surf:    #111827;
+  --surf2:   #1a2235;
+  --border:  rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text:    #e8edf5;
+  --muted:   rgba(200,210,230,0.5);
+  --accent:  #F59E0B;
+  --accd:    #B45309;
+  --ok:      #10B981;
+  --err:     #EF4444;
+  --code-bg: #0d1117;
+}
+
+html, body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Chakra Petch', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════
+   LOGIN GATE
+══════════════════════════════════════ */
+#authGate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px 16px;
+}
+.gate-box {
+  background: var(--surf);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.gate-title {
+  font-family: 'Russo One', sans-serif;
+  font-size: 18px;
+  color: var(--accent);
+  letter-spacing: 1px;
+  text-align: center;
+}
+.gate-sub {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: -8px;
+}
+.gate-field { display: flex; flex-direction: column; gap: 6px; }
+.gate-field label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.gate-field input {
+  background: var(--surf2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 14px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.gate-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(245,158,11,0.15); }
+.gate-field input::placeholder { color: var(--muted); }
+#gateErr {
+  display: none;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 6px;
+  color: var(--err);
+  font-size: 12px;
+  padding: 8px 12px;
+}
+.btn-login {
+  background: linear-gradient(135deg, var(--accd), var(--accent));
+  border: none; border-radius: 8px;
+  color: #111;
+  cursor: pointer;
+  font-family: 'Russo One', sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  padding: 12px;
+  text-transform: uppercase;
+  transition: opacity 0.15s;
+  width: 100%;
+}
+.btn-login:hover:not(:disabled) { opacity: 0.88; }
+.btn-login:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ══════════════════════════════════════
+   MAIN PANEL
+══════════════════════════════════════ */
+#adminMain { display: none; }
+
+body.authed {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px 80px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border2);
+  padding-bottom: 16px;
+}
+.header-title {
+  font-family: 'Russo One', sans-serif;
+  font-size: 22px;
+  color: var(--accent);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.header-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: rgba(239,68,68,0.15);
+  color: var(--err);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+.header-user {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-logout {
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 3px 8px;
+  transition: border-color 0.12s, color 0.12s;
+}
+.btn-logout:hover { border-color: var(--err); color: var(--err); }
+
+/* Note */
+.note {
+  background: rgba(239,68,68,0.07);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: rgba(239,68,68,0.9);
+  line-height: 1.7;
+}
+.note strong { color: var(--err); }
+
+/* Card */
+.card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.card-title {
+  font-family: 'Russo One', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Field */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.field input, .field select {
+  background: var(--surf2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 14px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+.field input:focus, .field select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(245,158,11,0.15);
+}
+.field input::placeholder { color: var(--muted); }
+.field select option { background: var(--surf2); }
+
+/* Unban button */
+.btn-unban {
+  background: linear-gradient(135deg, var(--accd), var(--accent));
+  border: none; border-radius: 8px;
+  color: #111;
+  cursor: pointer;
+  font-family: 'Russo One', sans-serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  padding: 12px 24px;
+  text-transform: uppercase;
+  transition: opacity 0.15s, transform 0.1s;
+  width: 100%;
+}
+.btn-unban:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+.btn-unban:active:not(:disabled) { transform: translateY(0); }
+.btn-unban:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Status */
+.status {
+  display: none;
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.7;
+  gap: 10px;
+  align-items: flex-start;
+}
+.status.visible { display: flex; }
+.status-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.status-text { flex: 1; }
+.status-label {
+  font-family: 'Russo One', sans-serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.status.loading { border-color: rgba(245,158,11,0.3); }
+.status.loading .status-label { color: var(--accent); }
+.status.ok      { border-color: rgba(16,185,129,0.4); }
+.status.ok      .status-label { color: var(--ok); }
+.status.fail    { border-color: rgba(239,68,68,0.4); }
+.status.fail    .status-label { color: var(--err); }
+
+/* Result */
+.result-card {
+  display: none;
+  background: var(--surf);
+  border: 1px solid rgba(16,185,129,0.35);
+  border-radius: 10px;
+  padding: 22px 24px;
+  flex-direction: column;
+  gap: 16px;
+}
+.result-card.visible { display: flex; }
+.result-header { display: flex; align-items: center; gap: 8px; }
+.result-header-label {
+  font-family: 'Russo One', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ok);
+}
+.result-meta { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+.code-field { display: flex; flex-direction: column; gap: 6px; }
+.code-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.code-row { display: flex; gap: 8px; align-items: center; }
+.code-val {
+  background: var(--code-bg);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  color: #a5f3fc;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 10px 14px;
+  flex: 1;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.btn-copy {
+  background: var(--surf2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 12px;
+  padding: 8px 14px;
+  transition: background 0.12s, border-color 0.12s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.btn-copy:hover { background: var(--border2); border-color: var(--accent); }
+.btn-copy.copied { border-color: var(--ok); color: var(--ok); }
+
+/* Order list */
+.order-list { display: flex; flex-direction: column; gap: 8px; }
+.order-row {
+  background: var(--surf2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 12px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 0.12s, background 0.12s;
+}
+.order-row:hover { border-color: var(--accent); background: rgba(245,158,11,0.06); }
+.order-row.selected { border-color: var(--accent); background: rgba(245,158,11,0.1); }
+.order-status {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.s-paid      { background: rgba(16,185,129,0.15); color: var(--ok); border: 1px solid rgba(16,185,129,0.3); }
+.s-pending   { background: rgba(245,158,11,0.12); color: var(--accent); border: 1px solid rgba(245,158,11,0.3); }
+.s-failed    { background: rgba(239,68,68,0.12); color: var(--err); border: 1px solid rgba(239,68,68,0.3); }
+.s-other     { background: var(--surf); color: var(--muted); border: 1px solid var(--border); }
+.order-info { flex: 1; min-width: 0; }
+.order-id-text { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.order-date   { font-size: 11px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+.order-tc { font-size: 11px; color: rgba(165,243,252,0.7); font-family: monospace; }
+.btn-search {
+  background: var(--surf2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 16px;
+  transition: border-color 0.12s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.btn-search:hover { border-color: var(--accent); color: var(--accent); }
+.search-row { display: flex; gap: 8px; align-items: flex-end; }
+.search-row .field { flex: 1; }
+.empty-msg { font-size: 12px; color: var(--muted); text-align: center; padding: 16px 0; }
+
+.divider { height: 1px; background: var(--border); }
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.meta-item {
+  background: var(--surf2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+.meta-item-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.meta-item-val {
+  font-size: 12px;
+  color: var(--text);
+  word-break: break-all;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  display: inline-block;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(245,158,11,0.2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+</style>
+</head>
+<body>
+
+<!-- ════ LOGIN GATE ════ -->
+<div id="authGate">
+  <div class="gate-box">
+    <div class="gate-title">⛓ Unban Tool</div>
+    <div class="gate-sub">Admin เท่านั้น</div>
+
+    <div class="gate-field">
+      <label for="gateUser">Username</label>
+      <input id="gateUser" type="text" placeholder="username" autocomplete="username">
+    </div>
+    <div class="gate-field">
+      <label for="gatePass">Password</label>
+      <input id="gatePass" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div id="gateErr"></div>
+    <button class="btn-login" id="gateLoginBtn" onclick="adminLogin()">เข้าสู่ระบบ Admin</button>
+  </div>
+</div>
+
+<!-- ════ MAIN PANEL ════ -->
+<div id="adminMain">
+<div class="wrap">
+
+  <div class="header">
+    <span class="header-title">⛓ Unban</span>
+    <span class="header-badge">Admin Only</span>
+    <div class="header-user">
+      <span id="headerUser"></span>
+      <button class="btn-logout" onclick="adminLogout()">ออก</button>
+    </div>
+  </div>
+
+  <!-- ── ค้นหาด้วย Username ── -->
+  <div class="card">
+    <div class="card-title">🔍 ค้นหา Order ด้วย Username</div>
+    <div class="search-row">
+      <div class="field">
+        <label for="searchUser">Username ลูกค้า</label>
+        <input id="searchUser" type="text" placeholder="เช่น player123" autocomplete="off" spellcheck="false">
+      </div>
+      <button class="btn-search" onclick="searchAll()">ค้นหา</button>
+    </div>
+    <div id="orderList" style="display:none;">
+      <div class="divider" style="margin:0 0 10px;"></div>
+      <div class="order-list" id="orderListItems"></div>
+    </div>
+  </div>
+
+  <!-- ── Unban Form ── -->
+  <div class="card">
+    <div class="card-title">Unban Account</div>
+    <div class="field">
+      <label for="orderId">Order ID</label>
+      <input id="orderId" type="text" placeholder="เลือกจากรายการด้านบน หรือพิมพ์เอง" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="field">
+      <label for="country">Country / Region</label>
+      <select id="country">
+        <option value="1">🌏 EN (Global)</option>
+        <option value="2">🇯🇵 JP (Japan)</option>
+        <option value="3">🇰🇷 KR (Korea)</option>
+        <option value="4">🇹🇼 TW (Taiwan)</option>
+      </select>
+    </div>
+    <input type="hidden" id="_directTC">
+    <button class="btn-unban" id="btnRun" onclick="runUnban()">🔓 Unban Account</button>
+  </div>
+
+  <div class="status" id="status">
+    <span class="status-icon" id="statusIcon">⏳</span>
+    <div class="status-text">
+      <div class="status-label" id="statusLabel">กำลังทำงาน</div>
+      <div id="statusMsg"></div>
+    </div>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-header">
+      <span class="result-header-label">✅ Unban สำเร็จ</span>
+      <div class="result-meta" id="resultMeta"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="code-field">
+      <div class="code-label">Transfer Code ใหม่</div>
+      <div class="code-row">
+        <div class="code-val" id="outTc">—</div>
+        <button class="btn-copy" onclick="copyVal('outTc', this)">Copy</button>
+      </div>
+    </div>
+    <div class="code-field">
+      <div class="code-label">Confirmation Code ใหม่</div>
+      <div class="code-row">
+        <div class="code-val" id="outCc">—</div>
+        <button class="btn-copy" onclick="copyVal('outCc', this)">Copy</button>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="meta-grid" id="metaGrid"></div>
+  </div>
+
+</div>
+</div><!-- /adminMain -->
+
+<script src="assets/supabase-client.js?v=2"></script>
+<script>
+// ── Session ────────────────────────────────────────────────────────────────
+var _adminUser = '';
+var _adminHash = '';
+
+function showAdminPanel(username, hash) {
+  _adminUser = username;
+  _adminHash = hash;
+  sessionStorage.setItem('bc_unban_user', username);
+  sessionStorage.setItem('bc_unban_hash', hash);
+  document.getElementById('authGate').style.display = 'none';
+  document.getElementById('adminMain').style.display = 'block';
+  document.getElementById('headerUser').textContent = username;
+  document.body.classList.add('authed');
+}
+
+function gateErr(msg) {
+  var el = document.getElementById('gateErr');
+  el.textContent = '❌ ' + msg;
+  el.style.display = 'block';
+}
+
+async function adminLogin() {
+  var user = document.getElementById('gateUser').value.trim();
+  var pass = document.getElementById('gatePass').value;
+  var btn  = document.getElementById('gateLoginBtn');
+  if (!user || !pass) { gateErr('กรอก username และ password'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ กำลังตรวจสอบ...';
+  document.getElementById('gateErr').style.display = 'none';
+
+  try {
+    var hash = btoa(unescape(encodeURIComponent(pass)));
+    var res = await DB.from('profiles')
+      .select('username, is_admin, password_hash')
+      .eq('username', user)
+      .maybeSingle();
+
+    if (res.error) throw new Error('DB error: ' + res.error.message);
+    if (!res.data)                    { gateErr('ไม่พบ username "' + user + '"'); return; }
+    if (res.data.password_hash !== hash) { gateErr('password ไม่ถูกต้อง'); return; }
+    if (!res.data.is_admin)           { gateErr('บัญชีนี้ไม่มีสิทธิ์ admin'); return; }
+
+    showAdminPanel(res.data.username, hash);
+  } catch (e) {
+    gateErr(e.message || String(e));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'เข้าสู่ระบบ Admin';
+  }
+}
+
+function adminLogout() {
+  sessionStorage.removeItem('bc_unban_user');
+  sessionStorage.removeItem('bc_unban_hash');
+  document.getElementById('adminMain').style.display = 'none';
+  document.getElementById('authGate').style.display  = 'flex';
+  document.body.classList.remove('authed');
+  document.getElementById('gateUser').value = '';
+  document.getElementById('gatePass').value = '';
+  document.getElementById('gateErr').style.display = 'none';
+  document.getElementById('status').className = 'status';
+  document.getElementById('resultCard').classList.remove('visible');
+}
+
+// Auto-restore session ถ้ายังอยู่
+(function() {
+  var u = sessionStorage.getItem('bc_unban_user');
+  var h = sessionStorage.getItem('bc_unban_hash');
+  if (u && h) showAdminPanel(u, h);
+})();
+
+// Enter on password
+document.getElementById('gatePass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') adminLogin();
+});
+
+// ── Unban ──────────────────────────────────────────────────────────────────
+async function runUnban() {
+  var orderId  = document.getElementById('orderId').value.trim();
+  var directTC = document.getElementById('_directTC').value.trim();
+  if (!orderId && !directTC) { setStatus('fail', '❌', 'กรุณาเลือก order หรือ loyalty จากรายการด้านบน'); return; }
+
+  var country = document.getElementById('country').value;
+  var btn = document.getElementById('btnRun');
+
+  btn.disabled = true;
+  document.getElementById('resultCard').classList.remove('visible');
+  setStatus('loading', '<span class="spinner"></span>', 'กำลังค้นหา backup และ unban...');
+
+  try {
+    var body = { country: country, username: _adminUser, session_token: _adminHash };
+    if (directTC) {
+      body.transfer_code = directTC;   // จาก loyalty → ส่ง TC โดยตรง
+    } else {
+      body.order_id = orderId;         // จาก orders → ให้ server ดึง TC เอง
+    }
+
+    var res = await fetch('/api/admin/unban/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (res.status === 403) {
+      setStatus('fail', '🔒', 'Session หมดอายุ — กรุณา login ใหม่');
+      adminLogout();
+      return;
+    }
+
+    var data = await res.json();
+    if (data.success) {
+      setStatus('ok', '✅', 'Unban สำเร็จ — ส่ง TC ใหม่ให้ลูกค้าได้เลย');
+      showResult(data, orderId || '(loyalty redemption)');
+    } else {
+      setStatus('fail', '❌', data.error || 'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ');
+    }
+  } catch (e) {
+    setStatus('fail', '❌', 'ไม่สามารถเชื่อมต่อ server: ' + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function setStatus(type, iconHtml, msg) {
+  var el = document.getElementById('status');
+  el.className = 'status visible ' + type;
+  document.getElementById('statusIcon').innerHTML = iconHtml;
+  var labels = { loading: 'กำลังทำงาน', ok: 'สำเร็จ', fail: 'ล้มเหลว' };
+  document.getElementById('statusLabel').textContent = labels[type] || '';
+  document.getElementById('statusMsg').textContent   = msg;
+}
+
+function showResult(data, orderId) {
+  document.getElementById('outTc').textContent = data.new_transfer_code    || '—';
+  document.getElementById('outCc').textContent = data.new_confirmation_code || '—';
+
+  var now = new Date();
+  document.getElementById('resultMeta').textContent =
+    'สร้างเมื่อ ' + now.toLocaleTimeString('th', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  var inquiryChanged = data.inquiry_before && data.inquiry_after && data.inquiry_before !== data.inquiry_after;
+  var inquiryStatus  = inquiryChanged ? '✅ เปลี่ยนแล้ว' : '⚠️ ไม่เปลี่ยน';
+  var metas = [
+    { label: 'TC เดิม (Banned)',    val: data.tc_old         || '—' },
+    { label: 'Backup ที่ใช้',       val: data.backup_used    || '—' },
+    { label: 'Inquiry เก่า (ก่อน)', val: data.inquiry_before || '—' },
+    { label: 'Inquiry ใหม่ (หลัง) ' + inquiryStatus, val: data.inquiry_after || '—' },
+    { label: 'Order ID',            val: orderId },
+  ];
+  document.getElementById('metaGrid').innerHTML = metas.map(function(m, i) {
+    var span = (i === metas.length - 1 && metas.length % 2 !== 0) ? ' style="grid-column:1/-1"' : '';
+    return '<div class="meta-item"' + span + '>'
+         + '<div class="meta-item-label">' + m.label + '</div>'
+         + '<div class="meta-item-val">'   + m.val   + '</div>'
+         + '</div>';
+  }).join('');
+
+  document.getElementById('resultCard').classList.add('visible');
+}
+
+function copyVal(id, btn) {
+  var text = document.getElementById(id).textContent.trim();
+  if (!text || text === '—') return;
+  navigator.clipboard.writeText(text).then(function() {
+    var orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = orig;
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+document.getElementById('orderId').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') runUnban();
+});
+document.getElementById('searchUser').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') searchAll();
+});
+
+var COUNTRY_MAP   = { '1':'EN', '2':'JP', '3':'KR', '4':'TW' };
+var STATUS_CLASS  = { paid:'s-paid', completed:'s-paid', bcsfe_failed:'s-failed', pending:'s-pending' };
+
+// ── ค้นหาทั้ง orders + loyalty_redemptions ───────────────────────────────
+async function searchAll() {
+  var user = document.getElementById('searchUser').value.trim();
+  if (!user) return;
+
+  var listEl  = document.getElementById('orderList');
+  var itemsEl = document.getElementById('orderListItems');
+  listEl.style.display = 'block';
+  itemsEl.innerHTML = '<div class="empty-msg"><span class="spinner"></span> กำลังค้นหา...</div>';
+
+  try {
+    // Query ทั้ง 2 tables พร้อมกัน
+    var [ordRes, loyRes] = await Promise.all([
+      DB.from('orders')
+        .select('order_id, transfer_code, country, status, created_at, amount')
+        .eq('username', user)
+        .order('created_at', { ascending: false })
+        .limit(15),
+      DB.from('loyalty_redemptions')
+        .select('id, username, original_transfer_code, new_transfer_code, country, redeemed_at, cycles_redeemed')
+        .eq('username', user)
+        .order('redeemed_at', { ascending: false })
+        .limit(15)
+    ]);
+
+    var orders = (ordRes.data || []);
+    var loys   = (loyRes.data || []);
+
+    if (!orders.length && !loys.length) {
+      itemsEl.innerHTML = '<div class="empty-msg">ไม่พบข้อมูลของ "' + user + '"</div>';
+      return;
+    }
+
+    var html = '';
+
+    // ── Orders ──
+    if (orders.length) {
+      html += '<div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">📦 Orders (' + orders.length + ')</div>';
+      html += orders.map(function(o) {
+        var sc   = STATUS_CLASS[o.status] || 's-other';
+        var date = fmtDate(o.created_at);
+        var tc   = o.transfer_code ? o.transfer_code.slice(0,8) + '…' : '—';
+        var cc   = COUNTRY_MAP[o.country] || o.country || '—';
+        var amt  = o.amount ? ' · ฿' + o.amount : '';
+        var rowId = 'row-ord-' + o.order_id;
+        return '<div class="order-row" onclick="selectByOrderId(\'' + o.order_id + '\',\'' + (o.country||'1') + '\')" id="' + rowId + '">'
+             + '<span class="order-status ' + sc + '">' + (o.status||'?') + '</span>'
+             + '<div class="order-info">'
+             + '<div style="font-size:12px;font-weight:600;">' + o.order_id + '</div>'
+             + '<div class="order-tc">TC: ' + tc + ' · ' + cc + amt + '</div>'
+             + '</div>'
+             + '<div class="order-date">' + date + '</div>'
+             + '</div>';
+      }).join('');
+    }
+
+    // ── Loyalty Redemptions ──
+    if (loys.length) {
+      html += '<div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:12px 0 6px;">🎁 Loyalty Redemptions (' + loys.length + ')</div>';
+      html += loys.map(function(l) {
+        var date  = fmtDate(l.redeemed_at);
+        var tc    = l.original_transfer_code ? l.original_transfer_code.slice(0,8) + '…' : '—';
+        var newTc = l.new_transfer_code      ? l.new_transfer_code.slice(0,8) + '…'      : '—';
+        var cc    = COUNTRY_MAP[l.country] || l.country || '—';
+        var rowId = 'row-loy-' + l.id;
+        var safeOtc = (l.original_transfer_code||'').replace(/'/g, "\\'");
+        return '<div class="order-row" onclick="selectByTC(\'' + safeOtc + '\',\'' + (l.country||'1') + '\',\'' + rowId + '\')" id="' + rowId + '">'
+             + '<span class="order-status s-paid">loyalty</span>'
+             + '<div class="order-info">'
+             + '<div style="font-size:12px;font-weight:600;">แลก ' + (l.cycles_redeemed||1) + ' รอบ &nbsp;·&nbsp; ' + cc + '</div>'
+             + '<div class="order-tc">TC เก่า: ' + tc + ' → TC ใหม่: ' + newTc + '</div>'
+             + '</div>'
+             + '<div class="order-date">' + date + '</div>'
+             + '</div>';
+      }).join('');
+    }
+
+    itemsEl.innerHTML = html;
+
+  } catch (e) {
+    itemsEl.innerHTML = '<div class="empty-msg" style="color:var(--err);">❌ ' + e.message + '</div>';
+  }
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('th', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+}
+
+// เลือกจาก orders (ส่ง order_id)
+function selectByOrderId(orderId, country) {
+  _highlightRow('row-ord-' + orderId);
+  document.getElementById('orderId').value       = orderId;
+  document.getElementById('country').value       = country || '1';
+  document.getElementById('_directTC').value     = '';   // clear direct TC
+  document.getElementById('btnRun').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+// เลือกจาก loyalty (ส่ง TC โดยตรง — ไม่มี order_id)
+function selectByTC(tc, country, rowId) {
+  _highlightRow(rowId);
+  document.getElementById('orderId').value       = '';   // clear order_id
+  document.getElementById('_directTC').value     = tc;
+  document.getElementById('country').value       = country || '1';
+  document.getElementById('btnRun').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+function _highlightRow(rowId) {
+  document.querySelectorAll('.order-row').forEach(function(r) { r.classList.remove('selected'); });
+  var row = document.getElementById(rowId);
+  if (row) row.classList.add('selected');
+}
+</script>
+</body>
+</html>
