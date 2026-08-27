@@ -47,6 +47,7 @@ _STAGE_LEGEND_PRICES   = {
 }
 _STAGE_AKU_UNLOCK   = 40
 _STAGE_AKU_CHAPTERS = 100
+_STAGE_EVENT_PRICE  = 30  # ฿ ต่อ 1 map (Normal Event Stage)
 
 def _story_group_count(chapters: list) -> int:
     groups = set()
@@ -65,9 +66,10 @@ def _calc_stages_price(cfg) -> int:
         total += _STAGE_LEGEND_PRICES.get(lt, {}).get(crown, 0)
     if cfg.aku_unlock:   total += _STAGE_AKU_UNLOCK
     if cfg.aku_chapters: total += _STAGE_AKU_CHAPTERS
+    total += len(cfg.event_stage_ids) * _STAGE_EVENT_PRICE
     return total
 
-from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest, LoyaltyRedeemRequest, CodeShopBuyRequest, AdminProductRequest, AdminToggleRequest, AdminEditProductRequest, AdminStockRequest, ClearStoryChaptersRequest, ClearStoryAllRequest, ResetStoryChaptersRequest, ResetStoryAllRequest, SetTreasureChaptersRequest, SetTreasureAllRequest, ClearOutbreakChaptersRequest, ClearOutbreakAllRequest, AkuRequest, ClearLegendsRequest, StagesPaymentRequest, WalletTopupRequest, WalletVoucherRequest, WalletPayRequest, CRBuyRequest, CRAdminProductRequest, CRAdminEditProductRequest, CRAdminStockRequest, UnbanRequest
+from models import OrderRequest, OrderResponse, ItemSummary, ItemRequest, TestBCSFERequest, UnlockCharactersRequest, RetryRequest, UnlockPaymentRequest, AllCatsRequest, VoucherRedeemRequest, DupeSaveRequest, CheckIDRequest, LoyaltyRedeemRequest, CodeShopBuyRequest, AdminProductRequest, AdminToggleRequest, AdminEditProductRequest, AdminStockRequest, ClearStoryChaptersRequest, ClearStoryAllRequest, ResetStoryChaptersRequest, ResetStoryAllRequest, SetTreasureChaptersRequest, SetTreasureAllRequest, ClearOutbreakChaptersRequest, ClearOutbreakAllRequest, AkuRequest, ClearLegendsRequest, StagesPaymentRequest, WalletTopupRequest, WalletVoucherRequest, WalletPayRequest, CRBuyRequest, CRAdminProductRequest, CRAdminEditProductRequest, CRAdminStockRequest, UnbanRequest, RemoveCheetahUnbanRequest
 from runner import BCSFERunner
 from config import ITEM_MAP, AMOUNT_OPTIONS, COUNTRIES
 from payment import (
@@ -86,7 +88,8 @@ from payment import (
     mark_slip_used,
     get_user_loyalty,
     increment_loyalty_redeemed,
-    add_loyalty_redeemed_cycles,
+    add_loyalty_redeemed_tier,
+    # add_loyalty_redeemed_cycles,  # deprecated → ใช้ add_loyalty_redeemed_tier แทน
     save_loyalty_redemption,
     get_loyalty_redemptions,
     get_loyalty_redemption_by_id,
@@ -790,6 +793,15 @@ def _run_bcsfe_steps(order: dict, tc: str, cc: str) -> dict:
             if aku_chapters: summary.append({"item": "Aku Chapters Clear", "amount": 1})
             print(f"[BCSFE] aku done -> tc={cur_tc}")
 
+        # Normal Event Stages
+        event_stage_ids = stages_config.get("event_stage_ids", [])
+        if event_stage_ids:
+            r = _call("run_clear_event_stages", event_stage_ids)
+            if not r["success"]: return _fail(r)
+            _upd(r.get("new_transfer_code", cur_tc))
+            summary.append({"item": f"Normal Event Stages ({len(event_stage_ids)} ด่าน)", "amount": len(event_stage_ids)})
+            print(f"[BCSFE] event_stages done ({len(event_stage_ids)} maps) -> tc={cur_tc}")
+
     return {"success": True, "new_tc": cur_tc, "new_cc": cur_cc, "summary": summary}
 
 
@@ -802,7 +814,8 @@ async def payment_create_stages(body: StagesPaymentRequest):
         raise HTTPException(status_code=400, detail=f"Country ไม่ถูกต้อง: {body.country}")
     cfg = body.stages_config
     if not any([cfg.story_chapters, cfg.treasure_chapters, cfg.zombie_chapters,
-                cfg.legend_types, cfg.aku_unlock, cfg.aku_chapters]):
+                cfg.legend_types, cfg.aku_unlock, cfg.aku_chapters,
+                cfg.event_stage_ids]):
         raise HTTPException(status_code=400, detail="กรุณาเลือกบริการอย่างน้อย 1 อย่าง")
     correct_amount = _calc_stages_price(cfg)
     if correct_amount <= 0:
@@ -1030,22 +1043,91 @@ async def payment_verify_voucher(order_id: str, body: VoucherRedeemRequest):
 # LOYALTY ENDPOINTS
 # ══════════════════════════════════════════
 
+def _loyalty_items_for_tier(tier: int, cycles: int) -> list:
+    """สร้างรายการ items ตาม loyalty tier และจำนวน cycles
+    หมายเหตุ: catfruit/catseye ส่ง 1 item — runner เพิ่มทุก sub_type อัตโนมัติ"""
+    if tier == 200:
+        return [
+            {"key": "normal_ticket", "amount": 100 * cycles},
+            {"key": "leadership",    "amount": 30  * cycles},
+            {"key": "catfruit",      "amount": 30  * cycles},  # runner เพิ่มทุก 29 ประเภทเอง
+        ]
+
+    elif tier == 500:
+        return [
+            {"key": "catfruit",       "amount": 100 * cycles},  # runner เพิ่มทุก 29 ประเภทเอง
+            {"key": "platinum_shard", "amount": 30  * cycles},
+            {"key": "xp",             "amount": 99999999},       # max เสมอ ไม่คูณ cycles
+        ]
+
+    elif tier == 1000:
+        return [
+            {"key": "legend_ticket",  "amount": 2  * cycles},
+            {"key": "platinum_shard", "amount": 30 * cycles},
+            {"key": "catseye",        "amount": 100 * cycles},  # runner เพิ่มทุก 6 ประเภทเอง
+        ]
+
+    return []
+
+
 @app.get("/api/loyalty/status")
 def loyalty_status_endpoint(username: str):
-    loyalty = get_user_loyalty(username)
+    loyalty     = get_user_loyalty(username)
     total_spent = loyalty["total_spent"]
-    redeemed = loyalty["loyalty_redeemed_cycles"]
-    total_cycles = total_spent // 200
-    available = total_cycles - redeemed
-    progress_baht = total_spent % 200
+    r200  = loyalty["redeemed_tier200"]
+    r500  = loyalty["redeemed_tier500"]
+    r1000 = loyalty["redeemed_tier1000"]
+
+    # sequential cycle: ฿200 → ฿500 → ฿1000 → วน
+    completed = total_spent // 1000   # จบกี่ cycle แล้ว
+    remainder = total_spent % 1000    # ยอดในรอบปัจจุบัน (0-999)
+
+    max_200  = completed + (1 if remainder >= 200  else 0)
+    max_500  = completed + (1 if remainder >= 500  else 0)
+    max_1000 = completed
+
+    avail_200  = max(0, max_200  - r200)
+    avail_500  = max(0, max_500  - r500)
+    avail_1000 = max(0, max_1000 - r1000)
+
+    tiers_data = {
+        "tier200": {
+            "redeemed":      r200,
+            "earned":        max_200,
+            "available":     avail_200,
+            "progress_baht": min(remainder, 200),
+            "progress_pct":  min(100.0, round(remainder / 200 * 100, 1)),
+        },
+        "tier500": {
+            "redeemed":      r500,
+            "earned":        max_500,
+            "available":     avail_500,
+            "progress_baht": min(remainder, 500),
+            "progress_pct":  min(100.0, round(remainder / 500 * 100, 1)),
+        },
+        "tier1000": {
+            "redeemed":      r1000,
+            "earned":        max_1000,
+            "available":     avail_1000,
+            "progress_baht": remainder,
+            "progress_pct":  round(remainder / 1000 * 100, 1),
+        },
+    }
+
     return {
-        "username":                 username,
-        "total_spent":              total_spent,
-        "loyalty_redeemed_cycles":  redeemed,
-        "available_cycles":         available,
-        "progress_baht":            progress_baht,
-        "progress_pct":             round(progress_baht / 200 * 100, 1),
-        "next_reward_at":           (redeemed + 1) * 200,
+        "username":                username,
+        "total_spent":             total_spent,
+        # backward compat
+        "loyalty_redeemed_cycles": r200,
+        "available_cycles":        avail_200,
+        "progress_baht":           remainder,
+        "progress_pct":            round(remainder / 1000 * 100, 1),
+        "next_reward_at":          (completed + 1) * 1000,
+        # multi-tier
+        "tiers":        tiers_data,
+        "cycle_spent":  remainder,
+        "cycle_number": completed,
+        "cycle_total":  1000,
     }
 
 
@@ -1053,36 +1135,50 @@ def loyalty_status_endpoint(username: str):
 async def loyalty_redeem(body: LoyaltyRedeemRequest):
     if not verify_loyalty_session(body.username, body.session_token):
         raise HTTPException(status_code=401, detail="session ไม่ถูกต้อง — กรุณาเข้าสู่ระบบใหม่")
-    loyalty = get_user_loyalty(body.username)
-    available = loyalty["total_spent"] // 200 - loyalty["loyalty_redeemed_cycles"]
-    if available <= 0:
-        raise HTTPException(status_code=400, detail="ยังไม่มีรอบที่พร้อม redeem (ซื้อครบ 200 บาทถึงจะแลกได้)")
 
-    cycles = max(1, min(body.cycles, available))  # clamp: 1 ≤ cycles ≤ available
-    items = [
-        {"key": "normal_ticket", "amount": 100 * cycles},
-        {"key": "leadership",    "amount": 30  * cycles},
-        {"key": "rare_ticket",   "amount": 10  * cycles},
-    ]
+    tier = body.tier
+    if tier not in (200, 500, 1000):
+        raise HTTPException(status_code=400, detail="tier ไม่ถูกต้อง (200/500/1000)")
+
+    loyalty     = get_user_loyalty(body.username)
+    total_spent = loyalty["total_spent"]
+    redeemed    = loyalty[f"redeemed_tier{tier}"]
+
+    # sequential cycle formula (เหมือน status endpoint)
+    completed = total_spent // 1000
+    remainder = total_spent % 1000
+    if tier == 200:
+        max_tier = completed + (1 if remainder >= 200 else 0)
+    elif tier == 500:
+        max_tier = completed + (1 if remainder >= 500 else 0)
+    else:  # 1000
+        max_tier = completed
+
+    available = max(0, max_tier - redeemed)
+    if available <= 0:
+        raise HTTPException(status_code=400, detail=f"ยังไม่มีรอบที่พร้อม redeem (ซื้อครบ ฿{tier} ถึงจะแลกได้)")
+
+    cycles = max(1, min(body.cycles, available))
+    items  = _loyalty_items_for_tier(tier, cycles)
     runner = BCSFERunner(body.transfer_code, body.confirmation_code, body.country)
     result = runner.run(items)
 
     if not result.get("success"):
         raise HTTPException(status_code=500, detail=result.get("error", "BCSFE error"))
 
-    codes = result["new_transfer_code"]
-    new_tc = codes.get("transfer") if isinstance(codes, dict) else codes
-    new_cc = codes.get("confirmation") if isinstance(codes, dict) else None
-    add_loyalty_redeemed_cycles(body.username, cycles)
+    codes  = result["new_transfer_code"]
+    new_tc = codes.get("transfer")      if isinstance(codes, dict) else codes
+    new_cc = codes.get("confirmation")  if isinstance(codes, dict) else None
+    add_loyalty_redeemed_tier(body.username, tier, cycles)
     save_loyalty_redemption(body.username, cycles, new_tc or "", new_cc or "",
-                            body.transfer_code, body.country)
+                            body.transfer_code, body.country, tier)
     return {
         "success":               True,
         "new_transfer_code":     new_tc,
         "new_confirmation_code": new_cc,
         "cycles_redeemed":       cycles,
         "cycles_remaining":      available - cycles,
-        "customer_note":         result.get("customer_note", ""),
+        "tier":                  tier,
     }
 
 
@@ -1094,33 +1190,38 @@ async def loyalty_history(username: str):
 
 @app.post("/api/loyalty/retry-tc/{redemption_id}")
 async def loyalty_retry_tc(redemption_id: str):
-    """ขอ TC ใหม่ — โหลด backup → re-run rare_ticket CLI (เหมือน order retry-tc)"""
+    """ขอ TC ใหม่ — โหลด backup (post-items) → ปล่อย TC ใหม่ โดยไม่ re-add items
+    (backup ถ่ายหลังเพิ่มของแล้ว ดังนั้นแค่ get_codes ใหม่ ไม่ต้องเพิ่มซ้ำ)"""
+    import glob as _glob
     rec = get_loyalty_redemption_by_id(redemption_id)
     if not rec:
         raise HTTPException(status_code=404, detail="ไม่พบ redemption record")
 
     original_tc = rec.get("original_transfer_code", "")
-    backup_path = None
+    country     = rec.get("country") or "en"
+
+    # หา backup ที่มี items อยู่แล้ว (ถ่ายหลัง run)
+    backup_bytes = None
     if original_tc:
-        backup_dir = Path("saves_backup")
-        matches = sorted(backup_dir.glob(f"*_{original_tc[:8]}"),
-                         key=lambda f: f.stat().st_mtime, reverse=True)
+        tc_prefix = original_tc[:8]
+        matches = _glob.glob(str(Path("saves_backup") / f"*_{tc_prefix}"))
         if matches:
-            backup_path = matches[0]
+            latest = max(matches, key=lambda f: Path(f).stat().st_mtime)
+            with open(latest, "rb") as f:
+                backup_bytes = f.read()
 
-    latest_tc = rec.get("new_transfer_code", "")
-    latest_cc = rec.get("new_confirmation_code", "")
-    country   = rec.get("country") or "en"
-    cycles    = rec.get("cycles_redeemed") or 1
-    cli_items = [{"key": "rare_ticket", "amount": 10 * cycles}]
+    if not backup_bytes:
+        raise HTTPException(status_code=404, detail="ไม่พบ backup file — เกิน 30 วันหรือยังไม่มี")
 
-    runner = BCSFERunner(transfer=latest_tc, confirm=latest_cc, country=country)
-    result = runner.run_retry_fresh(cli_items, backup_path=backup_path)
+    cc_map = {"1": "en", "2": "jp", "3": "kr", "4": "tw", "en": "en", "jp": "jp", "kr": "kr", "tw": "tw"}
+    cc_str = cc_map.get(str(country), "en")
+    runner = BCSFERunner(transfer="dummy", confirm="dummy", country=cc_str)
+    result = await run_bcsfe(lambda: runner.run_unban_from_backup(backup_bytes))
     if not result.get("success"):
         raise HTTPException(status_code=500, detail=result.get("error", "retry ล้มเหลว"))
 
-    new_tc = result["transfer"]
-    new_cc = result["confirmation"]
+    new_tc = result["new_transfer_code"]
+    new_cc = result["new_confirmation_code"]
     update_loyalty_redemption_tc(redemption_id, new_tc or "", new_cc or "")
     return {"success": True, "new_transfer_code": new_tc, "new_confirmation_code": new_cc}
 
@@ -2095,6 +2196,38 @@ async def admin_unban_run(request: UnbanRequest):
                 "inquiry_after":         result.get("inquiry_after", ""),
                 "backup_used":           backup_name,
                 "tc_old":                tc_old,
+            }
+        return {"success": False, "error": result.get("error", "Unknown")}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        return {"success": False, "error": f"เกิดข้อผิดพลาด: {e}"}
+
+@app.post("/api/admin/remove-cheetah-unban")
+async def admin_remove_cheetah_unban(request: RemoveCheetahUnbanRequest):
+    """ลบแมว Cheetah (#673) + Unban: download fresh → remove cat → create_new_account + get_codes"""
+    try:
+        if not verify_admin_session(request.username, request.session_token):
+            raise HTTPException(status_code=403, detail="ไม่มีสิทธิ์ admin")
+
+        tc = request.transfer_code.strip()
+        cc = request.confirmation_code.strip()
+        if not tc or not cc:
+            return {"success": False, "error": "ต้องใส่ Transfer Code และ Confirmation Code"}
+
+        runner = BCSFERunner(transfer=tc, confirm=cc, country=request.country)
+        result = await run_bcsfe(lambda: runner.run_remove_cheetah_and_unban(cat_id=673))
+
+        if result["success"]:
+            return {
+                "success":               True,
+                "new_transfer_code":     result["new_transfer_code"],
+                "new_confirmation_code": result["new_confirmation_code"],
+                "inquiry_before":        result.get("inquiry_before", ""),
+                "inquiry_after":         result.get("inquiry_after", ""),
+                "cat_removed":           result.get("cat_removed", 673),
+                "tc_old":                tc,
             }
         return {"success": False, "error": result.get("error", "Unknown")}
 

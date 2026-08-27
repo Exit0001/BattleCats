@@ -1,0 +1,17 @@
+============================================================
+เวลา      : 2026-08-24 19:12:30
+Transfer  : d1bc8bbc8
+Confirm   : 4518
+Country   : en
+============================================================
+[OP] Clear Event Stages: 2 maps
+[BCSFE] ⬇  Downloading save (transfer=d1bc8b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+✔ map 395 — cleared
+✔ map 394 — cleared
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_269076b4
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260824_191231_d1bc8bbc
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: fff950346 | Confirm ใหม่: 5211
+============================================================
+[DONE] 2 cleared, 0 skipped → TC=transfer

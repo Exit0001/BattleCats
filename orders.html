@@ -547,7 +547,7 @@ var _PER_CAT_SVC_KEYS = { upgrade_cat:1, trueform_cat:1, ultraform_cat:1, talent
 
 function _stageItemsToConfig(items) {
   var storyCh=[], treasureCh=[], zombieCh=[], legendTypes=[], legendCrowns={};
-  var akuUnlock=false, akuChaps=false;
+  var akuUnlock=false, akuChaps=false, eventStageIds=[];
   items.forEach(function(i) {
     if (i.stage_cat === 'story') {
       if (i.stage_field === 'clear')    storyCh    = storyCh.concat(i.stage_chapters||[]);
@@ -559,11 +559,14 @@ function _stageItemsToConfig(items) {
     } else if (i.stage_cat === 'aku') {
       if (i.stage_field === 'unlock')   akuUnlock = true;
       if (i.stage_field === 'chapters') akuChaps  = true;
+    } else if (i.stage_cat === 'event') {
+      eventStageIds.push(i.stage_target);
     }
   });
   return { story_chapters:storyCh, treasure_chapters:treasureCh, zombie_chapters:zombieCh,
            legend_types:legendTypes, max_crown:4, legend_crowns:legendCrowns,
-           aku_unlock:akuUnlock, aku_chapters:akuChaps };
+           aku_unlock:akuUnlock, aku_chapters:akuChaps,
+           event_stage_ids:eventStageIds };
 }
 var _PER_CAT_SVC_LABEL = { upgrade_cat:'Upgrade Max', trueform_cat:'True Form', ultraform_cat:'Ultra Form', talents_cat:'Talent Max' };
 

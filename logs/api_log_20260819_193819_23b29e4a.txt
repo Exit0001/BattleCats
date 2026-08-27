@@ -1,0 +1,47 @@
+============================================================
+เวลา      : 2026-08-19 19:38:19
+Transfer  : 23b29e4a9
+Confirm   : 9217
+Country   : en
+============================================================
+[OP] เพิ่มของ 3 รายการ
+[BCSFE] ⬇  Downloading save (transfer=23b29e... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Normal Ticket: 404 → 504  (+100)
+[ITEM] Leadership: 77 → 107  (+30)
+[ITEM] Catfruit (ผลไม้แมว) (29 types) +30 each:
+       type 1: 660 → 690
+       type 2: 660 → 690
+       type 3: 660 → 690
+       type 4: 660 → 690
+       type 5: 660 → 690
+       type 6: 660 → 690
+       type 7: 660 → 690
+       type 8: 660 → 690
+       type 9: 660 → 690
+       type 10: 660 → 690
+       type 11: 660 → 690
+       type 12: 660 → 690
+       type 13: 660 → 690
+       type 14: 660 → 690
+       type 15: 660 → 690
+       type 16: 660 → 690
+       type 17: 660 → 690
+       type 18: 660 → 690
+       type 19: 660 → 690
+       type 20: 660 → 690
+       type 21: 660 → 690
+       type 22: 660 → 690
+       type 23: 660 → 690
+       type 24: 660 → 690
+       type 25: 660 → 690
+       type 26: 660 → 690
+       type 27: 660 → 690
+       type 28: 660 → 690
+       type 29: 660 → 690
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_5c15763e
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260819_193821_23b29e4a
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 82c0bfffb | Confirm ใหม่: 9139
+============================================================
+============================================================

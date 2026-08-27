@@ -1,0 +1,18 @@
+============================================================
+เวลา      : 2026-08-24 19:48:31
+Transfer  : 2b1960465
+Confirm   : 0465
+Country   : en
+============================================================
+[OP] Clear Event Stages: 1 maps
+[BCSFE] ⬇  Downloading save (transfer=2b1960... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+✔ map 134 — cleared
+✔ cat #246 — queued True Form (awakening)
+✔ cat #246 — True Form applied
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_0fffda26
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260824_194832_2b196046
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 343a8f252 | Confirm ใหม่: 6030
+============================================================
+[DONE] 1 cleared, 0 skipped → TC=343a8f252

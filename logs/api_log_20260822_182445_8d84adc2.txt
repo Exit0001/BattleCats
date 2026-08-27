@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-08-22 18:24:45
+Transfer  : 8d84adc24
+Confirm   : 5234
+Country   : en
+============================================================
+[OP] Ultra Form Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=8d84ad... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #412 — Ultra Form applied
+[BCSFE] Ultra Form 1/1 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_6cba77b7
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260822_182447_8d84adc2
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: b96b51121 | Confirm ใหม่: 9455
+============================================================

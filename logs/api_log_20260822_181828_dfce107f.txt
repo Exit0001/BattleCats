@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-08-22 18:18:28
+Transfer  : dfce107fe
+Confirm   : 3752
+Country   : en
+============================================================
+[OP] Ultra Form Characters จำนวน 1 ตัว
+[BCSFE] ⬇  Downloading save (transfer=dfce10... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CAT] ✔ #359 — Ultra Form applied
+[BCSFE] Ultra Form 1/1 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_fcf370f0
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260822_181830_dfce107f
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 0d9bdee4a | Confirm ใหม่: 9805
+============================================================

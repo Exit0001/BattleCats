@@ -1,0 +1,16 @@
+============================================================
+เวลา      : 2026-08-24 19:44:50
+Transfer  : f40628a29
+Confirm   : 8287
+Country   : en
+============================================================
+[OP] Clear Event Stages: 1 maps
+[BCSFE] ⬇  Downloading save (transfer=f40628... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+✔ map 134 — cleared
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_67503edd
+[BCSFE] 📁 Backup → saves_backup\SAVE_20260824_194451_f40628a2
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: c65838cc7 | Confirm ใหม่: 9904
+============================================================
+[DONE] 1 cleared, 0 skipped → TC=c65838cc7

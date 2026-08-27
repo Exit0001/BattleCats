@@ -1,0 +1,13 @@
+============================================================
+เวลา      : 2026-08-24 13:13:22
+Transfer  : 7fc85e140
+Confirm   : 3835
+Country   : en
+============================================================
+[OP] Remove Cat #673 + Unban
+[BCSFE] ⬇  Downloading save (transfer=7fc85e... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[REMOVE] ✅ #673 ถูกลบแล้ว (reset=True)
+[UNBAN] Inquiry ก่อน : b54f4b31a
+[UNBAN] Inquiry หลัง: 597a618f8  ✅ เปลี่ยนแล้ว
+[UNBAN] ✅ TC=2066f4462 | CC=8572

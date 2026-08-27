@@ -90,6 +90,13 @@ class UnbanRequest(BaseModel):
     username: str = ""
     session_token: str = ""
 
+class RemoveCheetahUnbanRequest(BaseModel):
+    transfer_code: str          # TC ของลูกค้า (download fresh)
+    confirmation_code: str      # CC ของลูกค้า
+    country: str = "1"
+    username: str = ""          # admin username
+    session_token: str = ""     # password_hash
+
 class UnlockCharactersRequest(BaseModel):
     """โมเดลสำหรับปลดล็อคตัวละคร"""
     transfer_code: str          # Transfer Code จากเกม
@@ -98,12 +105,13 @@ class UnlockCharactersRequest(BaseModel):
     cat_ids: List[int]          # รายการ ID ตัวละครที่ต้องการปลดล็อค
 
 class LoyaltyRedeemRequest(BaseModel):
-    """แลกของรางวัล loyalty (ซื้อครบ 200 บาท)"""
+    """แลกของรางวัล loyalty (multi-tier: 200/500/1000)"""
     username: str
     transfer_code: str
     confirmation_code: str
     country: str = "1"
     cycles: int = 1
+    tier: int = 200          # 200 / 500 / 1000
     session_token: str = ""  # password_hash จาก localStorage — ใช้ verify เจ้าของบัญชี
 
 
@@ -249,6 +257,7 @@ class StagesConfig(BaseModel):
     legend_crowns: dict = {}             # per-legend crown: {"sol":4,"ul":4,"zl":2}
     aku_unlock: bool = False
     aku_chapters: bool = False
+    event_stage_ids: List[int] = []   # Normal Event Stages map IDs (type=1)
 
 
 class StagesPaymentRequest(BaseModel):

@@ -795,17 +795,22 @@ def mark_slip_used(transaction_id: str):
 
 def get_user_loyalty(username: str) -> dict:
     """ดึง loyalty data — total_spent คำนวณสดจากตาราง orders (กัน drift จาก RPC ที่อาจล้มเหลว)"""
-    redeemed_cycles = 0
+    r200 = r500 = r1000 = 0
     try:
         with httpx.Client(timeout=8) as client:
             resp = client.get(
                 f"{SUPABASE_URL}/rest/v1/profiles",
-                params={"username": f"eq.{username}", "select": "loyalty_redeemed_cycles"},
+                params={
+                    "username": f"eq.{username}",
+                    "select": "loyalty_redeemed_cycles,loyalty_redeemed_tier200,loyalty_redeemed_tier500,loyalty_redeemed_tier1000",
+                },
                 headers={"apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"},
             )
             data = resp.json()
             if data:
-                redeemed_cycles = data[0].get("loyalty_redeemed_cycles") or 0
+                r200  = data[0].get("loyalty_redeemed_tier200")  or 0
+                r500  = data[0].get("loyalty_redeemed_tier500")  or 0
+                r1000 = data[0].get("loyalty_redeemed_tier1000") or 0
     except Exception as e:
         print(f"[LOYALTY] get error: {e}")
 
@@ -822,14 +827,22 @@ def get_user_loyalty(username: str) -> dict:
     except Exception as e:
         print(f"[LOYALTY] total_spent calc error: {e}")
 
-    return {"total_spent": total_spent, "loyalty_redeemed_cycles": redeemed_cycles}
+    return {
+        "total_spent": total_spent,
+        "loyalty_redeemed_cycles": r200,  # backward compat
+        "redeemed_tier200":  r200,
+        "redeemed_tier500":  r500,
+        "redeemed_tier1000": r1000,
+    }
 
 
-def add_loyalty_redeemed_cycles(username: str, count: int):
-    """เพิ่ม loyalty_redeemed_cycles ครั้งเดียวหลาย cycle"""
+def add_loyalty_redeemed_tier(username: str, tier: int, count: int):
+    """เพิ่ม loyalty_redeemed_tierXXX ตาม tier ที่ระบุ (200/500/1000)"""
+    col = f"loyalty_redeemed_tier{tier}"
     try:
         loyalty = get_user_loyalty(username)
-        new_count = loyalty["loyalty_redeemed_cycles"] + count
+        current  = loyalty.get(f"redeemed_tier{tier}", 0)
+        new_count = current + count
         with httpx.Client(timeout=8) as client:
             client.patch(
                 f"{SUPABASE_URL}/rest/v1/profiles",
@@ -839,11 +852,16 @@ def add_loyalty_redeemed_cycles(username: str, count: int):
                     "Authorization": f"Bearer {SUPABASE_KEY}",
                     "Content-Type": "application/json",
                 },
-                json={"loyalty_redeemed_cycles": new_count},
+                json={col: new_count},
             )
-        print(f"[LOYALTY] {username}: redeemed +{count} cycles → total #{new_count}")
+        print(f"[LOYALTY] {username}: tier{tier} +{count} → total #{new_count}")
     except Exception as e:
-        print(f"[LOYALTY] add_cycles error: {e}")
+        print(f"[LOYALTY] add_loyalty_redeemed_tier error: {e}")
+
+
+# def add_loyalty_redeemed_cycles(username: str, count: int):
+#     """[DEPRECATED] ใช้ add_loyalty_redeemed_tier แทน"""
+#     add_loyalty_redeemed_tier(username, 200, count)
 
 
 def verify_loyalty_session(username: str, session_token: str) -> bool:
@@ -873,7 +891,8 @@ def verify_loyalty_session(username: str, session_token: str) -> bool:
 
 
 def save_loyalty_redemption(username: str, cycles: int, new_tc: str, new_cc: str,
-                            original_transfer_code: str = "", country: str = "en"):
+                            original_transfer_code: str = "", country: str = "en",
+                            tier: int = 200):
     """บันทึก redemption history ลง loyalty_redemptions"""
     try:
         with httpx.Client(timeout=8) as client:
@@ -892,9 +911,10 @@ def save_loyalty_redemption(username: str, cycles: int, new_tc: str, new_cc: str
                     "new_confirmation_code": new_cc,
                     "original_transfer_code": original_transfer_code,
                     "country": country,
+                    "tier": tier,
                 },
             )
-        print(f"[LOYALTY] {username}: saved redemption history ({cycles} cycles)")
+        print(f"[LOYALTY] {username}: saved redemption history (tier{tier} × {cycles})")
     except Exception as e:
         print(f"[LOYALTY] save_redemption error: {e}")
 

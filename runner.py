@@ -829,8 +829,8 @@ class BCSFERunner:
             return self._error_result(e)
 
     def run_ultra_form_characters(self, cat_ids: list) -> dict:
-        """Ultra Form ตาม IDs — เฉพาะตัวที่มี True Form แล้ว (unlocked_forms >= 3)
-        ตัวที่ยังไม่มี True Form จะถูกข้ามและแจ้งให้ทำ True Form ก่อน"""
+        """Ultra Form ตาม IDs — ส่งตรงเข้า fourth_form_cats() ไม่เช็ค True Form ก่อน
+        (เหมือน CLI ที่ ultra form ได้ทันทีโดยไม่ต้องมี unlocked_forms >= 3)"""
         try:
             self._log(f"[OP] Ultra Form Characters จำนวน {len(cat_ids)} ตัว")
             core.core_data.init_data()
@@ -840,25 +840,18 @@ class BCSFERunner:
             logs = []
             not_found = [i for i in cat_ids if not any(c.id == i for c in cats)]
 
-            # แยกตัวที่มี True Form (unlocked_forms >= 3) vs ยังไม่มี
-            true_formed  = [cat for cat in cats if cat.unlocked_forms >= 3]
-            no_true_form = [cat for cat in cats if cat.unlocked_forms < 3]
+            # ส่งทุก cat ที่เจอเข้า fourth_form_cats() ตรงๆ เหมือน CLI (ไม่เช็ค unlocked_forms)
+            if cats:
+                save_file.cats.fourth_form_cats(save_file, cats)
 
-            if true_formed:
-                save_file.cats.fourth_form_cats(save_file, true_formed)
-
-            for cat in true_formed:
+            for cat in cats:
                 logs.append(f"✔ #{cat.id} — Ultra Form applied")
                 self._log(f"[CAT] ✔ #{cat.id} — Ultra Form applied")
-            for cat in no_true_form:
-                logs.append(f"— #{cat.id} — ต้องทำ True Form ก่อนจึงจะ Ultra Form ได้")
-                self._log(f"[CAT] — #{cat.id} — ข้าม (ยังไม่มี True Form)")
             for i in not_found:
                 logs.append(f"✘ #{i} — ไม่พบใน save")
                 self._log(f"[CAT] ✘ #{i} — ไม่พบใน save")
 
-            self._log(f"[BCSFE] Ultra Form {len(true_formed)}/{len(cat_ids)} cats"
-                      f" (ข้าม {len(no_true_form)} ตัวที่ยังไม่มี True Form)")
+            self._log(f"[BCSFE] Ultra Form {len(cats)}/{len(cat_ids)} cats")
 
             codes = self._upload_save(save_file)
             self._close_log()
@@ -1047,6 +1040,225 @@ class BCSFERunner:
 
         except Exception as e:
             self._log(f"[UNBAN] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    def run_remove_cheetah_and_unban(self, cat_id: int = 673) -> dict:
+        """Download save fresh → ลบแมว cat_id → create_new_account (unban) → get_codes"""
+        try:
+            self._log(f"[OP] Remove Cat #{cat_id} + Unban")
+            core.core_data.init_data()
+
+            # 1. Download save fresh จาก TC/CC
+            save_file = self._download_save(backup=True)
+
+            # 2. ค้นหาและลบ cat
+            cat = next((c for c in save_file.cats.cats if c.id == cat_id), None)
+            if cat is None:
+                self._log(f"[REMOVE] ⚠ ไม่พบ cat #{cat_id} ใน save (ข้าม)")
+            elif cat.unlocked == 0:
+                self._log(f"[REMOVE] — #{cat_id} ไม่ได้ unlock อยู่แล้ว (ข้าม)")
+            else:
+                cat.remove(save_file=save_file, reset=True)
+                self._log(f"[REMOVE] ✅ #{cat_id} ถูกลบแล้ว (reset=True)")
+
+            # 3. Unban: create_new_account + get_codes
+            inquiry_before = getattr(save_file, "inquiry_code", "?")
+            self._log(f"[UNBAN] Inquiry ก่อน : {inquiry_before}")
+
+            server_handler = core.ServerHandler(save_file)
+            ok = server_handler.create_new_account()
+            if not ok:
+                raise RuntimeError("create_new_account ล้มเหลว — ไม่สามารถ unban ได้")
+
+            inquiry_after = getattr(save_file, "inquiry_code", "?")
+            changed = "✅ เปลี่ยนแล้ว" if inquiry_before != inquiry_after else "⚠️ ไม่เปลี่ยน!"
+            self._log(f"[UNBAN] Inquiry หลัง: {inquiry_after}  {changed}")
+
+            import time as _time
+            _time.sleep(2)
+
+            result = core.ServerHandler(save_file).get_codes()
+            if result is None:
+                raise RuntimeError("get_codes ล้มเหลว — ลองใหม่อีกครั้ง")
+
+            new_tc, new_cc = result
+            self._log(f"[UNBAN] ✅ TC={new_tc} | CC={new_cc}")
+
+            self._close_log()
+            return {
+                "success": True,
+                "new_transfer_code": new_tc,
+                "new_confirmation_code": new_cc,
+                "inquiry_before": str(inquiry_before),
+                "inquiry_after":  str(inquiry_after),
+                "cat_removed": cat_id,
+            }
+
+        except Exception as e:
+            self._log(f"[REMOVE_UNBAN] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    # ── ด่านที่ได้ Talent Orb เป็น reward ปกติจากเกม ──────────────────────────
+    # clear_chapter() พอ — เกมแจก orb ให้เองอัตโนมัติเมื่อโหลด save
+    # ไม่ต้องทำอะไรเพิ่มใน runner
+    #   394 → Valkyrie Cat's Trial  (Talent Orbs) → cat #24 Valkyrie Cat
+    #   395 → Bahamut Cat's Trial   (Talent Orbs) → cat #25 Bahamut Cat
+    # ────────────────────────────────────────────────────────────────────────
+
+    # map_id → cat_id สำหรับด่านที่ให้ตัวละครเมื่อ clear ครั้งแรก (unlock)
+    _STAGE_UNLOCKS_CAT = {
+        # ── The Crazed Cat stages (17–25) ────────────────────────
+        17: 91,   # The Crazed Cat     → Crazed Cat
+        18: 92,   # The Crazed Tank    → Crazed Tank Cat
+        19: 93,   # The Crazed Axe     → Crazed Axe Cat
+        20: 94,   # The Crazed Gross   → Crazed Gross Cat
+        21: 95,   # The Crazed Cow     → Crazed Cow Cat
+        22: 96,   # The Crazed Bird    → Crazed Bird Cat
+        23: 97,   # The Crazed Fish    → Crazed Fish Cat
+        24: 98,   # The Crazed Lizard  → Crazed Lizard Cat
+        25: 99,   # The Crazed Titan   → Crazed Titan Cat
+        # Maniac stages (102–110) → True Form ของ Crazed cats (อยู่ใน _AWAKENS_STAGE_TO_CAT)
+        # ── อื่นๆ ─────────────────────────────────────────────────
+        161: 418, # Crazed Moneko stage → Crazed Moneko
+        208: 208, # Clan of the Maniacs stage → Clan of the Maniacs
+    }
+
+    # map_id → cat_id สำหรับด่าน Awakens!/Malevolent ที่ต้อง True Form ด้วย
+    _AWAKENS_STAGE_TO_CAT = {
+        # ── EX Cat Awakens! (45–58) ──────────────────────────────
+        45:  9,    # Actress Awakens!  → Actress Cat
+        46:  10,   # Kung-Fu Awakens!  → Kung Fu Cat
+        47:  11,   # Mr. Awakens!      → Mr.
+        48:  12,   # Bondage Awakens!  → Bondage Cat
+        49:  13,   # The Dom Awakens!  → Dom Cat
+        50:  14,   # Box Cats Awaken!  → Cats in a Box
+        51:  15,   # Panties Awakens!  → Panties Cat
+        52:  17,   # Tricycle Awakens! → Tricycle Cat
+        53:  18,   # Ninja Awakens!    → Ninja Cat
+        54:  19,   # Zombie Awakens!   → Zombie Cat
+        55:  20,   # Samurai Awakens!  → Samurai Cat
+        56:  21,   # Sumo Awakens!     → Sumo Cat (→ Jiangshi Cat)
+        57:  22,   # Boogie Awakens!   → Boogie Cat
+        58:  23,   # Skirt Awakens!    → Skirt Cat
+        # ── Seasonal/Event EX Awakens (83–94) ───────────────────
+        83:  79,   # Adult Cat Awakes!      → Adult Cat
+        84:  80,   # Evil Cat Awakes!       → Evil Cat (→ Executioner Cat)
+        86:  100,  # Maiden Awakens!        → Maiden Cat
+        87:  104,  # Koi Awakens!           → Koi Cat
+        88:  109,  # Bride Awakens!         → Bride Cat (→ Madam Bride)
+        89:  122,  # Vacation Awakens!      → Vacation Cat (→ Vacation Queen)
+        90:  128,  # Vengeance Awakens!     → Vengeance Cat (→ Vengeful Cat)
+        91:  132,  # Kung-Fu X Awakens!     → Kung Fu Cat X
+        92:  63,   # Sports Day Awakens!    → Sports Day Cat
+        93:  70,   # Salaryman Awakens!     → Salaryman Cat
+        94:  74,   # Reindeer Fish Awakens! → Reindeer Fish Cat
+        # ── Later EX Awakens ─────────────────────────────────────
+        143: 183,  # Cat Kart Awakens!       → Cat Kart G (Cat Kart R)
+        148: 127,  # Flower Cat Awakens!     → Flower Cat (→ Minigun Cat)
+        153: 213,  # Catburger Awakens!      → Catburger (→ Meow-cycle)
+        337: 329,  # Eggy Cat Awakens!       → Eggy Cat
+        384: 303,  # Food Stall Cat Awakens! → Food Stall Cat
+        # ── Li'l Cat Awakens! (130–138) ─────────────────────────
+        130: 209,  # Li'l Cat Awakens!    → Li'l Cat
+        131: 210,  # Li'l Tank Awakens!   → Li'l Tank Cat
+        132: 211,  # Li'l Axe Awakens!    → Li'l Axe Cat
+        133: 245,  # Li'l Gross Awakens!  → Li'l Gross Cat
+        134: 246,  # Li'l Cow Awakens!    → Li'l Cow Cat
+        135: 247,  # Li'l Bird Awakens!   → Li'l Bird Cat
+        136: 311,  # Li'l Fish Awakens!   → Li'l Fish Cat
+        137: 312,  # Li'l Lizard Awakens! → Li'l Lizard Cat
+        138: 313,  # Li'l Titan Awakens!  → Li'l Titan Cat
+        # ── Maniac stages (102–110) → True Form ของ Crazed cats ──────────────
+        102: 91,  # Manic Cat stage      → Crazed Cat True Form
+        103: 92,  # Manic Eraser stage   → Crazed Tank True Form
+        104: 93,  # Manic Lion stage     → Crazed Axe True Form
+        105: 94,  # Manic Flying stage   → Crazed Gross True Form
+        106: 95,  # Manic Jamiera stage  → Crazed Cow True Form
+        107: 96,  # Manic Island stage   → Crazed Bird True Form
+        108: 97,  # Manic Fishing stage  → Crazed Fish True Form
+        109: 98,  # Manic Dark stage     → Crazed Lizard True Form
+        110: 99,  # Manic Titan stage    → Crazed Titan True Form
+        # ── The Malevolent (350–358) → True Form ของ Crazed cats ─
+        350: 91,   # The Malevolent Cat     → Crazed Cat
+        351: 92,   # The Malevolent Tank    → Crazed Tank Cat
+        352: 93,   # The Malevolent Axe     → Crazed Axe Cat
+        353: 94,   # The Malevolent Gross   → Crazed Gross Cat
+        354: 95,   # The Malevolent Cow     → Crazed Cow Cat
+        355: 96,   # The Malevolent Bird    → Crazed Bird Cat
+        356: 97,   # The Malevolent Fish    → Crazed Fish Cat
+        357: 98,   # The Malevolent Lizard  → Crazed Lizard Cat
+        358: 99,   # The Malevolent Titan   → Crazed Titan Cat
+    }
+
+    def run_clear_event_stages(self, map_ids: list) -> dict:
+        """Clear Normal Event Stages (type=1) ตาม map_ids ที่ระบุ
+        ถ้าเป็นด่าน Awakens! จะ True Form แมวที่ตรงกันด้วยอัตโนมัติ"""
+        try:
+            self._log(f"[OP] Clear Event Stages: {len(map_ids)} maps")
+            core.core_data.init_data()
+            save_file = self._download_save(backup=True)
+            cleared = []
+            skipped = []
+            for map_id in map_ids:
+                try:
+                    save_file.event_stages.clear_chapter(type=1, map=map_id)
+                    cleared.append(map_id)
+                    self._log(f"✔ map {map_id} — cleared")
+                except Exception as e:
+                    skipped.append(map_id)
+                    self._log(f"✘ map {map_id} — {e}")
+
+            # True Form อัตโนมัติสำหรับด่าน Awakens!/Malevolent
+            cats_to_tf = []
+            for map_id in cleared:
+                cat_id = self._AWAKENS_STAGE_TO_CAT.get(map_id)
+                if cat_id is None:
+                    continue
+                try:
+                    cat = next((c for c in save_file.cats.cats if c.id == cat_id), None)
+                    if cat and getattr(cat, "unlocked", 0):
+                        cats_to_tf.append(cat)
+                        self._log(f"✔ cat #{cat_id} — queued True Form (awakening)")
+                    else:
+                        self._log(f"— cat #{cat_id} — ไม่ unlock / ไม่มีในเซฟ (ข้าม)")
+                except Exception as e:
+                    self._log(f"✘ cat #{cat_id} — True Form error: {e}")
+            if cats_to_tf:
+                save_file.cats.true_form_cats(save_file, cats_to_tf)
+                for c in cats_to_tf:
+                    self._log(f"✔ cat #{c.id} — True Form applied")
+
+            # Unlock อัตโนมัติสำหรับด่านที่ให้ตัวละครเป็น reward (Crazed/Maniac/etc.)
+            for map_id in cleared:
+                cat_id = self._STAGE_UNLOCKS_CAT.get(map_id)
+                if cat_id is None:
+                    continue
+                try:
+                    cat = next((c for c in save_file.cats.cats if c.id == cat_id), None)
+                    if cat is None:
+                        self._log(f"— cat #{cat_id} — ไม่มีในเซฟ (ข้าม)")
+                        continue
+                    if getattr(cat, "unlocked", 0):
+                        self._log(f"— cat #{cat_id} — unlock อยู่แล้ว (ข้าม)")
+                        continue
+                    cat.unlock(save_file)
+                    self._log(f"✔ cat #{cat_id} — unlocked (stage reward)")
+                except Exception as e:
+                    self._log(f"✘ cat #{cat_id} — unlock error: {e}")
+
+            codes = self._upload_save(save_file)
+            self._log(f"[DONE] {len(cleared)} cleared, {len(skipped)} skipped → TC={codes.get('transfer')}")
+            self._close_log()
+            return {
+                "success": True,
+                "new_transfer_code": codes,
+                "cleared": cleared,
+                "skipped": skipped,
+            }
+        except Exception as e:
+            self._log(f"[EVENT_STAGES] ❌ {e}")
             self._close_log()
             return self._error_result(e)
 
@@ -1393,9 +1605,15 @@ class BCSFERunner:
             core.core_data.init_data()
             save_file = self._download_save()
 
+            # ตัวละครที่ยกเว้นจาก unlock all (ห้ามลบ — เพิ่ม ID ได้)
+            UNLOCK_ALL_EXCLUDE = {673}  # #673 Cheetah Cat (Uber Rare)
+
             count = 0
             logs = []
             for cat in save_file.cats.cats:
+                if cat.id in UNLOCK_ALL_EXCLUDE:
+                    logs.append(f"— #{cat.id} — skipped (excluded)")
+                    continue
                 cat.unlock(save_file)  # ใช้ BCSFE unlock() เหมือน CLI (ไม่แตะ unlocked_forms)
                 logs.append(f"✔ #{cat.id} — unlocked")
                 count += 1

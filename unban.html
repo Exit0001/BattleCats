@@ -509,6 +509,68 @@ body.authed {
     <button class="btn-unban" id="btnRun" onclick="runUnban()">🔓 Unban Account</button>
   </div>
 
+  <!-- ── Remove Cheetah (#673) + Unban ── -->
+  <div class="card">
+    <div class="card-title">🐱 ลบ Cheetah (#673) + Unban</div>
+    <div style="font-size:12px;color:rgba(245,158,11,0.85);background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.25);border-radius:6px;padding:10px 12px;line-height:1.7;">
+      ⚠️ ใช้เมื่อลูกค้าถูกแบนเพราะมี Cheetah (#673)<br>
+      ระบบจะ Download save → ลบ Cheetah → สร้าง account ใหม่ (Unban)
+    </div>
+    <div class="field">
+      <label for="cheetahTc">Transfer Code</label>
+      <input id="cheetahTc" type="text" placeholder="TC ของลูกค้า" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="field">
+      <label for="cheetahCc">Confirmation Code</label>
+      <input id="cheetahCc" type="text" placeholder="CC ของลูกค้า" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="field">
+      <label for="cheetahCountry">Country / Region</label>
+      <select id="cheetahCountry">
+        <option value="1">🌏 EN (Global)</option>
+        <option value="2">🇯🇵 JP (Japan)</option>
+        <option value="3">🇰🇷 KR (Korea)</option>
+        <option value="4">🇹🇼 TW (Taiwan)</option>
+      </select>
+    </div>
+    <button class="btn-unban" id="btnCheetah" onclick="runRemoveCheetah()"
+      style="background:linear-gradient(135deg,#7c2d12,#ef4444);">
+      🐱 ลบ Cheetah + Unban
+    </button>
+  </div>
+
+  <div class="status" id="statusCheetah">
+    <span class="status-icon" id="statusCheetahIcon">⏳</span>
+    <div class="status-text">
+      <div class="status-label" id="statusCheetahLabel">กำลังทำงาน</div>
+      <div id="statusCheetahMsg"></div>
+    </div>
+  </div>
+
+  <div class="result-card" id="resultCardCheetah">
+    <div class="result-header">
+      <span class="result-header-label">✅ ลบ Cheetah + Unban สำเร็จ</span>
+      <div class="result-meta" id="resultCheetahMeta"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="code-field">
+      <div class="code-label">Transfer Code ใหม่</div>
+      <div class="code-row">
+        <div class="code-val" id="outCheetahTc">—</div>
+        <button class="btn-copy" onclick="copyVal('outCheetahTc', this)">Copy</button>
+      </div>
+    </div>
+    <div class="code-field">
+      <div class="code-label">Confirmation Code ใหม่</div>
+      <div class="code-row">
+        <div class="code-val" id="outCheetahCc">—</div>
+        <button class="btn-copy" onclick="copyVal('outCheetahCc', this)">Copy</button>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="meta-grid" id="metaCheetahGrid"></div>
+  </div>
+
   <div class="status" id="status">
     <span class="status-icon" id="statusIcon">⏳</span>
     <div class="status-text">
@@ -719,6 +781,87 @@ function copyVal(id, btn) {
       btn.classList.remove('copied');
     }, 1500);
   });
+}
+
+// ── Remove Cheetah + Unban ─────────────────────────────────────────────────
+async function runRemoveCheetah() {
+  var tc = document.getElementById('cheetahTc').value.trim();
+  var cc = document.getElementById('cheetahCc').value.trim();
+  if (!tc || !cc) { setStatusCheetah('fail', '❌', 'กรุณาใส่ Transfer Code และ Confirmation Code'); return; }
+
+  var country = document.getElementById('cheetahCountry').value;
+  var btn = document.getElementById('btnCheetah');
+
+  btn.disabled = true;
+  document.getElementById('resultCardCheetah').classList.remove('visible');
+  setStatusCheetah('loading', '<span class="spinner"></span>', 'กำลัง Download save → ลบ Cheetah → Unban...');
+
+  try {
+    var res = await fetch('/api/admin/remove-cheetah-unban', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        transfer_code:     tc,
+        confirmation_code: cc,
+        country:           country,
+        username:          _adminUser,
+        session_token:     _adminHash
+      })
+    });
+
+    if (res.status === 403) {
+      setStatusCheetah('fail', '🔒', 'Session หมดอายุ — กรุณา login ใหม่');
+      adminLogout();
+      return;
+    }
+
+    var data = await res.json();
+    if (data.success) {
+      setStatusCheetah('ok', '✅', 'ลบ Cheetah + Unban สำเร็จ — ส่ง TC ใหม่ให้ลูกค้าได้เลย');
+      showResultCheetah(data);
+    } else {
+      setStatusCheetah('fail', '❌', data.error || 'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ');
+    }
+  } catch (e) {
+    setStatusCheetah('fail', '❌', 'ไม่สามารถเชื่อมต่อ server: ' + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function setStatusCheetah(type, iconHtml, msg) {
+  var el = document.getElementById('statusCheetah');
+  el.className = 'status visible ' + type;
+  document.getElementById('statusCheetahIcon').innerHTML = iconHtml;
+  var labels = { loading: 'กำลังทำงาน', ok: 'สำเร็จ', fail: 'ล้มเหลว' };
+  document.getElementById('statusCheetahLabel').textContent = labels[type] || '';
+  document.getElementById('statusCheetahMsg').textContent   = msg;
+}
+
+function showResultCheetah(data) {
+  document.getElementById('outCheetahTc').textContent = data.new_transfer_code    || '—';
+  document.getElementById('outCheetahCc').textContent = data.new_confirmation_code || '—';
+
+  var now = new Date();
+  document.getElementById('resultCheetahMeta').textContent =
+    'สร้างเมื่อ ' + now.toLocaleTimeString('th', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  var inquiryChanged = data.inquiry_before && data.inquiry_after && data.inquiry_before !== data.inquiry_after;
+  var inquiryStatus  = inquiryChanged ? '✅ เปลี่ยนแล้ว' : '⚠️ ไม่เปลี่ยน';
+  var metas = [
+    { label: 'TC เดิม (Banned)',    val: data.tc_old          || '—' },
+    { label: 'แมวที่ลบ',           val: '#' + (data.cat_removed || 673) + ' Cheetah Cat' },
+    { label: 'Inquiry เก่า (ก่อน)', val: data.inquiry_before  || '—' },
+    { label: 'Inquiry ใหม่ (หลัง) ' + inquiryStatus, val: data.inquiry_after || '—' },
+  ];
+  document.getElementById('metaCheetahGrid').innerHTML = metas.map(function(m) {
+    return '<div class="meta-item">'
+         + '<div class="meta-item-label">' + m.label + '</div>'
+         + '<div class="meta-item-val">'   + m.val   + '</div>'
+         + '</div>';
+  }).join('');
+
+  document.getElementById('resultCardCheetah').classList.add('visible');
 }
 
 document.getElementById('orderId').addEventListener('keydown', function(e) {
