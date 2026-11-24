@@ -1,0 +1,32 @@
+============================================================
+เวลา      : 2026-11-11 23:43:39
+Transfer  : cd950b215
+Confirm   : 3593
+Country   : en
+============================================================
+[OP] Dupe Save (ไว) x20 | ทำพร้อมกัน 8 ชุด
+[BCSFE] ⬇  Downloading save (transfer=cd950b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[DUPE-FAST] สุ่มเวลาเล่น 25.0–200.0 ชม.
+[DUPE-FAST] #6 ✅ TC=72b683f03 | CC=3448 | Inquiry=59b3aee73 | เวลาเล่น 108:17
+[DUPE-FAST] #8 ✅ TC=f58fd1308 | CC=0543 | Inquiry=1a294560c | เวลาเล่น 120:41
+[DUPE-FAST] #7 ✅ TC=7093aa1a6 | CC=4044 | Inquiry=e38fadd7e | เวลาเล่น 159:12
+[DUPE-FAST] #2 ✅ TC=9ad1d05e0 | CC=7691 | Inquiry=251d09556 | เวลาเล่น 29:40
+[DUPE-FAST] #3 ✅ TC=ec726fac8 | CC=6899 | Inquiry=f53a979a9 | เวลาเล่น 95:48
+[DUPE-FAST] #1 ✅ TC=5dd85863e | CC=2243 | Inquiry=ebc1518dd | เวลาเล่น 99:14
+[DUPE-FAST] #4 ✅ TC=4a3b50281 | CC=1072 | Inquiry=86165a11e | เวลาเล่น 150:23
+[DUPE-FAST] #5 ✅ TC=377761a4a | CC=0024 | Inquiry=9bb6e6d17 | เวลาเล่น 142:52
+[DUPE-FAST] #11 ✅ TC=c0a7c50d8 | CC=7405 | Inquiry=0e0c8cf7a | เวลาเล่น 160:19
+[DUPE-FAST] #10 ✅ TC=85986b656 | CC=8671 | Inquiry=b0459842c | เวลาเล่น 68:01
+[DUPE-FAST] #12 ✅ TC=8e25da82d | CC=3032 | Inquiry=8a202e472 | เวลาเล่น 115:01
+[DUPE-FAST] #9 ✅ TC=4562ef0f6 | CC=8985 | Inquiry=c66a4e929 | เวลาเล่น 149:05
+[DUPE-FAST] #13 ✅ TC=c5fefa75e | CC=1809 | Inquiry=622f450cd | เวลาเล่น 72:42
+[DUPE-FAST] #16 ✅ TC=b9dafb2e4 | CC=7021 | Inquiry=0b4c3f6dc | เวลาเล่น 28:18
+[DUPE-FAST] #15 ✅ TC=ac6acd7ea | CC=6024 | Inquiry=9d5e17e8e | เวลาเล่น 83:03
+[DUPE-FAST] #14 ✅ TC=bab0b4367 | CC=1097 | Inquiry=307666dca | เวลาเล่น 37:21
+[DUPE-FAST] #17 ✅ TC=8c7f52bb2 | CC=1301 | Inquiry=1b7e63fae | เวลาเล่น 140:45
+[DUPE-FAST] #18 ✅ TC=322b94d25 | CC=3211 | Inquiry=e1366ef09 | เวลาเล่น 51:20
+[DUPE-FAST] #19 ✅ TC=40c9f5996 | CC=2479 | Inquiry=44505e728 | เวลาเล่น 42:47
+[DUPE-FAST] #20 ✅ TC=76fe0dd8b | CC=8069 | Inquiry=4544b830d | เวลาเล่น 84:16
+[CLEANUP] ลบ backup 0 ไฟล์
+[DUPE-FAST] เสร็จ 20/20 รหัส ใช้เวลา 23.6 วิ

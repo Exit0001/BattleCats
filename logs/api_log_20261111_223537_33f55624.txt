@@ -1,0 +1,14 @@
+============================================================
+เวลา      : 2026-11-11 22:35:37
+Transfer  : 33f556242
+Confirm   : 4462
+Country   : en
+============================================================
+[OP] Dupe Save (ไว) x3 | ทำพร้อมกัน 3 ชุด
+[BCSFE] ⬇  Downloading save (transfer=33f556... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[DUPE-FAST] #1 ✅ TC=6e6c7c4ab | CC=6392 | Inquiry=567df01bd
+[DUPE-FAST] #3 ✅ TC=5ee32dc18 | CC=5841 | Inquiry=445f613d0
+[DUPE-FAST] #2 ✅ TC=51f2aeb95 | CC=0006 | Inquiry=059178fd8
+[CLEANUP] ลบ backup 0 ไฟล์
+[DUPE-FAST] เสร็จ 3/3 รหัส ใช้เวลา 7.9 วิ

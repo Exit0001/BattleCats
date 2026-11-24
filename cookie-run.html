@@ -855,7 +855,7 @@ async function submitVoucher() {
 
 // ── Pay with wallet ──
 async function payWithWallet() {
-  if (!currentOrderId) { showPayMsg('ไม่พบ order', 'err'); return; }
+  if (!currentOrderId) { showPayMsg('⏳ กำลังสร้างออเดอร์ รอสักครู่แล้วกดใหม่', 'err'); return; }
   if (!getCrAuth()) { showPayMsg('กรุณาเข้าสู่ระบบก่อน', 'err'); return; }
   document.getElementById('payWLBtn').disabled = true;
   showPayMsg('⏳ กำลังหักเงิน...', 'info');
@@ -981,6 +981,11 @@ function resetPayModal() {
   document.getElementById('resDownloadBtn').style.display = 'none';
   updateMethodTabs('promptpay');
   currentOrderId = null;
+  // ล็อคปุ่มกระเป๋าเงินไว้จนกว่า /api/cr/buy จะตอบกลับ — กันลูกค้ากดก่อนออเดอร์สร้างเสร็จ (ขึ้น "ไม่พบ order")
+  document.getElementById('payWLBtn').disabled = true;
+  document.getElementById('payWLBtn').style.opacity = '0.5';
+  document.getElementById('payWLAmt').textContent = '⏳ กำลังสร้างออเดอร์...';
+  document.getElementById('payWLLow').style.display = 'none';
 }
 
 function resetPayQrSection() {

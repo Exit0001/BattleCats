@@ -1,0 +1,13 @@
+============================================================
+เวลา      : 2026-11-11 23:21:02
+Transfer  : ce55f62ae
+Confirm   : 0882
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=ce55f6... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_8f242817
+[BCSFE] 📁 Backup → saves_backup\SAVE_20261111_232104_ce55f62a
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 5c2c709e1 | Confirm ใหม่: 2879
+============================================================

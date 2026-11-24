@@ -1,0 +1,112 @@
+============================================================
+เวลา      : 2026-11-12 00:29:05
+Transfer  : 6a22f451d
+Confirm   : 2199
+Country   : en
+============================================================
+[OP] Dupe Save (ไว) x100 | ทำพร้อมกัน 8 ชุด
+[BCSFE] ⬇  Downloading save (transfer=6a22f4... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[DUPE-FAST] สุ่มเวลาเล่น 25.0–45.0 ชม.
+[DUPE-FAST] #8 ✅ TC=40c979e37 | CC=5426 | Inquiry=1bd58f4a9 | เวลาเล่น 32:46
+[DUPE-FAST] #3 ✅ TC=b648c2e7f | CC=7387 | Inquiry=2b2b9365b | เวลาเล่น 41:38
+[DUPE-FAST] #2 ✅ TC=3645682e2 | CC=4108 | Inquiry=e4ed45c02 | เวลาเล่น 33:13
+[DUPE-FAST] #6 ✅ TC=4bef5d493 | CC=4877 | Inquiry=ea95fdefb | เวลาเล่น 41:23
+[DUPE-FAST] #7 ✅ TC=cfb96d78e | CC=7776 | Inquiry=7a9dae7ac | เวลาเล่น 40:36
+[DUPE-FAST] #5 ✅ TC=f84ab60d5 | CC=8844 | Inquiry=b1f12bfba | เวลาเล่น 29:43
+[DUPE-FAST] #4 ✅ TC=382ba8516 | CC=3881 | Inquiry=970421845 | เวลาเล่น 42:08
+[DUPE-FAST] #1 ✅ TC=895d93c70 | CC=2064 | Inquiry=7afd259f2 | เวลาเล่น 35:07
+[DUPE-FAST] #9 ✅ TC=9660c6286 | CC=1896 | Inquiry=304f193f5 | เวลาเล่น 38:31
+[DUPE-FAST] #14 ✅ TC=e9ad73e99 | CC=5173 | Inquiry=54eb060c3 | เวลาเล่น 44:17
+[DUPE-FAST] #13 ✅ TC=52e0a7af4 | CC=7515 | Inquiry=fdd0a5587 | เวลาเล่น 40:48
+[DUPE-FAST] #11 ✅ TC=dc438ae57 | CC=7887 | Inquiry=fa7e374e3 | เวลาเล่น 41:22
+[DUPE-FAST] #12 ✅ TC=7a263ac5e | CC=6069 | Inquiry=2bbc6257b | เวลาเล่น 43:40
+[DUPE-FAST] #16 ✅ TC=868891809 | CC=7017 | Inquiry=8395f8793 | เวลาเล่น 40:29
+[DUPE-FAST] #10 ✅ TC=8a38816a5 | CC=0905 | Inquiry=f26a46f6e | เวลาเล่น 31:39
+[DUPE-FAST] #15 ✅ TC=e98f2e92e | CC=7631 | Inquiry=227de9cb3 | เวลาเล่น 36:27
+[DUPE-FAST] #17 ✅ TC=ad942d425 | CC=3867 | Inquiry=22e51c327 | เวลาเล่น 29:18
+[DUPE-FAST] #24 ✅ TC=7366672e6 | CC=1893 | Inquiry=abee7bcc3 | เวลาเล่น 38:41
+[DUPE-FAST] #20 ✅ TC=d45a93b68 | CC=1623 | Inquiry=a88659c87 | เวลาเล่น 33:24
+[DUPE-FAST] #18 ✅ TC=fb86079f6 | CC=2408 | Inquiry=907e47a61 | เวลาเล่น 29:50
+[DUPE-FAST] #19 ✅ TC=c49991d2f | CC=4301 | Inquiry=4546c2782 | เวลาเล่น 38:08
+[DUPE-FAST] #23 ✅ TC=0aecb0bbc | CC=4615 | Inquiry=6ac87219e | เวลาเล่น 40:03
+[DUPE-FAST] #22 ✅ TC=3a2d1c35f | CC=4573 | Inquiry=c1ed0f4b3 | เวลาเล่น 32:06
+[DUPE-FAST] #21 ✅ TC=d26d94ed8 | CC=2191 | Inquiry=d41e54f08 | เวลาเล่น 40:25
+[DUPE-FAST] #27 ✅ TC=628f9543e | CC=2551 | Inquiry=a84e0160e | เวลาเล่น 39:28
+[DUPE-FAST] #31 ✅ TC=c11b94f79 | CC=0211 | Inquiry=a2869229c | เวลาเล่น 33:24
+[DUPE-FAST] #32 ✅ TC=c7222e797 | CC=8970 | Inquiry=3dc7ffdfc | เวลาเล่น 40:36
+[DUPE-FAST] #25 ✅ TC=03d9001ef | CC=4732 | Inquiry=b4ef65fb0 | เวลาเล่น 42:21
+[DUPE-FAST] #29 ✅ TC=af37692fe | CC=1951 | Inquiry=dd88abe25 | เวลาเล่น 41:22
+[DUPE-FAST] #28 ✅ TC=4fc6ca1ac | CC=1438 | Inquiry=ac65d4962 | เวลาเล่น 32:42
+[DUPE-FAST] #26 ✅ TC=d18df45d4 | CC=9188 | Inquiry=c583f4d42 | เวลาเล่น 32:20
+[DUPE-FAST] #30 ✅ TC=05ec57f47 | CC=6985 | Inquiry=3b9a319bc | เวลาเล่น 34:44
+[DUPE-FAST] #34 ✅ TC=056251b33 | CC=8238 | Inquiry=3e46e9bcb | เวลาเล่น 35:42
+[DUPE-FAST] #39 ✅ TC=97c0e6979 | CC=6023 | Inquiry=fcd81d595 | เวลาเล่น 40:17
+[DUPE-FAST] #40 ✅ TC=54be5465e | CC=5206 | Inquiry=8e6d1fc96 | เวลาเล่น 31:48
+[DUPE-FAST] #35 ✅ TC=e71ca4afc | CC=4253 | Inquiry=6a5d05772 | เวลาเล่น 33:14
+[DUPE-FAST] #37 ✅ TC=30da31f3c | CC=9219 | Inquiry=f91e66fac | เวลาเล่น 31:37
+[DUPE-FAST] #33 ✅ TC=e16a7b218 | CC=6418 | Inquiry=cd5fc50a3 | เวลาเล่น 38:59
+[DUPE-FAST] #36 ✅ TC=a55e7a36f | CC=4144 | Inquiry=9eee3ee9d | เวลาเล่น 38:47
+[DUPE-FAST] #38 ✅ TC=c37fbaec9 | CC=2401 | Inquiry=f7a264066 | เวลาเล่น 38:30
+[DUPE-FAST] #41 ✅ TC=d53c73476 | CC=4973 | Inquiry=053e4ff9f | เวลาเล่น 28:20
+[DUPE-FAST] #45 ✅ TC=09e360b0b | CC=4409 | Inquiry=a9137d296 | เวลาเล่น 34:24
+[DUPE-FAST] #44 ✅ TC=5e9d056c9 | CC=6393 | Inquiry=95af07562 | เวลาเล่น 31:33
+[DUPE-FAST] #43 ✅ TC=a7d479a6d | CC=5231 | Inquiry=8b7fdb5b2 | เวลาเล่น 41:00
+[DUPE-FAST] #42 ✅ TC=a3d39aabd | CC=7112 | Inquiry=b1665168b | เวลาเล่น 44:10
+[DUPE-FAST] #48 ✅ TC=4fb384f40 | CC=3189 | Inquiry=c66e2c3be | เวลาเล่น 34:07
+[DUPE-FAST] #46 ✅ TC=74819c7fe | CC=9122 | Inquiry=6f03a4f95 | เวลาเล่น 32:19
+[DUPE-FAST] #47 ✅ TC=5bdf3f3eb | CC=5610 | Inquiry=95ad728bb | เวลาเล่น 31:03
+[DUPE-FAST] #49 ✅ TC=edcd6302f | CC=2318 | Inquiry=e3c389e40 | เวลาเล่น 29:10
+[DUPE-FAST] #50 ✅ TC=2fb99ddf7 | CC=8928 | Inquiry=ebe715874 | เวลาเล่น 26:16
+[DUPE-FAST] #52 ✅ TC=f207b2d22 | CC=2856 | Inquiry=6bab2d33f | เวลาเล่น 36:15
+[DUPE-FAST] #51 ✅ TC=6f3e9817a | CC=8627 | Inquiry=6f1e12325 | เวลาเล่น 41:27
+[DUPE-FAST] #53 ✅ TC=d7082fbef | CC=6449 | Inquiry=ba4f72348 | เวลาเล่น 34:58
+[DUPE-FAST] #54 ✅ TC=5811bfce2 | CC=6204 | Inquiry=412508250 | เวลาเล่น 37:04
+[DUPE-FAST] #55 ✅ TC=9ec50410d | CC=5445 | Inquiry=95eec6bcd | เวลาเล่น 33:40
+[DUPE-FAST] #56 ✅ TC=ba9b09d92 | CC=8000 | Inquiry=9a293c329 | เวลาเล่น 43:52
+[DUPE-FAST] #59 ✅ TC=4358cb217 | CC=5852 | Inquiry=bbd4504fb | เวลาเล่น 31:49
+[DUPE-FAST] #58 ✅ TC=6ddf4274a | CC=1701 | Inquiry=ccbeab101 | เวลาเล่น 30:35
+[DUPE-FAST] #57 ✅ TC=c0928ba89 | CC=6941 | Inquiry=84c080b81 | เวลาเล่น 31:18
+[DUPE-FAST] #60 ✅ TC=b4752b822 | CC=0943 | Inquiry=6ab5d9aee | เวลาเล่น 32:03
+[DUPE-FAST] #61 ✅ TC=b8d6a711c | CC=2416 | Inquiry=44c26ca5f | เวลาเล่น 33:01
+[DUPE-FAST] #63 ✅ TC=3cac52fd5 | CC=3332 | Inquiry=42fd960c6 | เวลาเล่น 39:42
+[DUPE-FAST] #64 ✅ TC=57f29b530 | CC=2059 | Inquiry=46a5706d9 | เวลาเล่น 34:20
+[DUPE-FAST] #62 ✅ TC=3b6ac14e5 | CC=2256 | Inquiry=6f3cf029c | เวลาเล่น 26:15
+[DUPE-FAST] #66 ✅ TC=95c7f2b33 | CC=2198 | Inquiry=6fd5041d4 | เวลาเล่น 43:43
+[DUPE-FAST] #65 ✅ TC=95d7ec7e9 | CC=6718 | Inquiry=b86587593 | เวลาเล่น 39:53
+[DUPE-FAST] #67 ✅ TC=455b30ead | CC=1474 | Inquiry=b14becb1b | เวลาเล่น 37:05
+[DUPE-FAST] #69 ✅ TC=56a02eabf | CC=5384 | Inquiry=efa49c660 | เวลาเล่น 33:45
+[DUPE-FAST] #72 ✅ TC=d56de1bec | CC=8561 | Inquiry=cbdfe6cd2 | เวลาเล่น 30:25
+[DUPE-FAST] #68 ✅ TC=45122f297 | CC=2063 | Inquiry=01456eb95 | เวลาเล่น 28:52
+[DUPE-FAST] #70 ✅ TC=db855ae2e | CC=4018 | Inquiry=6af6a2e41 | เวลาเล่น 28:28
+[DUPE-FAST] #71 ✅ TC=d7f630139 | CC=3487 | Inquiry=653d390ef | เวลาเล่น 28:47
+[DUPE-FAST] #74 ✅ TC=5dea77f04 | CC=6150 | Inquiry=f8bf1f573 | เวลาเล่น 44:23
+[DUPE-FAST] #73 ✅ TC=10ae2ebb4 | CC=7174 | Inquiry=f3035c9eb | เวลาเล่น 41:08
+[DUPE-FAST] #75 ✅ TC=f22242fd9 | CC=1760 | Inquiry=a6ff07f84 | เวลาเล่น 38:18
+[DUPE-FAST] #76 ✅ TC=6bd79f587 | CC=4247 | Inquiry=5f91c1cbf | เวลาเล่น 42:05
+[DUPE-FAST] #78 ✅ TC=9c40c6199 | CC=4810 | Inquiry=e2f321755 | เวลาเล่น 41:15
+[DUPE-FAST] #77 ✅ TC=fc3f2c583 | CC=8299 | Inquiry=f3ea9b5d7 | เวลาเล่น 44:37
+[DUPE-FAST] #79 ✅ TC=23729540a | CC=8826 | Inquiry=6c01687b9 | เวลาเล่น 34:10
+[DUPE-FAST] #80 ✅ TC=dd7e2ac83 | CC=4680 | Inquiry=01c4497dc | เวลาเล่น 34:06
+[DUPE-FAST] #81 ✅ TC=3e42639f0 | CC=4002 | Inquiry=1713fa011 | เวลาเล่น 30:07
+[DUPE-FAST] #83 ✅ TC=f7df4eb77 | CC=3402 | Inquiry=1dbc1c732 | เวลาเล่น 31:50
+[DUPE-FAST] #82 ✅ TC=f57ff216f | CC=8249 | Inquiry=36a190fd9 | เวลาเล่น 30:41
+[DUPE-FAST] #86 ✅ TC=63e20b334 | CC=1210 | Inquiry=2eba8cb53 | เวลาเล่น 35:30
+[DUPE-FAST] #84 ✅ TC=292987cd9 | CC=6941 | Inquiry=30bba6154 | เวลาเล่น 29:35
+[DUPE-FAST] #85 ✅ TC=2af74dce7 | CC=3429 | Inquiry=468e4f102 | เวลาเล่น 27:00
+[DUPE-FAST] #87 ✅ TC=5fe8cc5db | CC=6367 | Inquiry=390014e9d | เวลาเล่น 28:52
+[DUPE-FAST] #88 ✅ TC=ef33f05aa | CC=5390 | Inquiry=ede14792e | เวลาเล่น 26:47
+[DUPE-FAST] #90 ✅ TC=0dc63379c | CC=8002 | Inquiry=3a9943d6a | เวลาเล่น 37:33
+[DUPE-FAST] #89 ✅ TC=ec6f7f604 | CC=3876 | Inquiry=196dbcd39 | เวลาเล่น 37:09
+[DUPE-FAST] #91 ✅ TC=478624167 | CC=1295 | Inquiry=3dacac8e6 | เวลาเล่น 26:17
+[DUPE-FAST] #92 ✅ TC=d2b8952cc | CC=1155 | Inquiry=564728e30 | เวลาเล่น 35:58
+[DUPE-FAST] #93 ✅ TC=051cf6d88 | CC=0775 | Inquiry=4c7cec262 | เวลาเล่น 42:48
+[DUPE-FAST] #96 ✅ TC=ddb791d8c | CC=6345 | Inquiry=b2f21c5e6 | เวลาเล่น 25:57
+[DUPE-FAST] #95 ✅ TC=e64df23c4 | CC=3594 | Inquiry=5a0e04f7c | เวลาเล่น 26:04
+[DUPE-FAST] #94 ✅ TC=7a78903e3 | CC=7201 | Inquiry=29fe628b9 | เวลาเล่น 37:24
+[DUPE-FAST] #98 ✅ TC=202b4b177 | CC=1330 | Inquiry=31d1dc719 | เวลาเล่น 40:52
+[DUPE-FAST] #97 ✅ TC=9fe42a382 | CC=5663 | Inquiry=54ee8270e | เวลาเล่น 25:03
+[DUPE-FAST] #99 ✅ TC=085c8a6f9 | CC=8540 | Inquiry=ba501b454 | เวลาเล่น 29:33
+[DUPE-FAST] #100 ✅ TC=dc026bebc | CC=6583 | Inquiry=ac495f99f | เวลาเล่น 32:26
+[CLEANUP] ลบ backup 0 ไฟล์
+[DUPE-FAST] เสร็จ 100/100 รหัส ใช้เวลา 97.3 วิ

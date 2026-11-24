@@ -390,6 +390,27 @@ class BCSFERunner:
                 self._log(f"[ITEM] {name}: {old} + {amount} → {mat.amount}")
             return
 
+        # ── talent_orb_s / talent_orb_a: Orb เกรด S หรือ A ทุกชนิด ชนิดละ amount ลูก ──
+        # ดึงรายการ orb จากข้อมูลเกมตามเวอร์ชัน save ลูกค้า (ชนิดใหม่ในเกมจะได้อัตโนมัติ)
+        ORB_GRADE = {"talent_orb_s": "S", "talent_orb_a": "A"}
+        if key in ORB_GRADE:
+            grade = ORB_GRADE[key]
+            import bcsfe.core as _bc
+            info = _bc.game.catbase.talent_orbs.OrbInfoList.create(save_file)
+            if info is None:
+                raise RuntimeError("โหลดข้อมูล Talent Orb จากเกมไม่ได้")
+            s_orbs = [o for o in info.orb_info_list if o.rank == grade]
+            if not s_orbs:
+                raise RuntimeError(f"ไม่พบ Talent Orb เกรด {grade} ในข้อมูลเกม")
+            for o in s_orbs:
+                oid = o.raw_orb_info.orb_id
+                cur = save_file.talent_orbs.orbs.get(oid)
+                old = cur.value if cur is not None else 0
+                new = min(old + amount, max_val)
+                save_file.talent_orbs.set_orb(oid, new)
+            self._log(f"[ITEM] Talent Orb {grade}: {len(s_orbs)} ชนิด +{amount} ต่อชนิด (สูงสุด {max_val})")
+            return
+
         # ── gamatoto_level: set XP ให้ตรงกับ level ที่เลือก ──
         if key == "gamatoto_level":
             import bcsfe.core as _bc
@@ -942,6 +963,44 @@ class BCSFERunner:
             self._close_log()
             return self._error_result(e)
 
+    def run_check_id_fast(self) -> dict:
+        """checkID แบบไว (ถูกเรียกพร้อมกันหลาย thread) — download → re-upload ไม่แก้ไข
+        - ไม่โหลดซ้ำ: download แล้วรหัสเดิมถูกใช้ทันที ถ้าโหลดใหม่จะได้ "รหัสหมดอายุ"
+        - upload ล้มเหลว → ลองใหม่ 3 ครั้ง (รอ 3/6 วิ) ถ้ายังไม่ได้ เก็บเซฟลง saves_backup ไว้กู้ผ่านหน้า unban
+          (ไม่ backup ทุกรหัสเหมือนเดิม: 1000 รหัส x 600KB จะกินพื้นที่เปล่าๆ)"""
+        try:
+            save_file = self._download_save(backup=False)
+            inquiry = getattr(save_file, "inquiry_code", "?")
+            self._log(f"[CHECK-FAST] {self.transfer} Inquiry: {inquiry}")
+            raw = save_file.to_data().to_bytes()
+            last_err = None
+            for attempt in range(1, 4):
+                try:
+                    result = core.ServerHandler(save_file).get_codes()
+                    if result is None:
+                        raise RuntimeError("get_codes ล้มเหลว")
+                    new_tc, new_cc = result
+                    self._log(f"[CHECK-FAST] {self.transfer} ✅ TC={new_tc} | CC={new_cc}")
+                    return {"success": True,
+                            "new_transfer_code": {"transfer": new_tc, "confirmation": new_cc},
+                            "inquiry_code": str(inquiry)}
+                except Exception as e:
+                    last_err = e
+                    self._log(f"[CHECK-FAST] {self.transfer} ⚠ upload ครั้งที่ {attempt}/3: {e}")
+                    if attempt < 3:
+                        time.sleep(3 * attempt)
+            backup_dir = Path("saves_backup")
+            backup_dir.mkdir(exist_ok=True)
+            ts = datetime.now(TZ_THAI).strftime("%Y%m%d_%H%M%S")
+            dest = backup_dir / f"SAVE_{ts}_{self.transfer[:8]}"
+            dest.write_bytes(raw)
+            self._log(f"[CHECK-FAST] {self.transfer} ❌ upload ไม่สำเร็จ — เก็บเซฟไว้ที่ {dest}")
+            return {"success": False,
+                    "error": f"โหลดได้แต่อัปโหลดไม่สำเร็จ ({last_err}) — รหัสเดิมใช้ไปแล้ว เซฟเก็บไว้ที่ {dest.name} กู้ได้ที่หน้า unban"}
+        except Exception as e:
+            self._log(f"[CHECK-FAST] {self.transfer} ❌ {e}")
+            return {"success": False, "error": str(e)}
+
     def run_dupe_save(self, count: int) -> dict:
         """Download save ครั้งเดียว แล้ว dupe N ครั้งด้วย create_new_account + get_codes"""
         try:
@@ -988,6 +1047,86 @@ class BCSFERunner:
 
             self._close_log()
             return {"success": True, "codes": results, "count": len(results)}
+
+        except Exception as e:
+            self._log(f"[BCSFE] ❌ {e}")
+            self._close_log()
+            return self._error_result(e)
+
+    def run_dupe_save_fast(self, count: int, workers: int = 3,
+                           playtime_min_h: float = 0, playtime_max_h: float = 0) -> dict:
+        """Dupe แบบไว: download ครั้งเดียว แล้วแตกเซฟเป็นหลายชุด ทำ create_new_account + get_codes พร้อมกัน
+        token/inquiry เก็บอยู่ในตัว SaveFile แต่ละชุด -> แต่ละ thread ไม่แชร์ state กัน
+        ไม่หน่วงเวลาตายตัว — รอเพิ่มเฉพาะรอบที่ PONOS ปฏิเสธ (backoff 3/6/9 วิ)
+        playtime_min_h/max_h > 0 -> สุ่มเวลาเล่นแต่ละรหัสในช่วงนั้น (ชั่วโมง) ไม่ให้ทุกรหัสเวลาเท่ากันเป๊ะ"""
+        import threading, random
+        from concurrent.futures import ThreadPoolExecutor
+        try:
+            t0 = time.monotonic()
+            self._log(f"[OP] Dupe Save (ไว) x{count} | ทำพร้อมกัน {workers} ชุด")
+            core.core_data.init_data()
+            save_file = self._download_save()
+            raw = save_file.to_data().to_bytes()
+            cc = self._get_cc()
+            log_lock = threading.Lock()
+
+            def _log_t(msg: str):
+                with log_lock:
+                    self._log(msg)
+
+            rand_pt = playtime_min_h > 0 and playtime_max_h >= playtime_min_h
+            if rand_pt:
+                self._log(f"[DUPE-FAST] สุ่มเวลาเล่น {playtime_min_h}–{playtime_max_h} ชม.")
+
+            def _one(i: int):
+                for attempt in range(1, 4):
+                    try:
+                        sf = core.SaveFile(core.Data(raw), cc=cc)
+                        if rand_pt:
+                            secs = random.randint(int(playtime_min_h * 3600), int(playtime_max_h * 3600))
+                            sf.officer_pass.play_time = core.PlayTime.from_seconds(secs).frames
+                        if not core.ServerHandler(sf).create_new_account():
+                            raise RuntimeError("create_new_account ล้มเหลว")
+                        result = core.ServerHandler(sf).get_codes()
+                        if result is None:
+                            raise RuntimeError("get_codes ล้มเหลว")
+                        new_tc, new_cc = result
+                        inquiry = str(getattr(sf, "inquiry_code", "?"))
+                        pt = core.PlayTime(sf.officer_pass.play_time)
+                        playtime = f"{pt.hours}:{pt.just_minutes:02d}"
+                        _log_t(f"[DUPE-FAST] #{i+1} ✅ TC={new_tc} | CC={new_cc} | Inquiry={inquiry} | เวลาเล่น {playtime}")
+                        return {"transfer": new_tc, "confirmation": new_cc, "inquiry": inquiry, "playtime": playtime}
+                    except Exception as e:
+                        _log_t(f"[DUPE-FAST] #{i+1} ⚠ ครั้งที่ {attempt}/3: {e}")
+                        if attempt < 3:
+                            time.sleep(3 * attempt)
+                _log_t(f"[DUPE-FAST] #{i+1} ❌ ล้มเหลวทั้ง 3 ครั้ง — ข้าม")
+                return None
+
+            with ThreadPoolExecutor(max_workers=workers) as ex:
+                results = list(ex.map(_one, range(count)))
+            codes = [r for r in results if r]
+            failed = count - len(codes)
+
+            # ลบ backup ทั้งหมดของ session นี้ (เหมือน run_dupe_save)
+            try:
+                backup_dir = Path("saves_backup")
+                deleted = 0
+                if backup_dir.exists():
+                    for f in backup_dir.iterdir():
+                        if self.transfer[:8] in f.name or self._session_id in f.name:
+                            f.unlink()
+                            deleted += 1
+                self._log(f"[CLEANUP] ลบ backup {deleted} ไฟล์")
+            except Exception as e:
+                self._log(f"[CLEANUP] ⚠ {e}")
+
+            secs = round(time.monotonic() - t0, 1)
+            self._log(f"[DUPE-FAST] เสร็จ {len(codes)}/{count} รหัส ใช้เวลา {secs} วิ")
+            self._close_log()
+            return {"success": bool(codes), "codes": codes, "count": len(codes),
+                    "failed": failed, "seconds": secs,
+                    **({} if codes else {"error": "dupe ไม่สำเร็จเลยสักรหัส"})}
 
         except Exception as e:
             self._log(f"[BCSFE] ❌ {e}")

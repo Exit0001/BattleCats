@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>รายงานยอดขาย</title>
+<style>
+body{margin:0;padding:16px;background:#12101c;color:#e9e4ff;font:14px system-ui,'Segoe UI',Tahoma,sans-serif}
+h1{font-size:20px;margin:0 0 4px}
+.sub{color:#a89cc9;margin-bottom:14px;min-height:20px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+input,select,button{background:#1e1a2e;color:#fff;border:1px solid #3b3358;border-radius:8px;padding:8px 10px;font:inherit}
+button{cursor:pointer} button:hover{border-color:#7c6bd6}
+#q{flex:1;min-width:200px}
+.sum{color:#fcd34d;font-weight:700}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{position:sticky;top:0;background:#241e38;text-align:left;padding:8px;cursor:pointer;white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid #2a2440}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+tr:hover td{background:#1c1830}
+.pm-promptpay{color:#a78bfa}.pm-truemoney{color:#fbbf24}.pm-wallet{color:#34d399}
+.msg{padding:30px;text-align:center;color:#a89cc9}
+.err{color:#f87171}
+</style>
+</head>
+<body>
+<h1>รายงานยอดขาย</h1>
+<div class="sub" id="sub">&nbsp;</div>
+
+<div class="bar">
+  <button id="prev" title="วันก่อนหน้า">◀</button>
+  <input type="date" id="day">
+  <button id="next" title="วันถัดไป">▶</button>
+  <button id="today">วันนี้</button>
+  <button id="dl" title="บันทึกรายงานวันนี้เป็นไฟล์ HTML ลงเครื่อง เปิดดูได้แม้ไม่มีเน็ต" disabled>💾 โหลดไฟล์</button>
+</div>
+<div class="bar">
+  <input id="q" placeholder="ค้นหา username, สินค้า, order id...">
+  <select id="pm">
+    <option value="">ทุกช่องทาง</option>
+    <option>promptpay</option><option>truemoney</option><option>wallet</option>
+  </select>
+  <span>แสดง <span id="cnt" class="sum">0</span> บิล · <span id="tot" class="sum">฿0</span></span>
+</div>
+
+<div class="wrap">
+  <table>
+    <thead><tr>
+      <th data-k="time">เวลา</th><th data-k="order_id">Order</th><th data-k="username">Username</th>
+      <th data-k="items">สินค้า</th><th data-k="amount">ยอด</th><th data-k="method">ช่องทาง</th>
+    </tr></thead>
+    <tbody id="tb"></tbody>
+  </table>
+</div>
+<div id="state" class="msg"></div>
+
+<script>
+var D = [], sk = 'time', sd = 1;
+var params = new URLSearchParams(location.search);
+var API = (params.get('api') || '').replace(/\/$/, '');   // ว่าง = เซิร์ฟเวอร์เดียวกับหน้านี้
+
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+function pad(n) { return (n < 10 ? '0' : '') + n; }
+function todayStr() { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function shift(str, days) {
+  var p = str.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2] + days);
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+function session() {
+  try { return JSON.parse(localStorage.getItem('bc_session')) || {}; } catch (e) { return {}; }
+}
+
+function render() {
+  var q = document.getElementById('q').value.toLowerCase(), pm = document.getElementById('pm').value;
+  var r = D.filter(function (x) {
+    return (!pm || x.method === pm) && (!q || (x.order_id + ' ' + x.username + ' ' + x.items).toLowerCase().indexOf(q) >= 0);
+  });
+  r.sort(function (a, b) { var A = a[sk], B = b[sk]; return (A > B ? 1 : A < B ? -1 : 0) * sd; });
+  document.getElementById('cnt').textContent = r.length.toLocaleString();
+  document.getElementById('tot').textContent = '฿' + r.reduce(function (s, x) { return s + x.amount; }, 0).toLocaleString();
+  document.getElementById('tb').innerHTML = r.map(function (x) {
+    return '<tr><td>' + x.time + '</td><td>' + esc(x.order_id) + '</td><td>' + esc(x.username) + '</td><td>' + esc(x.items) +
+      '</td><td class="n">฿' + x.amount.toLocaleString() + '</td><td class="pm-' + esc(x.method) + '">' + esc(x.method) + '</td></tr>';
+  }).join('');
+}
+
+function load(dateStr) {
+  document.getElementById('day').value = dateStr;
+  history.replaceState(null, '', '?date=' + dateStr + (API ? '&api=' + encodeURIComponent(API) : ''));
+  document.title = 'ยอดขาย ' + dateStr;
+  D = []; LAST = null; document.getElementById('dl').disabled = true; render();
+  var st = document.getElementById('state'), sub = document.getElementById('sub');
+  st.className = 'msg'; st.textContent = '⏳ กำลังโหลด...'; sub.innerHTML = '&nbsp;';
+  var s = session(), p = dateStr.split('-');
+  var url = API + '/api/admin/revenue/daily-detail?year=' + +p[0] + '&month=' + +p[1] + '&day=' + +p[2] +
+    '&username=' + encodeURIComponent(s.username || '') + '&session_token=' + encodeURIComponent(s.hash || '');
+  fetch(url).then(function (r) {
+    if (r.status === 403) throw new Error('ต้อง login ด้วยบัญชี admin ก่อน (เปิดจากหน้าจัดการออเดอร์)');
+    if (r.status === 429) throw new Error('โหลดถี่เกินไป รอสักครู่แล้วลองใหม่');
+    if (!r.ok) throw new Error('โหลดไม่สำเร็จ (HTTP ' + r.status + ')');
+    return r.json();
+  }).then(function (d) {
+    if (document.getElementById('day').value !== dateStr) return;   // เปลี่ยนวันไปแล้ว
+    D = d.orders || [];
+    LAST = d; document.getElementById('dl').disabled = !D.length;
+    sub.textContent = d.count.toLocaleString() + ' บิล · ฿' + d.total.toLocaleString() + ' · ลูกค้า ' +
+      d.customers.toLocaleString() + ' คน · ไม่รวมเติมเงิน / admin / บัญชีทดสอบ';
+    st.textContent = D.length ? '' : 'ไม่มียอดขายในวันนี้';
+    render();
+  }).catch(function (e) {
+    st.className = 'msg err'; st.textContent = '❌ ' + e.message;
+  });
+}
+
+// ── โหลดไฟล์ HTML ลงเครื่อง (สร้างในเบราว์เซอร์ ไม่ได้เก็บอะไรบนเซิร์ฟเวอร์) ──
+var LAST = null;
+function downloadReport() {
+  if (!LAST) return;
+  var css = document.querySelector('style').textContent;
+  var data = JSON.stringify(LAST.orders).replace(/</g, '\\u003c');
+  var js =
+    'var D=' + data + ',sk="time",sd=1;' +
+    'function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;"}[c]})}' +
+    'function render(){var q=document.getElementById("q").value.toLowerCase(),pm=document.getElementById("pm").value;' +
+    'var r=D.filter(function(x){return(!pm||x.method===pm)&&(!q||(x.order_id+" "+x.username+" "+x.items).toLowerCase().indexOf(q)>=0)});' +
+    'r.sort(function(a,b){var A=a[sk],B=b[sk];return(A>B?1:A<B?-1:0)*sd});' +
+    'document.getElementById("cnt").textContent=r.length.toLocaleString();' +
+    'document.getElementById("tot").textContent="฿"+r.reduce(function(s,x){return s+x.amount},0).toLocaleString();' +
+    'document.getElementById("tb").innerHTML=r.map(function(x){return"<tr><td>"+x.time+"</td><td>"+esc(x.order_id)+"</td><td>"+esc(x.username)+"</td><td>"+esc(x.items)+"</td><td class=\\"n\\">฿"+x.amount.toLocaleString()+"</td><td class=\\"pm-"+esc(x.method)+"\\">"+esc(x.method)+"</td></tr>"}).join("")}' +
+    'document.getElementById("q").oninput=render;document.getElementById("pm").onchange=render;' +
+    'document.querySelectorAll("th").forEach(function(t){t.onclick=function(){var k=t.dataset.k;sd=(sk===k)?-sd:(k==="amount"?-1:1);sk=k;render()}});render();';
+  var html =
+    '<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>ยอดขาย ' + LAST.date + '</title><style>' + css + '</style></head><body>' +
+    '<h1>ยอดขาย ' + LAST.date + '</h1><div class="sub">' + esc(document.getElementById('sub').textContent) + '</div>' +
+    '<div class="bar"><input id="q" placeholder="ค้นหา username, สินค้า, order id..."><select id="pm"><option value="">ทุกช่องทาง</option>' +
+    '<option>promptpay</option><option>truemoney</option><option>wallet</option></select>' +
+    '<span>แสดง <span id="cnt" class="sum"></span> บิล · <span id="tot" class="sum"></span></span></div>' +
+    '<div class="wrap"><table><thead><tr><th data-k="time">เวลา</th><th data-k="order_id">Order</th><th data-k="username">Username</th>' +
+    '<th data-k="items">สินค้า</th><th data-k="amount">ยอด</th><th data-k="method">ช่องทาง</th></tr></thead><tbody id="tb"></tbody></table></div>' +
+    '<script>' + js + '<\/script></body></html>';
+  var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ยอดขาย_' + LAST.date + '.html';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+}
+document.getElementById('dl').onclick = downloadReport;
+
+document.getElementById('q').oninput = render;
+document.getElementById('pm').onchange = render;
+document.getElementById('day').onchange = function () { if (this.value) load(this.value); };
+document.getElementById('prev').onclick = function () { load(shift(document.getElementById('day').value || todayStr(), -1)); };
+document.getElementById('next').onclick = function () { load(shift(document.getElementById('day').value || todayStr(), 1)); };
+document.getElementById('today').onclick = function () { load(todayStr()); };
+document.querySelectorAll('th').forEach(function (t) {
+  t.onclick = function () { var k = t.dataset.k; sd = (sk === k) ? -sd : (k === 'amount' ? -1 : 1); sk = k; render(); };
+});
+
+load(/^\d{4}-\d{2}-\d{2}$/.test(params.get('date') || '') ? params.get('date') : todayStr());
+</script>
+</body>
+</html>

@@ -34,6 +34,7 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="assets/promo.js?v=2"></script>
 </head>
 <body>
 
@@ -135,6 +136,16 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px;">
           <span data-i18n="ord_items_label">จำนวนสินค้า:</span>
           <span id="totalItems" style="font-weight: 700;">0 รายการ</span>
+        </div>
+
+        <!-- โปรลดราคา: แสดงเฉพาะช่วงโปร (displayCart เป็นคนเปิด) -->
+        <div id="promoRows" style="display:none;margin-bottom:12px;font-size:14px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;color:var(--text-secondary);">
+            <span>ยอดสินค้า:</span><span id="promoSubtotal" style="text-decoration:line-through;">฿0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;color:#FF4D92;font-weight:700;">
+            <span id="promoLabel">🔥 ส่วนลดโปร 25%:</span><span id="promoDiscount">-฿0</span>
+          </div>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; font-size: 16px;">
@@ -418,17 +429,21 @@
             <button onclick="copyCode('newConfirmCode',this)" style="flex-shrink:0;padding:5px 12px;background:#6366f1;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Chakra Petch',sans-serif;" data-i18n="copy_label">คัดลอก</button>
           </div>
         </div>
+        <!-- คำแนะนำหลังได้รหัสใหม่ (แสดงเฉพาะตอนสำเร็จ เพราะอยู่ใน modal-success-box) -->
+        <div style="margin-top:14px;padding:10px 12px;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;font-size:13px;line-height:1.6;color:#991b1b;font-weight:600;" data-i18n="ord_newcode_hint">
+          ⚠️ ในเกม กด "ยกเลิกการโอนถ่ายข้อมูลบันทึก" (ปุ่มสีแดง) ก่อน แล้วทำตามวิดีโอสอนใส่รหัสด้านล่างได้เลยครับ
+        </div>
       </div>
 
       <!-- วิดีโอสอนวิธีใส่รหัสใหม่ (accordion ปิด) -->
       <div style="margin-bottom:18px;border:1px solid #d1d5db;border-radius:10px;overflow:hidden;">
         <button onclick="toggleVidAccordion(this)" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f3f4f6;border:none;cursor:pointer;font-family:'Chakra Petch',sans-serif;font-size:12px;font-weight:700;color:#374151;text-align:left;">
-          <span data-i18n="ord_video_howto_newcode">🎬 วิธีนำรหัสใหม่ไปใส่ในเกม</span>
+          <span id="modalVidTitle" data-i18n="ord_video_howto_newcode">🎬 วิธีนำรหัสใหม่ไปใส่ในเกม</span>
           <span style="font-size:18px;transition:transform 0.2s;display:inline-block;transform:rotate(90deg);">›</span>
         </button>
         <div style="display:block;">
           <div style="position:relative;width:100%;padding-bottom:56.25%;background:#000;">
-            <iframe src="https://www.youtube.com/embed/oG4-nBVqz3o?rel=0&modestbranding=1"
+            <iframe id="modalVidFrame" src="https://www.youtube.com/embed/oG4-nBVqz3o?rel=0&modestbranding=1"
               style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
               allowfullscreen loading="lazy"></iframe>
           </div>
@@ -447,6 +462,20 @@
           <label style="display:block; font-size:12px; font-weight:700; color:#666; margin-bottom:4px;">Confirmation Code ใหม่</label>
           <input type="text" id="retry-cc" placeholder="12345678"
             style="width:100%; padding:8px 10px; border:1px solid #d1d5db; border-radius:8px; font-family:monospace; box-sizing:border-box;">
+        </div>
+        <!-- เปลี่ยนเซิร์ฟเวอร์ได้ (กรณีเลือกผิดตอนสั่ง) -->
+        <div style="margin-bottom:14px;">
+          <label style="display:block; font-size:12px; font-weight:700; color:#666; margin-bottom:4px;" data-i18n="ord_retry_server_label">เซิร์ฟเวอร์ (Server)</label>
+          <select id="retry-server"
+            style="width:100%; padding:8px 10px; border:1px solid #d1d5db; border-radius:8px; box-sizing:border-box; background:#fff; color:#111;">
+            <option value="1">EN (Global / TH / EU)</option>
+            <option value="2" data-i18n="stg_server_jp">JP (ญี่ปุ่น)</option>
+            <option value="3" data-i18n="stg_server_kr">KR (เกาหลี)</option>
+            <option value="4" data-i18n="stg_server_tw">TW (ไต้หวัน)</option>
+          </select>
+          <div style="margin-top:6px; font-size:12px; color:#92400e; line-height:1.5;" data-i18n="ord_retry_server_tip">
+            💡 เลือกเซิร์ฟเวอร์ผิดตอนสั่ง? เปลี่ยนตรงนี้ได้เลย — โหลดเกมจาก Store ไทยให้เลือก EN
+          </div>
         </div>
         <button id="retryBtn" onclick="retryBCSFE()"
           style="width:100%; padding:10px; background:#dc2626; color:#fff; border:none; border-radius:8px; font-family:'Kanit',sans-serif; font-size:14px; font-weight:700; cursor:pointer;" data-i18n="ord_retry_btn">
@@ -512,12 +541,19 @@ function displayCart() {
     document.getElementById('totalItems').textContent = window.bcT('ord_items_unit','{n} รายการ').replace('{n}', '0');
     document.getElementById('totalPrice').textContent = '฿0';
     document.getElementById('cartCount').textContent = '0';
+    document.getElementById('promoRows').style.display = 'none';
     _updateOrderTypeHint([]);
     return;
   }
 
+  // โปรลดราคา: ตะกร้าเก็บราคาเดิม ลดทีละแถวตอนแสดง (เซิร์ฟเวอร์คิดสูตรเดียวกัน)
+  var _P = window.BCPromo;
+  var subtotal = 0;
+
   cart.forEach(function(item, index) {
-    total += item.price;
+    subtotal += item.price;
+    total += _P ? _P.price(item.price) : item.price;
+    // total += item.price;
     var isUnlock = item.key === 'unlock_cat';
     var imgHtml = isUnlock
       ? '<img src="/api/cat-image/' + item.cat_id + '" style="width:40px;height:40px;border-radius:8px;object-fit:cover;margin-right:10px;background:#1a0a2e;" onerror="this.style.display=\'none\'">'
@@ -529,7 +565,8 @@ function displayCart() {
           imgHtml +
           '<div>' +
             '<div style="font-weight:700;font-size:14px;">' + item.name + amountText + '</div>' +
-            '<div style="font-size:12px;color:#888;">฿' + item.price.toLocaleString() + '</div>' +
+            '<div style="font-size:12px;color:#888;">' + (_P ? _P.fmt(item.price) : '฿' + item.price.toLocaleString()) + '</div>' +
+            // '<div style="font-size:12px;color:#888;">฿' + item.price.toLocaleString() + '</div>' +
           '</div>' +
         '</div>' +
         '<button onclick="removeFromCart(' + index + ')" style="background:#ffebee;color:#e8002a;border:none;padding:4px 12px;border-radius:6px;cursor:pointer;font-size:12px;">' + window.bcT('ord_remove_btn','ลบ') + '</button>' +
@@ -539,9 +576,21 @@ function displayCart() {
   document.getElementById('cartItems').innerHTML = cartHTML;
   document.getElementById('totalItems').textContent = window.bcT('ord_items_unit','{n} รายการ').replace('{n}', cart.length);
   document.getElementById('totalPrice').textContent = '฿' + total.toLocaleString();
+  var promoRows = document.getElementById('promoRows');
+  if (subtotal > total) {
+    promoRows.style.display = '';
+    document.getElementById('promoSubtotal').textContent = '฿' + subtotal.toLocaleString();
+    document.getElementById('promoLabel').textContent = (window.bcLang && window.bcLang() === 'en' ? '🔥 Promo ' : '🔥 ส่วนลดโปร ') + _P.percent + '%:';
+    document.getElementById('promoDiscount').textContent = '-฿' + (subtotal - total).toLocaleString();
+  } else {
+    promoRows.style.display = 'none';
+  }
   document.getElementById('cartCount').textContent = cart.length;
   _updateOrderTypeHint(cart);
 }
+
+// สถานะโปรเปลี่ยน (ยืนยันกับเซิร์ฟเวอร์เสร็จ) -> วาดตะกร้าใหม่ ยกเว้นตอนสร้าง QR ไปแล้ว
+window.addEventListener('bcpromo:change', function () { if (!_paymentLocked) displayCart(); });
 
 var _PER_CAT_SVC_KEYS = { upgrade_cat:1, trueform_cat:1, ultraform_cat:1, talents_cat:1 };
 
@@ -869,7 +918,7 @@ function onSlipChange() {
   reader.readAsDataURL(file);
 }
 
-// ── Submit slip → verify with SlipOK → run BCSFE ──────────────
+// ── Submit slip → verify with slip provider → run BCSFE ───────
 async function submitSlip() {
   var file = document.getElementById('slipInput').files[0];
   if (!file || !_currentOrderId) { alert(window.bcT('ord_choose_slip_alert','❌ กรุณาเลือกไฟล์สลิปก่อน')); return; }
@@ -879,7 +928,7 @@ async function submitSlip() {
   btn.disabled = true; btn.textContent = window.bcT('ord_checking_slip_btn','⏳ กำลังตรวจสอบสลิป...');
   msg.style.display = 'block';
   msg.style.color = 'rgba(255,255,255,0.6)';
-  msg.textContent = window.bcT('ord_checking_slip_msg','🔍 กำลังตรวจสอบสลิปกับ SlipOK...');
+  msg.textContent = window.bcT('ord_checking_slip_msg','🔍 กำลังตรวจสอบสลิป...');
 
   try {
     var formData = new FormData();
@@ -1179,6 +1228,12 @@ async function renderHistory() {
     if (username) {
       try {
         var sr = await fetch('/api/orders/my/' + encodeURIComponent(username));
+        if (sr.status === 429) {
+          // Cloudflare บล็อกชั่วคราวเพราะกดถี่ — บอกให้รอ แทนที่จะแสดงประวัติครึ่งๆ กลางๆ
+          content.innerHTML = '<div style="text-align:center;padding:40px;color:#fbbf24;font-size:14px;line-height:1.8;">' +
+            '⏳ ' + window.bcT('ord_hist_rate_limited','โหลดประวัติถี่เกินไป กรุณารอสักครู่แล้วกดแท็บ "ประวัติ" อีกครั้ง') + '</div>';
+          return;
+        }
         var sd = await sr.json();
         if (sd.success) serverOrders = sd.orders;
       } catch (e) {}
@@ -1186,14 +1241,17 @@ async function renderHistory() {
 
     // merge: server เป็นหลัก, local เพิ่มข้อมูลเสริม (items name, new_transfer_code)
     var merged = {};
-    serverOrders.forEach(function(o) { merged[o.order_id] = o; });
+    // _srv = ข้อมูลจาก server มีสถานะ/รหัสครบแล้ว ไม่ต้องยิง /api/payment/status ถามซ้ำทีละออเดอร์
+    // (เดิมยิงพร้อมกัน 30 request ทุกครั้งที่กดประวัติ -> Cloudflare ตอบ 429 -> ขึ้น "ไม่ทราบสถานะ")
+    serverOrders.forEach(function(o) { merged[o.order_id] = Object.assign({}, o, { _srv: true }); });
     local.forEach(function(o) {
       var id = o.id || o.order_id;
       if (!merged[id]) {
         merged[id] = Object.assign({}, o, { order_id: id });
       } else {
         // เอา items display และ new codes จาก localStorage ถ้า server ไม่มี
-        if (!merged[id].display_items && o.items) merged[id].display_items = o.items;
+        // ชื่อจากตะกร้าในเครื่องนี้ละเอียดกว่า ใช้ก่อน — ไม่มีค่อยใช้ display_items ที่ server แปลงให้
+        if (o.items && o.items.length) merged[id].display_items = o.items;
         if (o.new_transfer_code)     merged[id].new_transfer_code     = o.new_transfer_code;
         if (o.new_confirmation_code) merged[id].new_confirmation_code = o.new_confirmation_code;
       }
@@ -1213,9 +1271,7 @@ async function renderHistory() {
       return;
     }
 
-    var orders = await Promise.all(hist.map(async function(order) {
-      order = Object.assign({}, order);
-      order.id = order.id || order.order_id;
+    async function _fetchOrderStatus(order) {
       try {
         var r = await fetch('/api/payment/status/' + order.id);
         var d = await r.json();
@@ -1228,7 +1284,40 @@ async function renderHistory() {
       } catch (e) {
         return Object.assign({}, order, { status: order.status || 'unknown' });
       }
-    }));
+    }
+
+    // ยิงถามสถานะเฉพาะออเดอร์ที่ server ไม่รู้จัก (เช่น สั่งตอนไม่ได้ login) หรือ code_shop ที่รหัสอยู่ใน stock
+    // และยิงทีละ 3 ไม่ยิงพร้อมกันทั้งหมด กัน Cloudflare 429
+    var orders = [];
+    var _needFetch = [];
+    hist.forEach(function(order) {
+      order = Object.assign({}, order);
+      order.id = order.id || order.order_id;
+      var codeShopNoCode = order.order_type === 'code_shop' && order.status === 'done' && !order.new_transfer_code;
+      if (order._srv && order.status && !codeShopNoCode) {
+        orders.push(Object.assign({}, order, { order_type: order.order_type || '' }));
+      } else {
+        _needFetch.push(order);
+      }
+    });
+    for (var _fi = 0; _fi < _needFetch.length; _fi += 3) {
+      var _chunk = await Promise.all(_needFetch.slice(_fi, _fi + 3).map(_fetchOrderStatus));
+      orders = orders.concat(_chunk);
+    }
+    // คงลำดับเดิม (ใหม่สุดก่อน) หลังแยกกลุ่ม
+    orders.sort(function(a,b) { return (b.created_at||'').localeCompare(a.created_at||''); });
+
+    // --- โค้ดเดิม (ยิง /api/payment/status ทุกออเดอร์พร้อมกัน) ---
+    // var orders = await Promise.all(hist.map(async function(order) {
+    //   order = Object.assign({}, order);
+    //   order.id = order.id || order.order_id;
+    //   try {
+    //     var r = await fetch('/api/payment/status/' + order.id);
+    //     ...
+    //   } catch (e) {
+    //     return Object.assign({}, order, { status: order.status || 'unknown' });
+    //   }
+    // }));
 
     var STATUS_LABEL = {
       pending:      '⏳ รอชำระเงิน',
@@ -1396,6 +1485,32 @@ function showSuccessModal(orderId, cart, result) {
   document.getElementById('modal-success-box').style.display = isSuccess ? 'block' : 'none';
   document.getElementById('modal-retry-box').style.display   = isBcsfeFail ? 'block' : 'none';
 
+  // ฟอร์มลองใหม่: เลือกเซิร์ฟเวอร์เดิมของ order ไว้ให้ (ลูกค้าเปลี่ยนเองได้ถ้าเลือกผิด)
+  if (isBcsfeFail && orderId) {
+    var _rsSel = document.getElementById('retry-server');
+    var _srvMain = document.getElementById('server');
+    if (_rsSel && _srvMain && _srvMain.value) _rsSel.value = _srvMain.value;   // สั่งจากหน้านี้ ใช้ค่าที่เพิ่งเลือก
+    fetch('/api/payment/status/' + encodeURIComponent(orderId))
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { if (d && d.country && _rsSel) _rsSel.value = String(d.country); })
+      .catch(function () {});
+  }
+
+  // วิดีโอใน modal สลับตามสถานะ
+  //   รหัสผิด (ลูกค้าต้องกรอกใหม่) -> สอนวิธีดู Transfer Code จากเกม
+  //   สำเร็จ                      -> สอนวิธีนำรหัสใหม่ไปใส่ในเกม
+  var vidFrame = document.getElementById('modalVidFrame');
+  var vidTitle = document.getElementById('modalVidTitle');
+  if (vidFrame && vidTitle) {
+    var vidId  = isSuccess ? 'oG4-nBVqz3o' : 'Lv84OfTH-C8';
+    var vidKey = isSuccess ? 'ord_video_howto_newcode' : 'ord_video_howto_tc';
+    var vidTxt = isSuccess ? '🎬 วิธีนำรหัสใหม่ไปใส่ในเกม' : '🎬 วิธีดู Transfer Code จากเกม';
+    var vidSrc = 'https://www.youtube.com/embed/' + vidId + '?rel=0&modestbranding=1';
+    if (vidFrame.getAttribute('src') !== vidSrc) vidFrame.setAttribute('src', vidSrc);
+    vidTitle.setAttribute('data-i18n', vidKey);
+    vidTitle.textContent = window.bcT(vidKey, vidTxt);
+  }
+
   if (isSuccess) {
     document.getElementById('newTransferCode').textContent = result.new_transfer_code || '-';
     document.getElementById('newConfirmCode').textContent  = result.new_confirmation_code || '-';
@@ -1437,7 +1552,25 @@ function showSuccessModal(orderId, cart, result) {
       return '<div>' + (i.name || '') + ' — ฿' + (i.price || 0).toLocaleString() + '</div>';
     }).join('');
   } else {
-    summaryEl.textContent = '-';
+    // ไม่มีรายการในเครื่อง (เช่น เปิดจากเบราว์เซอร์อื่น ไม่มี bc_order_history) -> ดึงจากเซิร์ฟเวอร์
+    summaryEl.textContent = window.bcT('ord_loading','กำลังโหลด...');
+    summaryEl.setAttribute('data-for-order', orderId || '');
+    fetch('/api/payment/status/' + encodeURIComponent(orderId || '') + '?items=1')
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(d) {
+        if (summaryEl.getAttribute('data-for-order') !== (orderId || '')) return;  // modal เปลี่ยน order ไปแล้ว
+        var list = d && d.items_display;
+        if (!list || !list.length) { summaryEl.textContent = '-'; return; }
+        summaryEl.textContent = '';
+        list.forEach(function(it) {
+          var row = document.createElement('div');
+          row.textContent = (it.name || '') + (it.price ? ' — ฿' + Number(it.price).toLocaleString() : '');
+          summaryEl.appendChild(row);
+        });
+      })
+      .catch(function() {
+        if (summaryEl.getAttribute('data-for-order') === (orderId || '')) summaryEl.textContent = '-';
+      });
   }
 
   var hasRareTicket = cart && cart.some(function(i) {
@@ -1624,7 +1757,8 @@ async function retryBCSFE() {
     var res = await fetch('/api/payment/retry/' + _currentOrderId, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc }),
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc,
+                             country: (document.getElementById('retry-server') || {}).value || '' }),
     });
     var data = await res.json();
     if (!res.ok) throw new Error(data.detail || window.bcT('ord_retry_failed','ลองใหม่ไม่สำเร็จ'));

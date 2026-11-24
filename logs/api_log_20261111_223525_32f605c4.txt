@@ -1,0 +1,26 @@
+============================================================
+เวลา      : 2026-11-11 22:35:25
+Transfer  : 32f605c44
+Confirm   : 8240
+Country   : en
+============================================================
+[OP] เพิ่มของ 5 รายการ
+[BCSFE] ⬇  Downloading save (transfer=32f605... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[ITEM] Cat Food: 20 → 1520  (+1500)
+[ITEM] Leadership: 4 → 54  (+50)
+[ITEM] XP: 65845 → 3065845  (+3000000)
+[ITEM] Battle Item (6 types) +5 each:
+       type 1: 0 → 5
+       type 2: 2 → 7
+       type 3: 0 → 5
+       type 4: 0 → 5
+       type 5: 0 → 5
+       type 6: 0 → 5
+[ITEM] NP: 0 → 50  (+50)
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_6be98e09
+[BCSFE] 📁 Backup → saves_backup\SAVE_20261111_223526_32f605c4
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 71cdfdadf | Confirm ใหม่: 2200
+============================================================
+============================================================

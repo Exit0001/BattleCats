@@ -1,0 +1,1003 @@
+CheckID แบบไว: 100 รหัส | พร้อมกัน 8
+============================================================
+============================================================
+เวลา      : 2026-11-11 21:53:43
+============================================================
+เวลา      : 2026-11-11 21:53:43
+============================================================
+Transfer  : 5bf0f0bdc
+เวลา      : 2026-11-11 21:53:43
+============================================================
+Transfer  : d1f381ed9
+Confirm   : 9679
+เวลา      : 2026-11-11 21:53:43
+============================================================
+============================================================
+Confirm   : 9136
+เวลา      : 2026-11-11 21:53:43
+Transfer  : 2296134db
+เวลา      : 2026-11-11 21:53:43
+Country   : en
+============================================================
+Transfer  : de51ba1b5
+Country   : en
+Transfer  : 5d3a1199c
+Transfer  : ea8a77f42
+เวลา      : 2026-11-11 21:53:43
+============================================================
+Confirm   : 3635
+============================================================
+เวลา      : 2026-11-11 21:53:43
+Transfer  : 3813db37c
+[BCSFE] ⬇  Downloading save (transfer=5bf0f0... cc=en)
+Country   : en
+[BCSFE] ⬇  Downloading save (transfer=d1f381... cc=en)
+Transfer  : 81aeaf4d2
+Confirm   : 7249
+Confirm   : 1339
+Confirm   : 8668
+Confirm   : 8607
+Country   : en
+Country   : en
+Country   : en
+Country   : en
+============================================================
+============================================================
+============================================================
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=3813db... cc=en)
+[BCSFE] ⬇  Downloading save (transfer=de51ba... cc=en)
+[BCSFE] ⬇  Downloading save (transfer=229613... cc=en)
+[BCSFE] ⬇  Downloading save (transfer=81aeaf... cc=en)
+Confirm   : 1766
+============================================================
+Country   : en
+[BCSFE] ⬇  Downloading save (transfer=5d3a11... cc=en)
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=ea8a77... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] d1f381ed9 Inquiry: 0df4214a5
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 5bf0f0bdc Inquiry: 650f3fa8d
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] ea8a77f42 Inquiry: c893d4481
+[CHECK-FAST] 3813db37c Inquiry: 590a6410e
+[CHECK-FAST] 81aeaf4d2 Inquiry: 88cdd251a
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] de51ba1b5 Inquiry: a07509077
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 2296134db Inquiry: 42955f47a
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 5d3a1199c Inquiry: b8e9b9961
+[CHECK-FAST] 3813db37c ✅ TC=e4ce31b16 | CC=5028
+============================================================
+เวลา      : 2026-11-11 21:53:48
+Transfer  : e612a5092
+Confirm   : 2707
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=e612a5... cc=en)
+[CHECK-FAST] d1f381ed9 ✅ TC=4e7cbca43 | CC=3751
+============================================================
+เวลา      : 2026-11-11 21:53:48
+Transfer  : 8e03057d2
+Confirm   : 7503
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=8e0305... cc=en)
+[CHECK-FAST] ea8a77f42 ✅ TC=5649c4d29 | CC=1226
+============================================================
+เวลา      : 2026-11-11 21:53:48
+Transfer  : 04d7c8843
+Confirm   : 7749
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=04d7c8... cc=en)
+[CHECK-FAST] 5bf0f0bdc ✅ TC=d5902fe7c | CC=4571
+============================================================
+เวลา      : 2026-11-11 21:53:48
+Transfer  : 7faa51e59
+Confirm   : 5591
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=7faa51... cc=en)
+[CHECK-FAST] de51ba1b5 ✅ TC=c0c0b037b | CC=5568
+============================================================
+เวลา      : 2026-11-11 21:53:49
+Transfer  : 3a74dc543
+Confirm   : 6656
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=3a74dc... cc=en)
+[CHECK-FAST] 81aeaf4d2 ✅ TC=fcdbf3434 | CC=3913
+============================================================
+เวลา      : 2026-11-11 21:53:49
+Transfer  : d0e319a89
+Confirm   : 6614
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=d0e319... cc=en)
+[CHECK-FAST] 2296134db ✅ TC=2ed7a00f9 | CC=0217
+============================================================
+เวลา      : 2026-11-11 21:53:49
+Transfer  : c93f5e2ff
+Confirm   : 9661
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=c93f5e... cc=en)
+[CHECK-FAST] 5d3a1199c ✅ TC=4957c8bf9 | CC=6351
+============================================================
+เวลา      : 2026-11-11 21:53:49
+Transfer  : 220dc0808
+Confirm   : 7640
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=220dc0... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] e612a5092 Inquiry: dbdb485db
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 8e03057d2 Inquiry: 0f7465a94
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 04d7c8843 Inquiry: 435685e9d
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 7faa51e59 Inquiry: 1762aa004
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 3a74dc543 Inquiry: 48d02f21b
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] d0e319a89 Inquiry: 1f621eeb2
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 220dc0808 Inquiry: a2bd13777
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] c93f5e2ff Inquiry: 5e479aff2
+[CHECK-FAST] e612a5092 ✅ TC=d1bb2f237 | CC=4173
+============================================================
+เวลา      : 2026-11-11 21:53:52
+Transfer  : 060075b60
+Confirm   : 1263
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=060075... cc=en)
+[CHECK-FAST] 8e03057d2 ✅ TC=f39e87ac3 | CC=4298
+============================================================
+เวลา      : 2026-11-11 21:53:53
+Transfer  : 4e0113651
+Confirm   : 3771
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=4e0113... cc=en)
+[CHECK-FAST] d0e319a89 ✅ TC=1d4c92c56 | CC=5291
+============================================================
+เวลา      : 2026-11-11 21:53:53
+Transfer  : c6649d40c
+Confirm   : 2331
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=c6649d... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 3a74dc543 ✅ TC=4132c1ca7 | CC=6698
+[CHECK-FAST] 060075b60 Inquiry: ee9f636ff
+============================================================
+เวลา      : 2026-11-11 21:53:53
+Transfer  : 0aa4f1e88
+Confirm   : 3245
+Country   : en
+[CHECK-FAST] 04d7c8843 ✅ TC=dbcb567c0 | CC=8614
+[CHECK-FAST] 7faa51e59 ✅ TC=30e06fcfb | CC=4190
+============================================================
+============================================================
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=0aa4f1... cc=en)
+เวลา      : 2026-11-11 21:53:53
+เวลา      : 2026-11-11 21:53:53
+Transfer  : e01db9568
+Transfer  : 9a81359a5
+Confirm   : 8129
+Confirm   : 8596
+Country   : en
+============================================================
+Country   : en
+[BCSFE] ⬇  Downloading save (transfer=e01db9... cc=en)
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=9a8135... cc=en)
+[CHECK-FAST] c93f5e2ff ✅ TC=c03312635 | CC=0170
+[BCSFE] ✅ Download สำเร็จ
+============================================================
+เวลา      : 2026-11-11 21:53:54
+[CHECK-FAST] c6649d40c Inquiry: 1167d497f
+Transfer  : 892d12ced
+Confirm   : 5070
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=892d12... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 4e0113651 Inquiry: 353c6bd01
+[CHECK-FAST] 220dc0808 ✅ TC=0a9ec29b0 | CC=6819
+============================================================
+เวลา      : 2026-11-11 21:53:54
+Transfer  : 002357015
+Confirm   : 0212
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=002357... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 0aa4f1e88 Inquiry: 58ba2fea2
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 9a81359a5 Inquiry: d33ece229
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] e01db9568 Inquiry: b98e092a6
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 892d12ced Inquiry: be7621acc
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 002357015 Inquiry: 4d029c4dd
+[CHECK-FAST] 060075b60 ✅ TC=d9365a731 | CC=6325
+============================================================
+เวลา      : 2026-11-11 21:53:56
+Transfer  : 549e92942
+Confirm   : 8016
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=549e92... cc=en)
+[CHECK-FAST] c6649d40c ✅ TC=8f7bcc18d | CC=2824
+============================================================
+เวลา      : 2026-11-11 21:53:57
+Transfer  : d21f8cd4a
+Confirm   : 5487
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=d21f8c... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 549e92942 Inquiry: 2f761f475
+[CHECK-FAST] e01db9568 ✅ TC=0a992317b | CC=2353
+============================================================
+เวลา      : 2026-11-11 21:53:58
+Transfer  : 5c684b8ec
+Confirm   : 8234
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=5c684b... cc=en)
+[CHECK-FAST] 0aa4f1e88 ✅ TC=17ab5f356 | CC=1090
+============================================================
+เวลา      : 2026-11-11 21:53:58
+Transfer  : 0d2d254ca
+Confirm   : 8993
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=0d2d25... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] d21f8cd4a Inquiry: a7b202dde
+[CHECK-FAST] 9a81359a5 ✅ TC=05ef606a2 | CC=1027
+============================================================
+เวลา      : 2026-11-11 21:53:58
+Transfer  : c32b11362
+Confirm   : 4979
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=c32b11... cc=en)
+[CHECK-FAST] 4e0113651 ✅ TC=6dab6bc22 | CC=4707
+============================================================
+เวลา      : 2026-11-11 21:53:58
+Transfer  : adeb9209c
+Confirm   : 5960
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=adeb92... cc=en)
+[CHECK-FAST] 002357015 ✅ TC=cb02ea1f7 | CC=5526
+============================================================
+เวลา      : 2026-11-11 21:53:58
+Transfer  : 88d144f8f
+Confirm   : 8075
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=88d144... cc=en)
+[CHECK-FAST] 892d12ced ✅ TC=91aecd06a | CC=4189
+============================================================
+เวลา      : 2026-11-11 21:53:59
+Transfer  : 07f8d1fec
+Confirm   : 6273
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=07f8d1... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 5c684b8ec Inquiry: a8df613ea
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 0d2d254ca Inquiry: b1a1f9c0e
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] adeb9209c Inquiry: f2ee470ae
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] c32b11362 Inquiry: 933cfdb99
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 88d144f8f Inquiry: 7373fef06
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 07f8d1fec Inquiry: 3da402cdd
+[CHECK-FAST] 549e92942 ✅ TC=11b12f21e | CC=9388
+============================================================
+เวลา      : 2026-11-11 21:54:01
+Transfer  : 0338c7617
+Confirm   : 4803
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=0338c7... cc=en)
+[CHECK-FAST] d21f8cd4a ✅ TC=c08c79047 | CC=1068
+============================================================
+เวลา      : 2026-11-11 21:54:01
+Transfer  : 44c002704
+Confirm   : 4207
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=44c002... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 0338c7617 Inquiry: dd478aa20
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 44c002704 Inquiry: cce397fa8
+[CHECK-FAST] 5c684b8ec ✅ TC=3904f1c96 | CC=5701
+============================================================
+เวลา      : 2026-11-11 21:54:02
+Transfer  : f32e61bd0
+Confirm   : 5288
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=f32e61... cc=en)
+[CHECK-FAST] c32b11362 ✅ TC=071fb39d5 | CC=4764
+============================================================
+เวลา      : 2026-11-11 21:54:02
+Transfer  : 7d93974fd
+Confirm   : 6399
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=7d9397... cc=en)
+[CHECK-FAST] 0d2d254ca ✅ TC=314cc20ac | CC=9850
+============================================================
+เวลา      : 2026-11-11 21:54:02
+Transfer  : 53e615ef4
+Confirm   : 6987
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=53e615... cc=en)
+[CHECK-FAST] adeb9209c ✅ TC=aada3fb97 | CC=6163
+============================================================
+เวลา      : 2026-11-11 21:54:02
+Transfer  : ecffcbf37
+Confirm   : 6068
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=ecffcb... cc=en)
+[CHECK-FAST] 88d144f8f ✅ TC=87c6135db | CC=2750
+============================================================
+เวลา      : 2026-11-11 21:54:03
+Transfer  : d5788b2de
+Confirm   : 5641
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=d5788b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] f32e61bd0 Inquiry: 9dcf2ff30
+[CHECK-FAST] 07f8d1fec ✅ TC=72469214a | CC=5881
+============================================================
+เวลา      : 2026-11-11 21:54:03
+Transfer  : de5c31a02
+Confirm   : 4044
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=de5c31... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 7d93974fd Inquiry: 6c86efa7b
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 53e615ef4 Inquiry: d0eabaa91
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] ecffcbf37 Inquiry: 11416d7a2
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] d5788b2de Inquiry: d8c0892e0
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] de5c31a02 Inquiry: 5e3bf88af
+[CHECK-FAST] 0338c7617 ✅ TC=269d1e0e5 | CC=8930
+============================================================
+เวลา      : 2026-11-11 21:54:05
+Transfer  : 0c0042c77
+Confirm   : 3694
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=0c0042... cc=en)
+[CHECK-FAST] 44c002704 ✅ TC=8e6e2f296 | CC=8482
+============================================================
+เวลา      : 2026-11-11 21:54:05
+Transfer  : 1a8df0213
+Confirm   : 3418
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=1a8df0... cc=en)
+[CHECK-FAST] f32e61bd0 ✅ TC=b0986ef4f | CC=6163
+============================================================
+เวลา      : 2026-11-11 21:54:06
+Transfer  : aa518e54e
+Confirm   : 0166
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=aa518e... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 0c0042c77 Inquiry: 850f65c91
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 1a8df0213 Inquiry: 07ac5dbe5
+[CHECK-FAST] 7d93974fd ✅ TC=97d7c20c8 | CC=6926
+============================================================
+เวลา      : 2026-11-11 21:54:06
+Transfer  : c95d5af64
+Confirm   : 7861
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=c95d5a... cc=en)
+[CHECK-FAST] 53e615ef4 ✅ TC=9e681b321 | CC=0619
+============================================================
+เวลา      : 2026-11-11 21:54:07
+Transfer  : 52f7e392c
+Confirm   : 2309
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=52f7e3... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] aa518e54e Inquiry: cbd180d68
+[CHECK-FAST] d5788b2de ✅ TC=9a8b738d2 | CC=0462
+============================================================
+เวลา      : 2026-11-11 21:54:07
+Transfer  : 92b2c5daf
+Confirm   : 3617
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=92b2c5... cc=en)
+[CHECK-FAST] ecffcbf37 ✅ TC=cf1cf06a7 | CC=7874
+============================================================
+เวลา      : 2026-11-11 21:54:07
+Transfer  : f4a02e660
+Confirm   : 0305
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=f4a02e... cc=en)
+[CHECK-FAST] de5c31a02 ✅ TC=648168733 | CC=5497
+============================================================
+เวลา      : 2026-11-11 21:54:07
+Transfer  : 7b01d3716
+Confirm   : 5130
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=7b01d3... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] c95d5af64 Inquiry: 0e0948970
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 52f7e392c Inquiry: b90cde5b2
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 7b01d3716 Inquiry: 7bb04d5a8
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 92b2c5daf Inquiry: 05a7f074b
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] f4a02e660 Inquiry: df664de61
+[CHECK-FAST] 1a8df0213 ✅ TC=a102c822d | CC=5704
+============================================================
+เวลา      : 2026-11-11 21:54:09
+Transfer  : b81799b70
+Confirm   : 2694
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=b81799... cc=en)
+[CHECK-FAST] 0c0042c77 ✅ TC=14039b600 | CC=1928
+============================================================
+เวลา      : 2026-11-11 21:54:09
+Transfer  : ee9a0bc3a
+Confirm   : 0649
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=ee9a0b... cc=en)
+[CHECK-FAST] aa518e54e ✅ TC=468bd4f86 | CC=1480
+============================================================
+เวลา      : 2026-11-11 21:54:10
+Transfer  : aee2ce416
+Confirm   : 0464
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=aee2ce... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] ee9a0bc3a Inquiry: 24d8d31f6
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] b81799b70 Inquiry: d58d6376a
+[CHECK-FAST] c95d5af64 ✅ TC=e34c04906 | CC=4065
+============================================================
+เวลา      : 2026-11-11 21:54:11
+Transfer  : 783efa189
+Confirm   : 6251
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=783efa... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] aee2ce416 Inquiry: 5c58a3baa
+[CHECK-FAST] 52f7e392c ✅ TC=912637498 | CC=4344
+============================================================
+เวลา      : 2026-11-11 21:54:11
+Transfer  : 379548d8a
+Confirm   : 9551
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=379548... cc=en)
+[CHECK-FAST] 92b2c5daf ✅ TC=f542b1615 | CC=6289
+============================================================
+เวลา      : 2026-11-11 21:54:12
+Transfer  : d9bb960fe
+Confirm   : 4368
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=d9bb96... cc=en)
+[CHECK-FAST] 7b01d3716 ✅ TC=199e63bc4 | CC=1644
+============================================================
+เวลา      : 2026-11-11 21:54:12
+Transfer  : ffb675b1a
+Confirm   : 6611
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=ffb675... cc=en)
+[CHECK-FAST] f4a02e660 ✅ TC=c2ad2161b | CC=8734
+============================================================
+เวลา      : 2026-11-11 21:54:12
+Transfer  : c37c18f33
+Confirm   : 0334
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=c37c18... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 783efa189 Inquiry: 6a1d4ec35
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 379548d8a Inquiry: 2498da47b
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] d9bb960fe Inquiry: 07ce5a66d
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] c37c18f33 Inquiry: d18f73d6e
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] ffb675b1a Inquiry: 70cfb933b
+[CHECK-FAST] ee9a0bc3a ✅ TC=4cc6b10b1 | CC=0000
+============================================================
+เวลา      : 2026-11-11 21:54:14
+Transfer  : 826339c86
+Confirm   : 4979
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=826339... cc=en)
+[CHECK-FAST] b81799b70 ✅ TC=e5f3270b7 | CC=7190
+============================================================
+เวลา      : 2026-11-11 21:54:14
+Transfer  : c6644ccd4
+Confirm   : 9279
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=c6644c... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 826339c86 Inquiry: 6c5a8f0aa
+[CHECK-FAST] aee2ce416 ✅ TC=b3fc52d0e | CC=3198
+============================================================
+เวลา      : 2026-11-11 21:54:15
+Transfer  : 64ea9baa9
+Confirm   : 6454
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=64ea9b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] c6644ccd4 Inquiry: 74eec2a09
+[CHECK-FAST] 783efa189 ✅ TC=8e23e6f3d | CC=9249
+============================================================
+เวลา      : 2026-11-11 21:54:16
+Transfer  : 4ebcd053e
+Confirm   : 8684
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=4ebcd0... cc=en)
+[CHECK-FAST] 379548d8a ✅ TC=78263efc3 | CC=2066
+============================================================
+เวลา      : 2026-11-11 21:54:16
+Transfer  : f5b932d97
+Confirm   : 5387
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=f5b932... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] c37c18f33 ✅ TC=687af6aed | CC=6636
+============================================================
+[CHECK-FAST] 64ea9baa9 Inquiry: 014771f16
+เวลา      : 2026-11-11 21:54:16
+Transfer  : 09de6a155
+Confirm   : 4133
+Country   : en
+============================================================
+[CHECK-FAST] d9bb960fe ✅ TC=92c28c94f | CC=1955
+[BCSFE] ⬇  Downloading save (transfer=09de6a... cc=en)
+============================================================
+เวลา      : 2026-11-11 21:54:16
+Transfer  : f4f4a6696
+Confirm   : 9359
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=f4f4a6... cc=en)
+[CHECK-FAST] ffb675b1a ✅ TC=1d69a9fc3 | CC=1410
+============================================================
+เวลา      : 2026-11-11 21:54:16
+Transfer  : a293bb0da
+Confirm   : 9657
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=a293bb... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 4ebcd053e Inquiry: 3705cd6f1
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] f5b932d97 Inquiry: 6fad3f3b8
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] f4f4a6696 Inquiry: a4768f70f
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 09de6a155 Inquiry: 4ba64e7f0
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] a293bb0da Inquiry: ecc8c44ad
+[CHECK-FAST] c6644ccd4 ✅ TC=802208bd7 | CC=8762
+============================================================
+เวลา      : 2026-11-11 21:54:18
+Transfer  : bd59fe37f
+Confirm   : 2308
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=bd59fe... cc=en)
+[CHECK-FAST] 826339c86 ✅ TC=03dd0b20f | CC=5880
+============================================================
+เวลา      : 2026-11-11 21:54:18
+Transfer  : bc45b427d
+Confirm   : 7591
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=bc45b4... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] bd59fe37f Inquiry: c71649645
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] bc45b427d Inquiry: 922eb8b79
+[CHECK-FAST] 64ea9baa9 ✅ TC=7790a0445 | CC=0471
+============================================================
+เวลา      : 2026-11-11 21:54:19
+Transfer  : 9d5d6987a
+Confirm   : 8112
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=9d5d69... cc=en)
+[CHECK-FAST] 4ebcd053e ✅ TC=d9deb90ed | CC=4071
+============================================================
+เวลา      : 2026-11-11 21:54:19
+Transfer  : 8aec35382
+Confirm   : 6951
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=8aec35... cc=en)
+[CHECK-FAST] f4f4a6696 ✅ TC=84d9f4e14 | CC=3302
+============================================================
+เวลา      : 2026-11-11 21:54:20
+Transfer  : 71a8c45a6
+Confirm   : 6192
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=71a8c4... cc=en)
+[CHECK-FAST] f5b932d97 ✅ TC=fe8591b8a | CC=1500
+============================================================
+เวลา      : 2026-11-11 21:54:20
+Transfer  : e04dfefe2
+Confirm   : 9843
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=e04dfe... cc=en)
+[CHECK-FAST] a293bb0da ✅ TC=58e2d635c | CC=2838
+============================================================
+เวลา      : 2026-11-11 21:54:20
+Transfer  : a88169b34
+Confirm   : 2524
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=a88169... cc=en)
+[CHECK-FAST] 09de6a155 ✅ TC=9ebaabfa7 | CC=2115
+============================================================
+เวลา      : 2026-11-11 21:54:20
+Transfer  : f51a9a772
+Confirm   : 4271
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=f51a9a... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 71a8c45a6 Inquiry: 4ae8affd5
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 9d5d6987a Inquiry: 961b54de5
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 8aec35382 Inquiry: 6109c1bb1
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] e04dfefe2 Inquiry: 8fe9cbe1d
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] f51a9a772 Inquiry: 9b1f7595c
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] a88169b34 Inquiry: fdf316e8a
+[CHECK-FAST] bd59fe37f ✅ TC=2b15e7c5f | CC=4060
+============================================================
+เวลา      : 2026-11-11 21:54:22
+Transfer  : bd607e84e
+Confirm   : 3336
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=bd607e... cc=en)
+[CHECK-FAST] bc45b427d ✅ TC=aa0a01c91 | CC=7468
+============================================================
+เวลา      : 2026-11-11 21:54:22
+Transfer  : a32cf10e6
+Confirm   : 6106
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=a32cf1... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] bd607e84e Inquiry: 633223b55
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] a32cf10e6 Inquiry: 3f976985c
+[CHECK-FAST] 8aec35382 ✅ TC=c4e595e35 | CC=9697
+============================================================
+เวลา      : 2026-11-11 21:54:24
+Transfer  : a0bd40232
+Confirm   : 9405
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=a0bd40... cc=en)
+[CHECK-FAST] 71a8c45a6 ✅ TC=d0926d162 | CC=5726
+[CHECK-FAST] 9d5d6987a ✅ TC=6b2482c2a | CC=6931
+============================================================
+============================================================
+เวลา      : 2026-11-11 21:54:24
+เวลา      : 2026-11-11 21:54:24
+Transfer  : f5c3a9179
+Transfer  : 87a091fb1
+Confirm   : 1503
+Country   : en
+============================================================
+Confirm   : 2005
+[BCSFE] ⬇  Downloading save (transfer=f5c3a9... cc=en)
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=87a091... cc=en)
+[CHECK-FAST] e04dfefe2 ✅ TC=6810b1746 | CC=5297
+============================================================
+เวลา      : 2026-11-11 21:54:24
+Transfer  : 786941498
+Confirm   : 3470
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=786941... cc=en)
+[CHECK-FAST] a88169b34 ✅ TC=db9001627 | CC=8229
+============================================================
+เวลา      : 2026-11-11 21:54:24
+Transfer  : ecdf34464
+Confirm   : 0440
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=ecdf34... cc=en)
+[CHECK-FAST] f51a9a772 ✅ TC=236ddc429 | CC=8259
+============================================================
+เวลา      : 2026-11-11 21:54:25
+Transfer  : 4881b6a6c
+Confirm   : 4104
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=4881b6... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] a0bd40232 Inquiry: 5ea03fd52
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] f5c3a9179 Inquiry: 9ee19fc3b
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 786941498 Inquiry: ece7332b4
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 87a091fb1 Inquiry: 85d309661
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 4881b6a6c Inquiry: 4413ac183
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] ecdf34464 Inquiry: eee470204
+[CHECK-FAST] bd607e84e ✅ TC=f71c3e58b | CC=5552
+============================================================
+เวลา      : 2026-11-11 21:54:26
+Transfer  : 8827b6c9d
+Confirm   : 6368
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=8827b6... cc=en)
+[CHECK-FAST] a32cf10e6 ✅ TC=63d5bd317 | CC=7658
+============================================================
+เวลา      : 2026-11-11 21:54:27
+Transfer  : bd25cbdc3
+Confirm   : 8520
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=bd25cb... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 8827b6c9d Inquiry: d642c4956
+[CHECK-FAST] 786941498 ✅ TC=2bd14432d | CC=5825
+============================================================
+เวลา      : 2026-11-11 21:54:28
+Transfer  : 917b7b42a
+Confirm   : 2163
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=917b7b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] bd25cbdc3 Inquiry: 30fb3dcbc
+[CHECK-FAST] 87a091fb1 ✅ TC=b166bca26 | CC=2485
+[CHECK-FAST] a0bd40232 ✅ TC=1d9574d87 | CC=5901
+[CHECK-FAST] f5c3a9179 ✅ TC=bf6cc2638 | CC=7161
+============================================================
+============================================================
+============================================================
+เวลา      : 2026-11-11 21:54:28
+เวลา      : 2026-11-11 21:54:28
+Transfer  : 1f132cbfb
+Transfer  : 8c02279de
+เวลา      : 2026-11-11 21:54:28
+Confirm   : 0143
+Transfer  : 718205be9
+Confirm   : 4461
+Confirm   : 8397
+Country   : en
+Country   : en
+Country   : en
+============================================================
+============================================================
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=8c0227... cc=en)
+[BCSFE] ⬇  Downloading save (transfer=1f132c... cc=en)
+[BCSFE] ⬇  Downloading save (transfer=718205... cc=en)
+[CHECK-FAST] 4881b6a6c ✅ TC=71d5c75a6 | CC=5746
+============================================================
+เวลา      : 2026-11-11 21:54:28
+Transfer  : 32fd400db
+Confirm   : 8138
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=32fd40... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 917b7b42a Inquiry: 94f2cb92d
+[CHECK-FAST] ecdf34464 ✅ TC=8339d2199 | CC=6144
+============================================================
+เวลา      : 2026-11-11 21:54:29
+Transfer  : 254d7ae63
+Confirm   : 8723
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=254d7a... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 718205be9 Inquiry: 127c244d6
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 1f132cbfb Inquiry: b3def51bd
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 8c02279de Inquiry: 73b4c5b67
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 32fd400db Inquiry: a4db91f6d
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 254d7ae63 Inquiry: 2b56836b8
+[CHECK-FAST] 8827b6c9d ✅ TC=b51502517 | CC=5524
+============================================================
+เวลา      : 2026-11-11 21:54:30
+Transfer  : 3133f063f
+Confirm   : 6319
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=3133f0... cc=en)
+[CHECK-FAST] bd25cbdc3 ✅ TC=ce025aa0a | CC=7679
+============================================================
+[BCSFE] ✅ Download สำเร็จ
+เวลา      : 2026-11-11 21:54:32
+Transfer  : 047e5b1a7
+[CHECK-FAST] 3133f063f Inquiry: 70db1132c
+Confirm   : 0781
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=047e5b... cc=en)
+[CHECK-FAST] 917b7b42a ✅ TC=e97745b74 | CC=2879
+============================================================
+เวลา      : 2026-11-11 21:54:32
+Transfer  : 741f5e46e
+Confirm   : 0135
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=741f5e... cc=en)
+[CHECK-FAST] 1f132cbfb ✅ TC=96c100ec3 | CC=6534
+============================================================
+เวลา      : 2026-11-11 21:54:32
+Transfer  : 0ecff7b56
+Confirm   : 1437
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=0ecff7... cc=en)
+[CHECK-FAST] 718205be9 ✅ TC=72c3d2b49 | CC=2742
+============================================================
+เวลา      : 2026-11-11 21:54:33
+Transfer  : 0bdbe06d6
+Confirm   : 4907
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=0bdbe0... cc=en)
+[CHECK-FAST] 254d7ae63 ✅ TC=edb9f940e | CC=8486
+============================================================
+เวลา      : 2026-11-11 21:54:33
+Transfer  : cb02ed043
+Confirm   : 4562
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=cb02ed... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 047e5b1a7 Inquiry: 96363b925
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 741f5e46e Inquiry: 492e66960
+[CHECK-FAST] 8c02279de ✅ TC=0741ab08f | CC=6878
+============================================================
+เวลา      : 2026-11-11 21:54:33
+Transfer  : 25bb62cef
+Confirm   : 2780
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=25bb62... cc=en)
+[CHECK-FAST] 32fd400db ✅ TC=43d1c1c5e | CC=6206
+============================================================
+เวลา      : 2026-11-11 21:54:34
+Transfer  : 176f31bc3
+Confirm   : 8399
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=176f31... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 0bdbe06d6 Inquiry: 026ca7198
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 0ecff7b56 Inquiry: c89cfe17e
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] cb02ed043 Inquiry: 23b8f8b4b
+[CHECK-FAST] 3133f063f ✅ TC=adae63d23 | CC=9151
+============================================================
+เวลา      : 2026-11-11 21:54:34
+Transfer  : a23e0d40c
+Confirm   : 0328
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=a23e0d... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 176f31bc3 Inquiry: 9040f638d
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 25bb62cef Inquiry: 1023069fb
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] a23e0d40c Inquiry: 58e6f00a1
+[CHECK-FAST] 047e5b1a7 ✅ TC=a019a1152 | CC=0903
+============================================================
+เวลา      : 2026-11-11 21:54:36
+Transfer  : ef0ac405b
+Confirm   : 5631
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=ef0ac4... cc=en)
+[CHECK-FAST] 0bdbe06d6 ✅ TC=84f568461 | CC=5111
+============================================================
+เวลา      : 2026-11-11 21:54:36
+Transfer  : 25a0e860a
+Confirm   : 2550
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=25a0e8... cc=en)
+[CHECK-FAST] 741f5e46e ✅ TC=1b47a2d58 | CC=8667
+============================================================
+เวลา      : 2026-11-11 21:54:36
+Transfer  : 28feba47a
+Confirm   : 2326
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=28feba... cc=en)
+[CHECK-FAST] cb02ed043 ✅ TC=a49ea40ef | CC=7074
+[CHECK-FAST] 0ecff7b56 ✅ TC=a1dfda671 | CC=2781
+[CHECK-FAST] 176f31bc3 ✅ TC=e958aebe3 | CC=9365
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] ef0ac405b Inquiry: 3b8ef3728
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 28feba47a Inquiry: 65a2225f5
+[BCSFE] ✅ Download สำเร็จ
+[CHECK-FAST] 25a0e860a Inquiry: 7a24f7f9a
+[CHECK-FAST] a23e0d40c ✅ TC=05f9512d0 | CC=4932
+[CHECK-FAST] 25bb62cef ✅ TC=5f5392ca9 | CC=7292
+[CHECK-FAST] 28feba47a ✅ TC=e85e2e4ed | CC=7054
+[CHECK-FAST] ef0ac405b ✅ TC=b09455164 | CC=2573
+[CHECK-FAST] 25a0e860a ✅ TC=ae952f14c | CC=4740
+
+สรุป: ✅ 100 ใช้ได้  |  ❌ 0 ไม่ได้  |  57.1 วิ

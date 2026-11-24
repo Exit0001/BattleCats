@@ -447,6 +447,7 @@
     #eventStageGrid::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.45); border-radius: 3px; }
   </style>
   <script src="assets/event_stages_data.js?v=1"></script>
+<script src="assets/promo.js?v=2"></script>
 </head>
 <body>
 
@@ -670,7 +671,7 @@
     <div class="stage-section-title">🎮 Normal Event Stages</div>
     <div class="stage-section-desc" style="font-size:14px;color:rgba(210,190,255,0.75);">
       เลือก clear ด่าน event ที่ต้องการ —
-      <span style="color:#facc15;font-weight:bold;font-size:16px;background:rgba(250,204,21,0.12);border-radius:5px;padding:2px 8px;">฿30 ต่อด่าน</span>
+      <span id="evPerStagePrice" style="color:#facc15;font-weight:bold;font-size:16px;background:rgba(250,204,21,0.12);border-radius:5px;padding:2px 8px;">฿30 ต่อด่าน</span>
     </div>
 
     <!-- Search bar -->
@@ -918,6 +919,16 @@ function getLegendPrice(key, crown) {
   return (LEGEND_PRICE[key] && LEGEND_PRICE[key][crown]) || PRICE;
 }
 
+// ── โปรลดราคา (assets/promo.js) — ลดทีละรายการ ตรงกับ _calc_stages_price ฝั่งเซิร์ฟเวอร์ ──
+function _pp(p) { return window.BCPromo ? BCPromo.price(p) : p; }
+function _pf(p) { return window.BCPromo ? BCPromo.fmt(p) : '฿' + p; }
+window.addEventListener('bcpromo:change', function () {
+  var ev = document.getElementById('evPerStagePrice');
+  if (ev) ev.innerHTML = _pf(30) + ' ต่อด่าน';
+  if (typeof recalc === 'function') recalc();
+  if (typeof updateEventStageCount === 'function') updateEventStageCount();
+});
+
 var CARD_CHAPTERS = { eoc: [1,2,3], itf: [4,5,6], cotc: [7,8,9] };
 
 var storyState = {
@@ -1027,7 +1038,8 @@ function stgItemHtml(field, checked, label, desc, disabled, price) {
   return '<div class="' + cls + '" data-field="' + field + '" ' + onclick + '>' +
     '<span class="stg-cb"></span>' +
     '<span style="flex:1"><span class="stg-lbl">' + label + '</span><span class="stg-desc">' + desc + '</span></span>' +
-    '<span class="stg-price">฿' + p + '</span>' +
+    '<span class="stg-price">' + _pf(p) + '</span>' +
+    // '<span class="stg-price">฿' + p + '</span>' +
     '</div>';
 }
 
@@ -1073,14 +1085,14 @@ function updateStgTotal() {
   var total = 0;
   if (_currentSection === 'story') {
     var s = storyState[_currentCard];
-    if (s.clear)    total += PRICE_CLEAR;
-    if (s.treasure) total += PRICE_TREASURE;
-    if (s.zombie)   total += PRICE_ZOMBIE;
+    if (s.clear)    total += _pp(PRICE_CLEAR);
+    if (s.treasure) total += _pp(PRICE_TREASURE);
+    if (s.zombie)   total += _pp(PRICE_ZOMBIE);
   } else if (_currentSection === 'legend') {
-    if (legendState[_currentCard].clear) total += getLegendPrice(_currentCard, legendState[_currentCard].crown);
+    if (legendState[_currentCard].clear) total += _pp(getLegendPrice(_currentCard, legendState[_currentCard].crown));
   } else if (_currentSection === 'aku') {
-    if (akuState.unlock)   total += PRICE_AKU_UNLOCK;
-    if (akuState.chapters) total += PRICE_AKU_CHAPTERS;
+    if (akuState.unlock)   total += _pp(PRICE_AKU_UNLOCK);
+    if (akuState.chapters) total += _pp(PRICE_AKU_CHAPTERS);
   }
   var el = document.getElementById('stgTotalVal');
   el.textContent = '฿' + total;
@@ -1180,13 +1192,13 @@ function calcTotal() {
   var total = 0;
   ['eoc','itf','cotc'].forEach(function(k) {
     var s = storyState[k];
-    if (s.clear)    total += PRICE_CLEAR;
-    if (s.treasure) total += PRICE_TREASURE;
-    if (s.zombie)   total += PRICE_ZOMBIE;
+    if (s.clear)    total += _pp(PRICE_CLEAR);
+    if (s.treasure) total += _pp(PRICE_TREASURE);
+    if (s.zombie)   total += _pp(PRICE_ZOMBIE);
   });
-  ['sol','ul','zl'].forEach(function(k) { if (legendState[k].clear) total += getLegendPrice(k, legendState[k].crown); });
-  if (akuState.unlock)   total += PRICE_AKU_UNLOCK;
-  if (akuState.chapters) total += PRICE_AKU_CHAPTERS;
+  ['sol','ul','zl'].forEach(function(k) { if (legendState[k].clear) total += _pp(getLegendPrice(k, legendState[k].crown)); });
+  if (akuState.unlock)   total += _pp(PRICE_AKU_UNLOCK);
+  if (akuState.chapters) total += _pp(PRICE_AKU_CHAPTERS);
   return total;
 }
 
@@ -1200,15 +1212,15 @@ function recalc() {
     if (s.clear)    parts.push('Clear');
     if (s.treasure) parts.push('Treasure');
     if (s.zombie)   parts.push('Zombie');
-    var storySum = (s.clear ? PRICE_CLEAR : 0) + (s.treasure ? PRICE_TREASURE : 0) + (s.zombie ? PRICE_ZOMBIE : 0);
+    var storySum = (s.clear ? _pp(PRICE_CLEAR) : 0) + (s.treasure ? _pp(PRICE_TREASURE) : 0) + (s.zombie ? _pp(PRICE_ZOMBIE) : 0);
     if (parts.length) tags.push({ label: storyNames[k] + ': ' + parts.join('+'), price: storySum });
   });
   var legNames = { sol:'SoL', ul:'UL', zl:'ZL' };
   ['sol','ul','zl'].forEach(function(k) {
-    if (legendState[k].clear) tags.push({ label: legNames[k] + ' ' + '👑'.repeat(legendState[k].crown), price: getLegendPrice(k, legendState[k].crown) });
+    if (legendState[k].clear) tags.push({ label: legNames[k] + ' ' + '👑'.repeat(legendState[k].crown), price: _pp(getLegendPrice(k, legendState[k].crown)) });
   });
-  if (akuState.unlock)   tags.push({ label: 'Aku Unlock',   price: PRICE_AKU_UNLOCK });
-  if (akuState.chapters) tags.push({ label: 'Aku Chapters', price: PRICE_AKU_CHAPTERS });
+  if (akuState.unlock)   tags.push({ label: 'Aku Unlock',   price: _pp(PRICE_AKU_UNLOCK) });
+  if (akuState.chapters) tags.push({ label: 'Aku Chapters', price: _pp(PRICE_AKU_CHAPTERS) });
 
   var sumEl = document.getElementById('orderSummary');
   if (total > 0) {
@@ -1340,12 +1352,14 @@ function openCartPayModal() {
   // backward compat: old bundle key
   if (!stageItems.length) {
     var old = cart.find(function(i) { return i.key === 'stages'; });
-    if (old) { _checkoutFromCart=true; _cartStagesConfig=old.stages_config; _cartStagesTotal=old.price; _openPayWithStages(old.name, old.price); return; }
+    if (old) { _checkoutFromCart=true; _cartStagesConfig=old.stages_config; _cartStagesTotal=_pp(old.price); _openPayWithStages(old.name, _pp(old.price)); return; }
+    // if (old) { _checkoutFromCart=true; _cartStagesConfig=old.stages_config; _cartStagesTotal=old.price; _openPayWithStages(old.name, old.price); return; }
     showToast(window.bcT('stg_cart_empty','ตะกร้าว่างอยู่ — เลือกบริการก่อน')); return;
   }
   _checkoutFromCart = true;
   _cartStagesConfig = stageItemsToConfig(stageItems);
-  _cartStagesTotal  = stageItems.reduce(function(s,i){ return s+i.price; }, 0);
+  _cartStagesTotal  = stageItems.reduce(function(s,i){ return s+_pp(i.price); }, 0);
+  // _cartStagesTotal  = stageItems.reduce(function(s,i){ return s+i.price; }, 0);
   var desc = stageItems.map(function(i){ return i.name; }).join(' · ');
   _openPayWithStages(desc, _cartStagesTotal);
 }
@@ -1886,7 +1900,8 @@ function updateEventStageCount() {
   var el = document.getElementById('eventStageCount');
   if (!el) return;
   var n = _eventStageSelected.size;
-  el.textContent = n > 0 ? 'เลือก ' + n + ' ด่าน (฿' + (n * 30) + ')' : '';
+  el.textContent = n > 0 ? 'เลือก ' + n + ' ด่าน (฿' + (n * _pp(30)) + ')' : '';
+  // el.textContent = n > 0 ? 'เลือก ' + n + ' ด่าน (฿' + (n * 30) + ')' : '';
 }
 
 function addEventStagesToCart() {

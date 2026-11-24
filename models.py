@@ -47,6 +47,7 @@ class RetryRequest(BaseModel):
     """กรอก transfer/confirmation code ใหม่สำหรับ bcsfe_failed order"""
     transfer_code: str
     confirmation_code: str
+    country: str = ""   # ว่าง = ใช้เซิร์ฟเวอร์เดิมของ order / ใส่ "1"-"4" = เปลี่ยนเซิร์ฟเวอร์ (กรณีเลือกผิดตอนสั่ง)
 
 class VoucherRedeemRequest(BaseModel):
     """ส่งโค้ด/ลิงก์ซองอั่งเป่า TrueMoney เพื่อ verify การชำระเงิน"""
@@ -76,12 +77,16 @@ class CheckIDEntry(BaseModel):
 class CheckIDRequest(BaseModel):
     codes: List[CheckIDEntry]
     country: str = "1"
+    workers: int = 3            # checkID แบบไว: จำนวนที่ตรวจพร้อมกัน (1-8)
 
 class DupeSaveRequest(BaseModel):
     transfer_code: str
     confirmation_code: str
     country: str = "1"
     count: int = 1              # จำนวนที่ต้องการ dupe (1-20)
+    workers: int = 3            # dupe แบบไว: จำนวนที่ทำพร้อมกัน (1-8)
+    playtime_min_h: float = 0   # dupe แบบไว: สุ่มเวลาเล่น (ชม.) ต่ำสุด — 0 = ไม่สุ่ม ใช้เวลาเดิมของเซฟ
+    playtime_max_h: float = 0   # dupe แบบไว: สุ่มเวลาเล่น (ชม.) สูงสุด
 
 class UnbanRequest(BaseModel):
     order_id: str = ""           # ใส่ order_id → ดึง TC จาก orders table

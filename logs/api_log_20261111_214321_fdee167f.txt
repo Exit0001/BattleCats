@@ -1,0 +1,111 @@
+============================================================
+เวลา      : 2026-11-11 21:43:21
+Transfer  : fdee167f0
+Confirm   : 3899
+Country   : en
+============================================================
+[OP] Dupe Save (ไว) x100 | ทำพร้อมกัน 8 ชุด
+[BCSFE] ⬇  Downloading save (transfer=fdee16... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[DUPE-FAST] #7 ✅ TC=919e82a27 | CC=2027 | Inquiry=590a6410e
+[DUPE-FAST] #4 ✅ TC=55057e773 | CC=1072 | Inquiry=a07509077
+[DUPE-FAST] #2 ✅ TC=1e226b8a5 | CC=2536 | Inquiry=0df4214a5
+[DUPE-FAST] #5 ✅ TC=ca9a92758 | CC=2223 | Inquiry=b8e9b9961
+[DUPE-FAST] #6 ✅ TC=7ff5bec3d | CC=0104 | Inquiry=c893d4481
+[DUPE-FAST] #3 ✅ TC=ab50e3cbb | CC=4447 | Inquiry=42955f47a
+[DUPE-FAST] #8 ✅ TC=908266c1d | CC=6517 | Inquiry=88cdd251a
+[DUPE-FAST] #1 ✅ TC=4ab7c96c5 | CC=9019 | Inquiry=650f3fa8d
+[DUPE-FAST] #10 ✅ TC=968bfdd86 | CC=8278 | Inquiry=0f7465a94
+[DUPE-FAST] #9 ✅ TC=480545f0a | CC=0866 | Inquiry=dbdb485db
+[DUPE-FAST] #11 ✅ TC=a2cc37618 | CC=9641 | Inquiry=435685e9d
+[DUPE-FAST] #12 ✅ TC=5d44cfb19 | CC=8753 | Inquiry=1762aa004
+[DUPE-FAST] #15 ✅ TC=53969677f | CC=9790 | Inquiry=5e479aff2
+[DUPE-FAST] #13 ✅ TC=113b6170c | CC=0808 | Inquiry=48d02f21b
+[DUPE-FAST] #14 ✅ TC=64fa43c59 | CC=0705 | Inquiry=1f621eeb2
+[DUPE-FAST] #16 ✅ TC=fd1154f78 | CC=6907 | Inquiry=a2bd13777
+[DUPE-FAST] #21 ✅ TC=03d8cc049 | CC=0744 | Inquiry=d33ece229
+[DUPE-FAST] #18 ✅ TC=8d5044c61 | CC=6885 | Inquiry=353c6bd01
+[DUPE-FAST] #20 ✅ TC=e59a803d7 | CC=7794 | Inquiry=58ba2fea2
+[DUPE-FAST] #17 ✅ TC=4a43d1eb9 | CC=3939 | Inquiry=ee9f636ff
+[DUPE-FAST] #24 ✅ TC=f669823f4 | CC=9260 | Inquiry=4d029c4dd
+[DUPE-FAST] #23 ✅ TC=98b5cdf61 | CC=1779 | Inquiry=be7621acc
+[DUPE-FAST] #19 ✅ TC=b92447561 | CC=5158 | Inquiry=1167d497f
+[DUPE-FAST] #22 ✅ TC=2d5a07582 | CC=9895 | Inquiry=b98e092a6
+[DUPE-FAST] #27 ✅ TC=421fcba87 | CC=1935 | Inquiry=a8df613ea
+[DUPE-FAST] #26 ✅ TC=83bc75456 | CC=6096 | Inquiry=a7b202dde
+[DUPE-FAST] #29 ✅ TC=d814ef446 | CC=9870 | Inquiry=933cfdb99
+[DUPE-FAST] #28 ✅ TC=d281235f6 | CC=4909 | Inquiry=b1a1f9c0e
+[DUPE-FAST] #25 ✅ TC=eeea04a53 | CC=4861 | Inquiry=2f761f475
+[DUPE-FAST] #32 ✅ TC=6c19ca357 | CC=2009 | Inquiry=3da402cdd
+[DUPE-FAST] #31 ✅ TC=9dbd2e7da | CC=0451 | Inquiry=7373fef06
+[DUPE-FAST] #30 ✅ TC=a5385878d | CC=5095 | Inquiry=f2ee470ae
+[DUPE-FAST] #33 ✅ TC=cb09fd4b6 | CC=4446 | Inquiry=dd478aa20
+[DUPE-FAST] #37 ✅ TC=e06039c24 | CC=2880 | Inquiry=d0eabaa91
+[DUPE-FAST] #35 ✅ TC=8fd7c9ba7 | CC=3631 | Inquiry=9dcf2ff30
+[DUPE-FAST] #36 ✅ TC=29fa95d63 | CC=5182 | Inquiry=6c86efa7b
+[DUPE-FAST] #34 ✅ TC=cc16603a1 | CC=2242 | Inquiry=cce397fa8
+[DUPE-FAST] #39 ✅ TC=384e7d6f0 | CC=1607 | Inquiry=d8c0892e0
+[DUPE-FAST] #40 ✅ TC=f05167dbc | CC=1823 | Inquiry=5e3bf88af
+[DUPE-FAST] #38 ✅ TC=a991a3911 | CC=4027 | Inquiry=11416d7a2
+[DUPE-FAST] #41 ✅ TC=1743e34b0 | CC=0468 | Inquiry=850f65c91
+[DUPE-FAST] #45 ✅ TC=4104053bd | CC=1909 | Inquiry=b90cde5b2
+[DUPE-FAST] #42 ✅ TC=dc05f7a08 | CC=0155 | Inquiry=07ac5dbe5
+[DUPE-FAST] #43 ✅ TC=e7c8388f4 | CC=4432 | Inquiry=cbd180d68
+[DUPE-FAST] #44 ✅ TC=f0cf703e8 | CC=1215 | Inquiry=0e0948970
+[DUPE-FAST] #47 ✅ TC=a2f65a555 | CC=6235 | Inquiry=df664de61
+[DUPE-FAST] #46 ✅ TC=b13fa449c | CC=7244 | Inquiry=05a7f074b
+[DUPE-FAST] #48 ✅ TC=de49fcf99 | CC=8985 | Inquiry=7bb04d5a8
+[DUPE-FAST] #49 ✅ TC=52c1ca476 | CC=8676 | Inquiry=d58d6376a
+[DUPE-FAST] #52 ✅ TC=4963fc605 | CC=5220 | Inquiry=6a1d4ec35
+[DUPE-FAST] #51 ✅ TC=03cdc026f | CC=8859 | Inquiry=5c58a3baa
+[DUPE-FAST] #50 ✅ TC=47ba0753e | CC=1781 | Inquiry=24d8d31f6
+[DUPE-FAST] #54 ✅ TC=549ef2dc5 | CC=7632 | Inquiry=07ce5a66d
+[DUPE-FAST] #55 ✅ TC=025387a31 | CC=8045 | Inquiry=70cfb933b
+[DUPE-FAST] #53 ✅ TC=a20d0557c | CC=4994 | Inquiry=2498da47b
+[DUPE-FAST] #56 ✅ TC=af0b8d6d3 | CC=4193 | Inquiry=d18f73d6e
+[DUPE-FAST] #58 ✅ TC=90e52c470 | CC=0825 | Inquiry=74eec2a09
+[DUPE-FAST] #57 ✅ TC=41a5cfebf | CC=9175 | Inquiry=6c5a8f0aa
+[DUPE-FAST] #60 ✅ TC=3bd811755 | CC=4784 | Inquiry=3705cd6f1
+[DUPE-FAST] #59 ✅ TC=7d0e7d1f9 | CC=7242 | Inquiry=014771f16
+[DUPE-FAST] #64 ✅ TC=8a4362520 | CC=2990 | Inquiry=ecc8c44ad
+[DUPE-FAST] #61 ✅ TC=084cb75d6 | CC=3485 | Inquiry=6fad3f3b8
+[DUPE-FAST] #62 ✅ TC=f999b0ed7 | CC=9031 | Inquiry=4ba64e7f0
+[DUPE-FAST] #63 ✅ TC=efb731aed | CC=8531 | Inquiry=a4768f70f
+[DUPE-FAST] #65 ✅ TC=ff914ed48 | CC=2073 | Inquiry=c71649645
+[DUPE-FAST] #66 ✅ TC=64ed2cb3a | CC=3939 | Inquiry=922eb8b79
+[DUPE-FAST] #67 ✅ TC=923b60b5c | CC=6657 | Inquiry=961b54de5
+[DUPE-FAST] #68 ✅ TC=8a8418b64 | CC=1721 | Inquiry=6109c1bb1
+[DUPE-FAST] #70 ✅ TC=6f00bb01a | CC=9617 | Inquiry=8fe9cbe1d
+[DUPE-FAST] #69 ✅ TC=478599bfd | CC=1125 | Inquiry=4ae8affd5
+[DUPE-FAST] #71 ✅ TC=b64c43f29 | CC=2127 | Inquiry=fdf316e8a
+[DUPE-FAST] #72 ✅ TC=d5c9051cc | CC=6266 | Inquiry=9b1f7595c
+[DUPE-FAST] #73 ✅ TC=1196c6fe6 | CC=5186 | Inquiry=633223b55
+[DUPE-FAST] #74 ✅ TC=fee74fa63 | CC=2788 | Inquiry=3f976985c
+[DUPE-FAST] #75 ✅ TC=244a0c08d | CC=0409 | Inquiry=5ea03fd52
+[DUPE-FAST] #76 ✅ TC=6c3094f37 | CC=2408 | Inquiry=9ee19fc3b
+[DUPE-FAST] #78 ✅ TC=812c87f6c | CC=6002 | Inquiry=ece7332b4
+[DUPE-FAST] #77 ✅ TC=f1e6f842b | CC=0624 | Inquiry=85d309661
+[DUPE-FAST] #79 ✅ TC=7e5becf00 | CC=1833 | Inquiry=eee470204
+[DUPE-FAST] #80 ✅ TC=b5fc063e2 | CC=5083 | Inquiry=4413ac183
+[DUPE-FAST] #81 ✅ TC=f432ffcf7 | CC=6753 | Inquiry=d642c4956
+[DUPE-FAST] #82 ✅ TC=fa9c5073d | CC=0167 | Inquiry=30fb3dcbc
+[DUPE-FAST] #84 ✅ TC=f2066c3d1 | CC=3084 | Inquiry=b3def51bd
+[DUPE-FAST] #85 ✅ TC=6b5606a99 | CC=9814 | Inquiry=127c244d6
+[DUPE-FAST] #83 ✅ TC=601fc32ce | CC=6298 | Inquiry=94f2cb92d
+[DUPE-FAST] #86 ✅ TC=bcba4eed4 | CC=7410 | Inquiry=73b4c5b67
+[DUPE-FAST] #88 ✅ TC=c804e266d | CC=1847 | Inquiry=2b56836b8
+[DUPE-FAST] #87 ✅ TC=b38ccb316 | CC=8527 | Inquiry=a4db91f6d
+[DUPE-FAST] #91 ✅ TC=4f30bc0f9 | CC=7547 | Inquiry=492e66960
+[DUPE-FAST] #89 ✅ TC=cf44d8e3c | CC=4560 | Inquiry=70db1132c
+[DUPE-FAST] #93 ✅ TC=a6903ace0 | CC=9066 | Inquiry=026ca7198
+[DUPE-FAST] #90 ✅ TC=86b0bea75 | CC=6918 | Inquiry=96363b925
+[DUPE-FAST] #92 ✅ TC=69a31fca6 | CC=3559 | Inquiry=c89cfe17e
+[DUPE-FAST] #95 ✅ TC=4df0a02f9 | CC=9449 | Inquiry=1023069fb
+[DUPE-FAST] #94 ✅ TC=9488339fa | CC=8034 | Inquiry=23b8f8b4b
+[DUPE-FAST] #96 ✅ TC=54ca754d5 | CC=1053 | Inquiry=9040f638d
+[DUPE-FAST] #97 ✅ TC=49ab66f36 | CC=6271 | Inquiry=58e6f00a1
+[DUPE-FAST] #98 ✅ TC=de7eec633 | CC=8349 | Inquiry=3b8ef3728
+[DUPE-FAST] #99 ✅ TC=684d760bd | CC=8695 | Inquiry=7a24f7f9a
+[DUPE-FAST] #100 ✅ TC=92f0ee2f0 | CC=6218 | Inquiry=65a2225f5
+[CLEANUP] ลบ backup 0 ไฟล์
+[DUPE-FAST] เสร็จ 100/100 รหัส ใช้เวลา 92.8 วิ

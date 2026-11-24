@@ -153,6 +153,7 @@
     .btn-pay-method:hover { border-color:rgba(168,85,247,0.5); color:#e0d0ff; }
     .btn-pay-method.active { background:rgba(124,58,237,0.2); border-color:rgba(168,85,247,0.7); color:#fff; }
   </style>
+<script src="assets/promo.js?v=2"></script>
 </head>
 <body>
 
@@ -321,9 +322,26 @@
           </div>
           <div style="font-family:'Chakra Petch',sans-serif;font-size:14px;color:rgba(210,190,255,0.8);margin-bottom:12px"><span data-i18n="sc_tw_total_label">ยอดที่ต้องชำระ:</span> <span id="payAmountTW" style="font-family:'Russo One',sans-serif;font-size:28px;color:#FF4D92"></span></div>
           <div style="background:rgba(251,191,36,0.10);border:1px solid rgba(251,191,36,0.28);border-radius:10px;padding:10px 14px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#FCD34D;margin-bottom:14px;line-height:1.6">
-            <span data-i18n="sc_tw_warn">⚠️ อย่าปิดหน้านี้จนกว่าจะส่งโค้ดซองอั่งเป่าเสร็จ</span><br>
-            <span data-i18n="sc_tw_transfer_label">โอนไปยังเบอร์ TrueWallet:</span> <strong id="payTWPhone" style="color:#4ade80;font-size:15px;letter-spacing:1px">—</strong>
+            <span data-i18n="sc_tw_warn">⚠️ อย่าปิดหน้านี้จนกว่าจะส่งโค้ดซองอั่งเป่าเสร็จ</span>
+            <!-- ซ่อนเบอร์ร้านไว้ ลูกค้าเข้าใจผิดว่าต้องโอนเข้าเบอร์ ทั้งที่ต้องสร้างซองอั่งเป่าแล้ววางลิงก์
+            <br><span data-i18n="sc_tw_transfer_label">โอนไปยังเบอร์ TrueWallet:</span> <strong id="payTWPhone" style="color:#4ade80;font-size:15px;letter-spacing:1px">—</strong>
+            -->
           </div>
+          <!-- วิดีโอสอนวิธีส่งซองอั่งเป่า (รูปแบบเดียวกับหน้ากระเป๋าเงิน) -->
+          <div style="margin-bottom:14px;border:1px solid rgba(255,120,0,0.30);border-radius:10px;overflow:hidden;">
+            <button type="button" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('span:last-child').style.transform=this.nextElementSibling.style.display==='block'?'rotate(90deg)':'rotate(0deg)'" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(255,120,0,0.12);border:none;cursor:pointer;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;color:#FCA269;text-align:left;">
+              <span data-i18n="sc_tw_video_title">🎬 วิธีส่งซองอั่งเป่า TrueWallet</span>
+              <span style="font-size:18px;transition:transform 0.2s;display:inline-block;">›</span>
+            </button>
+            <div style="display:none;">
+              <div style="position:relative;width:100%;padding-bottom:56.25%;background:#000;">
+                <iframe src="https://www.youtube.com/embed/wygU82jTSsI?rel=0&modestbranding=1"
+                  style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
+                  allowfullscreen loading="lazy"></iframe>
+              </div>
+            </div>
+          </div>
+
           <div style="font-family:'Chakra Petch',sans-serif;font-size:12px;color:rgba(210,190,255,0.6);margin-bottom:6px" data-i18n="sc_tw_paste_label">วางลิงก์ซองอั่งเป่า TrueWallet</div>
           <input type="text" id="payVoucherInput" placeholder="https://gift.truemoney.com/campaign/..." style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(124,58,237,0.3);border-radius:8px;color:#fff;padding:8px 10px;font-family:'Chakra Petch',sans-serif;font-size:13px;margin-bottom:10px;box-sizing:border-box">
           <button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#22c55e,#16a34a)" onclick="submitVoucher()" data-i18n="sc_tw_submit_btn">💚 ยืนยันการชำระด้วย TrueWallet</button>
@@ -530,7 +548,8 @@ function openPD(product, startImg) {
 
   document.getElementById('pdName').textContent = _pName(product);
   document.getElementById('pdDesc').textContent = _pDesc(product);
-  document.getElementById('pdPrice').textContent = `฿${product.price}`;
+  document.getElementById('pdPrice').innerHTML = _promoFmt(product.price);
+  // document.getElementById('pdPrice').textContent = `฿${product.price}`;
   document.getElementById('pdStock').innerHTML = stockBadge(product.stock_count);
   const btn = document.getElementById('pdBuyBtn');
   btn.disabled = product.stock_count === 0;
@@ -639,6 +658,10 @@ function stopAutoplay(pid) { if (_carousels[pid]?.timer) clearInterval(_carousel
 function _pName(p) { return (window.bcLang() === 'en' && p.name_en) ? p.name_en : p.name; }
 function _pDesc(p) { return (window.bcLang() === 'en' && p.description_en) ? p.description_en : (p.description || ''); }
 
+/* ── โปรลดราคา (assets/promo.js) — เซิร์ฟเวอร์คิดราคาลดเองตอนสร้าง order ── */
+function _promoFmt(p) { return window.BCPromo ? BCPromo.fmt(p) : '฿' + p; }
+window.addEventListener('bcpromo:change', function () { if (Object.keys(_productsMap || {}).length) loadProducts(); });
+
 /* ── Load Products ── */
 async function loadProducts() {
   const grid = document.getElementById('productsGrid');
@@ -662,7 +685,7 @@ async function loadProducts() {
           <div class="code-card-name">${_pName(p)}</div>
           <div class="code-card-desc">${_pDesc(p)}</div>
           <div class="code-card-footer">
-            <div class="code-price">฿${p.price}</div>
+            <div class="code-price">${_promoFmt(p.price)}</div>
             ${stockBadge(p.stock_count)}
           </div>
         </div>
@@ -746,7 +769,8 @@ async function buyProduct(productId, stockCount) {
     } else if (isTW) {
       document.getElementById('payOrderIdTW').textContent = d.order_id;
       document.getElementById('payAmountTW').textContent = `฿${(d.amount || 0).toLocaleString()}`;
-      document.getElementById('payTWPhone').textContent = d.truemoney_id || '—';
+      var _twPhoneEl = document.getElementById('payTWPhone');   // ถูกซ่อนไว้ (ดู comment ในกล่องคำเตือน)
+      if (_twPhoneEl) _twPhoneEl.textContent = d.truemoney_id || '—';
       if (d.truemoney_fee && d.truemoney_fee > 0) {
         document.getElementById('payTWFeeBreakdown').style.display = 'block';
         document.getElementById('payTWBase').textContent = `฿${(d.base_amount || 0).toLocaleString()}`;

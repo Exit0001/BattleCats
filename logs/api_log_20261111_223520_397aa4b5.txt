@@ -1,0 +1,17 @@
+============================================================
+เวลา      : 2026-11-11 22:35:20
+Transfer  : 397aa4b53
+Confirm   : 9968
+Country   : en
+============================================================
+[OP] Set Treasure Chapters [1, 2, 3] value=3
+[BCSFE] ⬇  Downloading save (transfer=397aa4... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[TREASURE] ✔ Empire of Cats Ch.1 — 48 stages → Gold
+[TREASURE] ✔ Empire of Cats Ch.2 — 48 stages → Gold
+[TREASURE] ✔ Empire of Cats Ch.3 — 48 stages → Gold
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_5e8cc095
+[BCSFE] 📁 Backup → saves_backup\SAVE_20261111_223521_397aa4b5
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 32f605c44 | Confirm ใหม่: 8240
+============================================================

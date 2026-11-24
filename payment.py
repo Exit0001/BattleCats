@@ -8,8 +8,29 @@ import json
 import math
 import re
 import uuid
+import asyncio
+import time
+import os
+import threading
 import httpx
 from curl_cffi.requests import AsyncSession as CurlSession
+
+# ── แก้ปัญหา SSL บนเครื่อง dev ที่ path มีภาษาไทย ──────────────────
+# libcurl เป็นไลบรารี C อ่าน path ที่มีอักษรนอก ASCII ไม่ได้บน Windows
+# ทำให้ curl_cffi โหลด cacert.pem ไม่สำเร็จ -> curl error 77
+# แก้โดย copy ไฟล์ไป temp ที่เป็น ASCII ล้วน แล้วชี้ CURL_CA_BUNDLE ไปที่นั่น
+# บน VPS path เป็น /battlecats/ (ASCII) เงื่อนไขนี้จะไม่ทำงาน ไม่กระทบ production
+try:
+    import os as _os, shutil as _shutil, tempfile as _tempfile, certifi as _certifi
+    _ca = _certifi.where()
+    if not _ca.isascii():
+        _ca_ascii = _os.path.join(_tempfile.gettempdir(), "bc_cacert.pem")
+        if not _os.path.exists(_ca_ascii):
+            _shutil.copyfile(_ca, _ca_ascii)
+        _os.environ.setdefault("CURL_CA_BUNDLE", _ca_ascii)
+        print(f"[SSL] path certifi มีภาษาไทย -> ใช้ {_ca_ascii} แทน")
+except Exception as _e:
+    print(f"[SSL] ตั้ง CA bundle ไม่สำเร็จ: {_e}")
 from datetime import datetime, timedelta, timezone
 
 TZ_THAI = timezone(timedelta(hours=7))
@@ -23,7 +44,31 @@ PROMPTPAY_ID   = "004999236376637"       # K PLUS e-Wallet ID (15 หลัก) 
 KBANK_ACCOUNT  = "2278616293"            # บัญชีกสิกรที่ผูกกับ PromptPay (EasySlip อาจ return เลขนี้แทน)
 ALLOWED_RECEIVERS = {PROMPTPAY_ID, KBANK_ACCOUNT}  # receiver ที่รับได้
 TRUEMONEY_ID   = "0634515901"       # TrueMoney Wallet phone number (แก้ถ้าต่างกัน)
+
+# ── Proxy สำหรับเรียก TrueMoney (อั่งเป่า) ────────────────────────
+# Cloudflare ของ TrueMoney บล็อก IP ศูนย์ข้อมูล (VPS) แต่ IP บ้าน (residential) ผ่านได้
+# ใส่ residential proxy ไทยตรงนี้เพื่อให้ระบบอั่งเป่ากลับมาใช้งานได้
+#   รูปแบบ : "http://user:pass@host:port"
+#   ว่าง "" = ไม่ใช้ proxy (ยิงตรงจาก VPS -> จะโดน 403)
+# IPRoyal residential (whitelist IP ของ VPS ไว้แล้ว จึงไม่ต้องใส่ user/pass)
+#   IP ที่ whitelist : 187.77.156.253   |  ประเทศ : TH  |  order 81487917
+#   ต้องใช้คู่กับ curl_cffi (impersonate) เท่านั้น — curl ธรรมดาจะโดน Cloudflare 403
+# VPS ต้องยิงผ่าน proxy ไทย (IP datacenter โดน Cloudflare ของ TrueMoney บล็อก)
+# เทสที่บ้าน: IP บ้านไม่อยู่ใน whitelist ของ IPRoyal จะได้ 407 -> สั่ง ANGPAO_PROXY="" ตอนเปิดเซิร์ฟเวอร์เพื่อไม่ใช้ proxy
+ANGPAO_PROXY = os.getenv("ANGPAO_PROXY", "http://geo.iproyal.com:12321")
+
+def _angpao_session_kwargs() -> dict:
+    """ตัวเลือกที่ส่งให้ CurlSession — ใส่ proxy ถ้าตั้งค่าไว้"""
+    kw = {"impersonate": "chrome136"}
+    if ANGPAO_PROXY:
+        kw["proxies"] = {"http": ANGPAO_PROXY, "https": ANGPAO_PROXY}
+    return kw
 EASYSLIP_API_KEY = "1c49e3f0-85f9-4718-b3f6-de74ec35fe30"  # API Key จาก easyslip.com
+
+# ── Slip provider switch ──  "easyslip" | "slip2go"
+SLIP_PROVIDER    = "slip2go"
+SLIP2GO_API_KEY  = "yO1I5a+lTFR3j8WcEmS8t8A1IHyEXnv7hC0FgdZaNjs="
+SLIP2GO_API_URL  = "https://connect.slip2go.com/api/verify-slip/qr-image/info"
 ORDER_DB       = Path("orders.json")
 SLIP_DB        = Path("used_slips.json")
 USER_ORDERS_DB = Path("user_orders.json")
@@ -31,6 +76,45 @@ ORDER_TIMEOUT  = 15  # นาที หมดอายุ
 
 SUPABASE_URL = "https://jpzceuxeelnwthaitkcw.supabase.co"
 SUPABASE_KEY = "sb_publishable_VhQvIEjYgaDy0eW1qaIkyw_cxb5eZly"
+
+# ══════════════════════════════════════════
+# PROMOTION — ลดราคาทั้งร้านตามช่วงเวลา (ไม่รวม Cookie Run / เติมเงิน wallet)
+# ══════════════════════════════════════════
+# ⚠️ ถ้าแก้วัน/เปอร์เซ็นต์ ต้องแก้ใน assets/promo.js ให้ตรงกันด้วย (ใช้แสดงราคาบนหน้าเว็บ)
+PROMO_START   = datetime(2026, 11, 1, 0, 0, tzinfo=TZ_THAI)   # เริ่ม 1 พ.ย. 2569 00:00
+PROMO_END     = datetime(2026, 11, 11, 0, 0, tzinfo=TZ_THAI)  # จบ 10 พ.ย. 2569 23:59 (หมดตอน 11 พ.ย. 00:00)
+PROMO_PERCENT = 25
+# เทสใน local: ตั้ง PROMO_FORCE=1 ตอนเปิดเซิร์ฟเวอร์ = เปิดโปรทันทีไม่สนวันที่ (ห้ามตั้งบน VPS)
+PROMO_FORCE   = os.getenv("PROMO_FORCE", "") == "1"
+# เทสตั้งเวลาล่วงหน้าใน local: PROMO_TEST_START / PROMO_TEST_END = "2026-10-26T18:15:00+07:00" (ห้ามตั้งบน VPS)
+if os.getenv("PROMO_TEST_START"):
+    PROMO_START = datetime.fromisoformat(os.environ["PROMO_TEST_START"])
+if os.getenv("PROMO_TEST_END"):
+    PROMO_END = datetime.fromisoformat(os.environ["PROMO_TEST_END"])
+
+def promo_active() -> bool:
+    if PROMO_FORCE:
+        return True
+    return PROMO_START <= datetime.now(TZ_THAI) < PROMO_END
+
+def promo_price(price: int) -> int:
+    """ราคาหลังลด (คิดทีละชิ้น ปัดครึ่งขึ้น: 35→26, 39→29, 10→8, 15→11)
+    ต้องตรงกับ BCPromo.price() ใน assets/promo.js"""
+    if not price or not promo_active():
+        return price
+    return (int(price) * (100 - PROMO_PERCENT) + 50) // 100
+
+def promo_info() -> dict:
+    # ก่อนโปรเริ่ม ไม่บอกวัน/เปอร์เซ็นต์ (กันลูกค้ารู้ล่วงหน้าจาก /api/promo)
+    if not promo_active():
+        return {"active": False}
+    return {"active": True, "percent": PROMO_PERCENT}
+    # return {
+    #     "active":  promo_active(),
+    #     "percent": PROMO_PERCENT,
+    #     "start":   PROMO_START.isoformat(),
+    #     "end":     PROMO_END.isoformat(),
+    # }
 
 # ══════════════════════════════════════════
 # PRICE MAP — ราคาต่อ item ตามแพ็กเกจ
@@ -118,6 +202,8 @@ ITEM_PRICE = {
         500: 149,
         999: 249,
     },
+    "talent_orb_s":       {1: 49, 5: 99, 10: 149, 30: 249},
+    "talent_orb_a":       {1: 29, 5: 59, 10: 89, 30: 149},
     "gamatoto_level":     {50: 29, 80: 49, 100: 79, 130: 200},
     "gamatoto_lackey":    {10: 19},
     "gamatoto_underling": {10: 39},
@@ -136,23 +222,31 @@ ITEM_PRICE = {
 # ORDER DB HELPERS
 # ══════════════════════════════════════════
 
+# lock กันอ่าน/เขียน orders.json ชนกัน — หน้าประวัติยิง /api/payment/status ~30 ออเดอร์พร้อมกัน
+# แต่ละ request ที่ fallback ไป Supabase จะ load+save ไฟล์นี้ ถ้าไม่ล็อค: tmp ชื่อเดียวกันถูกเขียนทับ/ย้ายชนกัน
+# -> "No such file: orders.tmp -> orders.json" (ตอบ 404 = "ไม่ทราบสถานะ") และไฟล์พังจนถูก rename เป็น .corrupt
+_ORDERS_LOCK = threading.RLock()
+
 def _load_orders() -> dict:
-    if ORDER_DB.exists():
-        try:
-            return json.loads(ORDER_DB.read_text(encoding="utf-8"))
-        except Exception:
-            # corrupted — backup and start fresh
+    with _ORDERS_LOCK:
+        if ORDER_DB.exists():
             try:
-                ORDER_DB.rename(str(ORDER_DB) + ".corrupt")
+                return json.loads(ORDER_DB.read_text(encoding="utf-8"))
             except Exception:
-                pass
-            return {}
-    return {}
+                # corrupted — backup and start fresh
+                try:
+                    ORDER_DB.rename(str(ORDER_DB) + ".corrupt")
+                except Exception:
+                    pass
+                return {}
+        return {}
 
 def _save_orders(data: dict):
-    tmp = ORDER_DB.with_suffix(".tmp")
-    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-    tmp.replace(ORDER_DB)
+    with _ORDERS_LOCK:
+        # tmp ชื่อไม่ซ้ำต่อครั้ง เผื่อมีคนเขียนนอก lock (เช่น process อื่น) จะได้ไม่ชนกัน
+        tmp = ORDER_DB.with_name(f"{ORDER_DB.stem}.{os.getpid()}.{threading.get_ident()}.tmp")
+        tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        tmp.replace(ORDER_DB)
 
 def _add_user_order(username: str, order_id: str):
     if not username:
@@ -304,7 +398,8 @@ def calculate_total(items: list[dict]) -> int:
         price = price_table.get(amount)
         if price is None:
             raise ValueError(f"ไม่พบราคาสำหรับ {key} จำนวน {amount}")
-        total += price
+        total += promo_price(price)
+        # total += price
     return total
 
 
@@ -404,11 +499,16 @@ def _supabase_get_order(order_id: str) -> dict | None:
             rows = resp.json()
             if rows:
                 order = rows[0]
-                # sync กลับมาเก็บใน local JSON ด้วย
-                orders = _load_orders()
-                orders[order_id] = order
-                _save_orders(orders)
-                print(f"[SUPABASE] ✔ recovered order {order_id} from Supabase")
+                # sync กลับมาเก็บใน local JSON ด้วย — ทำใน lock เดียวกันทั้ง load+save จะได้ไม่ทับกันเอง
+                # และถ้าเขียนไฟล์ไม่สำเร็จก็ยังต้องคืน order ให้ผู้เรียก (ห้ามตอบ 404 ทั้งที่มีออเดอร์)
+                try:
+                    with _ORDERS_LOCK:
+                        orders = _load_orders()
+                        orders[order_id] = order
+                        _save_orders(orders)
+                    print(f"[SUPABASE] ✔ recovered order {order_id} from Supabase")
+                except Exception as e:
+                    print(f"[SUPABASE] ⚠ recovered {order_id} but local save failed: {e}")
                 return order
     except Exception as e:
         print(f"[SUPABASE] ⚠ get_order fallback error: {e}")
@@ -426,12 +526,17 @@ def get_order(order_id: str) -> dict | None:
 
 def update_order_status(order_id: str, status: str, extra: dict = {}):
     """อัปเดต status ของ order"""
-    orders = _load_orders()
-    if order_id in orders:
-        orders[order_id]["status"] = status
-        orders[order_id].update(extra)
-        _save_orders(orders)
-        _supabase_upsert(orders[order_id])
+    with _ORDERS_LOCK:
+        orders = _load_orders()
+        if order_id in orders:
+            orders[order_id]["status"] = status
+            orders[order_id].update(extra)
+            _save_orders(orders)
+            row = orders[order_id]
+        else:
+            row = None
+    if row is not None:
+        _supabase_upsert(row)
 
 
 def is_order_expired(order: dict) -> bool:
@@ -440,12 +545,216 @@ def is_order_expired(order: dict) -> bool:
     return datetime.now(TZ_THAI) > expires
 
 # ══════════════════════════════════════════
-# EASYSLIP VERIFICATION
+# SLIP VERIFICATION — รองรับ 2 provider (EasySlip / Slip2Go)
 # ══════════════════════════════════════════
+#
+# ทั้ง 2 provider return "normalized dict" หน้าตาเดียวกัน เพื่อให้ verify_slip()
+# ตรวจ security เหมือนเดิมโดยไม่ต้องแยก logic:
+#
+#   {"ok": bool, "reason": str,
+#    "recv_name_th": str, "recv_name_en": str,
+#    "recv_proxy_type": str, "recv_proxy_acct": str, "recv_bank_acct": str,
+#    "amount": float, "trans_ref": str, "is_duplicate": bool}
+#
+
+# ต่อท้าย error ที่เป็น "อาการชั่วคราว" เท่านั้น (ลองใหม่แล้วผ่านได้)
+# ห้ามใส่กับ error ที่สลิปผิดจริง เช่น โอนผิดบัญชี / สลิปซ้ำ / ยอดไม่ตรง
+_RETRY_HINT = " — หากลองแล้วยังไม่ได้ ให้กดยกเลิก order นี้ แล้วทำรายการใหม่ (ใช้สลิปเดิมได้เลย)"
+
+async def _call_easyslip(slip_image_bytes: bytes) -> dict:
+    """เรียก EasySlip API แล้ว normalize ผลลัพธ์"""
+    _ef, _em = _sniff_image(slip_image_bytes)
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.post(
+                "https://api.easyslip.com/v2/verify/bank",
+                headers={"Authorization": f"Bearer {EASYSLIP_API_KEY}"},
+                files={"image": (_ef, slip_image_bytes, _em)},
+                data={"matchAccount": "true"},
+            )
+        print(f"[EASYSLIP] status={resp.status_code} body={resp.text[:500]}")
+        if resp.status_code in (502, 503, 504):
+            return {"ok": False, "reason": "ระบบเช็คสลิปขัดข้องชั่วคราว (EasySlip server down) กรุณารอสักครู่แล้วลองใหม่" + _RETRY_HINT}
+        if resp.status_code == 401:
+            return {"ok": False, "reason": "EasySlip API Key หมดอายุหรือไม่ถูกต้อง กรุณาติดต่อแอดมิน"}
+        try:
+            data = resp.json()
+        except Exception:
+            return {"ok": False, "reason": f"EasySlip ตอบกลับผิดปกติ (status {resp.status_code}) กรุณาลองใหม่" + _RETRY_HINT}
+        print(f"[EASYSLIP] response: {json.dumps(data, ensure_ascii=False)}")
+    except Exception as e:
+        reason = str(e) if str(e) else "เชื่อมต่อ EasySlip ไม่ได้ กรุณาลองใหม่อีกครั้ง"
+        return {"ok": False, "reason": f"เช็คสลิปไม่ได้: {reason}" + _RETRY_HINT}
+
+    if not data.get("success"):
+        msg = data.get("message") or "สลิปไม่ถูกต้อง"
+        error_map = {
+            "IMAGE_SIZE_TOO_LARGE": "ไฟล์สลิปใหญ่เกิน 4MB กรุณาบีบอัดรูปแล้วส่งใหม่",
+            "INVALID_IMAGE_FORMAT": "รูปแบบไฟล์ไม่รองรับ กรุณาส่งเป็น JPG หรือ PNG",
+            "SLIP_NOT_FOUND":       "ไม่พบ QR Code ในสลิป กรุณาส่งรูปให้ชัดขึ้น",
+            "SLIP_PENDING":         "สลิปยังประมวลผลไม่เสร็จ กรุณารอสักครู่แล้วส่งใหม่",
+        }
+        return {"ok": False, "reason": error_map.get(msg, f"EasySlip: {msg}")}
+
+    slip_data = data.get("data", {})
+    _raw      = slip_data.get("rawSlip", {})
+    _recv_acc = _raw.get("receiver", {}).get("account", {})
+    _proxy    = _recv_acc.get("proxy", {}) or {}
+    _bank     = _recv_acc.get("bank",  {}) or {}
+    _name_obj = _recv_acc.get("name",  {}) or {}
+
+    return {
+        "ok": True,
+        "recv_name_th":    (_name_obj.get("th", "") or "").strip(),
+        "recv_name_en":    (_name_obj.get("en", "") or "").strip(),
+        "recv_proxy_type": _proxy.get("type", ""),
+        "recv_proxy_acct": (_proxy.get("account", "") or "").replace("-", "").replace(" ", ""),
+        "recv_bank_acct":  (_bank.get("account", "") or "").replace("-", "").replace(" ", ""),
+        "amount":          float(_raw.get("amount", {}).get("amount", 0)),
+        "trans_ref":       _raw.get("transRef", ""),
+        "is_duplicate":    bool(slip_data.get("isDuplicate")),
+    }
+
+
+def _sniff_image(data: bytes):
+    """
+    เดาชนิดรูปจาก magic bytes → คืน (filename, mime)
+
+    เดิม hardcode เป็น slip.jpg/image/jpeg เสมอ ทำให้ตอนลูกค้าอัปโหลด PNG
+    เราไปบอก API ว่าเป็น JPEG ซึ่งอาจทำให้ฝั่งเขา error ได้
+    """
+    if data[:8] == bytes([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]):
+        return ("slip.png", "image/png")
+    if data[:3] == bytes([0xFF, 0xD8, 0xFF]):
+        return ("slip.jpg", "image/jpeg")
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return ("slip.webp", "image/webp")
+    return ("slip.jpg", "image/jpeg")   # fallback เดิม
+
+
+SLIP2GO_LOG = Path("logs") / "slip2go.log"
+
+def _slip2go_log(line: str):
+    """บันทึกทุก response ของ Slip2Go ลงไฟล์ — ใช้เป็นหลักฐานส่ง support"""
+    try:
+        SLIP2GO_LOG.parent.mkdir(exist_ok=True)
+        ts = datetime.now(TZ_THAI).strftime("%Y-%m-%d %H:%M:%S")
+        with io.open(SLIP2GO_LOG, "a", encoding="utf-8") as f:
+            f.write(f"[{ts}] {line}\n")
+    except Exception:
+        pass
+
+
+async def _call_slip2go(slip_image_bytes: bytes) -> dict:
+    """
+    เรียก Slip2Go API (endpoint แบบส่งรูป) แล้ว normalize ผลลัพธ์
+
+    Slip2Go ตอบ 5xx เป็นช่วงๆ (intermittent) → retry เองเงียบๆ ก่อน
+    ลูกค้าจะไม่เห็น error ถ้าลองซ้ำแล้วผ่าน
+    """
+    # จากข้อมูลจริง (เก็บ 1 ชม. 31 ส.ค. 69): Slip2Go 502 เป็นช่วงๆ uptime ~86%
+    # ช่วงที่ล่มมักหายภายใน ~30 วิ → backoff ต้องกว้างพอจะข้ามช่วงนั้น
+    #   ปกติตอบ ~300ms | ตอน 502 ก็ตอบเร็ว (~280ms) → เวลาส่วนใหญ่คือ backoff ไม่ใช่ timeout
+    #   เคส 502 ล้วน  : 0.3*5 + 30 ≈ 31 วิ
+    #   เคสค้างจริง   : ตัดที่ _DEADLINE
+    _ATTEMPTS = 5
+    _TIMEOUT  = 10
+    _BACKOFF  = (2.0, 5.0, 8.0, 15.0)   # รวม 30 วิ — ครอบคลุมช่วง 502 ที่เคยเจอ (26 วิ)
+    _DEADLINE = 55                       # เพดานรวม กันลูกค้ารอเป็นนาที
+
+    _fname, _mime = _sniff_image(slip_image_bytes)
+    _t_start = time.monotonic()
+    resp = None
+    last_err = None
+    for attempt in range(1, _ATTEMPTS + 1):
+        try:
+            async with httpx.AsyncClient(timeout=_TIMEOUT) as client:
+                resp = await client.post(
+                    SLIP2GO_API_URL,
+                    headers={"Authorization": f"Bearer {SLIP2GO_API_KEY}"},
+                    files={"file": (_fname, slip_image_bytes, _mime)},
+                )
+            print(f"[SLIP2GO] attempt {attempt}/{_ATTEMPTS} status={resp.status_code} body={resp.text[:500]}")
+            _slip2go_log(f"attempt {attempt}/{_ATTEMPTS} HTTP {resp.status_code} | {resp.text[:400]}")
+            if resp.status_code < 500:
+                # 200502 = "Bank error" — Slip2Go ยืนยันว่าเป็นฝั่งธนาคารขัดข้อง
+                # สลิปยังไม่ทันถึงขั้นตอนตรวจ, ให้รอแล้วลองใหม่, และ "ไม่หักโทเคน"
+                # → ถือเป็น transient ต้อง retry (มาพร้อม HTTP 200 เลยหลุด check ข้างบน)
+                if '"200502"' not in resp.text:
+                    break      # ได้คำตอบจริง (สำเร็จ หรือ error ที่ retry ไปก็ไม่ช่วย)
+                last_err = "code 200502 (Bank error)"
+            else:
+                last_err = f"HTTP {resp.status_code}"
+        except Exception as e:
+            resp = None
+            last_err = f"{type(e).__name__}: {e}"
+            print(f"[SLIP2GO] attempt {attempt}/{_ATTEMPTS} ❌ {last_err}")
+            _slip2go_log(f"attempt {attempt}/{_ATTEMPTS} EXCEPTION | {last_err}")
+
+        if attempt < _ATTEMPTS:
+            delay = _BACKOFF[attempt - 1]
+            elapsed = time.monotonic() - _t_start
+            if elapsed + delay > _DEADLINE:
+                print(f"[SLIP2GO] ถึง deadline {_DEADLINE}s แล้ว หยุด retry")
+                _slip2go_log(f"หยุด retry ที่ attempt {attempt}/{_ATTEMPTS} (deadline {_DEADLINE}s)")
+                break
+            print(f"[SLIP2GO] retry ใน {delay}s... (ผ่านไป {elapsed:.1f}s)")
+            await asyncio.sleep(delay)
+
+    # ครบทุกรอบแล้วยังไม่ได้คำตอบ
+    if resp is None:
+        return {"ok": False, "reason": f"เชื่อมต่อ Slip2Go ไม่ได้ ({last_err}) ลองแล้ว {_ATTEMPTS} ครั้ง" + _RETRY_HINT}
+    if resp.status_code >= 500:
+        return {"ok": False, "reason": f"ระบบเช็คสลิปขัดข้องชั่วคราว (Slip2Go {resp.status_code}) ลองแล้ว {_ATTEMPTS} ครั้ง" + _RETRY_HINT}
+    if resp.status_code in (401, 403):
+        return {"ok": False, "reason": "Slip2Go API Key ไม่ถูกต้อง/ไม่มีสิทธิ์ กรุณาติดต่อแอดมิน"}
+    try:
+        data = resp.json()
+    except Exception:
+        return {"ok": False, "reason": f"Slip2Go ตอบกลับผิดปกติ (status {resp.status_code}) กรุณาลองใหม่" + _RETRY_HINT}
+    print(f"[SLIP2GO] response: {json.dumps(data, ensure_ascii=False)}")
+
+    code = str(data.get("code", ""))
+    if code != "200000":
+        msg = data.get("message") or "สลิปไม่ถูกต้อง"
+        error_map = {
+            "401001": "Slip2Go: Token ไม่ถูกต้อง กรุณาติดต่อแอดมิน",
+            "401002": "Slip2Go: ไม่พบร้านค้า (Shop not found) กรุณาติดต่อแอดมิน",
+            "400002": "ไฟล์สลิปไม่ถูกต้อง กรุณาส่งเป็น JPG หรือ PNG ที่ชัดเจน",
+            "200500": "ไม่ใช่สลิปโอนเงินที่ถูกต้อง กรุณาส่งรูปสลิปจริงที่เห็น QR ชัดเจน",  # Slip is fraud
+            "404000": "ไม่พบข้อมูลสลิปนี้ในระบบธนาคาร กรุณาตรวจสอบสลิปอีกครั้ง",
+            # Slip2Go support ยืนยัน: ธนาคารส่งข้อมูลช้า ครั้งแรกเลยหาไม่เจอ ให้รอ 5-10 นาที
+            "200404": "ธนาคารยังส่งข้อมูลมาไม่ถึงระบบตรวจสอบ — เงินของคุณไม่หาย ไม่ต้องโอนใหม่ กรุณารอ 5-10 นาที แล้วส่งสลิปใบเดิมอีกครั้ง" + _RETRY_HINT,
+            "200502": "ธนาคารขัดข้องชั่วคราว (ไม่ใช่ปัญหาที่สลิปของคุณ) ลองแล้ว 3 ครั้ง กรุณารอ 1-2 นาทีแล้วลองใหม่" + _RETRY_HINT,
+        }
+        return {"ok": False, "reason": error_map.get(code, f"Slip2Go [{code}]: {msg}")}
+
+    d         = data.get("data", {}) or {}
+    _recv     = d.get("receiver", {}) or {}
+    _recv_acc = _recv.get("account", {}) or {}
+    _proxy    = _recv_acc.get("proxy", {}) or {}
+    _bank     = _recv_acc.get("bank",  {}) or {}
+    # Slip2Go ส่งชื่อมาช่องเดียว และอาจเป็น "ไทย" หรือ "อังกฤษ" ก็ได้ แล้วแต่ธนาคาร
+    #   PromptPay/e-wallet → "Mr. Sorawit T"   |  โอนบัญชีธนาคาร → "นาย สรวิชญ์ ท"
+    # → ใส่ทั้ง 2 ช่อง เพื่อให้ verify_slip() เช็คได้ทั้งไทยและอังกฤษ
+    _name     = (_recv_acc.get("name", "") or "").strip()
+
+    return {
+        "ok": True,
+        "recv_name_th":    _name,
+        "recv_name_en":    _name,
+        "recv_proxy_type": _proxy.get("type", ""),
+        "recv_proxy_acct": (_proxy.get("account", "") or "").replace("-", "").replace(" ", ""),
+        "recv_bank_acct":  (_bank.get("account", "") or "").replace("-", "").replace(" ", ""),
+        "amount":          float(d.get("amount", 0) or 0),
+        "trans_ref":       d.get("transRef", "") or "",
+        "is_duplicate":    False,   # Slip2Go ไม่มี field นี้ — ใช้ used_slips + Supabase แทน
+    }
+
 
 async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
     """
-    ส่งสลิปไปเช็คกับ EasySlip API
+    ส่งสลิปไปเช็คกับ slip provider ที่เลือกไว้ (SLIP_PROVIDER)
     คืน {"success": True/False, "reason": "..."}
     """
     order = get_order(order_id)
@@ -459,60 +768,27 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
     if order["status"] == "paid":
         return {"success": False, "reason": "order นี้ชำระแล้ว"}
 
-    # ── ส่งสลิปไป EasySlip ──
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.post(
-                "https://api.easyslip.com/v2/verify/bank",
-                headers={"Authorization": f"Bearer {EASYSLIP_API_KEY}"},
-                files={"image": ("slip.jpg", slip_image_bytes, "image/jpeg")},
-                data={"matchAccount": "true"},
-            )
-        print(f"[EASYSLIP] status={resp.status_code} body={resp.text[:500]}")
-        if resp.status_code in (502, 503, 504):
-            return {"success": False, "reason": "ระบบเช็คสลิปขัดข้องชั่วคราว (EasySlip server down) กรุณารอสักครู่แล้วลองใหม่"}
-        if resp.status_code == 401:
-            return {"success": False, "reason": "EasySlip API Key หมดอายุหรือไม่ถูกต้อง กรุณาติดต่อแอดมิน"}
-        try:
-            data = resp.json()
-        except Exception:
-            return {"success": False, "reason": f"EasySlip ตอบกลับผิดปกติ (status {resp.status_code}) กรุณาลองใหม่"}
-        print(f"[EASYSLIP] response: {json.dumps(data, ensure_ascii=False)}")
-    except Exception as e:
-        reason = str(e) if str(e) else "เชื่อมต่อ EasySlip ไม่ได้ กรุณาลองใหม่อีกครั้ง"
-        return {"success": False, "reason": f"เช็คสลิปไม่ได้: {reason}"}
+    # ── ส่งสลิปไป provider ที่เลือกไว้ ──
+    if SLIP_PROVIDER == "slip2go":
+        _r = await _call_slip2go(slip_image_bytes)
+    else:
+        _r = await _call_easyslip(slip_image_bytes)
 
-    # ── ตรวจผลลัพธ์ ──
-    if not data.get("success"):
-        msg = data.get("message") or "สลิปไม่ถูกต้อง"
-        error_map = {
-            "IMAGE_SIZE_TOO_LARGE": "ไฟล์สลิปใหญ่เกิน 4MB กรุณาบีบอัดรูปแล้วส่งใหม่",
-            "INVALID_IMAGE_FORMAT": "รูปแบบไฟล์ไม่รองรับ กรุณาส่งเป็น JPG หรือ PNG",
-            "SLIP_NOT_FOUND":       "ไม่พบ QR Code ในสลิป กรุณาส่งรูปให้ชัดขึ้น",
-            "SLIP_PENDING":         "สลิปยังประมวลผลไม่เสร็จ กรุณารอสักครู่แล้วส่งใหม่",
-        }
-        friendly = error_map.get(msg, f"EasySlip: {msg}")
-        return {"success": False, "reason": friendly}
-
-    slip_data = data.get("data", {})
+    _TAG = SLIP_PROVIDER.upper()
+    if not _r.get("ok"):
+        return {"success": False, "reason": _r.get("reason", "เช็คสลิปไม่สำเร็จ")}
 
     # 0) เช็ค receiver — ต้องโอนเข้าบัญชีร้านเราเท่านั้น
-    _raw       = slip_data.get("rawSlip", {})
-    _recv_acc  = _raw.get("receiver", {}).get("account", {})
-    _proxy     = _recv_acc.get("proxy", {}) or {}
-    _bank_recv = _recv_acc.get("bank",  {}) or {}
-    _proxy_type  = _proxy.get("type", "")
-    _proxy_acct  = (_proxy.get("account", "") or "").replace("-", "").replace(" ", "")
-    _bank_acct   = (_bank_recv.get("account", "") or "").replace("-", "").replace(" ", "")
-    _name_obj    = _recv_acc.get("name", {}) or {}
-    _recv_name_th = (_name_obj.get("th", "") or "").strip()
-    _recv_name_en = (_name_obj.get("en", "") or "").strip()
-    _matched_account = slip_data.get("matchedAccount")
-    print(f"[EASYSLIP] receiver: th={_recv_name_th!r} proxy_type={_proxy_type!r} matchedAccount={_matched_account!r}")
+    _proxy_type   = _r["recv_proxy_type"]
+    _proxy_acct   = _r["recv_proxy_acct"]
+    _bank_acct    = _r["recv_bank_acct"]
+    _recv_name_th = _r["recv_name_th"]
+    _recv_name_en = _r["recv_name_en"]
+    print(f"[{_TAG}] receiver: th={_recv_name_th!r} proxy_type={_proxy_type!r} acct={(_proxy_acct or _bank_acct)!r}")
 
     # ── ชั้น 1: BILLERID = ร้านค้า/บริการ (LINE MAN, ค่าไฟ ฯลฯ) ──
     if _proxy_type == "BILLERID":
-        print(f"[EASYSLIP] ❌ BILLERID receiver: {_recv_name_th!r}")
+        print(f"[{_TAG}] ❌ BILLERID receiver: {_recv_name_th!r}")
         return {"success": False, "reason": "สลิปนี้โอนเข้าบัญชีอื่น ไม่ใช่บัญชีร้านค้า กรุณาโอนเข้า PromptPay ของร้านเท่านั้น"}
 
     # ── ชั้น 2: digit groups — ทุกชุดเลขต้องอยู่ในเลขบัญชีเรา ──
@@ -522,9 +798,9 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
         _our_accounts = [PROMPTPAY_ID, KBANK_ACCOUNT]
         if _digit_groups:
             _all_match = all(any(g in acct for acct in _our_accounts) for g in _digit_groups)
-            print(f"[EASYSLIP] receiver digit groups: {_digit_groups} → match={_all_match}")
+            print(f"[{_TAG}] receiver digit groups: {_digit_groups} → match={_all_match}")
             if not _all_match:
-                print(f"[EASYSLIP] ❌ account digit mismatch: {_digit_groups}")
+                print(f"[{_TAG}] ❌ account digit mismatch: {_digit_groups}")
                 return {"success": False, "reason": "สลิปนี้โอนเข้าบัญชีอื่น ไม่ใช่บัญชีร้านค้า กรุณาโอนเข้า PromptPay ของร้านเท่านั้น"}
 
     # ── ชั้น 3: เช็คชื่อผู้รับเงิน ──
@@ -549,31 +825,30 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
             ("sorawit" in _name_en_clean or "thongin" in _name_en_clean)
         )
         if not _name_ok:
-            print(f"[EASYSLIP] ❌ wrong receiver name: th={_name_th_clean!r} en={_name_en_clean!r}")
+            print(f"[{_TAG}] ❌ wrong receiver name: th={_name_th_clean!r} en={_name_en_clean!r}")
             return {"success": False, "reason": "สลิปนี้โอนเข้าบัญชีอื่น ไม่ใช่บัญชีร้านค้า กรุณาโอนเข้า PromptPay ของร้านเท่านั้น"}
 
     # ── fallback: ถ้าไม่มี receiver info เลย → reject ──
     _has_account_info = bool(_proxy_type or _proxy_acct or _bank_acct)
     _has_name_info    = bool(_recv_name_th or _recv_name_en)
     if not _has_account_info and not _has_name_info:
-        print(f"[EASYSLIP] ❌ no receiver info at all — reject")
+        print(f"[{_TAG}] ❌ no receiver info at all — reject")
         return {"success": False, "reason": "ไม่สามารถยืนยันบัญชีผู้รับได้ กรุณาติดต่อแอดมิน"}
 
     # 1) เช็คยอด — รับได้ถ้า received >= expected (ส่วนเกินเข้า wallet)
-    raw_slip = slip_data.get("rawSlip", {})
-    received = float(raw_slip.get("amount", {}).get("amount", 0))
+    received = _r["amount"]
     expected = float(order["amount"])
     if received < expected - 0.01:
         return {"success": False, "reason": f"ยอดไม่ตรง คาดหวัง {expected:.2f} แต่ได้ {received:.2f} บาท"}
 
     # 2) เช็คสลิปซ้ำ — ตรวจทั้ง local file และ Supabase orders
-    transaction_id = raw_slip.get("transRef", "")
+    transaction_id = _r["trans_ref"]
     used_slips = _load_slips()
     if transaction_id and (transaction_id in used_slips or _is_transaction_used(transaction_id)):
         return {"success": False, "reason": "สลิปนี้ถูกใช้ไปแล้ว"}
 
-    # 3) เช็ค isDuplicate จาก EasySlip
-    if slip_data.get("isDuplicate"):
+    # 3) เช็ค isDuplicate จาก provider (EasySlip มี field นี้ / Slip2Go ไม่มี)
+    if _r["is_duplicate"]:
         return {"success": False, "reason": "สลิปนี้ถูกใช้ไปแล้ว (duplicate detected)"}
 
     # ── อัปเดต order เป็น paid (ยังไม่บันทึกสลิป รอให้ BCSFE สำเร็จก่อน) ──
@@ -584,7 +859,7 @@ async def verify_slip(slip_image_bytes: bytes, order_id: str) -> dict:
     })
 
     surplus = max(0, int(received) - int(expected))
-    print(f"[EASYSLIP] ✅ order {order_id} ชำระแล้ว {received} บาท" + (f" surplus ฿{surplus}" if surplus else ""))
+    print(f"[{_TAG}] ✅ order {order_id} ชำระแล้ว {received} บาท" + (f" surplus ฿{surplus}" if surplus else ""))
     return {"success": True, "reason": "ชำระเงินสำเร็จ", "transaction_id": transaction_id, "surplus": surplus}
 
 # ══════════════════════════════════════════
@@ -598,6 +873,81 @@ _ANGPAO_ERROR_MESSAGES = {
     "TARGET_USER_REDEEMED":   "ซองอั่งเป่านี้ถูกใช้ไปแล้ว",
     "CANNOT_GET_OWN_VOUCHER": "ไม่สามารถใช้ซองอั่งเป่าของตัวเองได้",
 }
+
+
+# ── กู้ซองที่ "เปิดเข้าเบอร์ร้านแล้ว แต่ระบบไม่ได้บันทึก" ────────────────────
+# เคสจริง 22/9/2026: ยิงไป TrueMoney เปิดซองสำเร็จ แต่คำตอบขากลับหาย (timeout/proxy)
+# ระบบถือว่าล้มเหลว ลูกค้าส่งซ้ำได้ VOUCHER_OUT_OF_STOCK -> เงินเข้าร้านแต่ลูกค้าไม่ได้ยอด
+#
+# กันใช้ซ้ำด้วย 4 ด่าน:
+#   1. voucher_hash ต้องไม่อยู่ใน used_slips (ซองที่เคยได้ยอดแล้วจะไม่ผ่านด่านนี้ตลอดไป)
+#   2. ผู้รับซองต้องเป็นเบอร์ร้านเท่านั้น (เทียบกับเลขที่ TrueMoney ปิดบังไว้ 063-xxx-5901)
+#   3. เปิดซองไม่เกิน _ANGPAO_RECOVER_WINDOW_SEC (กันขุดลิงก์เก่ามายิง)
+#   4. ผู้เรียกต้อง mark_slip_used() ทันทีก่อนให้ยอด
+_ANGPAO_RECOVER_CODES = {"VOUCHER_OUT_OF_STOCK", "TARGET_USER_REDEEMED"}
+_ANGPAO_RECOVER_WINDOW_SEC = 24 * 3600
+
+
+def _mobile_matches_shop(masked: str) -> bool:
+    """เทียบเบอร์ที่ TrueMoney ปิดบัง เช่น '063-xxx-5901' กับเบอร์ร้าน '0634515901'"""
+    shop = re.sub(r"\D", "", TRUEMONEY_ID)
+    digits = re.sub(r"[^0-9x]", "", (masked or "").lower())
+    if not digits or len(digits) != len(shop):
+        return False
+    return all(d == "x" or d == s for d, s in zip(digits, shop))
+
+
+def _angpao_recover_amount(data: dict, code: str) -> float | None:
+    """ซองถูกเปิดเข้าเบอร์ร้านไปแล้วเมื่อเร็วๆ นี้หรือไม่ — คืนยอดเงิน ถ้าใช่"""
+    if code not in _ANGPAO_RECOVER_CODES:
+        return None
+    vdata = data.get("data") or {}
+    voucher = vdata.get("voucher") or {}
+    if voucher.get("status") != "redeemed":
+        return None
+    now_ms = time.time() * 1000
+    for t in (vdata.get("tickets") or []):
+        if not _mobile_matches_shop(t.get("mobile")):
+            continue
+        upd = t.get("update_date")
+        if not isinstance(upd, (int, float)) or (now_ms - upd) > _ANGPAO_RECOVER_WINDOW_SEC * 1000:
+            continue
+        amt = t.get("amount_baht") or voucher.get("redeemed_amount_baht") or voucher.get("amount_baht")
+        try:
+            amt = float(amt)
+        except (TypeError, ValueError):
+            continue
+        if amt > 0:
+            print(f"[ANGPAO] 🔁 กู้ซองที่เปิดเข้าเบอร์ร้านแล้ว ฿{amt} (เปิดเมื่อ {int((now_ms - upd) / 1000)} วินาทีก่อน)")
+            return amt
+    return None
+
+
+async def _angpao_redeem_call(voucher_hash: str) -> dict:
+    """ยิงเปิดซอง 1 ครั้ง — คืน dict ของ TrueMoney (โยน exception ถ้าติดต่อไม่ได้)"""
+    mobile = TRUEMONEY_ID.replace("-", "").replace(" ", "")
+    async with CurlSession(**_angpao_session_kwargs()) as client:
+        resp = await client.post(
+            f"https://gift.truemoney.com/campaign/vouchers/{voucher_hash}/redeem",
+            json={"mobile": mobile, "voucher_hash": voucher_hash},
+            headers={
+                "Content-Type": "application/json",
+                "Origin": "https://gift.truemoney.com",
+                "Referer": f"https://gift.truemoney.com/campaign/?v={voucher_hash}",
+            },
+        )
+    return resp.json()
+
+
+async def _angpao_redeem_with_retry(voucher_hash: str, tag: str) -> dict:
+    """ยิงเปิดซอง ถ้าคำตอบหาย (timeout/เน็ตสะดุด) ให้ยิงซ้ำอีกครั้ง
+    รอบสองซองจะถูกเปิดไปแล้ว -> ได้ VOUCHER_OUT_OF_STOCK ที่มีข้อมูลให้ _angpao_recover_amount กู้ต่อได้"""
+    try:
+        return await _angpao_redeem_call(voucher_hash)
+    except Exception as e:
+        print(f"[{tag}] ⚠ ยิงเปิดซองรอบแรกไม่สำเร็จ ({e}) — ยิงซ้ำเพื่อเช็คว่าซองถูกเปิดไปแล้วหรือยัง")
+        await asyncio.sleep(2)
+        return await _angpao_redeem_call(voucher_hash)
 
 
 def _extract_voucher_hash(code_or_link: str) -> str:
@@ -634,22 +984,10 @@ async def redeem_truemoney_voucher(voucher_code: str, order_id: str) -> dict:
     if voucher_hash in used_slips:
         return {"success": False, "reason": "ซองอั่งเป่านี้ถูกใช้ไปแล้ว"}
 
-    mobile = TRUEMONEY_ID.replace("-", "").replace(" ", "")
-    print(f"[ANGPAO] calling redeem: hash={voucher_hash} mobile={mobile}")
+    print(f"[ANGPAO] calling redeem: hash={voucher_hash} mobile={TRUEMONEY_ID}")
 
     try:
-        async with CurlSession(impersonate="chrome124") as client:
-            resp = await client.post(
-                f"https://gift.truemoney.com/campaign/vouchers/{voucher_hash}/redeem",
-                json={"mobile": mobile, "voucher_hash": voucher_hash},
-                headers={
-                    "Content-Type": "application/json",
-                    "Origin": "https://gift.truemoney.com",
-                    "Referer": f"https://gift.truemoney.com/campaign/?v={voucher_hash}",
-                },
-            )
-        print(f"[ANGPAO] status={resp.status_code} body={resp.text[:500]}")
-        data = resp.json()
+        data = await _angpao_redeem_with_retry(voucher_hash, "ANGPAO")
         print(f"[ANGPAO] response: {json.dumps(data, ensure_ascii=False)}")
     except Exception as e:
         return {"success": False, "reason": f"เช็คซองอั่งเป่าไม่ได้: {e}"}
@@ -657,17 +995,29 @@ async def redeem_truemoney_voucher(voucher_code: str, order_id: str) -> dict:
     status_obj = data.get("status") or {}
     code = data.get("code") or status_obj.get("code") or ("SUCCESS" if data.get("success") else "")
 
+    recovered = None
     if code != "SUCCESS":
-        msg = _ANGPAO_ERROR_MESSAGES.get(code) or data.get("message") or status_obj.get("message") or "ซองอั่งเป่าไม่ถูกต้อง"
-        return {"success": False, "reason": msg}
+        # ซองอาจถูกเปิดเข้าเบอร์ร้านไปแล้วจากรอบที่คำตอบหาย — ถ้าใช่ ให้ถือว่าจ่ายแล้ว
+        recovered = _angpao_recover_amount(data, code)
+        if recovered is None:
+            msg = _ANGPAO_ERROR_MESSAGES.get(code) or data.get("message") or status_obj.get("message") or "ซองอั่งเป่าไม่ถูกต้อง"
+            return {"success": False, "reason": msg}
 
-    voucher_data = data.get("data") or {}
-    voucher = voucher_data.get("my_ticket") or voucher_data.get("voucher") or {}
-    amount_baht = voucher.get("amount_baht")
-    if amount_baht is not None:
-        received = float(amount_baht)
+    # จดรหัสซองทันทีที่ TrueMoney ยืนยันว่าเปิดซองแล้ว (เงินเข้าร้านแล้ว)
+    # เดิมจดหลัง BCSFE สำเร็จเท่านั้น -> ถ้าลูกค้ากรอกรหัสเกมผิด ซองไม่ถูกจด
+    #    เอาซองเดิมไปเติมกระเป๋า/จ่ายออเดอร์อื่นได้เงินซ้ำ (ตัวกู้ซองจะมองว่าเปิดเข้าเบอร์ร้านแล้ว)
+    mark_slip_used(voucher_hash)
+
+    if recovered is not None:
+        received = recovered
     else:
-        received = float(data.get("amount", 0)) / 100  # satang → บาท
+        voucher_data = data.get("data") or {}
+        voucher = voucher_data.get("my_ticket") or voucher_data.get("voucher") or {}
+        amount_baht = voucher.get("amount_baht")
+        if amount_baht is not None:
+            received = float(amount_baht)
+        else:
+            received = float(data.get("amount", 0)) / 100  # satang → บาท
 
     expected = float(order["amount"])
     if received < expected - 0.01:
@@ -1016,27 +1366,69 @@ def _sh(extra: dict | None = None) -> dict:
     return h
 
 
-def _get_revenue_for_range(start: datetime, end: datetime) -> dict:
-    """สรุปยอดรายได้ระหว่าง start-end (ไม่นับ order ของบัญชี admin) — ใช้ร่วมกันทั้งรายเดือน/รายวัน"""
+def _supabase_get_all(client, table: str, params: dict, page: int = 1000) -> list:
+    """ดึงทุกแถวแบบแบ่งหน้า — Supabase ตอบสูงสุด 1000 แถวต่อครั้ง
+    (เดิมดึงครั้งเดียว วันที่ออเดอร์เกิน 1000 ยอดขายจะถูกตัดเหลือแค่ช่วงเช้า-บ่าย)"""
+    rows, offset = [], 0
+    while True:
+        r = client.get(
+            f"{SUPABASE_URL}/rest/v1/{table}",
+            params={**params, "order": "created_at.asc", "limit": str(page), "offset": str(offset)},
+            headers=_sh(),
+        )
+        if r.status_code != 200:
+            # ลองซ้ำ 2 ครั้ง ถ้ายังไม่ได้ให้ error ไปเลย — ห้ามคืนข้อมูลครึ่งๆ
+            # (เดิม break เงียบๆ -> ยอดขายวันนั้นขึ้น 0 บาทหรือขาดไปโดยไม่มีใครรู้)
+            for _wait in (0.5, 1.5):
+                time.sleep(_wait)
+                r = client.get(
+                    f"{SUPABASE_URL}/rest/v1/{table}",
+                    params={**params, "order": "created_at.asc", "limit": str(page), "offset": str(offset)},
+                    headers=_sh(),
+                )
+                if r.status_code == 200:
+                    break
+            if r.status_code != 200:
+                raise RuntimeError(f"Supabase {table} HTTP {r.status_code}")
+        chunk = r.json()
+        rows.extend(chunk)
+        if len(chunk) < page:
+            break
+        offset += page
+    return rows
+
+
+def _fetch_revenue_rows(start: datetime, end: datetime) -> tuple:
+    """ดึงออเดอร์ที่ใช้คิดยอด (ไม่รวม topup) + รายชื่อ admin — error ให้ raise ไม่คืนข้อมูลครึ่งๆ"""
     with httpx.Client(timeout=8) as client:
         admin_resp = client.get(
             f"{SUPABASE_URL}/rest/v1/profiles",
             params={"is_admin": "eq.true", "select": "username"},
             headers=_sh(),
         )
-    admin_usernames = [p["username"] for p in admin_resp.json()] if admin_resp.status_code == 200 else []
+    if admin_resp.status_code != 200:
+        # ถ้าดึงรายชื่อ admin ไม่ได้ ยอดของ admin จะถูกนับรวมไปด้วย — ให้ error แทน
+        raise RuntimeError(f"Supabase profiles HTTP {admin_resp.status_code}")
+    admin_usernames = [p["username"] for p in admin_resp.json()]
 
-    with httpx.Client(timeout=8) as client:
-        resp = client.get(
-            f"{SUPABASE_URL}/rest/v1/orders",
-            params={
-                "status": "eq.done",
-                "created_at": [f"gte.{start.isoformat()}", f"lt.{end.isoformat()}"],
-                "select": "order_id,amount,base_amount,order_type,payment_method,username,created_at",
-            },
-            headers=_sh(),
-        )
-    all_orders = resp.json() if resp.status_code == 200 else []
+    with httpx.Client(timeout=15) as client:
+        all_orders = _supabase_get_all(client, "orders", {
+            "status": "eq.done",
+            "created_at": [f"gte.{start.isoformat()}", f"lt.{end.isoformat()}"],
+            # ไม่ดึงออเดอร์เติมเงิน (topup) ตั้งแต่ต้น — ต้องรวม order_type ที่เป็น null ด้วย
+            # (ออเดอร์เก่าหลายตัวไม่มี order_type ถ้าใช้ neq อย่างเดียว postgres จะตัดพวกนี้ทิ้ง)
+            "or": "(order_type.is.null,order_type.neq.topup)",
+            "select": "order_id,amount,base_amount,order_type,payment_method,username,created_at",
+        })
+    # --- โค้ดเดิม (ดึงครั้งเดียว โดนตัดที่ 1000 แถว) ---
+    # with httpx.Client(timeout=8) as client:
+    #     resp = client.get(f"{SUPABASE_URL}/rest/v1/orders", params={...}, headers=_sh())
+    # all_orders = resp.json() if resp.status_code == 200 else []
+    return all_orders, admin_usernames
+
+
+def _summarize_revenue(all_orders: list, admin_usernames: list, include_orders: bool = True) -> dict:
+    """สรุปยอดจากรายการออเดอร์ที่ดึงมาแล้ว (ไม่นับ admin / บัญชีทดสอบ / topup / ไม่มี username)"""
     TEST_ACCOUNTS = {"test", "mod"}
     orders = [o for o in all_orders if o.get("username") and o.get("username") not in admin_usernames
               and o.get("username") not in TEST_ACCOUNTS
@@ -1065,11 +1457,42 @@ def _get_revenue_for_range(start: datetime, end: datetime) -> dict:
         "by_method": by_method,
         "by_method_count": by_method_count,
         "excluded_admins": admin_usernames,
-        "excluded_no_username_count": len(all_orders) - len(orders) - sum(
-            1 for o in all_orders if o.get("username") in admin_usernames
-        ),
-        "orders": orders_sorted,
+        # นับเฉพาะออเดอร์ที่ไม่มี username จริงๆ
+        # (สูตรเดิม = ทั้งหมด − ที่นับ − admin ทำให้ topup/บัญชีทดสอบถูกนับเป็น "ไม่มี username" ไปด้วย)
+        "excluded_no_username_count": sum(1 for o in all_orders if not o.get("username")),
+        # "excluded_no_username_count": len(all_orders) - len(orders) - sum(
+        #     1 for o in all_orders if o.get("username") in admin_usernames
+        # ),
+        "orders": orders_sorted if include_orders else [],
     }
+
+
+def _get_revenue_for_range(start: datetime, end: datetime) -> dict:
+    """สรุปยอดรายได้ระหว่าง start-end (ไม่นับ order ของบัญชี admin) — ใช้ร่วมกันทั้งรายเดือน/รายวัน"""
+    all_orders, admin_usernames = _fetch_revenue_rows(start, end)
+    return _summarize_revenue(all_orders, admin_usernames)
+
+
+def get_revenue_days(year: int, month: int, day: int, days: int, include_orders: bool = False) -> dict:
+    """สรุปยอดรายวันหลายวันติดกันจากการดึงข้อมูล "ครั้งเดียว"
+    (เดิมหน้าเว็บยิง /revenue/daily ทีละวันพร้อมกัน 30 request -> Cloudflare 429 -> บางวันขึ้น 0 บาท)"""
+    start = datetime(year, month, day, tzinfo=TZ_THAI)
+    end = start + timedelta(days=days)
+    all_orders, admin_usernames = _fetch_revenue_rows(start, end)
+    buckets: dict = {}
+    for o in all_orders:
+        try:
+            k = datetime.fromisoformat(o["created_at"]).astimezone(TZ_THAI).strftime("%Y-%m-%d")
+        except Exception:
+            continue
+        buckets.setdefault(k, []).append(o)
+    out = []
+    for i in range(days):
+        d = start + timedelta(days=i)
+        k = d.strftime("%Y-%m-%d")
+        out.append({"year": d.year, "month": d.month, "day": d.day,
+                    **_summarize_revenue(buckets.get(k, []), admin_usernames, include_orders)})
+    return {"days": out}
 
 
 def get_monthly_revenue(year: int, month: int) -> dict:
@@ -1099,17 +1522,15 @@ def get_daily_revenue(year: int, month: int, day: int) -> dict:
 def _get_cr_revenue_for_range(start: datetime, end: datetime) -> dict:
     TEST_ACCOUNTS = {"test", "mod"}
     try:
-        with httpx.Client(timeout=8) as client:
-            resp = client.get(
-                f"{SUPABASE_URL}/rest/v1/cr_orders",
-                params={
-                    "status": "eq.done",
-                    "created_at": [f"gte.{start.isoformat()}", f"lt.{end.isoformat()}"],
-                    "select": "order_id,amount,base_amount,quantity,payment_method,username,created_at,done_at",
-                },
-                headers=_sh(),
-            )
-        all_orders = resp.json() if resp.status_code == 200 else []
+        with httpx.Client(timeout=15) as client:
+            all_orders = _supabase_get_all(client, "cr_orders", {
+                "status": "eq.done",
+                "created_at": [f"gte.{start.isoformat()}", f"lt.{end.isoformat()}"],
+                "select": "order_id,amount,base_amount,quantity,payment_method,username,created_at,done_at",
+            })
+        # --- โค้ดเดิม (ดึงครั้งเดียว โดนตัดที่ 1000 แถว) ---
+        # resp = client.get(f"{SUPABASE_URL}/rest/v1/cr_orders", params={...}, headers=_sh())
+        # all_orders = resp.json() if resp.status_code == 200 else []
     except Exception as e:
         print(f"[CR-REVENUE] error: {e}")
         all_orders = []
@@ -1207,26 +1628,75 @@ def get_wallet_balance(username: str) -> int:
         return 0
 
 
+PENDING_CREDITS_FILE = Path("logs") / "pending_credits.jsonl"
+
+
+def _record_pending_credit(username: str, amount: int, reason: str):
+    """จดไว้ให้แอดมินเติมมือ เมื่อเติมเงินอัตโนมัติไม่สำเร็จ (เงินลูกค้าต้องไม่หายเงียบ)"""
+    try:
+        PENDING_CREDITS_FILE.parent.mkdir(exist_ok=True)
+        with open(PENDING_CREDITS_FILE, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"time": datetime.now(TZ_THAI).isoformat(), "username": username,
+                                "amount": amount, "reason": reason}, ensure_ascii=False) + "\n")
+    except Exception as e:
+        print(f"[WALLET] ⚠ บันทึก pending credit ไม่ได้: {e}")
+    print(f"[WALLET] 🚨 PENDING CREDIT {username} +฿{amount} — ต้องเติมมือ ({reason})")
+
+
 def credit_wallet(username: str, amount: int) -> bool:
-    """บวกเงินเข้า wallet (หน่วยบาท)"""
+    """บวกเงินเข้า wallet (หน่วยบาท) — แบบปลอดภัย
+
+    เดิม: อ่านยอดไม่ได้ -> ถือว่ายอดเป็น 0 -> เขียนทับ = ยอดเดิมลูกค้าหาย
+          และถ้า Supabase timeout เงินไม่เข้าแต่ไม่มีใครรู้ (เคส Noh 15/10/2026)
+    ใหม่: - อ่านยอดไม่ได้ = ไม่เขียน (ลองใหม่)
+          - เขียนแบบมีเงื่อนไข wallet_balance=ยอดที่อ่านมา กันมีรายการอื่นแทรกแล้วทับกัน
+          - ลองซ้ำ 4 ครั้ง ถ้ายังไม่ได้ จดลง logs/pending_credits.jsonl ให้แอดมินเติมมือ"""
     if amount <= 0:
         return False
-    try:
-        current = get_wallet_balance(username)
-        with httpx.Client(timeout=8) as client:
-            resp = client.patch(
-                f"{SUPABASE_URL}/rest/v1/profiles",
-                params={"username": f"eq.{username}"},
-                headers=_sh({"Content-Type": "application/json", "Prefer": "return=minimal"}),
-                json={"wallet_balance": current + amount},
-            )
-        ok = resp.status_code in (200, 204)
-        if ok:
-            print(f"[WALLET] ✅ credit {username} +฿{amount} → ฿{current + amount}")
-        return ok
-    except Exception as e:
-        print(f"[WALLET] credit error: {e}")
-        return False
+    last_err = ""
+    for attempt in range(4):
+        if attempt:
+            time.sleep(1.5 * attempt)
+        try:
+            with httpx.Client(timeout=12) as client:
+                r = client.get(
+                    f"{SUPABASE_URL}/rest/v1/profiles",
+                    params={"username": f"eq.{username}", "select": "wallet_balance"},
+                    headers=_sh(),
+                )
+                if r.status_code != 200 or not r.json():
+                    last_err = f"อ่านยอดไม่ได้ HTTP {r.status_code}"
+                    continue
+                current = int(r.json()[0].get("wallet_balance") or 0)
+                try:
+                    resp = client.patch(
+                        f"{SUPABASE_URL}/rest/v1/profiles",
+                        params={"username": f"eq.{username}", "wallet_balance": f"eq.{current}"},
+                        headers=_sh({"Content-Type": "application/json", "Prefer": "return=representation"}),
+                        json={"wallet_balance": current + amount},
+                    )
+                except Exception as e:
+                    # ส่งคำสั่งเขียนไปแล้วแต่ไม่รู้ผล (เขียนสำเร็จแต่คำตอบหายก็ได้)
+                    # ห้ามลองซ้ำ — ไม่งั้นลูกค้าได้เงิน 2 เท่า ให้แอดมินเช็คยอดก่อนเติมมือ
+                    _record_pending_credit(username, amount,
+                        f"ไม่รู้ผลการเขียน ({e}) — ยอดก่อนเติม ฿{current} เช็คก่อน ถ้าเป็น ฿{current + amount} แล้วไม่ต้องเติม")
+                    return False
+            if resp.status_code in (200, 204) and resp.json():
+                print(f"[WALLET] ✅ credit {username} +฿{amount} → ฿{current + amount}")
+                return True
+            last_err = f"เขียนไม่สำเร็จ HTTP {resp.status_code} (ยอดอาจเปลี่ยนระหว่างทาง)"
+        except Exception as e:
+            last_err = str(e)
+            print(f"[WALLET] credit error (ครั้งที่ {attempt + 1}): {e}")
+    _record_pending_credit(username, amount, last_err)
+    return False
+    # --- โค้ดเดิม ---
+    # try:
+    #     current = get_wallet_balance(username)
+    #     with httpx.Client(timeout=8) as client:
+    #         resp = client.patch(f"{SUPABASE_URL}/rest/v1/profiles",
+    #             params={"username": f"eq.{username}"}, headers=..., json={"wallet_balance": current + amount})
+    #     ...
 
 
 def deduct_wallet(username: str, amount: int) -> bool:
@@ -1290,21 +1760,10 @@ async def redeem_angpao_for_wallet(voucher_code: str, username: str) -> dict:
     if voucher_hash in used_slips:
         return {"success": False, "reason": "ซองอั่งเป่านี้ถูกใช้ไปแล้ว"}
 
-    mobile = TRUEMONEY_ID.replace("-", "").replace(" ", "")
     print(f"[WALLET] angpao redeem for {username}: hash={voucher_hash}")
 
     try:
-        async with CurlSession(impersonate="chrome124") as client:
-            resp = await client.post(
-                f"https://gift.truemoney.com/campaign/vouchers/{voucher_hash}/redeem",
-                json={"mobile": mobile, "voucher_hash": voucher_hash},
-                headers={
-                    "Content-Type": "application/json",
-                    "Origin": "https://gift.truemoney.com",
-                    "Referer": f"https://gift.truemoney.com/campaign/?v={voucher_hash}",
-                },
-            )
-        data = resp.json()
+        data = await _angpao_redeem_with_retry(voucher_hash, "WALLET")
         print(f"[WALLET] angpao response: {json.dumps(data, ensure_ascii=False)[:300]}")
     except Exception as e:
         return {"success": False, "reason": f"เช็คซองอั่งเป่าไม่ได้: {e}"}
@@ -1312,17 +1771,24 @@ async def redeem_angpao_for_wallet(voucher_code: str, username: str) -> dict:
     status_obj = data.get("status") or {}
     code = data.get("code") or status_obj.get("code") or ("SUCCESS" if data.get("success") else "")
 
+    recovered = None
     if code != "SUCCESS":
-        msg = _ANGPAO_ERROR_MESSAGES.get(code) or data.get("message") or status_obj.get("message") or "ซองอั่งเป่าไม่ถูกต้อง"
-        return {"success": False, "reason": msg}
+        # ซองอาจถูกเปิดเข้าเบอร์ร้านไปแล้วจากรอบที่คำตอบหาย — ถ้าใช่ ให้เติมเงินให้ลูกค้า
+        recovered = _angpao_recover_amount(data, code)
+        if recovered is None:
+            msg = _ANGPAO_ERROR_MESSAGES.get(code) or data.get("message") or status_obj.get("message") or "ซองอั่งเป่าไม่ถูกต้อง"
+            return {"success": False, "reason": msg}
 
-    voucher_data = data.get("data") or {}
-    voucher_obj  = voucher_data.get("my_ticket") or voucher_data.get("voucher") or {}
-    amount_baht  = voucher_obj.get("amount_baht")
-    if amount_baht is not None:
-        received = float(amount_baht)
+    if recovered is not None:
+        received = recovered
     else:
-        received = float(data.get("amount", 0)) / 100
+        voucher_data = data.get("data") or {}
+        voucher_obj  = voucher_data.get("my_ticket") or voucher_data.get("voucher") or {}
+        amount_baht  = voucher_obj.get("amount_baht")
+        if amount_baht is not None:
+            received = float(amount_baht)
+        else:
+            received = float(data.get("amount", 0)) / 100
 
     if received < MIN_AMOUNT:
         return {"success": False, "reason": f"ยอดขั้นต่ำ ฿{MIN_AMOUNT} (ซองนี้มีแค่ ฿{received:.2f})"}
@@ -2155,41 +2621,26 @@ async def verify_cr_slip(slip_image_bytes: bytes, order_id: str) -> dict:
     if order["status"] == "paid":
         return {"success": False, "reason": "order นี้ชำระแล้ว"}
 
-    try:
-        async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.post(
-                "https://api.easyslip.com/v2/verify/bank",
-                headers={"Authorization": f"Bearer {EASYSLIP_API_KEY}"},
-                files={"image": ("slip.jpg", slip_image_bytes, "image/jpeg")},
-            )
-        data = resp.json()
-        print(f"[CR-EASYSLIP] response: {json.dumps(data, ensure_ascii=False)}")
-    except Exception as e:
-        reason = str(e) if str(e) else "เชื่อมต่อ EasySlip ไม่ได้ กรุณาลองใหม่อีกครั้ง"
-        return {"success": False, "reason": f"เช็คสลิปไม่ได้: {reason}"}
+    # ใช้ provider เดียวกับ verify_slip() (SLIP_PROVIDER)
+    if SLIP_PROVIDER == "slip2go":
+        _r = await _call_slip2go(slip_image_bytes)
+    else:
+        _r = await _call_easyslip(slip_image_bytes)
 
-    if not data.get("success"):
-        msg = data.get("message") or "สลิปไม่ถูกต้อง"
-        error_map = {
-            "IMAGE_SIZE_TOO_LARGE": "ไฟล์สลิปใหญ่เกิน 4MB กรุณาบีบอัดรูปแล้วส่งใหม่",
-            "INVALID_IMAGE_FORMAT": "รูปแบบไฟล์ไม่รองรับ กรุณาส่งเป็น JPG หรือ PNG",
-            "SLIP_NOT_FOUND":       "ไม่พบ QR Code ในสลิป กรุณาส่งรูปให้ชัดขึ้น",
-            "SLIP_PENDING":         "สลิปยังประมวลผลไม่เสร็จ กรุณารอสักครู่แล้วส่งใหม่",
-        }
-        return {"success": False, "reason": error_map.get(msg, f"EasySlip: {msg}")}
+    _TAG = "CR-" + SLIP_PROVIDER.upper()
+    if not _r.get("ok"):
+        return {"success": False, "reason": _r.get("reason", "เช็คสลิปไม่สำเร็จ")}
 
-    slip_data = data.get("data", {})
-    raw_slip = slip_data.get("rawSlip", {})
-    received = float(raw_slip.get("amount", {}).get("amount", 0))
+    received = _r["amount"]
     expected = float(order["amount"])
     if received < expected - 0.01:
         return {"success": False, "reason": f"ยอดไม่ตรง คาดหวัง {expected:.2f} แต่ได้ {received:.2f} บาท"}
 
-    transaction_id = raw_slip.get("transRef", "")
+    transaction_id = _r["trans_ref"]
     used_slips = _load_slips()
     if transaction_id and (transaction_id in used_slips or _is_transaction_used(transaction_id)):
         return {"success": False, "reason": "สลิปนี้ถูกใช้ไปแล้ว"}
-    if slip_data.get("isDuplicate"):
+    if _r["is_duplicate"]:
         return {"success": False, "reason": "สลิปนี้ถูกใช้ไปแล้ว (duplicate detected)"}
 
     update_cr_order_status(order_id, "paid", {
@@ -2197,7 +2648,7 @@ async def verify_cr_slip(slip_image_bytes: bytes, order_id: str) -> dict:
         "transaction_id": transaction_id,
         "received": received,
     })
-    print(f"[CR-EASYSLIP] ✅ order {order_id} ชำระแล้ว {received} บาท")
+    print(f"[{_TAG}] ✅ order {order_id} ชำระแล้ว {received} บาท")
     return {"success": True, "reason": "ชำระเงินสำเร็จ", "transaction_id": transaction_id}
 
 
@@ -2220,33 +2671,34 @@ async def redeem_truemoney_voucher_cr(voucher_code: str, order_id: str) -> dict:
     if voucher_hash in used_slips:
         return {"success": False, "reason": "ซองอั่งเป่านี้ถูกใช้ไปแล้ว"}
 
-    mobile = TRUEMONEY_ID.replace("-", "").replace(" ", "")
     try:
-        async with CurlSession(impersonate="chrome124") as client:
-            resp = await client.post(
-                f"https://gift.truemoney.com/campaign/vouchers/{voucher_hash}/redeem",
-                json={"mobile": mobile, "voucher_hash": voucher_hash},
-                headers={
-                    "Content-Type": "application/json",
-                    "Origin": "https://gift.truemoney.com",
-                    "Referer": f"https://gift.truemoney.com/campaign/?v={voucher_hash}",
-                },
-            )
-        data = resp.json()
+        data = await _angpao_redeem_with_retry(voucher_hash, "CR-ANGPAO")
         print(f"[CR-ANGPAO] response: {json.dumps(data, ensure_ascii=False)}")
     except Exception as e:
         return {"success": False, "reason": f"เช็คซองอั่งเป่าไม่ได้: {e}"}
 
     status_obj = data.get("status") or {}
     code = data.get("code") or status_obj.get("code") or ("SUCCESS" if data.get("success") else "")
+    recovered = None
     if code != "SUCCESS":
-        msg = _ANGPAO_ERROR_MESSAGES.get(code) or data.get("message") or status_obj.get("message") or "ซองอั่งเป่าไม่ถูกต้อง"
-        return {"success": False, "reason": msg}
+        # ซองอาจถูกเปิดเข้าเบอร์ร้านไปแล้วจากรอบที่คำตอบหาย — ถ้าใช่ ให้ถือว่าจ่ายแล้ว
+        recovered = _angpao_recover_amount(data, code)
+        if recovered is None:
+            msg = _ANGPAO_ERROR_MESSAGES.get(code) or data.get("message") or status_obj.get("message") or "ซองอั่งเป่าไม่ถูกต้อง"
+            return {"success": False, "reason": msg}
 
-    voucher_data = data.get("data") or {}
-    voucher = voucher_data.get("my_ticket") or voucher_data.get("voucher") or {}
-    amount_baht = voucher.get("amount_baht")
-    received = float(amount_baht) if amount_baht is not None else float(data.get("amount", 0)) / 100
+    # จดรหัสซองทันทีที่ TrueMoney ยืนยันว่าเปิดซองแล้ว (เงินเข้าร้านแล้ว)
+    # เดิมจดหลัง BCSFE สำเร็จเท่านั้น -> ถ้าลูกค้ากรอกรหัสเกมผิด ซองไม่ถูกจด
+    #    เอาซองเดิมไปเติมกระเป๋า/จ่ายออเดอร์อื่นได้เงินซ้ำ (ตัวกู้ซองจะมองว่าเปิดเข้าเบอร์ร้านแล้ว)
+    mark_slip_used(voucher_hash)
+
+    if recovered is not None:
+        received = recovered
+    else:
+        voucher_data = data.get("data") or {}
+        voucher = voucher_data.get("my_ticket") or voucher_data.get("voucher") or {}
+        amount_baht = voucher.get("amount_baht")
+        received = float(amount_baht) if amount_baht is not None else float(data.get("amount", 0)) / 100
 
     expected = float(order["amount"])
     if received < expected - 0.01:

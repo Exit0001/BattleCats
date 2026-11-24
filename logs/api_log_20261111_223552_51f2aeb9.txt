@@ -1,0 +1,18 @@
+============================================================
+เวลา      : 2026-11-11 22:35:52
+Transfer  : 51f2aeb95
+Confirm   : 0006
+Country   : en
+============================================================
+[OP] Unlock Characters จำนวน 2 ตัว
+[BCSFE] ⬇  Downloading save (transfer=51f2ae... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] พบ 2/2 ตัวใน save
+[CAT] ✔ #318 — unlocked
+[CAT] ✔ #359 — unlocked
+[BCSFE] Unlocked 2 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_571df115
+[BCSFE] 📁 Backup → saves_backup\SAVE_20261111_223554_51f2aeb9
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: c9eca942c | Confirm ใหม่: 0435
+============================================================

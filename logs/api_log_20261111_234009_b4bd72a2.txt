@@ -1,0 +1,31 @@
+============================================================
+เวลา      : 2026-11-11 23:40:09
+Transfer  : b4bd72a2f
+Confirm   : 1578
+Country   : en
+============================================================
+[OP] Dupe Save (ไว) x20 | ทำพร้อมกัน 8 ชุด
+[BCSFE] ⬇  Downloading save (transfer=b4bd72... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[DUPE-FAST] #4 ✅ TC=14f3fcd29 | CC=3662 | Inquiry=f21aea461 | เวลาเล่น 31:27
+[DUPE-FAST] #5 ✅ TC=8b2623cb9 | CC=7774 | Inquiry=c1b874591 | เวลาเล่น 31:27
+[DUPE-FAST] #3 ✅ TC=cf6bbd1cb | CC=6142 | Inquiry=6b4636434 | เวลาเล่น 31:27
+[DUPE-FAST] #6 ✅ TC=10434d0bf | CC=9960 | Inquiry=d55258e2a | เวลาเล่น 31:27
+[DUPE-FAST] #2 ✅ TC=cd5ba2933 | CC=1941 | Inquiry=3feb277cd | เวลาเล่น 31:27
+[DUPE-FAST] #7 ✅ TC=3c0bba446 | CC=6467 | Inquiry=299fead2a | เวลาเล่น 31:27
+[DUPE-FAST] #1 ✅ TC=c3e8b6e2d | CC=7637 | Inquiry=13891fe95 | เวลาเล่น 31:27
+[DUPE-FAST] #8 ✅ TC=08781934a | CC=6376 | Inquiry=7c877fb64 | เวลาเล่น 31:27
+[DUPE-FAST] #9 ✅ TC=33a66f4fb | CC=7624 | Inquiry=2e502aa2e | เวลาเล่น 31:27
+[DUPE-FAST] #11 ✅ TC=180fbe1f7 | CC=6421 | Inquiry=ade326667 | เวลาเล่น 31:27
+[DUPE-FAST] #13 ✅ TC=c66fb659b | CC=2784 | Inquiry=52e8f0064 | เวลาเล่น 31:27
+[DUPE-FAST] #10 ✅ TC=cce21a5a1 | CC=1436 | Inquiry=c248cc347 | เวลาเล่น 31:27
+[DUPE-FAST] #14 ✅ TC=61c3cec78 | CC=8919 | Inquiry=150c50133 | เวลาเล่น 31:27
+[DUPE-FAST] #16 ✅ TC=a4addf23a | CC=3371 | Inquiry=2df39ae55 | เวลาเล่น 31:27
+[DUPE-FAST] #15 ✅ TC=568c4a208 | CC=6195 | Inquiry=3be8f0505 | เวลาเล่น 31:27
+[DUPE-FAST] #12 ✅ TC=d153e3ee8 | CC=7157 | Inquiry=b9db20916 | เวลาเล่น 31:27
+[DUPE-FAST] #17 ✅ TC=1579ff7c3 | CC=0249 | Inquiry=ad2f9c8d0 | เวลาเล่น 31:27
+[DUPE-FAST] #18 ✅ TC=028f604ce | CC=7665 | Inquiry=6e7654d36 | เวลาเล่น 31:27
+[DUPE-FAST] #19 ✅ TC=f685eb299 | CC=8739 | Inquiry=1a4f6e853 | เวลาเล่น 31:27
+[DUPE-FAST] #20 ✅ TC=b5a2ebb2d | CC=4062 | Inquiry=ba77aff16 | เวลาเล่น 31:27
+[CLEANUP] ลบ backup 0 ไฟล์
+[DUPE-FAST] เสร็จ 20/20 รหัส ใช้เวลา 24.1 วิ

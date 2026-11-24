@@ -1,0 +1,13 @@
+============================================================
+เวลา      : 2026-11-11 23:20:21
+Transfer  : c9d03ba9c
+Confirm   : 2414
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=c9d03b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_302ccb17
+[BCSFE] 📁 Backup → saves_backup\SAVE_20261111_232022_c9d03ba9
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: e41ea8157 | Confirm ใหม่: 3521
+============================================================

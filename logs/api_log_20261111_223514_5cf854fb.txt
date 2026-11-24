@@ -1,0 +1,17 @@
+============================================================
+เวลา      : 2026-11-11 22:35:14
+Transfer  : 5cf854fbc
+Confirm   : 8006
+Country   : en
+============================================================
+[OP] Clear Story Chapters [1, 2, 3] x1
+[BCSFE] ⬇  Downloading save (transfer=5cf854... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[STORY] ✔ Empire of Cats Ch.1 — 48 stages
+[STORY] ✔ Empire of Cats Ch.2 — 48 stages
+[STORY] ✔ Empire of Cats Ch.3 — 48 stages
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_ec85f711
+[BCSFE] 📁 Backup → saves_backup\SAVE_20261111_223515_5cf854fb
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 397aa4b53 | Confirm ใหม่: 9968
+============================================================

@@ -1,0 +1,13 @@
+============================================================
+เวลา      : 2026-11-11 23:20:56
+Transfer  : e41ea8157
+Confirm   : 3521
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=e41ea8... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_e45a3b82
+[BCSFE] 📁 Backup → saves_backup\SAVE_20261111_232058_e41ea815
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 56abfb9b1 | Confirm ใหม่: 5346
+============================================================

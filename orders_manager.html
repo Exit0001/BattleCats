@@ -368,8 +368,27 @@
     <div id="revenueResultMonth" style="margin-top: 14px;"></div>
   </div>
 
+  <!-- ===== คนเข้าเว็บ / โฆษณา ===== -->
   <div class="bcsfe-section" style="margin-bottom: 24px;">
-    <h3 style="color: #667eea; margin-bottom: 15px;">📊 สรุปยอดรายได้รายวัน</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:15px;">
+      <h3 style="color: #667eea; margin: 0;">📈 คนเข้าเว็บ &amp; โฆษณา</h3>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select id="trafficDays" style="background:#1e1a2e;color:#fff;border:1px solid #3b3358;border-radius:8px;padding:6px 10px;font-family:'Chakra Petch',sans-serif;font-size:13px;">
+          <option value="7">7 วัน</option>
+          <option value="14" selected>14 วัน (สูงสุด)</option>
+        </select>
+        <button type="button" class="btn-action primary" onclick="loadTraffic()" style="margin-top:0;">🔄 โหลด</button>
+      </div>
+    </div>
+    <div id="trafficResult" style="font-family:'Chakra Petch',sans-serif;font-size:13px;color:#999;">กด "โหลด" เพื่อดูสถิติคนเข้าเว็บ</div>
+  </div>
+
+  <div class="bcsfe-section" style="margin-bottom: 24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:15px;">
+      <h3 style="color: #667eea; margin: 0;">📊 สรุปยอดรายได้รายวัน</h3>
+      <button type="button" onclick="openSalesReport()" title="ดูทุกบิลของวันที่เลือก พร้อมชื่อสินค้า (ดึงข้อมูลสดตอนกด ไม่ได้เก็บไฟล์)"
+        style="padding:8px 14px;border-radius:8px;border:1px solid rgba(252,211,77,0.45);background:rgba(252,211,77,0.12);color:#fcd34d;font-family:'Chakra Petch',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">📄 ดูรายการขายทั้งหมด</button>
+    </div>
     <div class="form-row" style="align-items: flex-end;">
       <div class="form-group">
         <label>เลือกวัน:</label>
@@ -563,6 +582,7 @@ async function adminLogin() {
     if (!res.data.is_admin) { gateErr('บัญชีนี้ไม่มีสิทธิ์ admin'); return; }
 
     sessionStorage.setItem('bc_admin', res.data.username);
+    sessionStorage.setItem('bc_admin_hash', hash);   // ส่งไปกับ /api/test/bcsfe (เซิร์ฟเวอร์เช็คสิทธิ์แอดมิน)
     showAdminPanel();
   } catch (e) {
     gateErr(e.message || String(e));
@@ -577,6 +597,7 @@ document.getElementById('gatePass').addEventListener('keydown', function (e) {
 
 function adminLogout() {
   sessionStorage.removeItem('bc_admin');
+  sessionStorage.removeItem('bc_admin_hash');
   window.location.reload();
 }
 
@@ -624,12 +645,18 @@ async function loadRevenueChart(range) {
   }
 
   try {
-    var promises = days.map(function (day) {
-      return fetch(backendURL + '/api/admin/revenue/daily?year=' + day.y + '&month=' + day.m + '&day=' + day.d)
-        .then(function (r) { return r.ok ? r.json() : null; })
-        .catch(function () { return null; });
-    });
-    var results = await Promise.all(promises);
+    // ดึงทุกวันในครั้งเดียว (เดิมยิงทีละวันพร้อมกัน 30 request -> Cloudflare 429 -> บางวันกลายเป็น 0)
+    var f0 = days[0];
+    var rr = await fetch(backendURL + '/api/admin/revenue/days?year=' + f0.y + '&month=' + f0.m + '&day=' + f0.d + '&days=' + days.length);
+    if (!rr.ok) throw new Error('HTTP ' + rr.status);
+    var results = (await rr.json()).days;
+    // --- โค้ดเดิม ---
+    // var promises = days.map(function (day) {
+    //   return fetch(backendURL + '/api/admin/revenue/daily?year=' + day.y + '&month=' + day.m + '&day=' + day.d)
+    //     .then(function (r) { return r.ok ? r.json() : null; })
+    //     .catch(function () { return null; });
+    // });
+    // var results = await Promise.all(promises);
     _renderRevenueChart(days, results);
     _renderPaymentBreakdown(results);
   } catch (e) {
@@ -866,17 +893,23 @@ async function loadRevenueMonth() {
   box.innerHTML = '<p style="color:#999;">⏳ กำลังโหลด...</p>';
   try {
     var daysInMonth = new Date(year, month, 0).getDate();
-    var promises = [];
-    for (var d = 1; d <= daysInMonth; d++) {
-      (function(day) {
-        promises.push(
-          fetch(backendURL + '/api/admin/revenue/daily?year=' + year + '&month=' + month + '&day=' + day)
-            .then(function(r) { return r.ok ? r.json() : null; })
-            .catch(function() { return null; })
-        );
-      })(d);
-    }
-    var results = await Promise.all(promises);
+    // ดึงทั้งเดือนในครั้งเดียว (เดิมยิง 28-31 request พร้อมกัน -> โดนบล็อก -> ยอดขาดบางวัน)
+    var mr = await fetch(backendURL + '/api/admin/revenue/days?year=' + year + '&month=' + month + '&day=1&days=' + daysInMonth + '&orders=1');
+    if (mr.status === 429) { box.innerHTML = '<p style="color:#fbbf24;">⏳ โหลดถี่เกินไป รอสักครู่แล้วกดใหม่</p>'; return; }
+    if (!mr.ok) { box.innerHTML = '<p style="color:#f44;">❌ ดึงข้อมูลยอดขายไม่สำเร็จ ลองใหม่อีกครั้ง</p>'; return; }
+    var results = (await mr.json()).days;
+    // --- โค้ดเดิม ---
+    // var promises = [];
+    // for (var d = 1; d <= daysInMonth; d++) {
+    //   (function(day) {
+    //     promises.push(
+    //       fetch(backendURL + '/api/admin/revenue/daily?year=' + year + '&month=' + month + '&day=' + day)
+    //         .then(function(r) { return r.ok ? r.json() : null; })
+    //         .catch(function() { return null; })
+    //     );
+    //   })(d);
+    // }
+    // var results = await Promise.all(promises);
 
     var totalRevenue = 0, totalOrders = 0, byType = {}, byMethod = {}, byMethodCount = {}, allOrders = [], excludedAdmins = [], excludedNoUsername = 0;
     results.forEach(function(r) {
@@ -1117,9 +1150,17 @@ async function runBCSFE() {
   try {
     showNotification('⏳ กำลังประมวลผล...');
     
+    if (!sessionStorage.getItem('bc_admin_hash')) {
+      showNotification('🔒 กรุณาออกจากระบบแล้วเข้าสู่ระบบแอดมินใหม่อีกครั้ง (ต้องใช้สิทธิ์แอดมินเพิ่มของ)');
+      return;
+    }
     const response = await fetch(backendURL + '/api/test/bcsfe', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Admin-User':  sessionStorage.getItem('bc_admin') || '',
+        'X-Admin-Token': sessionStorage.getItem('bc_admin_hash') || '',
+      },
       body: JSON.stringify({
         transfer_code: order.transfer_code,
         confirmation_code: order.confirmation_code,
@@ -1184,5 +1225,117 @@ style.textContent = `
 document.head.appendChild(style);
 </script>
 
+<script>
+// เปิดหน้ารายงานยอดขายของวันที่เลือกในแท็บใหม่ — ดึงข้อมูลสดตอนเปิด ไม่ได้สร้าง/เก็บไฟล์บนเซิร์ฟเวอร์
+function openSalesReport() {
+  var d = document.getElementById('revenueDay').value;
+  var api = (document.getElementById('backendURL').value || '').trim().replace(/\/$/, '');
+  var q = [];
+  if (d) q.push('date=' + d);
+  if (api && api !== location.origin) q.push('api=' + encodeURIComponent(api));
+  window.open('sales_report.html' + (q.length ? '?' + q.join('&') : ''), '_blank');
+}
+</script>
+<script>
+// ── คนเข้าเว็บ / โฆษณา (อ่านจาก access log ของ nginx) ──────────────────────
+var _trafficLoading = false;
+async function loadTraffic() {
+  if (_trafficLoading) return;
+  var box = document.getElementById('trafficResult');
+  var days = document.getElementById('trafficDays').value;
+  var backendURL = (document.getElementById('backendURL').value || '').trim().replace(/\/$/, '');
+  var ses = {};
+  try { ses = JSON.parse(localStorage.getItem('bc_session')) || {}; } catch (e) {}
+  _trafficLoading = true;
+  box.innerHTML = '<p style="color:#999;">⏳ กำลังอ่าน log (ใช้เวลาสักครู่)...</p>';
+  try {
+    var r = await fetch(backendURL + '/api/admin/traffic?days=' + days +
+      '&username=' + encodeURIComponent(ses.username || '') +
+      '&session_token=' + encodeURIComponent(ses.hash || ''));
+    if (r.status === 403) { box.innerHTML = '<p style="color:#f44;">❌ ต้อง login ด้วยบัญชี admin</p>'; return; }
+    if (!r.ok) { box.innerHTML = '<p style="color:#f44;">❌ โหลดไม่สำเร็จ (HTTP ' + r.status + ')</p>'; return; }
+    renderTraffic(await r.json(), box);
+  } catch (e) {
+    box.innerHTML = '<p style="color:#f44;">❌ เชื่อมต่อ API ไม่ได้</p>';
+  } finally {
+    _trafficLoading = false;
+  }
+}
+
+function renderTraffic(d, box) {
+  var days = (d.days || []).slice().reverse();          // วันล่าสุดอยู่บน
+  if (!days.length) { box.innerHTML = '<p style="color:#999;">ไม่มีข้อมูล log</p>'; return; }
+  var sum = days.reduce(function (a, x) {
+    a.v += x.visitors; a.ad += x.ad_visitors; a.dir += x.direct_visitors; return a;
+  }, { v: 0, ad: 0, dir: 0 });
+  var pct = sum.v ? Math.round(sum.ad * 100 / sum.v) : 0;
+
+  var byMonth = {};
+  days.forEach(function (x) {
+    var m = x.date.slice(0, 7);
+    var o = byMonth[m] || (byMonth[m] = { v: 0, ad: 0, dir: 0, days: 0 });
+    o.v += x.visitors; o.ad += x.ad_visitors; o.dir += x.direct_visitors; o.days++;
+  });
+
+  function card(label, val, color) {
+    return '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(124,58,237,0.25);border-radius:10px;padding:10px 14px;min-width:130px;">' +
+      '<div style="font-size:11px;color:rgba(210,190,255,0.6);margin-bottom:3px;">' + label + '</div>' +
+      '<div style="font-family:Russo One,sans-serif;font-size:20px;color:' + color + ';">' + val.toLocaleString() + '</div></div>';
+  }
+  function row(cells, color) {
+    return '<tr style="border-top:1px solid rgba(255,255,255,0.08);">' + cells + '</tr>';
+  }
+
+  var html = '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">' +
+    card('คนเข้าทั้งหมด', sum.v, '#EDE6FF') +
+    card('มาจากโฆษณา (' + pct + '%)', sum.ad, '#FBBF24') +
+    card('เข้าเอง', sum.dir, '#34D399') + '</div>';
+
+  html += '<div style="font-size:13px;color:#C4B5FD;margin:12px 0 6px;">รายเดือน</div>' +
+    '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px;">' +
+    '<tr style="color:rgba(210,190,255,0.6);"><td style="padding:4px 8px;">เดือน</td><td style="padding:4px 8px;">วันที่มีข้อมูล</td>' +
+    '<td style="padding:4px 8px;text-align:right;">คนเข้า</td><td style="padding:4px 8px;text-align:right;">จากโฆษณา</td><td style="padding:4px 8px;text-align:right;">เข้าเอง</td></tr>';
+  Object.keys(byMonth).sort().reverse().forEach(function (m) {
+    var o = byMonth[m];
+    html += row('<td style="padding:4px 8px;">' + m + '</td>' +
+      '<td style="padding:4px 8px;color:rgba(210,190,255,0.5);">' + o.days + ' วัน</td>' +
+      '<td style="padding:4px 8px;text-align:right;">' + o.v.toLocaleString() + '</td>' +
+      '<td style="padding:4px 8px;text-align:right;color:#FBBF24;">' + o.ad.toLocaleString() + '</td>' +
+      '<td style="padding:4px 8px;text-align:right;color:#34D399;">' + o.dir.toLocaleString() + '</td>');
+  });
+  html += '</table>';
+
+  html += '<div style="font-size:13px;color:#C4B5FD;margin:12px 0 6px;">รายวัน</div>' +
+    '<div style="max-height:320px;overflow-y:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">' +
+    '<tr style="color:rgba(210,190,255,0.6);"><td style="padding:4px 8px;">วันที่</td>' +
+    '<td style="padding:4px 8px;text-align:right;">คนเข้า</td><td style="padding:4px 8px;text-align:right;">จากโฆษณา</td>' +
+    '<td style="padding:4px 8px;text-align:right;">เข้าเอง</td><td style="padding:4px 8px;text-align:right;">เปิดหน้าเว็บ</td></tr>';
+  days.forEach(function (x) {
+    var p = x.visitors ? Math.round(x.ad_visitors * 100 / x.visitors) : 0;
+    html += row('<td style="padding:4px 8px;">' + x.date + '</td>' +
+      '<td style="padding:4px 8px;text-align:right;">' + x.visitors.toLocaleString() + '</td>' +
+      '<td style="padding:4px 8px;text-align:right;color:#FBBF24;">' + x.ad_visitors.toLocaleString() +
+      ' <span style="color:rgba(210,190,255,0.4);font-size:11px;">(' + p + '%)</span></td>' +
+      '<td style="padding:4px 8px;text-align:right;color:#34D399;">' + x.direct_visitors.toLocaleString() + '</td>' +
+      '<td style="padding:4px 8px;text-align:right;color:rgba(210,190,255,0.5);">' + x.pageviews.toLocaleString() + '</td>');
+  });
+  html += '</table></div>';
+
+  if ((d.campaigns || []).length) {
+    html += '<div style="font-size:13px;color:#C4B5FD;margin:14px 0 6px;">แคมเปญโฆษณาที่พาคนมามากสุด</div>' +
+      '<table style="width:100%;border-collapse:collapse;font-size:13px;">' +
+      '<tr style="color:rgba(210,190,255,0.6);"><td style="padding:4px 8px;">รหัสแคมเปญ</td>' +
+      '<td style="padding:4px 8px;text-align:right;">คนเข้า</td><td style="padding:4px 8px;text-align:right;">จำนวนคลิก</td></tr>';
+    d.campaigns.forEach(function (c) {
+      html += row('<td style="padding:4px 8px;font-family:monospace;">' + c.campaign + '</td>' +
+        '<td style="padding:4px 8px;text-align:right;">' + c.visitors.toLocaleString() + '</td>' +
+        '<td style="padding:4px 8px;text-align:right;color:rgba(210,190,255,0.5);">' + c.clicks.toLocaleString() + '</td>');
+    });
+    html += '</table>';
+  }
+  html += '<div style="font-size:11px;color:rgba(210,190,255,0.45);margin-top:10px;">* นับจาก log ของเซิร์ฟเวอร์ เก็บย้อนหลังได้ 14 วัน · "จากโฆษณา" = เปิดเว็บด้วยลิงก์ที่มี fbclid/utm จาก Facebook</div>';
+  box.innerHTML = html;
+}
+</script>
 </body>
 </html>

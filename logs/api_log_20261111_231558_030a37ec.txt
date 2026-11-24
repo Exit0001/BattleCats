@@ -1,0 +1,13 @@
+============================================================
+เวลา      : 2026-11-11 23:15:58
+Transfer  : 030a37ec3
+Confirm   : 0400
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=030a37... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_598b0a7e
+[BCSFE] 📁 Backup → saves_backup\SAVE_20261111_231559_030a37ec
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: e9c9dbcd0 | Confirm ใหม่: 6645
+============================================================

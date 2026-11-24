@@ -1,0 +1,10 @@
+============================================================
+เวลา      : 2026-10-26 17:58:28
+Transfer  : acf785a5e
+Confirm   : 8548
+Country   : en
+============================================================
+[OP] เพิ่มของ 4 รายการ
+[BCSFE] ⬇  Downloading save (transfer=acf785... cc=en)
+[BCSFE] ❌ from_codes exception: FailedToLoadError: Failed to load save file
+[BCSFE] ❌ Failed to load save file

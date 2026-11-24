@@ -30,6 +30,7 @@
     "sameAs": []
   }
   </script>
+<script src="assets/promo.js?v=2"></script>
 </head>
 <body>
 
@@ -286,7 +287,13 @@ window.addEventListener('load', () => {
 
 <script>
 // ── Event Promotion Banner (index.html) ──────────────────────
-(function() {
+// โปรลดราคา (assets/promo.js): สถานะโปรเปลี่ยนหลังยืนยันกับเซิร์ฟเวอร์ -> วาดแบนเนอร์ใหม่
+window.addEventListener('bcpromo:change', function () { if (window._idxLoadEvents) window._idxLoadEvents(); });
+function _idxPromoFmt(p) {
+  if (!window.BCPromo || BCPromo.price(p) === p) return '฿' + p;
+  return '<span style="font-size:13px;color:rgba(210,190,255,0.5);text-decoration:line-through;margin-right:6px;">฿' + p + '</span>฿' + BCPromo.price(p);
+}
+(window._idxLoadEvents = function() {
   fetch('/api/events')
     .then(function(r) { return r.json(); })
     .then(function(packs) {
@@ -357,8 +364,10 @@ window.addEventListener('load', () => {
         html += '<div style="font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:rgba(210,190,255,0.5);margin-bottom:10px;">' + (pack.cat_ids || []).length + ' ตัวละคร' + (hasMax ? ' · มี Max' : '') + '</div>';
         html += '<div style="display:flex;align-items:center;justify-content:space-between;">';
         html += '<div>';
-        html += '<span style="font-family:\'Russo One\',sans-serif;font-size:22px;color:#FCD34D;">฿' + price + '</span>';
-        if (hasMax) html += '<span style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);margin-left:6px;">/ ฿' + pack.price_max + '</span>';
+        html += '<span style="font-family:\'Russo One\',sans-serif;font-size:22px;color:#FCD34D;">' + _idxPromoFmt(price) + '</span>';
+        if (hasMax) html += '<span style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);margin-left:6px;">/ ฿' + (window.BCPromo ? BCPromo.price(pack.price_max) : pack.price_max) + '</span>';
+        // html += '<span style="font-family:\'Russo One\',sans-serif;font-size:22px;color:#FCD34D;">฿' + price + '</span>';
+        // if (hasMax) html += '<span style="font-family:\'Chakra Petch\',sans-serif;font-size:11px;color:rgba(210,190,255,0.45);margin-left:6px;">/ ฿' + pack.price_max + '</span>';
         html += '</div>';
         html += '<span style="background:linear-gradient(135deg,rgba(252,211,77,0.2),rgba(252,211,77,0.1));border:1px solid rgba(252,211,77,0.4);color:#FCD34D;font-family:\'Chakra Petch\',sans-serif;font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;">สั่งเลย →</span>';
         html += '</div>';

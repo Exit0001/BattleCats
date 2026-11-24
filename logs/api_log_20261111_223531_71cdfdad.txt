@@ -1,0 +1,46 @@
+============================================================
+เวลา      : 2026-11-11 22:35:31
+Transfer  : 71cdfdadf
+Confirm   : 2200
+Country   : en
+============================================================
+[OP] Unlock Characters จำนวน 30 ตัว
+[BCSFE] ⬇  Downloading save (transfer=71cdfd... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] พบ 30/30 ตัวใน save
+[CAT] ✔ #30 — unlocked
+[CAT] ✔ #31 — unlocked
+[CAT] ✔ #32 — unlocked
+[CAT] ✔ #35 — unlocked
+[CAT] ✔ #36 — unlocked
+[CAT] ✔ #37 — unlocked
+[CAT] ✔ #38 — unlocked
+[CAT] ✔ #39 — unlocked
+[CAT] ✔ #40 — unlocked
+[CAT] ✔ #41 — unlocked
+[CAT] ✔ #46 — unlocked
+[CAT] ✔ #47 — unlocked
+[CAT] ✔ #48 — unlocked
+[CAT] ✔ #49 — unlocked
+[CAT] ✔ #50 — unlocked
+[CAT] ✔ #51 — unlocked
+[CAT] ✔ #52 — unlocked
+[CAT] ✔ #55 — unlocked
+[CAT] ✔ #56 — unlocked
+[CAT] ✔ #58 — unlocked
+[CAT] ✔ #60 — unlocked
+[CAT] ✔ #61 — unlocked
+[CAT] ✔ #63 — unlocked
+[CAT] ✔ #68 — unlocked
+[CAT] ✔ #70 — unlocked
+[CAT] ✔ #88 — unlocked
+[CAT] ✔ #145 — unlocked
+[CAT] ✔ #146 — unlocked
+[CAT] ✔ #147 — unlocked
+[CAT] ✔ #151 — unlocked
+[BCSFE] Unlocked 30 cats
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_73621d42
+[BCSFE] 📁 Backup → saves_backup\SAVE_20261111_223532_71cdfdad
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 33f556242 | Confirm ใหม่: 4462
+============================================================

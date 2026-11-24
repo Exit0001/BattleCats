@@ -1,0 +1,13 @@
+============================================================
+เวลา      : 2026-11-11 23:16:38
+Transfer  : 09f84b0f6
+Confirm   : 3855
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=09f84b... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_41813abc
+[BCSFE] 📁 Backup → saves_backup\SAVE_20261111_231640_09f84b0f
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: dbc3720dd | Confirm ใหม่: 6776
+============================================================

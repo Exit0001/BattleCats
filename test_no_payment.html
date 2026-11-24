@@ -1020,6 +1020,69 @@
 
 <script src="assets/supabase-client.js?v=2"></script>
 <script src="assets/characters_data.js?v=2"></script>
+
+<!-- ── Admin login: endpoint ทดสอบทั้งหมดต้องเป็นแอดมิน (เช็คฝั่งเซิร์ฟเวอร์ด้วย X-Admin-User / X-Admin-Token) ── -->
+<div id="tnp-admin-bar" style="position:fixed;top:12px;right:12px;z-index:9998;background:rgba(15,8,30,0.95);border:1px solid rgba(124,58,237,0.5);border-radius:12px;padding:10px 12px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#EDE6FF;box-shadow:0 8px 24px rgba(0,0,0,0.5);max-width:calc(100vw - 24px);box-sizing:border-box;"></div>
+<script>
+// แนบสิทธิ์แอดมินไปกับทุกคำสั่ง /api/ ของหน้านี้ — ไม่ต้องแก้ fetch ทีละจุด
+(function () {
+  var KU = 'bc_tnp_user', KH = 'bc_tnp_hash';
+  function get(k) { try { return sessionStorage.getItem(k) || ''; } catch (e) { return ''; } }
+  function set(k, v) { try { v ? sessionStorage.setItem(k, v) : sessionStorage.removeItem(k); } catch (e) {} }
+
+  var _fetch = window.fetch.bind(window);
+  window.fetch = function (input, init) {
+    var url = typeof input === 'string' ? input : (input && input.url) || '';
+    if (url.indexOf('/api/') !== -1 && get(KU)) {
+      init = init || {};
+      var h = new Headers(init.headers || {});
+      h.set('X-Admin-User', get(KU));
+      h.set('X-Admin-Token', get(KH));
+      init.headers = h;
+    }
+    return _fetch(input, init).then(function (r) {
+      if (r.status === 403 && url.indexOf('/api/') !== -1 && typeof toast === 'function') {
+        toast('🔒 ต้องเข้าสู่ระบบแอดมินก่อน (มุมขวาบน)', 'err');
+      }
+      return r;
+    });
+  };
+
+  var bar = document.getElementById('tnp-admin-bar');
+  var inp = 'padding:6px 8px;border:1px solid rgba(255,255,255,0.15);border-radius:6px;background:rgba(255,255,255,0.06);color:white;font-size:12px;width:110px;';
+  var btn = 'padding:6px 10px;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;';
+  function render() {
+    if (get(KU)) {
+      bar.innerHTML = '🔓 แอดมิน: <strong>' + get(KU) + '</strong> ' +
+        '<button id="tnp-logout" style="' + btn + 'background:rgba(248,113,113,0.2);color:#FCA5A5;margin-left:6px;">ออก</button>';
+      document.getElementById('tnp-logout').onclick = function () { set(KU, ''); set(KH, ''); render(); };
+    } else {
+      bar.innerHTML = '🔒 <input id="tnp-u" placeholder="admin username" style="' + inp + '"> ' +
+        '<input id="tnp-p" type="password" placeholder="password" style="' + inp + '"> ' +
+        '<button id="tnp-login" style="' + btn + 'background:#7c3aed;color:white;">เข้าสู่ระบบ</button>' +
+        '<div id="tnp-err" style="color:#FCA5A5;margin-top:6px;display:none;"></div>';
+      var go = async function () {
+        var u = document.getElementById('tnp-u').value.trim();
+        var p = document.getElementById('tnp-p').value;
+        var err = document.getElementById('tnp-err');
+        if (!u || !p) return;
+        var hash = btoa(unescape(encodeURIComponent(p)));
+        try {
+          var res = await DB.from('profiles').select('username, is_admin, password_hash').eq('username', u).maybeSingle();
+          if (!res.data || res.data.password_hash !== hash || !res.data.is_admin) {
+            err.textContent = '❌ username/password ไม่ถูก หรือไม่ใช่แอดมิน'; err.style.display = 'block'; return;
+          }
+          set(KU, res.data.username); set(KH, hash); render();
+        } catch (e) { err.textContent = '❌ ' + (e.message || e); err.style.display = 'block'; }
+      };
+      document.getElementById('tnp-login').onclick = go;
+      document.getElementById('tnp-p').addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+    }
+  }
+  render();
+})();
+</script>
+
 <script>
 var testCart   = [];
 var testOrders = 0;
@@ -2670,6 +2733,134 @@ async function runCheckID(event) {
 }
 </script>
 <!-- ══════════════════════════════════════════════════════════════ -->
+<!-- checkID แบบไว — ตรวจหลายรหัสพร้อมกัน สูงสุด 1000 (/api/check/id-fast) -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="test-section" style="margin-top:32px;border:1px solid rgba(56,189,248,0.35);border-radius:16px;padding:24px;">
+  <h2 class="section-title" style="margin-bottom:20px;">⚡ checkID แบบไว</h2>
+
+  <div style="background:rgba(56,189,248,0.07);border:1px solid rgba(56,189,248,0.25);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#7DD3FC;line-height:1.7;">
+    ตรวจหลายรหัส<strong>พร้อมกัน</strong> สูงสุด <strong>1000 รหัส</strong> — download → re-upload (ไม่แก้ไข) → ได้ TC ใหม่คืน<br>
+    วางได้ทั้งไฟล์ Dupe/checkID (<code>TC: xxx CC: yyy</code>) หรือบรรทัดละ <code>รหัส รหัสยืนยัน</code> · <strong>รันใน local เท่านั้น</strong>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">Server</label>
+      <select id="chkf-srv" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;">
+        <option value="1">EN (Global / TH / EU)</option>
+        <option value="2">JP</option>
+        <option value="3">KR</option>
+        <option value="4">TW</option>
+      </select>
+    </div>
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">ตรวจพร้อมกัน (1–8)</label>
+      <input type="number" id="chkf-workers" value="3" min="1" max="8" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;">
+    </div>
+  </div>
+
+  <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">รหัสที่จะตรวจ <span id="chkf-count" style="color:#38BDF8;">(0 รหัส)</span></label>
+  <textarea id="chkf-input" rows="8" oninput="chkfCount()" placeholder="  1  TC: abc123456   CC: 1234   Inquiry: xyz...&#10;def789abc 5678" style="width:100%;padding:9px 12px;border:1px solid rgba(56,189,248,0.25);border-radius:8px;background:rgba(56,189,248,0.05);color:white;font-family:monospace;font-size:12px;resize:vertical;box-sizing:border-box;margin-bottom:16px;"></textarea>
+
+  <button onclick="runCheckIDFast(event)" class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;background:linear-gradient(135deg,#0ea5e9,#6366f1);">
+    ⚡ ตรวจสอบแบบไว
+  </button>
+
+  <div id="chkf-result" style="display:none;margin-top:16px;"></div>
+</div>
+
+<script>
+var CHKF_MAX = 1000;
+
+// แยกรหัสจากข้อความ: "TC: xxx CC: yyy" (ไฟล์ Dupe/checkID) หรือ "xxx yyy" บรรทัดละคู่
+// ข้ามบรรทัด "# ❌ TC เดิม ..." ในไฟล์ checkID (รหัสที่ใช้ไม่ได้แล้ว)
+function chkfParse() {
+  var out = [];
+  document.getElementById('chkf-input').value.split('\n').forEach(function(line) {
+    if (/^\s*#/.test(line)) return;
+    var tc = line.match(/TC:\s*([a-fA-F0-9]{9})/), cc = line.match(/CC:\s*([0-9]{4})/);
+    if (tc && cc) { out.push({ transfer_code: tc[1], confirmation_code: cc[1] }); return; }
+    var m = line.match(/\b([a-fA-F0-9]{9})\b[^0-9a-fA-F]+([0-9]{4})\b/);
+    if (m) out.push({ transfer_code: m[1], confirmation_code: m[2] });
+  });
+  return out;
+}
+
+function chkfCount() {
+  var n = chkfParse().length;
+  var el = document.getElementById('chkf-count');
+  el.textContent = '(' + n + ' รหัส' + (n > CHKF_MAX ? ' — เกิน ' + CHKF_MAX : '') + ')';
+  el.style.color = n > CHKF_MAX ? '#F87171' : '#38BDF8';
+}
+
+async function runCheckIDFast(event) {
+  var url     = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var srv     = document.getElementById('chkf-srv').value;
+  var workers = parseInt(document.getElementById('chkf-workers').value) || 3;
+  var btn     = event.target;
+  var res     = document.getElementById('chkf-result');
+  var codes   = chkfParse();
+
+  if (codes.length === 0) { toast('❌ ไม่พบรหัสในข้อความ', 'err'); return; }
+  if (codes.length > CHKF_MAX) { toast('❌ ใส่ได้สูงสุด ' + CHKF_MAX + ' รหัส (ตอนนี้ ' + codes.length + ')', 'err'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ กำลังตรวจ ' + codes.length + ' รหัส...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#7DD3FC;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ ตรวจ ' + codes.length + ' รหัส (พร้อมกัน ' + workers + ')...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/check/id-fast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ codes: codes, country: srv, workers: workers }),
+    });
+    var data = await resp.json();
+    if (!data.success) throw new Error(data.error || 'Unknown error');
+
+    toast('✅ ตรวจครบ — ใช้ได้ ' + data.ok + '/' + data.results.length, 'ok');
+    _chkLastResults = data.results;   // ใช้ปุ่มโหลด .txt ตัวเดียวกับ checkID ปกติ
+    var rows = data.results.map(function(r, i) {
+      var head = '<td style="padding:7px 10px;font-size:11px;color:#6B7280;">' + (i+1) + '</td>' +
+                 '<td style="padding:7px 10px;font-family:monospace;font-size:12px;color:#9CA3AF;">' + r.original_tc + '</td>';
+      if (r.valid) {
+        return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' + head +
+          '<td style="padding:7px 10px;color:#4ADE80;font-size:11px;font-weight:700;">✅</td>' +
+          '<td style="padding:7px 10px;font-family:monospace;font-size:13px;color:#FFD84E;">' + r.new_tc + '</td>' +
+          '<td style="padding:7px 10px;font-family:monospace;font-size:13px;color:#FFD84E;">' + r.new_cc + '</td>' +
+          '<td style="padding:7px 10px;font-family:monospace;font-size:11px;color:#7DD3FC;">' + (r.inquiry_code || '-') + '</td></tr>';
+      }
+      return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' + head +
+        '<td style="padding:7px 10px;color:#F87171;font-size:11px;font-weight:700;">❌</td>' +
+        '<td colspan="3" style="padding:7px 10px;font-size:11px;color:rgba(248,113,113,0.75);">' + (r.error || '') + '</td></tr>';
+    }).join('');
+
+    res.innerHTML =
+      '<div style="background:rgba(14,165,233,0.05);border:1px solid rgba(14,165,233,0.2);border-radius:12px;padding:16px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#38BDF8;font-size:12px;">ใช้ได้ ' + data.ok + ' / ไม่ได้ ' + data.error_count + ' จาก ' + data.results.length + ' รหัส · ' + data.seconds + ' วินาที</div>' +
+        '<button onclick="downloadCheckID()" style="padding:6px 16px;background:rgba(14,165,233,0.15);color:#38BDF8;border:1px solid rgba(14,165,233,0.35);border-radius:8px;font-size:12px;font-family:\'Chakra Petch\',sans-serif;cursor:pointer;">📥 โหลดเป็น .txt</button>' +
+      '</div>' +
+      '<div style="max-height:520px;overflow:auto;"><table style="width:100%;border-collapse:collapse;">' +
+      '<thead><tr style="border-bottom:1px solid rgba(255,255,255,0.12);">' +
+      '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">#</th>' +
+      '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">TC เดิม</th>' +
+      '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">สถานะ</th>' +
+      '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">TC ใหม่</th>' +
+      '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">CC ใหม่</th>' +
+      '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">Inquiry</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+  } catch(e) {
+    toast('❌ ' + e.message, 'err');
+    res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:14px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#FCA5A5;">❌ ' + e.message + '</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⚡ ตรวจสอบแบบไว';
+  }
+}
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
 <!-- DUPE SAVE SECTION                                            -->
 <!-- ══════════════════════════════════════════════════════════════ -->
 <div class="test-section" style="margin-top:32px;border:1px solid rgba(251,191,36,0.3);border-radius:16px;padding:24px;">
@@ -2811,6 +3002,143 @@ async function runDupeSave(event) {
   } finally {
     btn.disabled = false;
     btn.textContent = '🔀 เริ่ม Dupe';
+  }
+}
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- DUPE แบบไว — ทำหลายรหัสพร้อมกัน (/api/dupe/save-fast)          -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="test-section" style="margin-top:32px;border:1px solid rgba(56,189,248,0.35);border-radius:16px;padding:24px;">
+  <h2 class="section-title" style="margin-bottom:20px;">⚡ Dupe แบบไว</h2>
+
+  <div style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.3);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-family:'Chakra Petch',sans-serif;font-size:12px;color:#7DD3FC;line-height:1.7;">
+    ⚡ download ครั้งเดียว → แตกเซฟทำ <strong>หลายรหัสพร้อมกัน</strong> → ไม่หน่วงเวลา (รอเพิ่มเฉพาะรอบที่โดนปฏิเสธ)<br>
+    เริ่มที่ 3 ชุดพร้อมกันก่อน ถ้าไม่มีรหัสล้มเหลวค่อยเพิ่ม · <strong>รันใน local เท่านั้น</strong> (ระหว่างรันออเดอร์อื่นต้องรอ)
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">Transfer Code</label>
+      <input type="text" id="dupef-tc" placeholder="8274501e5" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;background:rgba(255,255,255,0.06);color:white;box-sizing:border-box;">
+    </div>
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">Confirmation Code</label>
+      <input type="text" id="dupef-cc" placeholder="0792" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:monospace;background:rgba(255,255,255,0.06);color:white;box-sizing:border-box;">
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">Server</label>
+      <select id="dupef-srv" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;">
+        <option value="1">EN (Global / TH / EU)</option>
+        <option value="2">JP</option>
+        <option value="3">KR</option>
+        <option value="4">TW</option>
+      </select>
+    </div>
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">จำนวน dupe (สูงสุด 1000)</label>
+      <input type="number" id="dupef-count" value="10" min="1" max="1000" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;">
+    </div>
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">ทำพร้อมกัน (1–8)</label>
+      <input type="number" id="dupef-workers" value="3" min="1" max="8" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;">
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">สุ่มเวลาเล่น ตั้งแต่ (ชม.) — เว้นว่าง = ใช้เวลาเดิมของเซฟ</label>
+      <input type="number" id="dupef-pt-min" value="25" placeholder="เช่น 25" min="0" step="0.5" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;">
+    </div>
+    <div>
+      <label style="display:block;font-size:11px;font-weight:700;color:var(--text-secondary);margin-bottom:5px;">ถึง (ชม.)</label>
+      <input type="number" id="dupef-pt-max" value="200" placeholder="เช่น 200" min="0" step="0.5" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,0.06);color:white;font-family:'Chakra Petch',sans-serif;box-sizing:border-box;">
+    </div>
+  </div>
+
+  <button onclick="runDupeFast(event)" class="btn btn-primary" style="width:100%;padding:12px;font-size:14px;">
+    ⚡ เริ่ม Dupe แบบไว
+  </button>
+
+  <div id="dupef-result" style="display:none;margin-top:16px;"></div>
+</div>
+
+<script>
+async function runDupeFast(event) {
+  var url     = (document.getElementById('backendURL').value || 'http://localhost:8000').trim();
+  var tc      = document.getElementById('dupef-tc').value.trim();
+  var cc      = document.getElementById('dupef-cc').value.trim();
+  var srv     = document.getElementById('dupef-srv').value;
+  var count   = parseInt(document.getElementById('dupef-count').value) || 1;
+  var workers = parseInt(document.getElementById('dupef-workers').value) || 3;
+  var btn     = event.target;
+  var res     = document.getElementById('dupef-result');
+
+  if (!tc || !cc) { toast('❌ กรอก TC และ CC ก่อน', 'err'); return; }
+  if (count > 1000) { toast('❌ dupe ได้สูงสุด 1000 รหัส', 'err'); return; }
+  var ptMin = parseFloat(document.getElementById('dupef-pt-min').value) || 0;
+  var ptMax = parseFloat(document.getElementById('dupef-pt-max').value) || 0;
+  if ((ptMin > 0) !== (ptMax > 0) || ptMax < ptMin) { toast('❌ ใส่เวลาเล่นให้ครบทั้ง 2 ช่อง และ "ถึง" ต้องไม่น้อยกว่า "ตั้งแต่"', 'err'); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ กำลัง dupe แบบไว...';
+  res.style.display = 'block';
+  res.innerHTML = '<div style="padding:14px;text-align:center;color:#7DD3FC;font-family:\'Chakra Petch\',sans-serif;font-size:13px;">⏳ Downloading save แล้ว dupe ' + count + ' รหัส (พร้อมกัน ' + workers + ' ชุด)...</div>';
+
+  try {
+    var resp = await fetch(url + '/api/dupe/save-fast', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ transfer_code: tc, confirmation_code: cc, country: srv, count: count, workers: workers,
+                             playtime_min_h: ptMin, playtime_max_h: ptMax }),
+    });
+    var data = await resp.json();
+
+    if (data.success && data.codes && data.codes.length > 0) {
+      toast('✅ Dupe แบบไวสำเร็จ ' + data.count + ' รหัส!', 'ok');
+      _dupeLastData = data;   // ใช้ปุ่มโหลด .txt ตัวเดียวกับ Dupe ปกติ
+      var rows = data.codes.map(function(c, i) {
+        return '<tr>' +
+          '<td style="padding:8px 10px;color:#9CA3AF;font-size:12px;">#' + (i+1) + '</td>' +
+          '<td style="padding:8px 10px;font-family:monospace;color:#FFD84E;font-size:13px;">' + c.transfer + '</td>' +
+          '<td style="padding:8px 10px;font-family:monospace;color:#FFD84E;font-size:13px;">' + c.confirmation + '</td>' +
+          '<td style="padding:8px 10px;font-family:monospace;font-size:11px;color:#7DD3FC;">' + (c.inquiry || '-') + '</td>' +
+          '<td style="padding:8px 10px;font-family:monospace;font-size:11px;color:#A7F3D0;">' + (c.playtime || '-') + '</td>' +
+          '<td style="padding:8px 4px;">' +
+            '<button onclick="copyText(\'' + c.transfer + '\',this)" style="padding:3px 8px;background:rgba(99,102,241,0.25);color:#c4b5fd;border:1px solid rgba(99,102,241,0.4);border-radius:5px;font-size:10px;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;margin-right:4px;">TC</button>' +
+            '<button onclick="copyText(\'' + c.confirmation + '\',this)" style="padding:3px 8px;background:rgba(99,102,241,0.25);color:#c4b5fd;border:1px solid rgba(99,102,241,0.4);border-radius:5px;font-size:10px;cursor:pointer;font-family:\'Chakra Petch\',sans-serif;">CC</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+      var failNote = data.failed ? ' · <span style="color:#FCA5A5;">ล้มเหลว ' + data.failed + ' รหัส (ลองลดจำนวนที่ทำพร้อมกัน)</span>' : '';
+      res.innerHTML =
+        '<div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:16px;">' +
+        '<div style="font-family:\'Russo One\',sans-serif;color:#4ADE80;font-size:13px;margin-bottom:12px;">✅ ได้ ' + data.count + ' รหัส ใน ' + data.seconds + ' วินาที' + failNote + '</div>' +
+        '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">' +
+        '<thead><tr style="border-bottom:1px solid rgba(255,255,255,0.1);">' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">#</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">Transfer Code</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">Confirmation</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">Inquiry Code</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">เวลาเล่น (ชม.:นาที)</th>' +
+        '<th style="padding:6px 10px;font-size:10px;color:#6B7280;text-align:left;">คัดลอก</th>' +
+        '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+        '<div style="margin-top:12px;text-align:right;">' +
+        '<button onclick="downloadDupeSave()" style="padding:6px 16px;background:rgba(251,191,36,0.12);color:#FBBF24;border:1px solid rgba(251,191,36,0.35);border-radius:8px;font-size:12px;font-family:\'Chakra Petch\',sans-serif;cursor:pointer;">📥 โหลดเป็น .txt</button>' +
+        '</div></div>';
+    } else {
+      toast('❌ Dupe แบบไวล้มเหลว', 'err');
+      res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:14px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#FCA5A5;">❌ ' + (data.error || 'Unknown error') + '</div>';
+    }
+  } catch(e) {
+    toast('❌ ' + e.message, 'err');
+    res.innerHTML = '<div style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:14px;font-family:\'Chakra Petch\',sans-serif;font-size:12px;color:#FCA5A5;">❌ ' + e.message + '</div>';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⚡ เริ่ม Dupe แบบไว';
   }
 }
 </script>

@@ -39,6 +39,12 @@ ITEM_MAP = {
     "base_material":   {"max": 9999, "has_warning": False, "label": "Base Materials (ทุกชนิด)",
                         "note": "เพิ่มวัสดุทุกชนิด (Bricks/Feathers/Coal/Sprockets ฯลฯ) สะสมได้สูงสุด 9999/ชนิด"},
 
+    # ── Talent Orb เกรด S ครบทุกชนิด (62 ชนิด ในเกมเวอร์ชัน 15.6) ──
+    "talent_orb_s":    {"max": 998, "has_warning": True, "label": "Talent Orb S (ครบทุกชนิด)",
+                        "note": "Orb เกรด S ทุกชนิด ชนิดละ X ลูก (สูงสุด 998/ชนิด) — ต้องปลดล็อคระบบ Talent Orb ในเกมแล้ว"},
+    "talent_orb_a":    {"max": 998, "has_warning": True, "label": "Talent Orb A (ครบทุกชนิด)",
+                        "note": "Orb เกรด A ทุกชนิด ชนิดละ X ลูก (สูงสุด 998/ชนิด) — ต้องปลดล็อคระบบ Talent Orb ในเกมแล้ว"},
+
     # ── Gamatoto Level (set XP ให้ตรงกับ level ที่เลือก) ──
     "gamatoto_level": {"max": 130, "has_warning": False, "label": "Gamatoto Level",
                        "note": "ตั้ง Gamatoto ให้ถึง level ที่เลือก (max 130)"},
@@ -80,6 +86,8 @@ AMOUNT_OPTIONS = {
     "legend_ticket":   [1, 2, 3, 4],
     "lucky_ticket":    [100, 500, 1000, 2999],
     "base_material":   [30, 100, 500, 999],
+    "talent_orb_s":    [1, 5, 10, 30],
+    "talent_orb_a":    [1, 5, 10, 30],
     "gamatoto_level":     [50, 80, 100, 130],
     "gamatoto_lackey":    [10],
     "gamatoto_underling": [10],

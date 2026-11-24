@@ -164,7 +164,10 @@
       padding: 16px;
     }
     #svcList {
-      max-height: calc(100dvh - 300px);
+      /* ยืดหดตามพื้นที่ที่เหลือใน .svc-box (flex column)
+         min-height:0 จำเป็น ไม่งั้น flex child จะไม่ยอม scroll */
+      flex: 1 1 auto;
+      min-height: 0;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
@@ -173,6 +176,11 @@
       max-width: 480px;
       width: 100%;
       max-height: calc(100dvh - 32px);
+      /* flex column: หัวข้อ + ยอดรวม + ปุ่ม อยู่ติดที่เสมอ
+         ส่วน #svcList ตรงกลางยืดหดแล้ว scroll เอง
+         เดิมใช้ overflow:hidden + max-height ตายตัว -> จอเตี้ย (แท็บเล็ตแนวนอน) ปุ่มถูกตัดหาย */
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
       background: linear-gradient(145deg,#100827 0%,#0b051a 100%);
       border: 1px solid rgba(124,58,237,0.38);
@@ -189,6 +197,7 @@
     }
     .svc-close:hover { color: #EDE6FF; }
     .svc-cat-header {
+      flex-shrink: 0;
       display: flex; align-items: center; gap: 14px;
       margin-bottom: 20px; padding-bottom: 18px;
       border-bottom: 1px solid rgba(124,58,237,0.30);
@@ -200,6 +209,7 @@
     }
     .svc-thumb img { width:100%; height:100%; object-fit:contain; image-rendering:pixelated; }
     .svc-title {
+      flex-shrink: 0;
       font-family: 'Russo One', sans-serif; font-size: 15px;
       color: #EDE6FF; margin-bottom: 16px;
     }
@@ -253,6 +263,7 @@
       color: #FF4D92; white-space: nowrap; flex-shrink: 0; margin-left: auto;
     }
     .svc-total-row {
+      flex-shrink: 0;
       display: flex; justify-content: space-between; align-items: center;
       padding: 14px 0 16px; border-top: 1px solid rgba(124,58,237,0.20); margin-top: 8px;
     }
@@ -307,6 +318,7 @@
       .svc-total-row { padding: 10px 0 12px; margin-top: 4px; }
     }
   </style>
+<script src="assets/promo.js?v=2"></script>
 </head>
 <body>
 
@@ -396,7 +408,8 @@
 
       <!-- 1. Upgrade All -->
       <div class="card" style="cursor:default;padding:24px 20px;">
-        <div class="card-picture"><img loading="lazy" src="pictures/อัพเกรด Max.png" width="200"></div>
+        <!-- <div class="card-picture"><img loading="lazy" src="pictures/อัพเกรด Max.png" width="200"></div> -->
+        <div class="card-picture"><img loading="lazy" src="pictures/upgrade_all.jpg?v=2" alt="อัพเกรดแมวทุกตัวในครั้งเดียว: ก่อน Lv ต่ำ → หลัง Lv ตัน" style="width:100%;height:auto;display:block;border-radius:10px;"></div>
         <div class="card-tag tag-rare">ALL</div>
         <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;" data-i18n="char_upgrade_all_name">อัพเกรด Max<br>ทุกตัวที่มีในรหัส</div>
         <div class="card-desc" style="line-height:1.6;" data-i18n="char_upgrade_all_desc">Uber Lv60 · SR/R Lv50 · Normal Lv30<br>Plus ของลูกค้าคงเดิม</div>
@@ -408,7 +421,8 @@
 
       <!-- 2. Unlock All -->
       <div class="card" style="cursor:default;padding:24px 20px;">
-        <div class="card-picture"><img loading="lazy" src="pictures/Unlock ทุกตัวละคร ในเกม.png" width="200"></div>
+        <!-- <div class="card-picture"><img loading="lazy" src="pictures/Unlock ทุกตัวละคร ในเกม.png" width="200"></div> -->
+        <div class="card-picture"><img loading="lazy" src="pictures/unlock_all.jpg" alt="ปลดแมวทุกตัว รวม Uber / Special" style="width:100%;height:auto;display:block;border-radius:10px;"></div>
         <div class="card-tag tag-super">HOT</div>
         <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;" data-i18n="char_unlock_all_name">Unlock ทุกตัวละคร<br>ในเกม</div>
         <div class="card-desc" style="line-height:1.6;" data-i18n="char_unlock_all_desc">ปลดล็อค <strong style="color:#EDE6FF;">ทุกตัวในเกม</strong><br>รวม Uber · Special ไม่มีข้อยกเว้น</div>
@@ -420,7 +434,8 @@
 
       <!-- 3. True Form All -->
       <div class="card" style="cursor:default;padding:24px 20px;">
-        <div class="card-picture"><img loading="lazy" src="pictures/True Form ทุกตัวที่มีในรหัส.png" width="200"></div>
+        <!-- <div class="card-picture"><img loading="lazy" src="pictures/True Form ทุกตัวที่มีในรหัส.png" width="200"></div> -->
+        <div class="card-picture"><img loading="lazy" src="pictures/trueform_all.jpg" alt="อัปร่าง 3 ทุกตัว: ร่างปกติ → ร่าง 3" style="width:100%;height:auto;display:block;border-radius:10px;"></div>
         <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;" data-i18n="char_trueform_all_name">True Form<br>ทุกตัวที่มีในรหัส</div>
         <div class="card-desc" style="line-height:1.6;" data-i18n="char_trueform_all_desc">เปลี่ยนแมวที่คุณมีอยู่ทุกตัว<br>เป็น True Form (ร่างที่ 3)</div>
         <div style="margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#fbbf24;line-height:1.6;border:1px solid rgba(251,191,36,0.5);border-radius:8px;padding:8px 10px;background:rgba(251,191,36,0.06);">⚠️ ใช้ได้เฉพาะตัวละครที่มีระบบ True Form<br>· Lv.30 ขึ้นไป</div>
@@ -437,7 +452,8 @@
 
       <!-- 4. Ultra Form All -->
       <div class="card" style="cursor:default;padding:24px 20px;">
-        <div class="card-picture"><img loading="lazy" src="pictures/Ultra Form ทุกตัวที่มีในรหัส.png" width="200"></div>
+        <!-- <div class="card-picture"><img loading="lazy" src="pictures/Ultra Form ทุกตัวที่มีในรหัส.png" width="200"></div> -->
+        <div class="card-picture"><img loading="lazy" src="pictures/ultraform_all.jpg" alt="อัปร่าง 4 ทุกตัว: ร่าง 3 → ร่าง 4" style="width:100%;height:auto;display:block;border-radius:10px;"></div>
         <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;" data-i18n="char_ultraform_all_name">Ultra Form<br>ทุกตัวที่มีในรหัส</div>
         <div class="card-desc" style="line-height:1.6;" data-i18n="char_ultraform_all_desc">เปลี่ยนทุกตัวที่มี 4 ร่าง<br>ให้เป็น Ultra Form (ร่างที่ 4)</div>
         <div style="margin-top:10px;font-family:'Chakra Petch',sans-serif;font-size:13px;color:#fbbf24;line-height:1.6;border:1px solid rgba(251,191,36,0.5);border-radius:8px;padding:8px 10px;background:rgba(251,191,36,0.06);">⚠️ ใช้ได้เฉพาะตัวละครที่มีระบบ Ultra Form<br>· ต้องมี True Form แล้ว · Lv.60 ขึ้นไป</div>
@@ -449,7 +465,8 @@
 
       <!-- 5. Max Talents All -->
       <div class="card" style="cursor:default;padding:24px 20px;">
-        <div class="card-picture"><img loading="lazy" src="pictures/Max Talents ทุกตัวที่มีในรหัส.png" width="200"></div>
+        <!-- <div class="card-picture"><img loading="lazy" src="pictures/Max Talents ทุกตัวที่มีในรหัส.png" width="200"></div> -->
+        <div class="card-picture"><img loading="lazy" src="pictures/talents_all.jpg" alt="Max Talents ทุกตัว" style="width:100%;height:auto;display:block;border-radius:10px;"></div>
         <div class="card-name" style="font-size:15px;font-family:'Russo One',sans-serif;margin-bottom:10px;" data-i18n="char_talents_all_name">Max Talents<br>ทุกตัวที่มีในรหัส</div>
         <div class="card-desc" style="line-height:1.6;" data-i18n="char_talents_all_desc">อัพ Talent ทุกสกิล Max<br>ทุกตัวที่มี Talent ในรหัสของคุณ</div>
         <div class="card-price" style="margin-top:14px;"><span class="price-now">฿300</span></div>
@@ -612,7 +629,7 @@
       <span class="svc-total-val" id="svcTotal">฿0</span>
     </div>
 
-    <button class="btn btn-primary" id="svcAddBtn" style="width:100%;background:linear-gradient(135deg,#7C3AED,#EC4899);border:none;" onclick="addSelectedToCart()" disabled data-i18n="add_to_cart">
+    <button class="btn btn-primary" id="svcAddBtn" style="width:100%;flex-shrink:0;background:linear-gradient(135deg,#7C3AED,#EC4899);border:none;" onclick="addSelectedToCart()" disabled data-i18n="add_to_cart">
       เพิ่มลงตะกร้า
     </button>
   </div>
@@ -739,7 +756,7 @@
   </div>
 </div>
 
-<script src="assets/characters_data.js?v=2"></script>
+<script src="assets/characters_data.js?v=3"></script>
 <script>
 // ── Tier colour system ─────────────────────────────────────────
 var TIER_COL = { N:'#9CA3AF', EX:'#60A5FA', RR:'#4ADE80', SR:'#C4B5FD', UR:'#FBBF24', LR:'#F87171' };
@@ -759,6 +776,7 @@ var JP_ONLY_IDS = new Set([
   /* Monster Hunter */ 204,205,206,207,208,
   /* Shin Japan Heroes Universe */ 701,702,703,704,
   /* Gudetama */ 430,347,348,349,350,
+  /* River City Ransom (คุนิโอะ) */ 874,
   /* World Trigger */ 677,678,679,
   /* Princess Punt Sweets */ 26,69,530,485,337,161,66,486,160,68,67,65,64,
   /* Pac-Man */ 866,867,868,
@@ -792,6 +810,11 @@ function priceForTier(tier) {
   return ({ N:5, EX:15, RR:20, SR:25, UR:39, LR:79 })[(tier||'').toUpperCase()] || 20;
 }
 
+// ── โปรลดราคา (assets/promo.js) — ตะกร้าเก็บราคาเดิม แสดงราคาลดเท่านั้น ──
+function _promoPrice(p) { return window.BCPromo ? BCPromo.price(p) : p; }
+function _promoFmt(p)   { return window.BCPromo ? BCPromo.fmt(p) : '฿' + p; }
+window.addEventListener('bcpromo:change', function () { if (window.catsData) applyFilters(); });
+
 // ── Render card grid (paginated) ───────────────────────────────
 var _catPage = 0;
 var _catList = [];
@@ -816,7 +839,8 @@ function _catCardHtml(r) {
     '<span class="cat-tier-badge" style="color:' + col + ';background:' + bg + ';border-color:' + col + '88;">' + label + '</span>' +
     '<div class="cat-name">' + name + '</div>' +
     '<button class="btn btn-primary cat-unlock-btn" onclick="openSvcModal(' + id + ',\'' + tier + '\',\'' + name.replace(/'/g, "\\'") + '\')">' +
-      window.bcT('char_choose_btn','เลือก') + ' <span style="color:#ff6b6b;font-size:13px;font-weight:700;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;">฿' + priceForTier(tier) + '</span>' +
+      window.bcT('char_choose_btn','เลือก') + ' <span style="color:#ff6b6b;font-size:13px;font-weight:700;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;">' + _promoFmt(priceForTier(tier)) + '</span>' +
+      // 1px 1px 0 #000;">฿' + priceForTier(tier) + '</span>' +
     '</button>' +
   '</div>';
 }
@@ -955,7 +979,8 @@ function openSvcModal(id, tier, name) {
         '</div>' +
         (svc.note ? '<div class="svc-note">' + svc.note + '</div>' : '') +
       '</div>' +
-      '<div class="svc-price">฿' + price + '</div>' +
+      '<div class="svc-price">' + _promoFmt(price) + '</div>' +
+      // '<div class="svc-price">฿' + price + '</div>' +
     '</label>';
   }).join('');
 
@@ -994,7 +1019,8 @@ function svcToggle(cb) {
   var price = parseInt(cb.dataset.price);
   cb.closest('.svc-item').classList.toggle('svc-checked', cb.checked);
   if (cb.checked) _svcSel[key] = price; else delete _svcSel[key];
-  var total = Object.values(_svcSel).reduce(function(a,b){ return a+b; }, 0);
+  var total = Object.values(_svcSel).reduce(function(a,b){ return a+_promoPrice(b); }, 0);
+  // var total = Object.values(_svcSel).reduce(function(a,b){ return a+b; }, 0);
   var totalEl2 = document.getElementById('svcTotal');
   totalEl2.textContent = '฿' + total;
   totalEl2.classList.toggle('has-total', total > 0);
@@ -1423,7 +1449,8 @@ function apOpen(pkgType, name, price) {
   _apPayMethod = 'promptpay';
   apSetPayMethod('promptpay');
   document.getElementById('apPkgName').textContent  = name;
-  document.getElementById('apPkgPrice').textContent = price ? '฿' + price : window.bcT('char_ap_contact_price','สอบถามราคา');
+  document.getElementById('apPkgPrice').innerHTML = price ? _promoFmt(price) : window.bcT('char_ap_contact_price','สอบถามราคา');
+  // document.getElementById('apPkgPrice').textContent = price ? '฿' + price : window.bcT('char_ap_contact_price','สอบถามราคา');
   document.getElementById('apTC').value = '';
   document.getElementById('apCC').value = '';
   document.getElementById('apSlipName').textContent = '';

@@ -1,0 +1,13 @@
+============================================================
+เวลา      : 2026-11-11 23:32:32
+Transfer  : 8a799ec83
+Confirm   : 0282
+Country   : en
+============================================================
+[BCSFE] ⬇  Downloading save (transfer=8a799e... cc=en)
+[BCSFE] ✅ Download สำเร็จ
+[BCSFE] 💾 บันทึก save → C:\Users\modpo\Documents\bcsfe\saves\SAVE_DATA_51602e9c
+[BCSFE] 📁 Backup → saves_backup\SAVE_20261111_233233_8a799ec8
+[BCSFE] ⬆  Uploading save...
+[BCSFE] ✅ Transfer ใหม่: 36792a6b3 | Confirm ใหม่: 0010
+============================================================
